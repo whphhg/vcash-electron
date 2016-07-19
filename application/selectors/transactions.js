@@ -36,7 +36,7 @@ export const getChartData = createSelector([getConfirmed], (transactions) => {
       if (index > -1) {
         data[index] = {
           ...data[index],
-          [tx.category]: Math.abs(parseFloat(parseFloat(data[index][tx.category] + tx.amount).toFixed(6)))
+          [tx.category]: parseFloat(parseFloat(data[index][tx.category] + Math.abs(tx.amount)).toFixed(6))
         }
       }
     }
