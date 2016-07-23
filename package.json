@@ -26,6 +26,7 @@
   "homepage": "https://github.com/whphhg/vcash-electron#readme",
   "dependencies": {
     "autobahn": "0.9.9",
+    "babel-runtime": "6.9.1",
     "electron-compile": "3.3.4",
     "leaflet": "0.7.7",
     "material-ui": "0.15.2",
@@ -40,6 +41,7 @@
     "recharts": "0.12.5",
     "redux": "3.5.2",
     "redux-thunk": "2.1.0",
+    "regenerator-runtime": "0.9.5",
     "reselect": "2.5.3"
   },
   "devDependencies": {
