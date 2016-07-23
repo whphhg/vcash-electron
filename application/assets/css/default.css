@@ -25,7 +25,7 @@
  */
 body {
   font-family:'Roboto', sans-serif;
-  margin:0px;
+  margin:0 0 25px 0;
 }
 .header {
   height:60px;
@@ -35,6 +35,7 @@ body {
   height:25px;
   bottom:0;
   position:fixed;
+  z-index:1;
 }
 .footer div {
   color:#757575;
