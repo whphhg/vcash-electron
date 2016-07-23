@@ -26,18 +26,16 @@ app.on('ready', () => {
   const productionWindow = {
     'width': 1152,
     'height': 768,
-    'minWidth': 1152,
-    'minHeight': 768,
-    'maxWidth': 1152,
-    'maxHeight': 768,
+    'minWidth': 800,
+    'minHeight': 480,
     icon: __dirname + '/application/assets/images/logoRed.png'
   }
 
   const developmentWindow = {
     'width': 1152,
     'height': 768,
-    'minWidth': 1152,
-    'minHeight': 768,
+    'minWidth': 800,
+    'minHeight': 480,
     icon: __dirname + '/application/assets/images/logoRed.png'
   }
 
