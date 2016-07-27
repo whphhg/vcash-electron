@@ -2,15 +2,12 @@ import  * as Colors from 'material-ui/styles/colors'
 import { fade } from 'material-ui/utils/colorManipulator'
 import Spacing from 'material-ui/styles/spacing'
 
-/**
- * Material-UI Vcash theme.
- */
 export default {
   spacing: Spacing,
   fontFamily: 'Roboto, sans-serif',
   palette: {
     primary1Color: '#b60127',
-    primary2Color: Colors.red700,
+    primary2Color: '#b60127',
     primary3Color: Colors.grey400,
     accent1Color: Colors.red800,
     accent2Color: Colors.grey100,

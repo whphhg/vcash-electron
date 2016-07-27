@@ -1,33 +1,24 @@
-import https from 'https'
-
+/**
+ * Get IP geo data.
+ * @function geoIp
+ * @param {string} ip - IP address to lookup.
+ * @param {function} callback - Callback function to be fired.
+ * @return {object|null} Provided IP geo data or null.
+ */
 const geoIp = (ip, callback) => {
-  https.get('https://geoip.nekudo.com/api/' + ip, (response) => {
-    if (response.headers['content-type'] === 'application/json') {
-      let buffer = ''
+  fetch('https://geoip.nekudo.com/api/' + ip)
+    .then((response) => { if (response.ok) return response.json() })
+    .then((data) => {
+      if (!data.hasOwnProperty('type')) {
+        return callback(data)
+      }
 
-      response.on('data', (data) => {
-        buffer += data
-      })
-
-      response.on('end', () => {
-        try {
-          const geoData = JSON.parse(buffer)
-
-          if (!geoData.hasOwnProperty('type')) {
-            return callback(geoData)
-          }
-
-          callback(null)
-        } catch (exception) {
-          process.env.NODE_ENV === 'development' && console.error('HTTPS: Error parsing geoIp response.', exception)
-          callback(null)
-        }
-      })
-    }
-  }).on('error', (error) => {
-    process.env.NODE_ENV === 'development' && console.error('HTTPS: https://geoip.nekudo.com/api/'+ip+' error.', error)
-    callback(null)
-  })
+      return callback(null)
+    })
+    .catch((error) => {
+      process.env.NODE_ENV === 'dev' && console.error('https://geoip.nekudo.com/api/' + ip, error.message)
+      return callback(null)
+    })
 }
 
 export default geoIp

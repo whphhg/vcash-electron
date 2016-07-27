@@ -1,63 +1,92 @@
 import React from 'react'
+import { inject, observer } from 'mobx-react'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import Snackbar from 'material-ui/Snackbar'
 import TextField from 'material-ui/TextField'
 
-const WatchOnlyAdd = ({ state, addAddress, explorerLookup, setAddress, setNote, toggleDialog, toggleSnackbar }) => {
-  const onAddClick = () => {
-    addAddress(state.address, state.note)
-    explorerLookup()
-    toggleDialog()
-    toggleSnackbar()
+@inject('watchOnly')
+@inject('watchOnlyAdd')
+@observer
+
+class WatchOnlyAdd extends React.Component {
+  constructor(props) {
+    super(props)
+    this.watchOnly = props.watchOnly
+    this.watchOnlyAdd = props.watchOnlyAdd
+
+    this.addAddress = this.addAddress.bind(this)
+    this.setAddress = this.setAddress.bind(this)
+    this.setNote = this.setNote.bind(this)
+    this.toggleDialog = this.toggleDialog.bind(this)
+    this.toggleSnackbar = this.toggleSnackbar.bind(this)
   }
 
-  let errorText = null
+  addAddress() {
+    this.watchOnly.addAddress(this.watchOnlyAdd.address, this.watchOnlyAdd.note)
+    this.watchOnlyAdd.toggleDialog()
+    this.watchOnlyAdd.toggleSnackbar()
+  }
 
-  if (state.errors.alreadyAdded) { errorText = 'The address you have entered is already on your watch-only list.' }
-  if (state.errors.invalid) { errorText = 'The address you have entered is not valid. Please double-check it.' }
-  if (state.errors.isMine) { errorText = 'The address you have entered belongs to your wallet.' }
+  setAddress(event) {
+    this.watchOnlyAdd.setAddress(event.target.value)
+  }
 
-  const actions = [
-    <FlatButton label='Cancel' onTouchTap={toggleDialog} />,
-    <FlatButton label='Add watch-only address' onTouchTap={onAddClick} disabled={state.button === false} primary={true} />
-  ]
+  setNote(event) {
+    this.watchOnlyAdd.setNote(event.target.value)
+  }
 
-  process.env.NODE_ENV === 'development' && console.log('%c' + '<WatchOnlyAdd />', 'color:#673AB7')
-  return (
-    <div>
-      <Dialog
-        title='Add watch-only address'
-        actions={actions}
-        modal={true}
-        autoScrollBodyContent={true}
-        open={state.dialogOpen}
-      >
-        <TextField
-          onChange={setAddress}
-          fullWidth={true}
-          value={state.address}
-          errorText={errorText}
-          floatingLabelText='Address'
-          hintText='Enter the address'
-          underlineStyle={state.button ? {borderColor: 'green'} : {}}
+  toggleDialog() {
+    this.watchOnlyAdd.toggleDialog()
+  }
+
+  toggleSnackbar() {
+    this.watchOnlyAdd.toggleSnackbar()
+  }
+
+  render() {
+    return (
+      <div>
+        <Dialog
+          title='Add watch-only address'
+          actions={[
+            <FlatButton label='Cancel' onTouchTap={this.toggleDialog} />,
+            <FlatButton label='Add watch-only address' onTouchTap={this.addAddress} disabled={this.watchOnlyAdd.button === false} primary={true} />
+          ]}
+          modal={true}
+          autoScrollBodyContent={true}
+          open={this.watchOnlyAdd.dialog}
+        >
+          <TextField
+            onChange={this.setAddress}
+            fullWidth={true}
+            value={this.watchOnlyAdd.address}
+            errorText={
+              this.watchOnlyAdd.errors.alreadyAdded && 'The address you have entered is already on your watch-only list.'
+              || this.watchOnlyAdd.errors.invalid && 'The address you have entered is not valid. Please double-check it.'
+              || this.watchOnlyAdd.errors.isMine && 'The address you have entered belongs to your wallet.'
+            }
+            floatingLabelText='Address'
+            hintText='Enter the address'
+            underlineStyle={this.watchOnlyAdd.button ? {borderColor: 'green'} : {}}
+          />
+          <TextField
+            onChange={this.setNote}
+            hintText="Enter note"
+            floatingLabelText="Note (optional)"
+            value={this.watchOnlyAdd.note}
+            fullWidth={true}
+          />
+        </Dialog>
+        <Snackbar
+          open={this.watchOnlyAdd.snackbar}
+          message={'Added watch-only address "' + this.watchOnlyAdd.address + '".'}
+          autoHideDuration={5 * 1000}
+          onRequestClose={this.toggleSnackbar}
         />
-        <TextField
-          onChange={setNote}
-          hintText="Enter note"
-          floatingLabelText="Note (optional)"
-          value={state.note}
-          fullWidth={true}
-        />
-      </Dialog>
-      <Snackbar
-        open={state.snackbarOpen}
-        message={'Added watch-only address "' + state.address + '".'}
-        autoHideDuration={5 * 1000}
-        onRequestClose={toggleSnackbar}
-      />
-    </div>
-  )
+      </div>
+    )
+  }
 }
 
 export default WatchOnlyAdd

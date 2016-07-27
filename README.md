@@ -50,24 +50,24 @@ If the Electron window is black, open `package.json`, add `--disable-gpu` after 
 
 ## TODOs and FIXMEs
 
-- Handle error_code_wallet_keypool_ran_out. __TODO__ [application/actions/addressNew.js](application/actions/addressNew.js)
-- Locking without toggling CB leaves it toggled after unlocking. __FIXME__ [application/actions/chainBlender.js](application/actions/chainBlender.js)
-- Transaction dialog not complete, needs overhaul, fails opening if PoS. __FIXME__ [application/actions/transaction.js](application/actions/transaction.js)
-- Combine self-sends and correctly handle category names, similar to WebUI. __TODO__ [application/actions/transactions.js](application/actions/transactions.js)
 - Show icons if vote candidate & staking (config.dat pos:1 & unlocked). __TODO__ [application/components/Header.js](application/components/Header.js)
 - Colorize amounts according to category. __TODO__ [application/components/Transactions.js](application/components/Transactions.js)
 - Switch table to FixedDataTable (performance). __TODO__ [application/components/Transactions.js](application/components/Transactions.js)
-- Contacts with VCF import/export support (node-vcf). __IDEA__ [application/constants/ActionTypes.js](application/constants/ActionTypes.js)
-- Guided tour (react-joyride). __IDEA__ [application/constants/ActionTypes.js](application/constants/ActionTypes.js)
-- Implement balance tracking of individual addresses and accounts. __TODO__ [application/constants/ActionTypes.js](application/constants/ActionTypes.js)
-- Implement key dump. __TODO__ [application/constants/ActionTypes.js](application/constants/ActionTypes.js)
-- Implement translations (i18next, react-i18next, moment-timezone). __TODO__ [application/constants/ActionTypes.js](application/constants/ActionTypes.js)
-- Implement wallet backup. __TODO__ [application/constants/ActionTypes.js](application/constants/ActionTypes.js)
-- Implement wallet check. __TODO__ [application/constants/ActionTypes.js](application/constants/ActionTypes.js)
-- Implement wallet dump. __TODO__ [application/constants/ActionTypes.js](application/constants/ActionTypes.js)
-- Implement wallet passphrase change. __TODO__ [application/constants/ActionTypes.js](application/constants/ActionTypes.js)
-- Implement wallet repair. __TODO__ [application/constants/ActionTypes.js](application/constants/ActionTypes.js)
-- RPC getbalance returns incorrect account balances after using RPC sendtoaddress. They're ok if only RPC sendmany is used on a fresh wallet. __NOTE__ [application/constants/ActionTypes.js](application/constants/ActionTypes.js)
+- Contacts with VCF import/export support (node-vcf). __IDEA__ [application/index.js](application/index.js)
+- Guided tour (react-joyride). __IDEA__ [application/index.js](application/index.js)
+- Implement key dump. __TODO__ [application/index.js](application/index.js)
+- Implement translations (i18next, react-i18next, moment-timezone). __TODO__ [application/index.js](application/index.js)
+- Implement wallet backup. __TODO__ [application/index.js](application/index.js)
+- Implement wallet check. __TODO__ [application/index.js](application/index.js)
+- Implement wallet dump. __TODO__ [application/index.js](application/index.js)
+- Implement wallet passphrase change. __TODO__ [application/index.js](application/index.js)
+- Implement wallet repair. __TODO__ [application/index.js](application/index.js)
+- Handle error_code_wallet_keypool_ran_out. __TODO__ [application/stores/addressNew.js](application/stores/addressNew.js)
+- Transaction dialog not complete, needs overhaul, fails opening if PoS. __FIXME__ [application/stores/transaction.js](application/stores/transaction.js)
+- Combine self-sends and correctly handle category names, similar to WebUI. __TODO__ [application/stores/transactions.js](application/stores/transactions.js)
+- Implement balance tracking of individual addresses and accounts. __TODO__ [application/stores/transactions.js](application/stores/transactions.js)
+- RPC getbalance incorrect IF using RPC sendtoaddress. Ok if only RPC sendmany is used on a fresh wallet. __NOTE__ [application/stores/transactions.js](application/stores/transactions.js)
+- Allow selecting the daemon you're getting data from, local or remote (tunnel-ssh). __TODO__ [application/utilities/rpc.js](application/utilities/rpc.js)
 
 ## Screenshots
 
@@ -76,3 +76,9 @@ If the Electron window is black, open `package.json`, add `--disable-gpu` after 
 ![Send](http://i.imgur.com/BmItZ1t.png)
 ![Network information](http://i.imgur.com/blfJXfD.png)
 ![Block reward calculator](http://i.imgur.com/x3ziJQO.png)
+
+Donations are welcome at
+```
+XVC: Vsaj7MMLwSMgzBQEonfMLR9QxqkKprFVGR
+BTC: 1Pay4nywPa1qkP5no3rcrLhfVo6Bc1JE8s
+```

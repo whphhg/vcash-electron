@@ -1,57 +1,50 @@
-import http from 'http'
-import { walletDaemon, walletLockCheck } from '../actions/wallet'
+/** Required store instances. */
+import daemon from '../stores/daemon'
 
-// Options can be a single object with a method and params, or an array of such objects.
-const rpc = (options, dispatch, getState, callback) => {
-  const request = http.request({
-    host: '127.0.0.1',
-    port: 9195,
-    method: 'POST'
-  })
-
-  // Assign random ids and jsonrpc version property.
-  if (Object.prototype.toString.call(options) === '[object Object]') {
-    options.jsonrpc = '2.0'
-    options.id = Math.floor(Math.random() * (10000 - 210 + 1)) + 210
-  } else {
+/**
+ * Make a RPC to Vcash daemon.
+ * TODO: Allow selecting the daemon you're getting data from, local or remote (tunnel-ssh).
+ *       - ssh -L9195:localhost:9195 user@ip
+ * @function rpc
+ * @param {object|array} options - Can be a single object with a method and params, or an array of such objects.
+ * @param {function} callback - Function to call when done.
+ * @return {callback} Returns callback with response object or null.
+ */
+const rpc = (options, callback) => {
+  /** Assign id and jsonrpc property. */
+  if (options.constructor === Array) {
     options.map((option) => {
       option.jsonrpc = '2.0'
-      option.id = Math.floor(Math.random() * (10000 - 210 + 1)) + 210
+      option.id = Math.floor(Math.random() * 10000)
     })
+  } else {
+    options.jsonrpc = '2.0'
+    options.id = Math.floor(Math.random() * 10000)
   }
 
-  // Serialize options and finish sending the request.
-  request.end(JSON.stringify(options))
-
-  request.on('error', (error) => {
-    if (getState().wallet.status.isRunning || getState().wallet.status.isRunning === null) {
-      dispatch(walletDaemon(false))
-    }
-
-    callback(null)
+  fetch('http://127.0.0.1:9195', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(options)
   })
-
-  request.on('response', (response) => {
-    let buffer = ''
-
-    response.on('data', (data) => {
-      buffer += data
-    })
-
-    response.on('end', () => {
-      if (!getState().wallet.status.isRunning || getState().wallet.status.isRunning === null) {
-        dispatch(walletDaemon(true))
-        dispatch(walletLockCheck())
+    .then((response) => { if (response.ok) return response.json() })
+    .then((data) => {
+      if (daemon.isRunning === false || daemon.isRunning === null) {
+        daemon.setRunning(true)
       }
 
-      try {
-        callback(JSON.parse(buffer))
-      } catch (exception) {
-        process.env.NODE_ENV === 'development' && console.error('RPC: Error parsing response.', options, exception)
-        callback(null)
-      }
+      return callback(data)
     })
-  })
+    .catch((error) => {
+      if (daemon.isRunning || daemon.isRunning === null) {
+        daemon.setRunning(false)
+      }
+
+      return callback(null)
+    })
 }
 
 export default rpc

@@ -1,85 +1,89 @@
 import React from 'react'
+import { inject, observer } from 'mobx-react'
+import moment from 'moment'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table'
-
 import IconConfirmed from 'material-ui/svg-icons/action/done-all'
 import IconUnconfirmed from 'material-ui/svg-icons/content/clear'
 import IconLabel from 'material-ui/svg-icons/action/label'
 import IconClock from 'material-ui/svg-icons/device/access-time'
 import IconBlockhash from 'material-ui/svg-icons/action/extension'
 
-import moment from 'moment'
+@inject('transaction')
+@observer
 
-const Transaction = ({ transaction, toggleDialog }) => {
-  let amountTransacted = 0
+class Transaction extends React.Component {
+  constructor(props) {
+    super(props)
+    this.transaction = props.transaction
+    this.amountTransacted = 0
 
-  if (transaction.result.hasOwnProperty('details')) {
-    transaction.result.details.forEach((detail) => {
-      amountTransacted += detail.amount
-    })
+    if (this.transaction.data.hasOwnProperty('details')) {
+      this.transaction.data.details.forEach((detail) => {
+        this.amountTransacted += detail.amount
+      })
+    }
+
+    this.toggleDialog = this.toggleDialog.bind(this)
   }
 
-  let titleString = ''
-
-  // Handle different cases of tx (sent/received/staked/generated).
-  if (transaction.result.fee) {
-    titleString = 'Sent ' + amountTransacted.toFixed(6) + ' XVC with ' + Math.abs(transaction.result.fee) + ' XVC in fees'
-  } else {
-    titleString = 'Received ' + amountTransacted.toFixed(6) + ' XVC'
+  toggleDialog() {
+    this.transaction.toggleDialog()
   }
 
-
-  process.env.NODE_ENV === 'development' && console.log('%c' + '<Transaction />', 'color:#673AB7')
-  return (
-    <div>
+  render() {
+    return (
       <Dialog
-        title={titleString}
-        actions={<FlatButton onTouchTap={toggleDialog} primary={true} label='Close' />}
+        title={
+          this.transaction.data.fee && 'Sent ' + this.amountTransacted.toFixed(6) + ' XVC with ' + Math.abs(this.transaction.data.fee) + ' XVC in fees'
+          || 'Received ' + this.amountTransacted.toFixed(6) + ' XVC'
+        }
+        actions={<FlatButton onTouchTap={this.toggleDialog} primary={true} label='Close' />}
         modal={false}
-        open={transaction.isOpen}
-        onRequestClose={toggleDialog}
+        open={this.transaction.dialog}
+        onRequestClose={this.toggleDialog}
         contentStyle={{width:'80%', maxWidth:'none'}}
         autoScrollBodyContent={true}
       >
         <div className='row'>
           <div className='col-md-12' style={{fontSize:'14px',marginTop:'20px'}}>
             <IconLabel style={{height:'20px',float:'left'}}/>
-            <p style={{float:'left',paddingLeft:'8px',margin:'0 0 1px'}}>Transaction ID <b>{transaction.result.txid}</b></p>
+            <p style={{float:'left',paddingLeft:'8px',margin:'0 0 1px'}}>Transaction ID <b>{this.transaction.data.txid}</b></p>
             <div style={{clear:'both'}}></div>
 
-            { transaction.result.blockhash && (
+            { this.transaction.data.blockhash && (
               <div style={{marginBottom:'15px'}}>
                 <IconBlockhash style={{height:'20px',float:'left'}}/>
-                <p style={{float:'left',paddingLeft:'8px',margin: '0 0 1px'}}>Blockhash <b>{transaction.result.blockhash}</b></p>
+                <p style={{float:'left',paddingLeft:'8px',margin: '0 0 1px'}}>Blockhash <b>{this.transaction.data.blockhash}</b></p>
                 <div style={{clear:'both'}}></div>
               </div>
             ) }
 
             <IconClock color='#1B5E20' style={{height:'20px',float:'left'}}/>
-            <p style={{float:'left',paddingLeft:'8px',margin: '0 0 1px'}}>Relayed on {moment(new Date(transaction.result.time * 1000)).format('YYYY-MM-DD [at] HH:mm:ss')}</p>
+            <p style={{float:'left',paddingLeft:'8px',margin: '0 0 1px'}}>Relayed on {moment(new Date(this.transaction.data.time * 1000)).format('YYYY-MM-DD [at] HH:mm:ss')}</p>
             <div style={{clear:'both'}}></div>
 
-            { transaction.result.blocktime && (
+            { this.transaction.data.blocktime && (
               <div>
                 <IconClock color='#1B5E20' style={{height:'20px',float:'left'}}/>
-                <p style={{float:'left',paddingLeft:'8px'}}>Confirmed on {moment(new Date(transaction.result.blocktime * 1000)).format('YYYY-MM-DD [at] HH:mm:ss')}</p>
+                <p style={{float:'left',paddingLeft:'8px'}}>Confirmed on {moment(new Date(this.transaction.data.blocktime * 1000)).format('YYYY-MM-DD [at] HH:mm:ss')}</p>
                 <div style={{clear:'both'}}></div>
               </div>
             ) }
 
-            { transaction.result.confirmations > 0 && (
+            { this.transaction.data.confirmations > 0 && (
               <div>
                 <IconConfirmed color='#1B5E20' style={{height:'20px',float:'left'}}/>
-                <p style={{float:'left',paddingLeft:'8px',color:'#1B5E20'}}><b>{transaction.result.confirmations}</b> confirmations</p>
+                <p style={{float:'left',paddingLeft:'8px',color:'#1B5E20'}}><b>{this.transaction.data.confirmations}</b> confirmations</p>
                 <div style={{clear:'both'}}></div>
               </div>
             ) }
 
-            { transaction.result.confirmations === 0 && (
+            { this.transaction.data.confirmations === 0 && (
               <div>
                 <IconUnconfirmed color='#B71C1C' style={{height:'20px',float:'left'}}/>
-                <p style={{float:'left',paddingLeft:'8px',color:'#B71C1C'}}><b>{transaction.result.confirmations}</b> confirmations</p>
+                <p style={{float:'left',paddingLeft:'8px',color:'#B71C1C'}}><b>{this.transaction.data.confirmations}</b> confirmations</p>
                 <div style={{clear:'both'}}></div>
               </div>
             ) }
@@ -98,7 +102,7 @@ const Transaction = ({ transaction, toggleDialog }) => {
                 </TableHeader>
                 <TableBody showRowHover={true} stripedRows={true} displayRowCheckbox={false}>
                   {
-                    transaction.result.hasOwnProperty('vin') && transaction.result.vin.map((row, index) => (
+                    this.transaction.data.hasOwnProperty('vin') && this.transaction.data.vin.map((row, index) => (
                       <TableRow key={index} displayBorder={false}>
                         <TableRowColumn className='font-mono' style={{width:'70%'}}>{row.details.address}</TableRowColumn>
                         <TableRowColumn style={{width:'30%'}}>{row.details.amount.toFixed(6)} XVC</TableRowColumn>
@@ -119,7 +123,7 @@ const Transaction = ({ transaction, toggleDialog }) => {
                 </TableHeader>
                 <TableBody displayRowCheckbox={false}>
                   {
-                    transaction.result.hasOwnProperty('vout') && transaction.result.vout.map((row, index) => {
+                    this.transaction.data.hasOwnProperty('vout') && this.transaction.data.vout.map((row, index) => {
                       if (row.isRemainder) {
                         return (
                           <TableRow key={index} displayBorder={false} style={{background:'#FFF9C4'}}>
@@ -143,8 +147,8 @@ const Transaction = ({ transaction, toggleDialog }) => {
           </div>
         </div>
       </Dialog>
-    </div>
-  )
+    )
+  }
 }
 
 export default Transaction

@@ -1,39 +1,53 @@
 import React from 'react'
+import { inject, observer } from 'mobx-react'
 import AppBar from 'material-ui/AppBar'
 import IconButton from 'material-ui/IconButton'
-
 import MenuIcon from 'material-ui/svg-icons/navigation/menu'
 import SendIcon from 'material-ui/svg-icons/content/send'
 
 /**
  * TODO: Show icons if vote candidate & staking (config.dat pos:1 & unlocked).
- *       Staking (gavel, flag, flash on, rowing, loyalty)
- *       Vote candidate (thumbs up, verified user, present to all, all inclusinve,stars)
+ *       Staking (gavel, flag, flash on, rowing, loyalty).
+ *       Vote candidate (thumbs up, verified user, present to all, all inclusinve,stars).
  */
-const Header = ({ balance, currencyConverter, toggleMenu, toggleSend }) => {
-  const onSendClick = () => {
-    toggleSend()
-    currencyConverter(1, 'vcash')
+@inject('send')
+@inject('wallet')
+@observer
+
+class Header extends React.Component {
+  constructor(props) {
+    super(props)
+    this.send = props.send
+    this.wallet = props.wallet
+    this.toggleMenu = this.toggleMenu.bind(this)
+    this.toggleSend = this.toggleSend.bind(this)
   }
 
-  process.env.NODE_ENV === 'development' && console.log('%c' + '<Header />', 'color:#673AB7')
-  return (
-    <div>
+  toggleMenu() {
+    this.wallet.toggleMenu()
+  }
+
+  toggleSend() {
+    this.send.toggleDrawer()
+  }
+
+  render() {
+    return (
       <AppBar
-        title={balance + ' XVC'}
+        title={this.wallet.balance + ' XVC'}
         iconElementLeft={
-          <IconButton onTouchTap={toggleMenu}>
+          <IconButton onTouchTap={this.toggleMenu}>
             <MenuIcon color='#FFFFFF' />
           </IconButton>
         }
         iconElementRight={
-          <IconButton onTouchTap={onSendClick}>
+          <IconButton onTouchTap={this.toggleSend}>
             <SendIcon color='#FFFFFF' />
           </IconButton>
         }
       />
-    </div>
-  )
+    )
+  }
 }
 
 export default Header

@@ -1,49 +1,76 @@
 import React from 'react'
+import { inject, observer } from 'mobx-react'
 import AutoComplete from 'material-ui/AutoComplete'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import Snackbar from 'material-ui/Snackbar'
 
-const AddressNew = ({ state, accounts, addressNew, setAccount, toggleDialog, toggleSnackbar }) => {
-  let errorText = null
+@inject('addressBook')
+@inject('addressNew')
+@observer
 
-  if (state.errors.invalid) { errorText = 'Account name can contain only alphanumerical characters and spaces.' }
+class AddressNew extends React.Component {
+  constructor(props) {
+    super(props)
+    this.addressBook = props.addressBook
+    this.addressNew = props.addressNew
 
-  const actions = [
-    <FlatButton label='Cancel' onTouchTap={toggleDialog} />,
-    <FlatButton label='Get new address' onTouchTap={addressNew} disabled={state.button === false} primary={true} />
-  ]
+    this.getnewaddress = this.getnewaddress.bind(this)
+    this.setAccount = this.setAccount.bind(this)
+    this.toggleDialog = this.toggleDialog.bind(this)
+    this.toggleSnackbar = this.toggleSnackbar.bind(this)
+  }
 
-  process.env.NODE_ENV === 'development' && console.log('%c' + '<AddressNew />', 'color:#673AB7')
-  return (
-    <div>
-      <Dialog
-        title='Assign your new address to an account'
-        actions={actions}
-        modal={true}
-        autoScrollBodyContent={true}
-        open={state.dialogOpen}
-      >
-        <AutoComplete
-          onNewRequest={setAccount}
-          onUpdateInput={setAccount}
-          searchText={state.account}
-          errorText={errorText}
-          floatingLabelText="Assign to account"
-          filter={AutoComplete.fuzzyFilter}
-          maxSearchResults={5}
-          dataSource={accounts}
-          fullWidth={true}
+  getnewaddress() {
+    this.addressNew.getnewaddress()
+  }
+
+  setAccount(account) {
+    this.addressNew.setAccount(account)
+  }
+
+  toggleDialog() {
+    this.addressNew.toggleDialog()
+  }
+
+  toggleSnackbar() {
+    this.addressNew.toggleSnackbar()
+  }
+
+  render() {
+    return (
+      <div>
+        <Dialog
+          title='Assign your new address to an account'
+          actions={[
+            <FlatButton label='Cancel' onTouchTap={this.toggleDialog} />,
+            <FlatButton label='Get new address' onTouchTap={this.getnewaddress} disabled={this.addressNew.button === false} primary={true} />
+          ]}
+          modal={true}
+          autoScrollBodyContent={true}
+          open={this.addressNew.dialog}
+        >
+          <AutoComplete
+            onNewRequest={this.setAccount}
+            onUpdateInput={this.setAccount}
+            searchText={this.addressNew.account}
+            errorText={this.addressNew.errors.invalid && 'Account name can contain only alphanumerical characters and spaces.'}
+            floatingLabelText="Assign to account"
+            filter={AutoComplete.fuzzyFilter}
+            maxSearchResults={5}
+            dataSource={this.addressBook.accounts}
+            fullWidth={true}
+          />
+        </Dialog>
+        <Snackbar
+          open={this.addressNew.snackbar}
+          message={'New address added to account "' + this.addressNew.account + '".'}
+          autoHideDuration={5 * 1000}
+          onRequestClose={this.toggleSnackbar}
         />
-      </Dialog>
-      <Snackbar
-        open={state.snackbarOpen}
-        message={'New address added to account "' + state.account + '".'}
-        autoHideDuration={5 * 1000}
-        onRequestClose={toggleSnackbar}
-      />
-    </div>
-  )
+      </div>
+    )
+  }
 }
 
 export default AddressNew

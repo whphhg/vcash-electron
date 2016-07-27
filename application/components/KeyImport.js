@@ -1,62 +1,94 @@
 import React from 'react'
+import { inject, observer } from 'mobx-react'
 import AutoComplete from 'material-ui/AutoComplete'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import Snackbar from 'material-ui/Snackbar'
 import TextField from 'material-ui/TextField'
 
-const KeyImport = ({ state, accounts, isLocked, keyImport, setAccount, setKey, toggleDialog, toggleSnackbar }) => {
-  let errorAutoComplete = null
-  let errorTextField = null
+@inject('addressBook')
+@inject('keyImport')
+@observer
 
-  if (state.errors.account.invalid) { errorAutoComplete = 'Account name can contain only alphanumerical characters and spaces.' }
-  if (state.errors.key.alreadyImported) { errorTextField = 'The private key you have entered belongs to your wallet.' }
-  if (state.errors.key.invalid) { errorTextField = 'The private key you have entered is invalid.' }
+class KeyImport extends React.Component {
+  constructor(props) {
+    super(props)
+    this.addressBook = props.addressBook
+    this.keyImport = props.keyImport
 
-  const actions = [
-    <FlatButton label='Cancel' onTouchTap={toggleDialog} />,
-    <FlatButton label='Import private key' onTouchTap={keyImport} disabled={state.button === false || isLocked} primary={true} />
-  ]
+    this.importprivkey = this.importprivkey.bind(this)
+    this.setAccount = this.setAccount.bind(this)
+    this.setPrivateKey = this.setPrivateKey.bind(this)
+    this.toggleDialog = this.toggleDialog.bind(this)
+    this.toggleSnackbar = this.toggleSnackbar.bind(this)
+  }
 
-  process.env.NODE_ENV === 'development' && console.log('%c' + '<KeyImport />', 'color:#673AB7')
-  return (
-    <div>
-      <Dialog
-        title='Import private key'
-        actions={actions}
-        modal={true}
-        autoScrollBodyContent={true}
-        open={state.dialogOpen}
-      >
-        <TextField
-          onChange={setKey}
-          fullWidth={true}
-          value={state.privateKey}
-          errorText={errorTextField}
-          floatingLabelText='Private key'
-          hintText='Enter the private key'
+  importprivkey() {
+    this.keyImport.importprivkey()
+  }
+
+  setAccount(account) {
+    this.keyImport.setAccount(account)
+  }
+
+  setPrivateKey(event) {
+    this.keyImport.setPrivateKey(event.target.value)
+  }
+
+  toggleDialog() {
+    this.keyImport.toggleDialog()
+  }
+
+  toggleSnackbar() {
+    this.keyImport.toggleSnackbar()
+  }
+
+  render() {
+    return (
+      <div>
+        <Dialog
+          title='Import private key'
+          actions={[
+            <FlatButton label='Cancel' onTouchTap={this.toggleDialog} />,
+            <FlatButton label='Import private key' onTouchTap={this.importprivkey} disabled={this.keyImport.button === false} primary={true} />
+          ]}
+          modal={true}
+          autoScrollBodyContent={true}
+          open={this.keyImport.dialog}
+        >
+          <TextField
+            onChange={this.setPrivateKey}
+            fullWidth={true}
+            value={this.keyImport.privateKey}
+            errorText={
+              this.keyImport.errors.privateKey.alreadyImported && 'The private key you have entered belongs to your wallet.'
+              || this.keyImport.errors.privateKey.invalid && 'The private key you have entered is invalid.'
+            }
+            floatingLabelText='Private key'
+            hintText='Enter the private key'
+          />
+          <AutoComplete
+            onNewRequest={this.setAccount}
+            onUpdateInput={this.setAccount}
+            searchText={this.keyImport.account}
+            errorText={this.keyImport.errors.account.invalid && 'Account name can contain only alphanumerical characters and spaces.'}
+            floatingLabelText="Assign to account"
+            filter={AutoComplete.fuzzyFilter}
+            maxSearchResults={5}
+            openOnFocus={true}
+            dataSource={this.addressBook.accounts}
+            fullWidth={true}
+          />
+        </Dialog>
+        <Snackbar
+          open={this.keyImport.snackbar}
+          message={'Imported private key and assigned it to account "' + this.keyImport.account + '".'}
+          autoHideDuration={5 * 1000}
+          onRequestClose={this.toggleSnackbar}
         />
-        <AutoComplete
-          onNewRequest={setAccount}
-          onUpdateInput={setAccount}
-          searchText={state.account}
-          errorText={errorAutoComplete}
-          floatingLabelText="Assign to account"
-          filter={AutoComplete.fuzzyFilter}
-          maxSearchResults={5}
-          openOnFocus={true}
-          dataSource={accounts}
-          fullWidth={true}
-        />
-      </Dialog>
-      <Snackbar
-        open={state.snackbarOpen}
-        message={'Imported private key and assigned it to account "' + state.account + '".'}
-        autoHideDuration={5 * 1000}
-        onRequestClose={toggleSnackbar}
-      />
-    </div>
-  )
+      </div>
+    )
+  }
 }
 
 export default KeyImport
