@@ -2,16 +2,16 @@
 import daemon from '../stores/daemon'
 
 /**
- * Make a RPC to Vcash daemon.
  * TODO: Allow selecting the daemon you're getting data from, local or remote (tunnel-ssh).
  *       - ssh -L9195:localhost:9195 user@ip
+ *
+ * Make RPC to Vcash daemon.
  * @function rpc
  * @param {object|array} options - Can be a single object with a method and params, or an array of such objects.
- * @param {function} callback - Function to call when done.
- * @return {callback} Returns callback with response object or null.
+ * @param {function} callback - Function to call with response.
+ * @return {callback} Callback with response object or null.
  */
 const rpc = (options, callback) => {
-  /** Assign id and jsonrpc property. */
   if (options.constructor === Array) {
     options.map((option) => {
       option.jsonrpc = '2.0'

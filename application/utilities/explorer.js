@@ -1,9 +1,9 @@
 /**
- * Get address data from explorer.
+ * Explorer API getaddress.
  * @function getAddress
  * @param {string} address - Address to lookup.
- * @param {function} callback - Callback function to be fired.
- * @return {object|null} Provided address data or null.
+ * @param {function} callback - Function to call with response.
+ * @return {callback} Callback with response object or null.
  * @see {@link https://explorer.v.cash/info|Explorer API}
  */
 export const getAddress = (address, callback) => {

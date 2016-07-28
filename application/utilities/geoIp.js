@@ -1,9 +1,9 @@
 /**
- * Get IP geo data.
+ * Get IP geodata.
  * @function geoIp
  * @param {string} ip - IP address to lookup.
- * @param {function} callback - Callback function to be fired.
- * @return {object|null} Provided IP geo data or null.
+ * @param {function} callback - Function to call with response.
+ * @return {callback} Callback with response object or null.
  */
 const geoIp = (ip, callback) => {
   fetch('https://geoip.nekudo.com/api/' + ip)

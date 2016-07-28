@@ -1,8 +1,8 @@
 /**
  * Get item from local storage.
  * @function getItem
- * @param {key} key - Item key to return.
- * @return {string|number|array|object|null} Stored item or null.
+ * @param {string} key - Retrieve the value of this key.
+ * @return {string|number|array|object|undefined} Stored key's value or undefined if it doesn't exist.
  */
 export const getItem = (key) => {
   const item = localStorage.getItem(key)
@@ -19,8 +19,8 @@ export const getItem = (key) => {
 /**
  * Set item in local storage.
  * @function setItem
- * @param {string} key - Item key.
- * @param {string} value - Item value.
+ * @param {string} key - Assign value to this key.
+ * @param {string|number|array|object} value - Value to be stored.
  */
 export const setItem = (key, value) => {
   localStorage.setItem(key, JSON.stringify(value))

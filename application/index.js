@@ -1,9 +1,5 @@
 'use strict'
 
-/** Use MobX strict mode. Only actions can change the state. */
-import { useStrict } from 'mobx'
-useStrict(true)
-
 /**
  * IDEA: Contacts with VCF import/export support (node-vcf).
  * IDEA: Guided tour (react-joyride).
@@ -15,15 +11,20 @@ useStrict(true)
  * TODO: Implement wallet repair.
  * TODO: Implement wallet passphrase change.
  */
+
 import React from 'react'
 import { render } from 'react-dom'
 import { Router, Route, IndexRoute, hashHistory } from 'react-router'
 import { Provider } from 'mobx-react'
 
+/** Use MobX strict mode. Only actions can change the state. */
+import { useStrict } from 'mobx'
+useStrict(true)
+
 /** Material-ui theme. */
-import muiTheme from './assets/muiTheme'
-import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import getMuiTheme from 'material-ui/styles/getMuiTheme'
+import muiTheme from './assets/muiTheme'
 
 /**
  * Needed for onTouchTap.
@@ -32,12 +33,12 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
 
-/** UI components. */
-import AddressBook from './components/AddressBook'
+/** Main UI components. */
 import Application from './components/Application'
-import Maintenance from './components/Maintenance'
-import Network from './components/Network'
 import Transactions from './components/Transactions'
+import AddressBook from './components/AddressBook'
+import Network from './components/Network'
+import Maintenance from './components/Maintenance'
 
 /** Store instances. */
 import addressBook from './stores/addressBook'
@@ -84,10 +85,10 @@ render(
       <Router history={hashHistory}>
         <Route path='/' component={Application}>
           <IndexRoute component={Transactions} />
+          <Route path='transactions' component={Transactions} />
           <Route path='addressBook' component={AddressBook} />
           <Route path='network' component={Network} />
           <Route path='maintenance' component={Maintenance} />
-          <Route path='transactions' component={Transactions} />
         </Route>
       </Router>
     </Provider>

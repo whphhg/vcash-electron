@@ -1,7 +1,7 @@
 /**
- * Get incentive percent of PoW reward based on provided block number.
+ * Get incentive percent of PoW reward for provided block.
  * @function calculateIncentive
- * @param {number} block - Block height.
+ * @param {number} block - Block to retrieve the reward percent of.
  * @return {number} Incentive percent of PoW reward.
  */
 export const calculateIncentive = (block) => {
@@ -20,9 +20,9 @@ export const calculateIncentive = (block) => {
 }
 
 /**
- * Get PoW reward based on provided block number.
+ * Get PoW reward for provided block.
  * @function calculatePoW
- * @param {number} block - Block height.
+ * @param {number} block - Block to calculate the PoW reward of.
  * @return {number} PoW reward.
  * @see {@link https://github.com/john-connor/vcash/blob/master/src/reward.cpp|GitHub}
  */
@@ -67,6 +67,7 @@ export const calculatePoW = (block) => {
  * Get incentive reward percent schedule.
  * @function incentivePercents
  * @return {array} Reward schedule.
+ * @see {@link https://gist.github.com/john-connor/967ba7f7e9dd0ec1f7a9|GitHub Gist}
  */
 export const incentivePercents = () => {
   return [
