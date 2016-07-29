@@ -26,7 +26,7 @@ The following dependencies are required to be installed:
 
 To install:
 
-    $ git clone https://github.com/whphhg/vcash-electron.git OR download zip.
+    $ git clone https://github.com/whphhg/vcash-electron.git OR download zip
     $ cd vcash-electron
     $ npm install
 
@@ -42,11 +42,11 @@ To run with DevTools enabled:
 To update:
 
     $ cd vcash-electron
-    $ git pull
+    $ git pull OR download zip
 
-:exclamation: Running the GUI inside of a Linux VirtualBox guest could cause the window to be black. To fix this, open `package.json`, add `--disable-gpu` after `electron .` and try again.
+:exclamation: Running the GUI inside of a Linux VirtualBox guest might cause the window to be black. To fix this, open `package.json`, add `--disable-gpu` after `electron .` and try again.
 
-## :zap: IDEAs, NOTEs, TODOs and FIXMEs
+## IDEAs, NOTEs, TODOs and FIXMEs
 
 - Show icons if vote candidate & staking (config.dat pos:1 & unlocked). __TODO__ [application/components/Header.js](application/components/Header.js)
 - Colorize amounts according to category. __TODO__ [application/components/Transactions.js](application/components/Transactions.js)
@@ -67,7 +67,8 @@ To update:
 - RPC getbalance incorrect IF using RPC sendtoaddress. Ok if only RPC sendmany is used on a fresh wallet. __NOTE__ [application/stores/transactions.js](application/stores/transactions.js)
 - Allow selecting the daemon you're getting data from, local or remote (tunnel-ssh). __TODO__ [application/utilities/rpc.js](application/utilities/rpc.js)
 
-:sparkles: Below are my tipping jars, in case you're feeling generous and want to send a few coins my way. :wink:
+<br />
+Below are my tipping jars, in case you're feeling generous and want to send a few coins my way. :wink:
 
 ```
 XVC: Vsaj7MMLwSMgzBQEonfMLR9QxqkKprFVGR
