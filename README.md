@@ -1,4 +1,6 @@
-# Electron GUI for Vcash, a decentralized currency for the internet
+# Vcash Electron GUI
+
+![Screenshots](http://i.imgur.com/zfjel56.gif)
 
 This is a (**unofficial**) GUI that communicates with vcashd using RPC. It runs on Linux, OS X and Windows.
 
@@ -65,11 +67,7 @@ To update:
 - RPC getbalance incorrect IF using RPC sendtoaddress. Ok if only RPC sendmany is used on a fresh wallet. __NOTE__ [application/stores/transactions.js](application/stores/transactions.js)
 - Allow selecting the daemon you're getting data from, local or remote (tunnel-ssh). __TODO__ [application/utilities/rpc.js](application/utilities/rpc.js)
 
-
-![Screenshots](http://i.imgur.com/zfjel56.gif)
-
-
-:sparkles: These are my tipping jars, in case you're feeling generous and want to send a few coins my way. :wink:
+:sparkles: Below are my tipping jars, in case you're feeling generous and want to send a few coins my way. :wink:
 
 ```
 XVC: Vsaj7MMLwSMgzBQEonfMLR9QxqkKprFVGR
