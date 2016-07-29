@@ -1,27 +1,34 @@
-# Electron UI for the Vcash crypto currency
+# Electron GUI for Vcash, a decentralized currency for the internet
 
-This is a (**unofficial**) tool that communicates with vcashd using RPC.
+This is a (**unofficial**) GUI that communicates with vcashd using RPC. It runs on Linux, OS X and Windows.
 
-It runs on Linux, OS X and Windows.
+:hatching_chick: **Warning**: This is beta software that is being actively developed. However, it is mature enough to be played with and any testing is welcome!
 
-**Warning**: This is a work in progress, but it's mature enough to be tested by anyone who's interested. Complete list of TODOs and FIXMEs is at the bottom.
 
-## Requirements
+## Starting and updating
 
+Right now there are no pre-built binaries, so you have to follow the steps below to install. I will be adding the binaries as soon as I'm done experimenting with the packager.
+
+User data is safely stored in Electron's local storage, depending on the operating system:
+- Linux `~/.config/vcash-electron`
+- OS X `~/Library/Application Support/vcash-electron`
+- Windows `%APPDATA%\vcash-electron`
+
+
+## Installing and updating from source
+
+The following dependencies are required to be installed:
 * current [Node.js](https://nodejs.org/en/download/current/) version
-* running the latest version of [Vcash](https://v.cash/wallets.php) (either GUI or daemon)
-
-## Installation and usage
-
-Currently, there are no pre-built binaries. I will be adding them as soon as I'm done experimenting with the packager in the next couple of days.
+* current [Vcash](https://v.cash/wallets.php) version (either GUI or daemon)
+* git (if cloning)
 
 To install:
 
-    $ git clone https://github.com/whphhg/vcash-electron.git
+    $ git clone https://github.com/whphhg/vcash-electron.git OR download zip.
     $ cd vcash-electron
     $ npm install
 
-To run:
+To run (make sure to launch Vcash before):
 
     $ npm run app
 
@@ -30,25 +37,14 @@ To run with DevTools enabled:
     $ npm run dev (Linux and OS X)
     $ npm run dev-win (Windows)
 
-## Updating
-
 To update:
 
     $ cd vcash-electron
     $ git pull
 
-After I add pre-built binaries, updating will be done by downloading and overwriting the existing binary. User data is safely stored in Electron's localStorage, so you can't accidentally overwrite or delete it.
+:exclamation: Running the GUI inside of a Linux VirtualBox guest could cause the window to be black. To fix this, open `package.json`, add `--disable-gpu` after `electron .` and try again.
 
-Depending on the operating system, user data is stored in:
-- Linux `~/.config/vcash-electron`
-- OS X `~/Library/Application Support/vcash-electron`
-- Windows `%APPDATA%\vcash-electron`
-
-## Running inside a Linux VirtualBox guest
-
-If the Electron window is black, open `package.json`, add `--disable-gpu` after `electron .` and try again.
-
-## TODOs and FIXMEs
+## :zap: IDEAs, NOTEs, TODOs and FIXMEs
 
 - Show icons if vote candidate & staking (config.dat pos:1 & unlocked). __TODO__ [application/components/Header.js](application/components/Header.js)
 - Colorize amounts according to category. __TODO__ [application/components/Transactions.js](application/components/Transactions.js)
@@ -69,15 +65,12 @@ If the Electron window is black, open `package.json`, add `--disable-gpu` after 
 - RPC getbalance incorrect IF using RPC sendtoaddress. Ok if only RPC sendmany is used on a fresh wallet. __NOTE__ [application/stores/transactions.js](application/stores/transactions.js)
 - Allow selecting the daemon you're getting data from, local or remote (tunnel-ssh). __TODO__ [application/utilities/rpc.js](application/utilities/rpc.js)
 
-## Screenshots
 
-![Transactions](http://i.imgur.com/F4LqzRg.png)
-![Address book](http://i.imgur.com/IzC89TE.png)
-![Send](http://i.imgur.com/BmItZ1t.png)
-![Network information](http://i.imgur.com/blfJXfD.png)
-![Block reward calculator](http://i.imgur.com/x3ziJQO.png)
+![Screenshots](http://i.imgur.com/zfjel56.gif)
 
-Donations are welcome at
+
+:sparkles: These are my tipping jars, in case you're feeling generous and want to send a few coins my way. :wink:
+
 ```
 XVC: Vsaj7MMLwSMgzBQEonfMLR9QxqkKprFVGR
 BTC: 1Pay4nywPa1qkP5no3rcrLhfVo6Bc1JE8s
