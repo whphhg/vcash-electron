@@ -1,14 +1,12 @@
-# Vcash Electron GUI
+## Vcash Electron GUI
+This is a (**unofficial**) GUI for Vcash, a decentralized currency for the internet. The GUI communicates with vcashd using RPC and is available for Linux, OS X and Windows.
+
+:hatching_chick: **Warning**: This is beta software that is being actively developed. Any testing is welcome!
 
 ![Screenshots](http://i.imgur.com/zfjel56.gif)
 
-This is a (**unofficial**) GUI that communicates with vcashd using RPC. It runs on Linux, OS X and Windows.
 
-:hatching_chick: **Warning**: This is beta software that is being actively developed. However, it is mature enough to be played with and any testing is welcome!
-
-
-## Starting and updating
-
+### Starting and updating
 Right now there are no pre-built binaries, so you have to follow the steps below to install. I will be adding the binaries as soon as I'm done experimenting with the packager.
 
 User data is safely stored in Electron's local storage, depending on the operating system:
@@ -17,10 +15,9 @@ User data is safely stored in Electron's local storage, depending on the operati
 - Windows `%APPDATA%\vcash-electron`
 
 
-## Installing and updating from source
-
+### Installing and updating from source
 The following dependencies are required to be installed:
-* current [Node.js](https://nodejs.org/en/download/current/) version
+* current [Node.js](https://nodejs.org/en/download/current/) version ([Ubuntu users](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions))
 * current [Vcash](https://v.cash/wallets.php) version (either GUI or daemon)
 * git (if cloning)
 
@@ -44,10 +41,10 @@ To update:
     $ cd vcash-electron
     $ git pull OR download zip
 
-:exclamation: Running the GUI inside of a Linux VirtualBox guest might cause the window to be black. To fix this, open `package.json`, add `--disable-gpu` after `electron .` and try again.
+Running the GUI inside of a Linux VirtualBox guest might cause the window to be black. To fix this, open `package.json`, add `--disable-gpu` after `electron .` and try again.
 
-## IDEAs, NOTEs, TODOs and FIXMEs
 
+### IDEAs, NOTEs, TODOs and FIXMEs
 - Show icons if vote candidate & staking (config.dat pos:1 & unlocked). __TODO__ [application/components/Header.js](application/components/Header.js)
 - Colorize amounts according to category. __TODO__ [application/components/Transactions.js](application/components/Transactions.js)
 - Switch table to FixedDataTable (performance). __TODO__ [application/components/Transactions.js](application/components/Transactions.js)
@@ -67,9 +64,8 @@ To update:
 - RPC getbalance incorrect IF using RPC sendtoaddress. Ok if only RPC sendmany is used on a fresh wallet. __NOTE__ [application/stores/transactions.js](application/stores/transactions.js)
 - Allow selecting the daemon you're getting data from, local or remote (tunnel-ssh). __TODO__ [application/utilities/rpc.js](application/utilities/rpc.js)
 
-<br />
-Below are my tipping jars, in case you're feeling generous and want to send a few coins my way. :wink:
 
+#### Tips are appreciated! :sparkles:
 ```
 XVC: Vsaj7MMLwSMgzBQEonfMLR9QxqkKprFVGR
 BTC: 1Pay4nywPa1qkP5no3rcrLhfVo6Bc1JE8s
