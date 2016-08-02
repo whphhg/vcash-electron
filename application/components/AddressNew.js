@@ -1,5 +1,6 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
+
 import AutoComplete from 'material-ui/AutoComplete'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
@@ -55,7 +56,7 @@ class AddressNew extends React.Component {
             onUpdateInput={this.setAccount}
             searchText={this.addressNew.account}
             errorText={this.addressNew.errors.invalid && 'Account name can contain only alphanumerical characters and spaces.'}
-            floatingLabelText="Assign to account"
+            floatingLabelText='Assign to account'
             filter={AutoComplete.fuzzyFilter}
             maxSearchResults={5}
             dataSource={this.addressBook.accounts}

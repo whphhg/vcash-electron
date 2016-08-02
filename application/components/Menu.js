@@ -2,6 +2,7 @@ import React from 'react'
 import { Link, IndexLink } from 'react-router'
 import { inject, observer } from 'mobx-react'
 import moment from 'moment'
+
 import AppBar from 'material-ui/AppBar'
 import Drawer from 'material-ui/Drawer'
 import IconButton from 'material-ui/IconButton'
@@ -28,7 +29,6 @@ import ChainBlender from './ChainBlender'
 class Menu extends React.Component {
   constructor(props) {
     super(props)
-
     this.rates = props.rates
     this.transactions = props.transactions
     this.wallet = props.wallet
@@ -62,19 +62,29 @@ class Menu extends React.Component {
     return (
       <Drawer docked={false} width={350} open={this.wallet.drawer} onRequestChange={this.toggleMenu}>
         <AppBar title={this.wallet.balance + ' XVC'}
-          iconElementLeft={<IconButton onTouchTap={this.toggleMenu}><MenuIcon color='#FFFFFF' /></IconButton>}
+          iconElementLeft={
+            <IconButton onTouchTap={this.toggleMenu}>
+              <MenuIcon color='#FFFFFF' />
+            </IconButton>
+          }
           iconElementRight={
             this.wallet.isLocked && this.wallet.isEncrypted &&
             (
-              <IconButton onTouchTap={this.toggleUnlock}><UnlockIcon color='#FFFFFF' /></IconButton>
+              <IconButton onTouchTap={this.toggleUnlock}>
+                <UnlockIcon color='#FFFFFF' />
+              </IconButton>
             ) ||
             !this.wallet.isLocked && this.wallet.isEncrypted &&
             (
-              <IconButton onTouchTap={this.lock}><LockIcon color='#FFFFFF' /></IconButton>
+              <IconButton onTouchTap={this.lock}>
+                <LockIcon color='#FFFFFF' />
+              </IconButton>
             ) ||
             !this.wallet.isEncrypted && !this.wallet.isLocked &&
             (
-              <IconButton onTouchTap={this.toggleEncrypt}><EncryptIcon color='#FFFFFF' /></IconButton>
+              <IconButton onTouchTap={this.toggleEncrypt}>
+                <EncryptIcon color='#FFFFFF' />
+              </IconButton>
             )
           }
         />

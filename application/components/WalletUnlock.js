@@ -1,5 +1,6 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
+
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import Snackbar from 'material-ui/Snackbar'
@@ -15,11 +16,19 @@ class WalletUnlock extends React.Component {
     this.walletLock = props.walletLock
     this.walletUnlock = props.walletUnlock
 
+    this.lock = this.lock.bind(this)
+    this.unlock = this.unlock.bind(this)
     this.setPassphrase = this.setPassphrase.bind(this)
     this.toggleDialog = this.toggleDialog.bind(this)
     this.toggleSnackbar = this.toggleSnackbar.bind(this)
-    this.lock = this.lock.bind(this)
-    this.unlock = this.unlock.bind(this)
+  }
+
+  lock() {
+    this.walletLock.lock()
+  }
+
+  unlock() {
+    this.walletUnlock.unlock()
   }
 
   setPassphrase(event) {
@@ -32,14 +41,6 @@ class WalletUnlock extends React.Component {
 
   toggleSnackbar() {
     this.walletUnlock.toggleSnackbar()
-  }
-
-  lock() {
-    this.walletLock.lock()
-  }
-
-  unlock() {
-    this.walletUnlock.unlock()
   }
 
   render() {
@@ -59,7 +60,7 @@ class WalletUnlock extends React.Component {
             fullWidth={true}
             hintText='Wallet passphrase'
             errorText={this.walletUnlock.errors.incorrect && 'The passphrase you have entered is incorrect. Please try again.'}
-            floatingLabelStyle={{fontWeight: 'normal'}}
+            floatingLabelStyle={{fontWeight:'normal'}}
             floatingLabelText='Enter wallet passphrase'
             onChange={this.setPassphrase}
           />

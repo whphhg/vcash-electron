@@ -1,5 +1,6 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
+
 import AutoComplete from 'material-ui/AutoComplete'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
@@ -72,7 +73,7 @@ class KeyImport extends React.Component {
             onUpdateInput={this.setAccount}
             searchText={this.keyImport.account}
             errorText={this.keyImport.errors.account.invalid && 'Account name can contain only alphanumerical characters and spaces.'}
-            floatingLabelText="Assign to account"
+            floatingLabelText='Assign to account'
             filter={AutoComplete.fuzzyFilter}
             maxSearchResults={5}
             openOnFocus={true}
@@ -82,7 +83,7 @@ class KeyImport extends React.Component {
         </Dialog>
         <Snackbar
           open={this.keyImport.snackbar}
-          message={'Imported private key and assigned it to account "' + this.keyImport.account + '".'}
+          message={'Imported the private key and assigned it to account "' + this.keyImport.account + '".'}
           autoHideDuration={5 * 1000}
           onRequestClose={this.toggleSnackbar}
         />

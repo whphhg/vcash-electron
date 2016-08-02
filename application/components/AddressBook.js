@@ -1,6 +1,7 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
 import { v4 } from 'node-uuid'
+
 import Divider from 'material-ui/Divider'
 import FlatButton from 'material-ui/FlatButton'
 import IconButton from 'material-ui/IconButton/IconButton'
@@ -8,9 +9,9 @@ import IconMenu from 'material-ui/IconMenu'
 import Menu from 'material-ui/Menu'
 import MenuItem from 'material-ui/MenuItem'
 import SelectField from 'material-ui/SelectField'
-import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table'
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
 import NewAddressIcon from 'material-ui/svg-icons/image/blur-on'
+import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table'
 
 import AddressNew from './AddressNew'
 import KeyImport from './KeyImport'
@@ -28,6 +29,7 @@ import WatchOnly from './WatchOnly'
 class AddressBook extends React.Component {
   constructor(props) {
     super(props)
+    this.props = props
     this.addressBook = props.addressBook
     this.addressNew = props.addressNew
     this.keyImport = props.keyImport
@@ -84,25 +86,24 @@ class AddressBook extends React.Component {
                 </SelectField>
               </div>
               <div style={{float:'left'}}>
-
                 <IconMenu
                   iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
-                  anchorOrigin={{horizontal: 'left', vertical: 'top'}}
-                  targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                  anchorOrigin={{horizontal:'left', vertical:'top'}}
+                  targetOrigin={{horizontal:'left', vertical:'top'}}
                   style={{marginTop:'27px'}}
                 >
-                  <MenuItem onTouchTap={this.toggleAddressNew} style={{lineHeight:'32px', fontSize:'15px'}} primaryText="Get new address" />
-                  <MenuItem onTouchTap={this.toggleKeyImport} disabled={this.wallet.isLocked} style={{lineHeight:'32px', fontSize:'15px'}} primaryText="Import private key" />
+                  <MenuItem onTouchTap={this.toggleAddressNew} style={{lineHeight:'32px', fontSize:'15px'}} primaryText='Get new address' />
+                  <MenuItem onTouchTap={this.toggleKeyImport} disabled={this.wallet.isLocked} style={{lineHeight:'32px', fontSize:'15px'}} primaryText='Import private key' />
                   <Divider />
-                  <MenuItem disabled={true} style={{lineHeight:'32px', fontSize:'15px'}} primaryText="Dump private key" />
-                  <MenuItem disabled={true} style={{lineHeight:'32px', fontSize:'15px'}} primaryText="Dump wallet" />
+                  <MenuItem disabled={true} style={{lineHeight:'32px', fontSize:'15px'}} primaryText='Dump private key' />
+                  <MenuItem disabled={true} style={{lineHeight:'32px', fontSize:'15px'}} primaryText='Dump wallet' />
                 </IconMenu>
               </div>
 
-              <h5 style={{marginTop:'42px', float:'right'}}>{this.addressBook.showAccountBalance.toFixed(6)} XVC </h5>
+              <h5 style={{marginTop:'42px', float:'right'}}>{this.addressBook.showAccountBalance.toFixed(6)} XVC</h5>
               <div style={{clear:'both'}}></div>
 
-              <Table height="265px" fixedHeader={true} showCheckboxes={false}>
+              <Table height='265px' fixedHeader={true} showCheckboxes={false}>
                 <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                   <TableRow>
                     <TableHeaderColumn style={{fontSize:'13px', width:'60%'}}>Addresses</TableHeaderColumn>
@@ -112,11 +113,17 @@ class AddressBook extends React.Component {
                 </TableHeader>
                 <TableBody showRowHover={true} stripedRows={true} displayRowCheckbox={false}>
                   {
-                    this.addressBook.showAccountAddresses.map((row) => (
+                    this.addressBook.showAccountAddresses.map((address) => (
                       <TableRow key={v4()} displayBorder={false}>
-                        <TableRowColumn style={{width:'60%'}} className='font-mono'>{row.address}</TableRowColumn>
-                        <TableRowColumn style={{textAlign:'right', width:'20%'}}>{parseFloat(row.received).toFixed(6)}</TableRowColumn>
-                        <TableRowColumn style={{textAlign:'right', width:'20%'}}>{parseFloat(row.received * this.rates.average * this.rates.local).toFixed(2) + ' ' + this.rates.localCurrency}</TableRowColumn>
+                        <TableRowColumn style={{width:'60%'}} className='font-mono'>
+                          {address.address}
+                        </TableRowColumn>
+                        <TableRowColumn style={{textAlign:'right', width:'20%'}}>
+                          {parseFloat(address.received).toFixed(6)}
+                        </TableRowColumn>
+                        <TableRowColumn style={{textAlign:'right', width:'20%'}}>
+                          {parseFloat(address.received * this.rates.average * this.rates.local).toFixed(2) + ' ' + this.rates.localCurrency}
+                        </TableRowColumn>
                       </TableRow>
                     ))
                   }

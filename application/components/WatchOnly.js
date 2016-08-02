@@ -2,12 +2,13 @@ import React from 'react'
 import { inject, observer } from 'mobx-react'
 import { v4 } from 'node-uuid'
 import moment from 'moment'
-import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table'
+
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import TextField from 'material-ui/TextField'
 import ClockIcon from 'material-ui/svg-icons/device/access-time'
 import BalanceIcon from 'material-ui/svg-icons/action/account-balance'
+import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table'
 
 import WatchOnlyAdd from './WatchOnlyAdd'
 
@@ -50,7 +51,7 @@ class WatchOnly extends React.Component {
       <div style={{marginTop:'6px'}}>
         <WatchOnlyAdd />
 
-        <Table height="265px" fixedHeader={true} showCheckboxes={false} onCellClick={this.setViewingAddress}>
+        <Table height='265px' fixedHeader={true} showCheckboxes={false} onCellClick={this.setViewingAddress}>
           <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
             <TableRow>
               <TableHeaderColumn style={{fontSize:'13px', width:'60%'}}>Watch-only addresses</TableHeaderColumn>
@@ -85,13 +86,13 @@ class WatchOnly extends React.Component {
               open={this.watchOnly.viewingDialog}
               onRequestClose={this.toggleViewingDialog}
             >
-              <div style={{fontSize:'14px',marginTop:'20px'}}>
-                <BalanceIcon style={{height:'20px',float:'left'}}/>
-                <p style={{float:'left',paddingLeft:'8px',margin:'0 0 1px'}}>Balance <b>{this.watchOnly.viewingAddressData.balance}</b> XVC</p>
+              <div style={{fontSize:'14px', marginTop:'20px'}}>
+                <BalanceIcon style={{height:'20px', float:'left'}} />
+                <p style={{float:'left', paddingLeft:'8px', margin:'0 0 1px'}}>Balance <span className='font-weight-500'>{this.watchOnly.viewingAddressData.balance}</span> XVC</p>
                 <div style={{clear:'both'}}></div>
 
-                <ClockIcon style={{height:'20px',float:'left'}}/>
-                <p style={{float:'left',paddingLeft:'8px',margin:'0 0 1px'}}>
+                <ClockIcon style={{height:'20px', float:'left'}} />
+                <p style={{float:'left', paddingLeft:'8px', margin:'0 0 1px'}}>
                   {this.watchOnly.viewingAddressData.lastUpdate === 0 ? 'Information has not been updated yet' : 'Last updated ' + moment().to(new Date(this.watchOnly.viewingAddressData.lastUpdate).toISOString())}.
                 </p>
                 <div style={{clear:'both'}}></div>
@@ -100,8 +101,8 @@ class WatchOnly extends React.Component {
               <TextField
                 key={'watchonly-view-note'}
                 onChange={this.setNote}
-                hintText="Enter note"
-                floatingLabelText="Note (optional)"
+                hintText='Enter note'
+                floatingLabelText='Note (optional)'
                 value={this.watchOnly.viewingAddressData.note}
                 fullWidth={true}
               />

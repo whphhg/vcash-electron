@@ -9,10 +9,8 @@ import TextField from 'material-ui/TextField'
 class CurrencyConverter extends React.Component {
   constructor(props) {
     super(props)
-
     this.currencyConverter = props.currencyConverter
     this.rates = props.rates
-
     this.onChange = this.onChange.bind(this)
   }
 

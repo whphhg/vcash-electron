@@ -82,9 +82,13 @@ class Send extends React.Component {
       <Drawer docked={true} width={750} open={this.send.drawer} openSecondary={true}>
         <AppBar
           title={'Send'}
-          iconElementLeft={<IconButton onTouchTap={this.toggleDrawer}><SendIcon color='#FFFFFF' /></IconButton>}
+          iconElementLeft={
+            <IconButton onTouchTap={this.toggleDrawer}>
+              <SendIcon color='#FFFFFF' />
+            </IconButton>
+          }
           children={
-            <div className='row' style={{marginTop:'3px',color:'#FFF',width:'80%'}}>
+            <div className='row' style={{marginTop:'3px', color:'#FFFFFF', width:'80%'}}>
               <div className='col-md-4 col-md-offset-1'>
                 <h5>Total to send</h5>
                 <h5>Remaining balance</h5>
@@ -114,7 +118,7 @@ class Send extends React.Component {
                         fullWidth={true}
                         hintText='Recipient address'
                         errorText={row.validAddress === false ? 'Invalid address' : null}
-                        underlineStyle={row.validAddress === true ? {borderColor: 'green'} : {}}
+                        underlineStyle={row.validAddress === true ? {borderColor:'green'} : {}}
                         value={row.address}
                       />
                     </div>
@@ -196,15 +200,15 @@ class Send extends React.Component {
 
           <div className='row'>
             <div className='col-md-12' style={{marginTop:'10px'}}>
-              { this.send.errors.insufficientBalance && (<h5>Account balance is too low to pay for the total with fees.</h5>) }
-              { this.send.errors.insufficientFunds && (<h5>You have insufficient funds to pay for the total with fees.</h5>) }
-              { this.send.errors.nonStandardTxType && (<h5>Nonstandard transaction type.</h5>) }
-              { this.send.errors.duplicateAddress && (<h5>You attempted to enter a duplicate address.</h5>) }
+              <h5>
+                {this.send.errors.insufficientBalance && 'Account balance is too low to pay for the total with fees.'}
+                {this.send.errors.insufficientFunds && 'You have insufficient funds to pay for the total with fees.'}
+                {this.send.errors.nonStandardTxType && 'Nonstandard transaction type.'}
+                {this.send.errors.duplicateAddress && 'You attempted to enter a duplicate address.'}
+              </h5>
             </div>
           </div>
-
         </div>
-
         <Divider style={{clear:'both', marginTop:'0px', marginBottom:'0px'}} />
         <CurrencyConverter />
       </Drawer>

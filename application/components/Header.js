@@ -1,5 +1,6 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
+
 import AppBar from 'material-ui/AppBar'
 import IconButton from 'material-ui/IconButton'
 import MenuIcon from 'material-ui/svg-icons/navigation/menu'
@@ -10,6 +11,7 @@ import SendIcon from 'material-ui/svg-icons/content/send'
  *       Staking (gavel, flag, flash on, rowing, loyalty).
  *       Vote candidate (thumbs up, verified user, present to all, all inclusinve,stars).
  */
+
 @inject('send')
 @inject('wallet')
 @observer
@@ -19,6 +21,7 @@ class Header extends React.Component {
     super(props)
     this.send = props.send
     this.wallet = props.wallet
+
     this.toggleMenu = this.toggleMenu.bind(this)
     this.toggleSend = this.toggleSend.bind(this)
   }

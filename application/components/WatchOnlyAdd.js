@@ -1,5 +1,6 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
+
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import Snackbar from 'material-ui/Snackbar'
@@ -68,12 +69,12 @@ class WatchOnlyAdd extends React.Component {
             }
             floatingLabelText='Address'
             hintText='Enter the address'
-            underlineStyle={this.watchOnlyAdd.button ? {borderColor: 'green'} : {}}
+            underlineStyle={this.watchOnlyAdd.button ? {borderColor:'green'} : {}}
           />
           <TextField
             onChange={this.setNote}
-            hintText="Enter note"
-            floatingLabelText="Note (optional)"
+            hintText='Enter note'
+            floatingLabelText='Note (optional)'
             value={this.watchOnlyAdd.note}
             fullWidth={true}
           />

@@ -10,12 +10,12 @@ import TextField from 'material-ui/TextField'
 class RewardCalculator extends React.Component {
   constructor(props) {
     super(props)
-
     this.rewardCalculator = props.rewardCalculator
     this.wallet = props.wallet
-
-    this.rewardCalculator.setBlock(this.wallet.blocks)
     this.onChange = this.onChange.bind(this)
+
+    /** Calculate current block when loading component. */
+    this.rewardCalculator.setBlock(this.wallet.blocks)
   }
 
   onChange(event) {
@@ -42,7 +42,7 @@ class RewardCalculator extends React.Component {
               <div className='row'>
                 <div className='col-md-12'>
                   <p>
-                    { this.rewardCalculator.estimate ? 'Confirmation est.' : 'Confirmed on' }
+                    {this.rewardCalculator.estimate ? 'Confirmation est.' : 'Confirmed on'}
                     <span className='font-weight-500'> {moment(this.rewardCalculator.time).format('YYYY-MM-DD HH:mm:ss')} </span>
                     (<span className='font-weight-500'>{moment().to(this.rewardCalculator.time.toISOString())}</span>)
                   </p>

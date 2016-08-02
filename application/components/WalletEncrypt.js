@@ -1,5 +1,6 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
+
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import Snackbar from 'material-ui/Snackbar'
@@ -59,7 +60,7 @@ class WalletEncrypt extends React.Component {
             hintText='Your passphrase'
             floatingLabelStyle={{fontWeight:'normal'}}
             floatingLabelText='Enter wallet passphrase'
-            underlineStyle={this.walletEncrypt.button ? {borderColor: 'green'} : {}}
+            underlineStyle={this.walletEncrypt.button ? {borderColor:'green'} : {}}
           />
           <TextField
             onChange={this.setRepeat}
@@ -68,12 +69,12 @@ class WalletEncrypt extends React.Component {
             type='password'
             fullWidth={true}
             hintText='Repeat passphrase'
-            underlineStyle={this.walletEncrypt.button ? {borderColor: 'green'} : {}}
+            underlineStyle={this.walletEncrypt.button ? {borderColor:'green'} : {}}
           />
         </Dialog>
         <Snackbar
           open={this.walletEncrypt.snackbar}
-          message="Wallet has been encrypted. Re-start the daemon."
+          message='Wallet has been encrypted. Re-start the daemon.'
           autoHideDuration={15 * 1000}
           onRequestClose={this.toggleSnackbar}
         />

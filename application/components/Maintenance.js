@@ -1,5 +1,6 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
+
 import MenuItem from 'material-ui/MenuItem'
 import SelectField from 'material-ui/SelectField'
 
@@ -19,25 +20,25 @@ class Maintenance extends React.Component {
 
   render() {
     return (
-      <div>
-        <h5>Maintenance</h5>
-        <SelectField
-          autoWidth={true}
-          style={{width:'150px'}}
-          value={this.rates.localCurrency}
-          onChange={this.setLocalCurrency}
-          floatingLabelText='Set local currency'
-        >
-          {
-            this.rates.localCurrencies.map((currency) => (
-              <MenuItem
-                key={currency}
-                value={currency}
-                primaryText={currency}
-              />
-            ))
-          }
-        </SelectField>
+      <div className='container-fluid'>
+        <div className='row'>
+          <div className='col-md-12'>
+            <h5>Maintenance</h5>
+            <SelectField
+              autoWidth={true}
+              style={{width:'150px'}}
+              value={this.rates.localCurrency}
+              onChange={this.setLocalCurrency}
+              floatingLabelText='Set local currency'
+            >
+              {
+                this.rates.localCurrencies.map((currency) => (
+                  <MenuItem key={currency} value={currency} primaryText={currency} />
+                ))
+              }
+            </SelectField>
+          </div>
+        </div>
       </div>
     )
   }

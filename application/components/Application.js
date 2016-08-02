@@ -13,7 +13,7 @@ import WalletUnlock from './WalletUnlock'
 
 const Application = ({ children }) => (
   <div>
-    { process.env.NODE_ENV === 'dev' && <DevTools /> }
+    {process.env.NODE_ENV === 'dev' && <DevTools />}
 
     <WalletEncrypt />
     <WalletLock />
@@ -25,7 +25,7 @@ const Application = ({ children }) => (
     <Transaction />
 
     <Header />
-    { children }
+    {children}
     <Footer />
   </div>
 )

@@ -28,9 +28,9 @@ class WalletLock extends React.Component {
     return (
       <Snackbar
         open={this.walletLock.snackbar}
-        message="Wallet has been locked."
-        action="Unlock?"
-        autoHideDuration={3000}
+        message='Wallet has been locked.'
+        action='Unlock?'
+        autoHideDuration={3 * 1000}
         onActionTouchTap={this.toggleDialog}
         onRequestClose={this.toggleSnackbar}
       />
