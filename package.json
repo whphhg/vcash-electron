@@ -2,7 +2,7 @@
   "name": "vcash-electron",
   "productName": "vcash-electron",
   "version": "0.2.0",
-  "description": "Electron UI for the Vcash crypto currency.",
+  "description": "Electron GUI for Vcash, a decentralized currency for the internet.",
   "main": "initialize.js",
   "scripts": {
     "app": "electron .",
@@ -28,7 +28,7 @@
     "leaflet": "0.7.7",
     "material-ui": "0.15.2",
     "mobx": "2.4.1",
-    "mobx-react": "3.5.1",
+    "mobx-react": "3.5.3",
     "moment": "2.14.1",
     "node-uuid": "1.4.7",
     "react": "15.3.0",
@@ -36,7 +36,7 @@
     "react-leaflet": "0.12.1",
     "react-router": "2.6.1",
     "react-tap-event-plugin": "1.0.0",
-    "recharts": "0.12.7"
+    "recharts": "0.12.8"
   },
   "devDependencies": {
     "babel-core": "6.11.4",
