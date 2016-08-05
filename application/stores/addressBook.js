@@ -66,6 +66,22 @@ class AddressBook {
   }
 
   /**
+   * Get address list.
+   * @function addressList
+   * @return {array} Addresses.
+   */
+  @computed get addressList() {
+    return this.accounts.reduce((addresses, account) => {
+
+      this.byAccount[account].addresses.forEach((entry) => {
+        addresses.push(entry.address)
+      })
+
+      return addresses
+    }, [])
+  }
+
+  /**
    * Get show account addresses.
    * @function showAccountAddresses
    * @return {array} Show account addresses.

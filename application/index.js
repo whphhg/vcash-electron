@@ -4,7 +4,7 @@
  * IDEA: Contacts with VCF import/export support (node-vcf).
  * IDEA: Guided tour (react-joyride).
  * TODO: Implement translations (i18next, react-i18next, moment-timezone).
- * TODO: Implement key dump.
+ * TODO: Implement right-click copy and paste menu.
  * TODO: Implement wallet dump.
  * TODO: Implement wallet backup.
  * TODO: Implement wallet check.
@@ -46,6 +46,7 @@ import addressNew from './stores/addressNew'
 import chainBlender from './stores/chainBlender'
 import currencyConverter from './stores/currencyConverter'
 import daemon from './stores/daemon'
+import keyDump from './stores/keyDump'
 import keyImport from './stores/keyImport'
 import network from './stores/network'
 import rates from './stores/rates'
@@ -60,28 +61,21 @@ import walletUnlock from './stores/walletUnlock'
 import watchOnly from './stores/watchOnly'
 import watchOnlyAdd from './stores/watchOnlyAdd'
 
+const stores = {
+  addressBook, addressNew,
+  chainBlender, currencyConverter,
+  daemon,
+  keyDump, keyImport,
+  network,
+  rates, rewardCalculator,
+  send,
+  transaction, transactions,
+  wallet, walletEncrypt, walletLock, walletUnlock, watchOnly, watchOnlyAdd
+}
+
 render(
   <MuiThemeProvider muiTheme={getMuiTheme(muiTheme)}>
-    <Provider
-      addressBook={addressBook}
-      addressNew={addressNew}
-      chainBlender={chainBlender}
-      currencyConverter={currencyConverter}
-      daemon={daemon}
-      keyImport={keyImport}
-      network={network}
-      rates={rates}
-      rewardCalculator={rewardCalculator}
-      send={send}
-      transaction={transaction}
-      transactions={transactions}
-      wallet={wallet}
-      walletEncrypt={walletEncrypt}
-      walletLock={walletLock}
-      walletUnlock={walletUnlock}
-      watchOnly={watchOnly}
-      watchOnlyAdd={watchOnlyAdd}
-    >
+    <Provider {...stores}>
       <Router history={hashHistory}>
         <Route path='/' component={Application}>
           <IndexRoute component={Transactions} />

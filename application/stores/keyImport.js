@@ -24,7 +24,7 @@ class KeyImport {
    * @property {object} errors - Error statuses.
    * @property {object} errors.account - Account errors.
    * @property {boolean} errors.account.invalid - Incorrect characters entered.
-   * @property {boolean} errors.account.missing - Missing passphrase.
+   * @property {boolean} errors.account.missing - Missing account.
    * @property {object} errors.privateKey - Private key errors.
    * @property {boolean} errors.privateKey.alreadyImported - Key already imported.
    * @property {boolean} errors.privateKey.incomplete - Key hasn't been entered fully yet.

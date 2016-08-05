@@ -1,5 +1,5 @@
 ## Vcash Electron GUI
-This is a (**unofficial**) GUI for Vcash, a decentralized currency for the internet. The GUI communicates with vcashd using RPC and is available for Linux, OS X and Windows.
+This is a **unofficial** GUI for Vcash, a decentralized currency for the internet. The GUI communicates with vcashd using RPC and is available for Linux, OS X and Windows.
 
 :hatching_chick: **Warning**: This is beta software that is being actively developed. Any testing is welcome!
 
@@ -50,7 +50,7 @@ Running the GUI inside of a Linux VirtualBox guest might cause the window to be 
 - Switch table to FixedDataTable (performance). __TODO__ [application/components/Transactions.js](application/components/Transactions.js)
 - Contacts with VCF import/export support (node-vcf). __IDEA__ [application/index.js](application/index.js)
 - Guided tour (react-joyride). __IDEA__ [application/index.js](application/index.js)
-- Implement key dump. __TODO__ [application/index.js](application/index.js)
+- Implement right-click copy and paste menu. __TODO__ [application/index.js](application/index.js)
 - Implement translations (i18next, react-i18next, moment-timezone). __TODO__ [application/index.js](application/index.js)
 - Implement wallet backup. __TODO__ [application/index.js](application/index.js)
 - Implement wallet check. __TODO__ [application/index.js](application/index.js)

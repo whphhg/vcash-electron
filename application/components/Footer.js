@@ -34,7 +34,7 @@ class Footer extends React.Component {
           <p className='text-muted'>
             Vcash <span className='font-weight-500'>{this.wallet.version}</span> &nbsp;
             Wallet <span className='font-weight-500'>{this.wallet.walletversion}</span> &nbsp;
-            GUI <span className='font-weight-500'>{process.env.npm_package_version}</span>
+            UI <span className='font-weight-500'>{process.env.npm_package_version}</span>
           </p>
         </div>
         <div style={{clear:'both'}}></div>

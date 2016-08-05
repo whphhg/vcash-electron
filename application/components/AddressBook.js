@@ -14,12 +14,14 @@ import NewAddressIcon from 'material-ui/svg-icons/image/blur-on'
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table'
 
 import AddressNew from './AddressNew'
+import KeyDump from './KeyDump'
 import KeyImport from './KeyImport'
 import TransactionsChart from './TransactionsChart'
 import WatchOnly from './WatchOnly'
 
 @inject('addressBook')
 @inject('addressNew')
+@inject('keyDump')
 @inject('keyImport')
 @inject('rates')
 @inject('wallet')
@@ -29,9 +31,9 @@ import WatchOnly from './WatchOnly'
 class AddressBook extends React.Component {
   constructor(props) {
     super(props)
-    this.props = props
     this.addressBook = props.addressBook
     this.addressNew = props.addressNew
+    this.keyDump = props.keyDump
     this.keyImport = props.keyImport
     this.rates = props.rates
     this.wallet = props.wallet
@@ -39,6 +41,7 @@ class AddressBook extends React.Component {
 
     this.setShowAccount = this.setShowAccount.bind(this)
     this.toggleAddressNew = this.toggleAddressNew.bind(this)
+    this.toggleKeyDump = this.toggleKeyDump.bind(this)
     this.toggleKeyImport = this.toggleKeyImport.bind(this)
     this.toggleWatchOnlyAdd = this.toggleWatchOnlyAdd.bind(this)
   }
@@ -49,6 +52,10 @@ class AddressBook extends React.Component {
 
   toggleAddressNew() {
     this.addressNew.toggleDialog()
+  }
+
+  toggleKeyDump() {
+    this.keyDump.toggleDialog()
   }
 
   toggleKeyImport() {
@@ -63,6 +70,7 @@ class AddressBook extends React.Component {
     return (
       <div>
         <AddressNew />
+        <KeyDump />
         <KeyImport />
 
         <div className='container-fluid'>
@@ -95,7 +103,7 @@ class AddressBook extends React.Component {
                   <MenuItem onTouchTap={this.toggleAddressNew} style={{lineHeight:'32px', fontSize:'15px'}} primaryText='Get new address' />
                   <MenuItem onTouchTap={this.toggleKeyImport} disabled={this.wallet.isLocked} style={{lineHeight:'32px', fontSize:'15px'}} primaryText='Import private key' />
                   <Divider />
-                  <MenuItem disabled={true} style={{lineHeight:'32px', fontSize:'15px'}} primaryText='Dump private key' />
+                  <MenuItem onTouchTap={this.toggleKeyDump} disabled={this.wallet.isLocked} style={{lineHeight:'32px', fontSize:'15px'}} primaryText='Dump private key' />
                   <MenuItem disabled={true} style={{lineHeight:'32px', fontSize:'15px'}} primaryText='Dump wallet' />
                 </IconMenu>
               </div>

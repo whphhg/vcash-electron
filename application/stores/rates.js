@@ -18,7 +18,6 @@ class Rates {
    */
   constructor() {
     this.localCurrency = getItem('localCurrency') || 'EUR'
-
     this.bitcoinAverage = {}
     this.bittrex = { Last: 0 }
     this.poloniex = { last: 0 }
