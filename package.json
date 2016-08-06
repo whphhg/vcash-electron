@@ -27,8 +27,8 @@
   "dependencies": {
     "leaflet": "0.7.7",
     "material-ui": "0.15.3",
-    "mobx": "2.4.1",
-    "mobx-react": "3.5.3",
+    "mobx": "^2.4.2",
+    "mobx-react": "^3.5.4",
     "moment": "2.14.1",
     "node-uuid": "1.4.7",
     "react": "15.3.0",
