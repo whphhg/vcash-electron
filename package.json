@@ -27,8 +27,8 @@
   "dependencies": {
     "leaflet": "0.7.7",
     "material-ui": "0.15.3",
-    "mobx": "^2.4.2",
-    "mobx-react": "^3.5.4",
+    "mobx": "2.4.2",
+    "mobx-react": "3.5.4",
     "moment": "2.14.1",
     "node-uuid": "1.4.7",
     "react": "15.3.0",
@@ -47,7 +47,7 @@
     "babel-runtime": "6.11.6",
     "electron-compile": "3.3.5",
     "electron-compilers": "3.1.6",
-    "electron-packager": "7.5.0",
+    "electron-packager": "7.5.1",
     "electron-prebuilt": "1.3.2",
     "mobx-react-devtools": "4.2.4",
     "regenerator-runtime": "0.9.5"
