@@ -29,6 +29,12 @@ class Footer extends React.Component {
               {parseFloat(this.rates.bittrex.Last).toFixed(8)}
             </span> BTC
           </span>
+          <img src='./assets/images/exchangeRawx.png' style={{paddingLeft:'15px', marginTop:'-2px'}} />
+          <span style={{paddingLeft:'4px'}}>
+            <span className='font-weight-500'>
+              {parseFloat(this.rates.rawx.lastprice).toFixed(8)}
+            </span> BTC
+          </span>
         </div>
         <div style={{float:'right', paddingRight:'15px'}}>
           <p className='text-muted'>

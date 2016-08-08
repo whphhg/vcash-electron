@@ -61,7 +61,6 @@ Running the GUI inside of a Linux VirtualBox guest might cause the window to be 
 - Transaction dialog not complete, needs overhaul, fails opening if PoS. __FIXME__ [application/stores/transaction.js](application/stores/transaction.js)
 - Combine self-sends and correctly handle category names, similar to WebUI. __TODO__ [application/stores/transactions.js](application/stores/transactions.js)
 - Implement balance tracking of individual addresses and accounts. __TODO__ [application/stores/transactions.js](application/stores/transactions.js)
-- RPC getbalance incorrect IF using RPC sendtoaddress. Ok if only RPC sendmany is used on a fresh wallet. __NOTE__ [application/stores/transactions.js](application/stores/transactions.js)
 - Allow selecting the daemon you're getting data from, local or remote (tunnel-ssh). __TODO__ [application/utilities/rpc.js](application/utilities/rpc.js)
 
 

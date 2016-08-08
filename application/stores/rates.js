@@ -7,6 +7,7 @@ class Rates {
   @observable bittrex
   @observable localCurrency
   @observable poloniex
+  @observable rawx
 
   /**
    * Prepare observable variables and run fetching functions.
@@ -15,16 +16,19 @@ class Rates {
    * @property {object} bitcoinAverage - Bitcoin average price index.
    * @property {object} bittrex - Bittrex ticker.
    * @property {object} poloniex - Poloniex ticker.
+   * @property {object} rawx - Rawx ticker.
    */
   constructor() {
     this.localCurrency = getItem('localCurrency') || 'EUR'
     this.bitcoinAverage = {}
     this.bittrex = { Last: 0 }
     this.poloniex = { last: 0 }
+    this.rawx = { lastprice: 0 }
 
     this.fetchBitcoinAverage()
     this.fetchBittrex()
     this.fetchPoloniex()
+    this.fetchRawx()
   }
 
   /**
@@ -46,6 +50,24 @@ class Rates {
   }
 
   /**
+   * Set Poloniex ticker.
+   * @function setPoloniex
+   * @param {string} ticker - Poloniex ticker.
+   */
+  @action setPoloniex(ticker) {
+    this.poloniex = ticker
+  }
+
+  /**
+   * Set Rawx ticker.
+   * @function setRawx
+   * @param {string} ticker - Rawx ticker.
+   */
+  @action setRawx(ticker) {
+    this.rawx = ticker
+  }
+
+  /**
    * Set provided local currency and save to localStorage.
    * @function setLocalCurrency
    * @param {string} localCurrency - Provided local currency.
@@ -56,21 +78,12 @@ class Rates {
   }
 
   /**
-   * Set Poloniex ticker.
-   * @function setPoloniex
-   * @param {string} ticker - Poloniex ticker.
-   */
-  @action setPoloniex(ticker) {
-    this.poloniex = ticker
-  }
-
-  /**
    * Get current Vcash price average.
    * @function average
    * @return {number} Vcash price average.
    */
   @computed get average() {
-    const rates = [this.poloniex.last, this.bittrex.Last]
+    const rates = [this.poloniex.last, this.bittrex.Last, this.rawx.lastprice]
     let total = 0
     let divideBy = 0
 
@@ -150,6 +163,35 @@ class Rates {
       .catch((error) => { process.env.NODE_ENV === 'dev' && console.error('https://poloniex.com/public?command=returnTicker:', error.message) })
 
     setTimeout(() => { this.fetchPoloniex() }, 30 * 1000)
+  }
+
+  /**
+   * Fetch Rawx ticker.
+   * @function fetchRawx
+   */
+  fetchRawx() {
+    fetch('https://beta.rawx.io/m')
+      .then((response) => { if (response.ok) return response.json() })
+      .then((ticker) => {
+        for (let i in ticker.pairs) {
+          if (ticker.pairs[i].other === 'XVC') {
+            const internalDecimals = Math.pow(10, 12)
+
+            ticker.pairs[i].lastprice = parseInt('0x' + ticker.pairs[i].lastprice) / internalDecimals
+            ticker.pairs[i].volume = parseInt('0x' + ticker.pairs[i].volume) / internalDecimals
+            ticker.pairs[i].bestask = parseInt('0x' + ticker.pairs[i].bestask) / internalDecimals
+            ticker.pairs[i].bestbid = parseInt('0x' + ticker.pairs[i].bestbid) / internalDecimals
+            ticker.pairs[i].minbase = parseInt('0x' + ticker.pairs[i].minbase) / internalDecimals
+            ticker.pairs[i].depthbid = parseInt('0x' + ticker.pairs[i].depthbid) / internalDecimals
+
+            this.setRawx(ticker.pairs[i])
+            break
+          }
+        }
+      })
+      .catch((error) => { process.env.NODE_ENV === 'dev' && console.error('https://beta.rawx.io/m:', error.message) })
+
+    setTimeout(() => { this.fetchRawx() }, 60 * 1000)
   }
 }
 
