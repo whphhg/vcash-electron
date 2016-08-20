@@ -24,7 +24,7 @@ useStrict(true)
 /** Material-ui theme. */
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
-import muiTheme from './assets/muiTheme'
+import muiTheme from 'material-ui/styles/baseThemes/lightBaseTheme'
 
 /**
  * Needed for onTouchTap.
@@ -39,6 +39,7 @@ import Transactions from './components/Transactions'
 import AddressBook from './components/AddressBook'
 import Network from './components/Network'
 import Maintenance from './components/Maintenance'
+import Send from './components/Send'
 
 /** Store instances. */
 import addressBook from './stores/addressBook'
@@ -79,8 +80,8 @@ render(
       <Router history={hashHistory}>
         <Route path='/' component={Application}>
           <IndexRoute component={Transactions} />
-          <Route path='transactions' component={Transactions} />
-          <Route path='addressBook' component={AddressBook} />
+          <Route path='send' component={Send} />
+          <Route path='receive' component={AddressBook} />
           <Route path='network' component={Network} />
           <Route path='maintenance' component={Maintenance} />
         </Route>
