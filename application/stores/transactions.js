@@ -10,8 +10,6 @@ import rates from './rates'
  * TODO: Combine self-sends and correctly handle category names, similar to WebUI.
  *       - Sending -> Sent, Receiving -> Received, Blended, Immature, PoS, PoW, Incentive
  * TODO: Implement balance tracking of individual addresses and accounts.
- * NOTE: RPC getbalance incorrect IF using RPC sendtoaddress. Ok if only RPC sendmany is used on a fresh wallet.
- *       - Affects: ADDRESS_BOOK, TRANSACTIONS, TRANSACTION_, SEND_
  */
 
 /** Transactions store class. */
@@ -37,7 +35,7 @@ class Transactions {
     this.amountUnconfirmed = 0
     this.confirmed = []
     this.filters = []
-    this.showSince = new Date(moment().subtract(20, 'days').calendar())
+    this.showSince = new Date(moment().subtract(123, 'days').calendar())
     this.showCategory = 'all'
     this.unconfirmed = []
 
