@@ -1,3 +1,17 @@
+/** Tabs */
+.tabs { border-bottom: 1px solid #ccc; padding-bottom: 3px; text-align: center; }
+.tabs a { text-decoration: none; color: #43464b; padding-bottom: 4px; padding-top: 10px; }
+.tabs a:hover { color: #B71C1C; }
+.tabs .activetab { color: #B71C1C; border-bottom: 2px solid #B71C1C; }
+
+
+
+
+
+
+
+
+
 /**
  * Fonts
  */
@@ -19,6 +33,10 @@
   src: local('Open Sans'), local('OpenSans'), url(../fonts/OpenSans.woff) format('woff');
 }
 */
+
+
+
+
 
 body {
   font-family:'Roboto', sans-serif;
