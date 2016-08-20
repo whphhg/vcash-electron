@@ -5,7 +5,7 @@
   "description": "Electron UI for Vcash, a decentralized currency for the internet.",
   "main": "initialize.js",
   "scripts": {
-    "app": "electron .",
+    "ui": "electron .",
     "dev": "NODE_ENV=dev electron .",
     "dev-win": "set NODE_ENV=dev&&electron ."
   },
@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/whphhg/vcash-electron#readme",
   "dependencies": {
+    "fixed-data-table": "0.6.3",
     "leaflet": "0.7.7",
     "material-ui": "0.15.4",
     "mobx": "2.4.3",
@@ -35,6 +36,7 @@
     "react-dom": "15.3.1",
     "react-leaflet": "0.12.1",
     "react-router": "2.7.0",
+    "react-mdl": "1.6.1",
     "react-tap-event-plugin": "1.0.0",
     "recharts": "0.13.3"
   },
