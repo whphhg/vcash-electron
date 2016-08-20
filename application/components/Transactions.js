@@ -2,16 +2,48 @@ import React from 'react'
 import { inject, observer } from 'mobx-react'
 import { v4 } from 'node-uuid'
 import moment from 'moment'
+import { Table, Column, Cell } from 'fixed-data-table'
 
-import DatePicker from 'material-ui/DatePicker'
 import MenuItem from 'material-ui/MenuItem'
 import SelectField from 'material-ui/SelectField'
 import TextField from 'material-ui/TextField'
-import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table'
+
+import TransactionsChart from './TransactionsChart'
+
+const CreateCell = ({ rowIndex, data, column, localCurrency, ...props }) => {
+  switch (column) {
+    case 'amount':
+      return (
+        <Cell {...props}>
+          {parseFloat(data[rowIndex][column]).toFixed(6)}
+        </Cell>
+      )
+
+    case 'amountLocal':
+      return (
+        <Cell {...props}>
+          {parseFloat(data[rowIndex][column]).toFixed(2)} {localCurrency}
+        </Cell>
+      )
+
+    case 'time':
+      return (
+        <Cell {...props}>
+          {moment(new Date(data[rowIndex][column] * 1000)).format('YYYY-MM-DD - HH:mm:ss')}
+        </Cell>
+      )
+
+    default:
+      return (
+        <Cell {...props}>
+          {data[rowIndex][column]}
+        </Cell>
+      )
+  }
+}
 
 /**
  * TODO: Colorize amounts according to category.
- * TODO: Switch table to FixedDataTable (performance).
  */
 @inject('transaction')
 @inject('transactions')
@@ -28,7 +60,6 @@ class Transactions extends React.Component {
 
     this.setFilters = this.setFilters.bind(this)
     this.setShowCategory = this.setShowCategory.bind(this)
-    this.setShowSince = this.setShowSince.bind(this)
     this.toggleTransaction = this.toggleTransaction.bind(this)
   }
 
@@ -45,10 +76,6 @@ class Transactions extends React.Component {
     this.transactions.setShowCategory(value)
   }
 
-  setShowSince(empty, since) {
-    this.transactions.setShowSince(since)
-  }
-
   toggleTransaction(rowNumber, columndId) {
     const txid = this.transactions.filtered[rowNumber].txid
     this.transaction.setTxid(txid)
@@ -56,6 +83,7 @@ class Transactions extends React.Component {
   }
 
   render() {
+    // buttons instead of dropdown, ToggleButton, textfield that reveals for filtering
     return (
       <div>
         <div className='container-fluid'>
@@ -72,17 +100,6 @@ class Transactions extends React.Component {
                     <MenuItem key={6} value='immature' primaryText='Immature' />
                   </SelectField>
                 </div>
-                <div className='col-md-4' style={{marginTop:'24px'}}>
-                  <DatePicker
-                    textFieldStyle={{width:'150px'}}
-                    hintText='Show transactions since'
-                    container='inline'
-                    mode='landscape'
-                    defaultDate={this.transactions.showSince}
-                    maxDate={new Date()}
-                    onChange={this.setShowSince}
-                  />
-                </div>
                 <div className='col-md-6 text-right'>
                   <TextField
                     hintText='by blockhash, txid or any of the columns below'
@@ -95,34 +112,55 @@ class Transactions extends React.Component {
               </div>
               <div className='row' style={{marginTop:'20px'}}>
                 <div className='col-md-12'>
-                  <Table height='480px' fixedHeader={true} showCheckboxes={false} onCellClick={this.toggleTransaction}>
-                    <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-                      <TableRow>
-                        <TableHeaderColumn style={{fontSize:'13px', width:'13%'}}>Date</TableHeaderColumn>
-                        <TableHeaderColumn style={{fontSize:'13px', width:'21%'}}>Account</TableHeaderColumn>
-                        <TableHeaderColumn style={{fontSize:'13px', width:'26%'}}>Address</TableHeaderColumn>
-                        <TableHeaderColumn style={{fontSize:'13px', width:'16%'}}>Category</TableHeaderColumn>
-                        <TableHeaderColumn style={{fontSize:'13px', width:'12%'}}>Amount</TableHeaderColumn>
-                        <TableHeaderColumn style={{fontSize:'13px', width:'12%'}}>{this.rates.localCurrency}</TableHeaderColumn>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody deselectOnClickaway={true} showRowHover={true} stripedRows={true} displayRowCheckbox={false}>
-                      {
-                        this.transactions.filtered.map((tx) => (
-                          <TableRow key={v4()} displayBorder={false} selected={tx.selected}>
-                            <TableRowColumn style={{width:'13%'}}>{moment(new Date(tx.time * 1000)).format('YYYY-MM-DD - HH:mm:ss')}</TableRowColumn>
-                            <TableRowColumn style={{width:'21%'}}>{tx.account}</TableRowColumn>
-                            <TableRowColumn style={{width:'26%'}} className='font-mono'>{tx.address}</TableRowColumn>
-                            <TableRowColumn style={{textAlign:'right', width:'16%'}}>{tx.category}</TableRowColumn>
-                            <TableRowColumn style={{textAlign:'right', width:'12%'}}>{parseFloat(tx.amount).toFixed(6)}</TableRowColumn>
-                            <TableRowColumn style={{textAlign:'right', width:'12%'}}>{parseFloat(tx.amountLocal).toFixed(2)} {this.rates.localCurrency}</TableRowColumn>
-                          </TableRow>
-                        ))
-                      }
-                    </TableBody>
+
+
+                  <Table
+                    rowHeight={50}
+                    headerHeight={50}
+                    rowsCount={this.transactions.filtered.length}
+                    width={1140}
+                    height={100}
+                  >
+                    <Column
+                      header={<Cell>Date</Cell>}
+                      cell={<CreateCell data={this.transactions.filtered} column='time' />}
+                      width={200}
+                    />
+                    <Column
+                      header={<Cell>Account</Cell>}
+                      cell={<CreateCell data={this.transactions.filtered} column='account' />}
+                      width={200}
+                    />
+                    <Column
+                      header={<Cell>Address</Cell>}
+                      cell={<CreateCell data={this.transactions.filtered} column='address' />}
+                      width={340}
+                    />
+                    <Column
+                      header={<Cell>Category</Cell>}
+                      cell={<CreateCell data={this.transactions.filtered} column='category' />}
+                      width={100}
+                    />
+                    <Column
+                      header={<Cell>Amount</Cell>}
+                      cell={<CreateCell data={this.transactions.filtered} column='amount' />}
+                      width={150}
+                    />
+                    <Column
+                      header={<Cell>{this.rates.localCurrency}</Cell>}
+                      cell={<CreateCell data={this.transactions.filtered} column='amountLocal' localCurrency={this.rates.localCurrency} />}
+                      width={150}
+                    />
                   </Table>
+
+
                 </div>
               </div>
+            </div>
+          </div>
+          <div className='row'>
+            <div className='col-md-12'>
+              <TransactionsChart />
             </div>
           </div>
         </div>

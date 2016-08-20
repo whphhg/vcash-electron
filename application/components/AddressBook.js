@@ -16,7 +16,6 @@ import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowCol
 import AddressNew from './AddressNew'
 import KeyDump from './KeyDump'
 import KeyImport from './KeyImport'
-import TransactionsChart from './TransactionsChart'
 import WatchOnly from './WatchOnly'
 
 @inject('addressBook')
@@ -148,11 +147,6 @@ class AddressBook extends React.Component {
               </div>
 
               <WatchOnly />
-            </div>
-          </div>
-          <div className='row'>
-            <div className='col-md-12'>
-              <TransactionsChart />
             </div>
           </div>
         </div>
