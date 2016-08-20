@@ -1,5 +1,5 @@
-## Vcash Electron GUI
-This is a **unofficial** GUI for Vcash, a decentralized currency for the internet. The GUI communicates with vcashd using RPC and is available for Linux, OS X and Windows.
+## Vcash Electron UI
+This is a **unofficial** UI for Vcash, a decentralized currency for the internet. The UI communicates with vcashd using RPC and is available for Linux, OS X and Windows.
 
 :hatching_chick: **Warning**: This is beta software that is being actively developed. Any testing is welcome!
 
