@@ -29,7 +29,7 @@ To install:
 
 To run (make sure to launch Vcash before):
 
-    $ npm run app
+    $ npm run ui
 
 To run with DevTools enabled:
 
@@ -41,13 +41,12 @@ To update:
     $ cd vcash-electron
     $ git pull OR download zip
 
-Running the GUI inside of a Linux VirtualBox guest might cause the window to be black. To fix this, open `package.json`, add `--disable-gpu` after `electron .` and try again.
+Running the UI inside of a Linux VirtualBox guest might cause the window to be black. To fix this, open `package.json`, add `--disable-gpu` after `electron .` and try again.
 
 
 ### IDEAs, NOTEs, TODOs and FIXMEs
-- Show icons if vote candidate & staking (config.dat pos:1 & unlocked). __TODO__ [application/components/Header.js](application/components/Header.js)
+- Show icons if vote candidate & staking (config.dat pos:1 & unlocked). __TODO__ [application/components/Application.js](application/components/Application.js)
 - Colorize amounts according to category. __TODO__ [application/components/Transactions.js](application/components/Transactions.js)
-- Switch table to FixedDataTable (performance). __TODO__ [application/components/Transactions.js](application/components/Transactions.js)
 - Contacts with VCF import/export support (node-vcf). __IDEA__ [application/index.js](application/index.js)
 - Guided tour (react-joyride). __IDEA__ [application/index.js](application/index.js)
 - Implement right-click copy and paste menu. __TODO__ [application/index.js](application/index.js)
