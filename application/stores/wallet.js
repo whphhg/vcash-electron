@@ -16,7 +16,6 @@ class Wallet {
   @observable stake
   @observable version
   @observable walletversion
-  @observable drawer
 
   /**
    * Prepare observable variables and run RPC info and lockCheck functions.
@@ -32,7 +31,6 @@ class Wallet {
    * @property {number} port - Wallet port.
    * @property {number} protocolversion - Protocol version.
    * @property {number} walletversion - Wallet version.
-   * @property {boolean} drawer - Drawer status.
    */
   constructor() {
     this.balance = 0
@@ -48,7 +46,6 @@ class Wallet {
     this.stake = 0
     this.version = 0
     this.walletversion = 0
-    this.drawer = false
 
     this.info()
     this.lockCheck()
@@ -78,14 +75,6 @@ class Wallet {
   @action setStatus(isLocked, isEncrypted) {
     this.isLocked = isLocked
     this.isEncrypted = isEncrypted
-  }
-
-  /**
-   * Toggle menu drawer.
-   * @function toggleMenu
-   */
-  @action toggleMenu() {
-    this.drawer = !this.drawer
   }
 
   /**

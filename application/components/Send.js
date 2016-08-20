@@ -79,7 +79,7 @@ class Send extends React.Component {
 
   render() {
     return (
-      <Drawer docked={true} width={750} open={this.send.drawer} openSecondary={true}>
+      <div>
         <AppBar
           title={'Send'}
           iconElementLeft={
@@ -211,7 +211,7 @@ class Send extends React.Component {
         </div>
         <Divider style={{clear:'both', marginTop:'0px', marginBottom:'0px'}} />
         <CurrencyConverter />
-      </Drawer>
+      </div>
     )
   }
 }
