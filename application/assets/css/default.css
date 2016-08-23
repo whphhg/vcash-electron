@@ -1,9 +1,31 @@
-/** Tabs */
-.tabs { border-bottom: 1px solid #ccc; padding-bottom: 3px; text-align: center; }
-.tabs a { text-decoration: none; color: #43464b; padding-bottom: 4px; padding-top: 10px; }
-.tabs a:hover { color: #B71C1C; }
-.tabs .activetab { color: #B71C1C; border-bottom: 2px solid #B71C1C; }
+/** HTML5 elements. */
+a { color: #FFFFFF; }
+header { background: #B71C1C; color: #FFFFFF; box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12); }
+header .logo { margin: 10px; width: 36px; height: 36px; }
+header .logo img { width: 36px; height: 36px; }
+header .balance { margin-top: 10px; margin-left: 14px; }
+header .menu { margin-top: 5px; margin-left: 12px; }
+header .menu i { vertical-align: text-bottom; }
+header p { padding: 0px; margin: 0px; line-height: 18px; font-weight: 500; }
+header p span { font-weight: 600; text-decoration: none; }
 
+/** Ant.Design theme. */
+.ant-switch-checked { border-color: #B71C1C; background-color: #B71C1C; }
+.ant-menu { background: #B71C1C; color: #FFFFFF; }
+.ant-menu-horizontal { border: none; }
+.ant-menu-horizontal > .ant-menu-item:hover,
+.ant-menu-horizontal > .ant-menu-item-selected { border-bottom: 2px solid #FFFFFF;color: #FFFFFF; }
+.ant-btn-primary { color: #FFFFFF; background-color: #43464B; border-color: #43464B; margin-top: 13px; min-height: 30px; }
+.ant-btn-primary i { vertical-align: middle; }
+
+.ant-btn-primary:hover, .ant-btn-primary:focus {
+    color: #B71C1C;
+    background-color: #43464B;
+    border-color: #43464B;
+    font-weight: bold;
+}
+
+.material-icons.md-18 { font-size: 20px; }
 
 
 
@@ -40,7 +62,6 @@
 
 body {
   font-family:'Roboto', sans-serif;
-  margin:0 0 25px 0;
 }
 .header {
   height:60px;
