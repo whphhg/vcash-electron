@@ -1,6 +1,6 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
-import Toggle from 'material-ui/Toggle'
+import { Switch } from 'react-mdl'
 
 @inject('chainBlender')
 @inject('wallet')
@@ -20,40 +20,21 @@ class ChainBlender extends React.Component {
 
   render() {
     return (
-      <div style={{minHeight:'240px'}}>
-        <div className='row' style={{marginTop:'30px'}}>
-          <div className='col-md-12'>
-            <Toggle
-              label='ChainBlender'
-              toggled={this.chainBlender.isActivated}
-              onToggle={this.toggle}
-              disabled={this.wallet.isLocked}
-            />
-          </div>
+      <div>
+        <div style={{float:'left'}}>
+          <Switch checked={this.chainBlender.isActivated} disabled={this.wallet.isLocked} onChange={this.toggle}>ChainBlender</Switch>
         </div>
+
         {
           !this.wallet.isLocked &&
           (
-            <div className='row' style={{marginTop:'30px'}}>
-              <div className='col-md-5'>
-                <p>Blend state</p>
-                <p>Balance</p>
-                <p>Denominated</p>
-                <p>Non-denominated</p>
-                <p>Blended</p>
-                <p>Blended percent</p>
-              </div>
-              <div className='col-md-7 text-right'>
-                <h5>{this.chainBlender.blendstate}</h5>
-                <h5>{this.chainBlender.balance.toFixed(6)} XVC</h5>
-                <h5>{this.chainBlender.denominatedbalance.toFixed(6)} XVC</h5>
-                <h5>{this.chainBlender.nondenominatedbalance.toFixed(6)} XVC</h5>
-                <h5>{this.chainBlender.blendedbalance.toFixed(6)} XVC</h5>
-                <h5>{this.chainBlender.blendedpercentage.toFixed(2)}%</h5>
-              </div>
+            <div style={{float:'left', marginLeft:'40px'}}>
+              <p>Blended balance <span>{this.chainBlender.blendedbalance.toFixed(6)}</span> XVC (<span>{this.chainBlender.blendedpercentage.toFixed(2)}</span>%)</p>
             </div>
           )
         }
+
+        <div style={{clear:'both'}}></div>
       </div>
     )
   }
