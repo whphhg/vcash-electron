@@ -29,7 +29,7 @@
     "fixed-data-table": "0.6.3",
     "leaflet": "0.7.7",
     "material-ui": "^0.15.4",
-    "mobx": "2.4.3",
+    "mobx": "^2.4.4",
     "mobx-react": "3.5.5",
     "moment": "2.14.1",
     "node-uuid": "1.4.7",
