@@ -2,7 +2,16 @@ import React from 'react'
 import DevTools from 'mobx-react-devtools'
 import { inject, observer } from 'mobx-react'
 import { Link, IndexLink, hashHistory } from 'react-router'
-import { Icon, IconToggle } from 'react-mdl'
+
+
+import { Row, Col } from 'antd'
+
+import { Menu, Icon, Tooltip, Button } from 'antd'
+
+const SubMenu = Menu.SubMenu
+const MenuItemGroup = Menu.ItemGroup
+
+
 
 import DaemonStatus from './DaemonStatus'
 import Transaction from './Transaction'
@@ -37,6 +46,9 @@ class Application extends React.Component {
     this.lock = this.lock.bind(this)
     this.toggleEncrypt = this.toggleEncrypt.bind(this)
     this.toggleUnlock = this.toggleUnlock.bind(this)
+    this.setView = this.setView.bind(this)
+
+    this.selectedView = '/'
   }
 
   lock() {
@@ -49,6 +61,11 @@ class Application extends React.Component {
 
   toggleUnlock() {
     this.walletUnlock.toggleDialog()
+  }
+
+  setView(e) {
+    this.selectedView = e.key
+    hashHistory.push(this.selectedView)
   }
 
   componentWillReceiveProps(props) {
@@ -66,35 +83,71 @@ class Application extends React.Component {
         <DaemonStatus />
         <Transaction />
 
-        {
-          this.wallet.isLocked && this.wallet.isEncrypted && (<IconToggle name='lock' onChange={this.toggleUnlock} />) ||
-          !this.wallet.isLocked && this.wallet.isEncrypted && (<IconToggle name='lock_open' onChange={this.lock} />) ||
-          !this.wallet.isEncrypted && !this.wallet.isLocked && (<IconToggle name='vpn_key' onChange={this.toggleEncrypt} />)
-        }
+        <header>
+          <Row>
+            <Col span={1}>
+              <div className='logo'>
+                <img src='./assets/images/logoGrey.png' />
+              </div>
+            </Col>
 
-        <img src='./assets/images/logoRed.png' alt='' width='35px' height='35px' />
-        <p>
-          {this.wallet.balance}
-          {(this.wallet.balance * this.rates.average).toFixed(8) + ' BTC'}
-          {(this.wallet.balance * this.rates.average * this.rates.local).toFixed(2) + ' ' + this.rates.localCurrency}
-        </p>
+            <Col span={9}>
+              <div className='balance'>
+                <p>Balance</p>
+                <Row>
+                  <Col span={8}><p><span>{this.wallet.balance}</span> XVC</p></Col>
+                  <Col span={8}><p><span>{(this.wallet.balance * this.rates.average).toFixed(8)}</span> BTC</p></Col>
+                  <Col span={8}><p><span>{(this.wallet.balance * this.rates.average * this.rates.local).toFixed(2)}</span> {this.rates.localCurrency}</p></Col>
+                </Row>
+              </div>
+            </Col>
 
-        <p>
-          Unconfirmed {this.transactions.amountUnconfirmed.toFixed(6) + ' XVC'}
-          Staking {this.wallet.stake.toFixed(6) + ' XVC'}
-          Immature {this.wallet.newmint.toFixed(6) + ' XVC'}
-        </p>
+            <Col span={13}>
+              <div className='menu'>
+                <Menu onClick={this.setView} selectedKeys={[this.selectedView]} mode='horizontal'>
+                  <Menu.Item key="/">
+                    <i className='material-icons md-18'>receipt</i> Transactions
+                  </Menu.Item>
+                  <Menu.Item key="send">
+                    <i className='material-icons md-18'>send</i> Send
+                  </Menu.Item>
+                  <Menu.Item key="receive">
+                    <i className='material-icons md-18'>plus_one</i> Receive
+                  </Menu.Item>
+                  <Menu.Item key="network">
+                    <i className='material-icons md-18'>router</i> Network
+                  </Menu.Item>
+                  <Menu.Item key="maintenance">
+                    <i className='material-icons md-18'>settings</i> Maintenance
+                  </Menu.Item>
+                </Menu>
+              </div>
+            </Col>
 
-        <div className='tabsContainer'>
-          <div className='tabs'>
-            <IndexLink to='/' activeClassName='activetab'><Icon name='account_balance' />History</IndexLink>
-            <Link to='send' activeClassName='activetab'><Icon name='send' />Send</Link>
-            <Link to='receive' activeClassName='activetab'><Icon name='library_books' />Receive</Link>
-            <Link to='network' activeClassName='activetab'><Icon name='router' />Network</Link>
-            <Link to='maintenance' activeClassName='activetab'><Icon name='settings' />Maintenance</Link>
-          </div>
-        </div>
-
+            <Col span={1}>
+              {
+                this.wallet.isLocked && this.wallet.isEncrypted &&
+                (
+                  <Button size='small' type='primary' onClick={this.toggleUnlock}>
+                    <i className='material-icons md-18'>lock</i>
+                  </Button>
+                ) ||
+                !this.wallet.isLocked && this.wallet.isEncrypted &&
+                (
+                  <Button size='small' type='primary' onClick={this.lock}>
+                    <i className='material-icons md-18'>lock_open</i>
+                  </Button>
+                ) ||
+                !this.wallet.isEncrypted && !this.wallet.isLocked &&
+                (
+                  <Button size='small' type='primary' onClick={this.toggleEncrypt}>
+                    <i className='material-icons md-18'>vpn_key</i>
+                  </Button>
+                )
+              }
+            </Col>
+          </Row>
+        </header>
         <section>{this.props.children}</section>
       </div>
     )
