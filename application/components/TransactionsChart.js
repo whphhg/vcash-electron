@@ -13,7 +13,7 @@ class TransactionsChart extends React.Component {
 
   render() {
     return (
-      <LineChart width={1100} height={250} data={this.transactions.chartData} margin={{top:30, right:38}}>
+      <LineChart width={1100} height={150} data={this.transactions.chartData} margin={{top:30, right:38}}>
         <CartesianGrid stroke='#ccc' strokeDasharray='6 6' />
         <Line type='monotone' dataKey='send' stroke='#b60127' />
         <Line type='monotone' dataKey='generate' stroke='#1A237E' />
