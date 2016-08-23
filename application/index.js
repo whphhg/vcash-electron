@@ -1,7 +1,6 @@
 'use strict'
 
 /**
- * IDEA: Contacts with VCF import/export support (node-vcf).
  * IDEA: Guided tour (react-joyride).
  * TODO: Implement translations (i18next, react-i18next, moment-timezone).
  * TODO: Implement right-click copy and paste menu.
