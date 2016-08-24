@@ -1,126 +1,33 @@
-/** HTML5 elements. */
-a { color: #FFFFFF; }
-header { background: #B71C1C; color: #FFFFFF; box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12); }
-header .logo { margin: 10px; width: 36px; height: 36px; }
-header .logo img { width: 36px; height: 36px; }
-header .balance { margin-top: 10px; margin-left: 14px; }
-header .menu { margin-top: 5px; margin-left: 12px; }
-header .menu i { vertical-align: text-bottom; }
+/** Roboto fonts */
+@import url(https://fonts.googleapis.com/css?family=Roboto:300,400,500&subset=latin-ext);
+@import url(https://fonts.googleapis.com/css?family=Roboto+Mono:300,400,500&subset=latin-ext);
+
+/** Elements */
+body { font-family: 'Roboto', sans-serif; font-size: 13px; }
+header { background: #B71C1C; color: #FFFFFF; }
+header #logo { margin: 10px; width: 36px; height: 36px; }
+header #logo img { width: 36px; height: 36px; }
+header #balance { margin-top: 10px; margin-left: 14px; }
+header nav { margin-top: 5px; margin-left: 12px; }
+header nav i { vertical-align: text-bottom; }
 header p { padding: 0px; margin: 0px; line-height: 18px; font-weight: 500; }
 header p span { font-weight: 600; text-decoration: none; }
+main #transactions { min-height: 450px; padding-bottom: 10px; }
 
-/** Ant.Design theme. */
+/** Scrollbar */
+::-webkit-scrollbar { -webkit-appearance: none; width: 7px; }
+::-webkit-scrollbar-thumb { border-radius: 4px; background-color: rgba(0,0,0,.5); -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5); }
+
+/** Ant.Design */
 .ant-switch-checked { border-color: #B71C1C; background-color: #B71C1C; }
 .ant-menu { background: #B71C1C; color: #FFFFFF; }
 .ant-menu-horizontal { border: none; }
-.ant-menu-horizontal > .ant-menu-item:hover,
-.ant-menu-horizontal > .ant-menu-item-selected { border-bottom: 2px solid #FFFFFF;color: #FFFFFF; }
+.ant-menu-horizontal > .ant-menu-item:hover, .ant-menu-horizontal > .ant-menu-item-selected { border-bottom: 2px solid #FFFFFF;color: #FFFFFF; }
 .ant-btn-primary { color: #FFFFFF; background-color: #43464B; border-color: #43464B; margin-top: 13px; min-height: 30px; }
 .ant-btn-primary i { vertical-align: middle; }
+.ant-btn-primary:hover, .ant-btn-primary:focus { color: #B71C1C; background-color: #43464B; border-color: #43464B; font-weight: bold; }
+.shadow { box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12); }
 
-.ant-btn-primary:hover, .ant-btn-primary:focus {
-    color: #B71C1C;
-    background-color: #43464B;
-    border-color: #43464B;
-    font-weight: bold;
-}
-
-.material-icons.md-18 { font-size: 20px; }
-
-
-
-
-
-
-
-
-/**
- * Fonts
- */
-@import url(https://fonts.googleapis.com/css?family=Roboto:400,300,500&subset=latin,latin-ext);
-@import url(https://fonts.googleapis.com/css?family=Roboto+Mono);
-
-/*
-@font-face {
-  font-family: 'Droid Sans Mono';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Droid Sans Mono'), local('DroidSansMono'), url(../fonts/DroidSansMono.woff) format('woff');
-}
-
-@font-face {
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Open Sans'), local('OpenSans'), url(../fonts/OpenSans.woff) format('woff');
-}
-*/
-
-
-
-
-
-body {
-  font-family:'Roboto', sans-serif;
-}
-.header {
-  height:60px;
-}
-.footer {
-  width:100%;
-  height:25px;
-  bottom:0;
-  position:fixed;
-  z-index:1;
-}
-.footer div {
-  color:#757575;
-  font-size:12px;
-  padding:0px;
-  padding-left:15px;
-  margin:0px;
-  line-height:25px;
-}
-::-webkit-scrollbar {
-  -webkit-appearance: none;
-  width: 7px;
-}
-::-webkit-scrollbar-thumb {
-  border-radius: 4px;
-  background-color: rgba(0,0,0,.5);
-  -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
-}
-.font-mono {
-  font-family:'Roboto Mono';
-}
-.noPadding p {
-  padding: 0px;
-}
-.noMargin p {
-  margin: 0px;
-}
-.textRight p {
-  text-align:right;
-}
-.menu h5 {
-  margin-top:4px;
-  margin-bottom:4px;
-}
-.menu p {
-  line-height:1.1;
-  margin-top:4px;
-  margin-bottom:4px;
-}
-.recipients {
-  max-height:432px;
-  overflow-y:scroll;
-}
-.transaction {
-  max-height:250px;
-  overflow-y:scroll;
-}
-.font-weight-500 {
-  font-weight:500;
-  border-bottom: 1px dotted #000;
-  text-decoration: none;
-}
+/** Material icons */
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-20 { font-size: 20px; }
