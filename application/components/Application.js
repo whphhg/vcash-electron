@@ -1,18 +1,12 @@
 import React from 'react'
-import DevTools from 'mobx-react-devtools'
-import { inject, observer } from 'mobx-react'
 import { Link, IndexLink, hashHistory } from 'react-router'
+import { inject, observer } from 'mobx-react'
+import { Button, Col, Icon, Menu, Row, Tooltip } from 'antd'
 
+/** MobX devtools. */
+import DevTools from 'mobx-react-devtools'
 
-import { Row, Col } from 'antd'
-
-import { Menu, Icon, Tooltip, Button } from 'antd'
-
-const SubMenu = Menu.SubMenu
-const MenuItemGroup = Menu.ItemGroup
-
-
-
+/** Required components. */
 import DaemonStatus from './DaemonStatus'
 import Transaction from './Transaction'
 import WalletEncrypt from './WalletEncrypt'
@@ -83,16 +77,16 @@ class Application extends React.Component {
         <DaemonStatus />
         <Transaction />
 
-        <header>
+        <header className='shadow'>
           <Row>
             <Col span={1}>
-              <div className='logo'>
+              <div id='logo'>
                 <img src='./assets/images/logoGrey.png' />
               </div>
             </Col>
 
             <Col span={9}>
-              <div className='balance'>
+              <div id='balance'>
                 <p>Balance</p>
                 <Row>
                   <Col span={8}><p><span>{this.wallet.balance}</span> XVC</p></Col>
@@ -103,54 +97,51 @@ class Application extends React.Component {
             </Col>
 
             <Col span={13}>
-              <div className='menu'>
+              <nav>
                 <Menu onClick={this.setView} selectedKeys={[this.selectedView]} mode='horizontal'>
-                  <Menu.Item key="/">
-                    <i className='material-icons md-18'>receipt</i> Transactions
-                  </Menu.Item>
-                  <Menu.Item key="send">
-                    <i className='material-icons md-18'>send</i> Send
-                  </Menu.Item>
-                  <Menu.Item key="receive">
-                    <i className='material-icons md-18'>plus_one</i> Receive
-                  </Menu.Item>
-                  <Menu.Item key="network">
-                    <i className='material-icons md-18'>router</i> Network
-                  </Menu.Item>
-                  <Menu.Item key="maintenance">
-                    <i className='material-icons md-18'>settings</i> Maintenance
-                  </Menu.Item>
+                  <Menu.Item key="/"><i className='material-icons md-20'>receipt</i> Transactions</Menu.Item>
+                  <Menu.Item key="send"><i className='material-icons md-20'>send</i> Send</Menu.Item>
+                  <Menu.Item key="receive"><i className='material-icons md-20'>plus_one</i> Receive</Menu.Item>
+                  <Menu.Item key="network"><i className='material-icons md-20'>router</i> Network</Menu.Item>
+                  <Menu.Item key="maintenance"><i className='material-icons md-20'>settings</i> Maintenance</Menu.Item>
                 </Menu>
-              </div>
+              </nav>
             </Col>
 
             <Col span={1}>
               {
                 this.wallet.isLocked && this.wallet.isEncrypted &&
                 (
-                  <Button size='small' type='primary' onClick={this.toggleUnlock}>
-                    <i className='material-icons md-18'>lock</i>
-                  </Button>
+                  <Tooltip placement='bottomRight' title='Wallet is locked'>
+                    <Button size='small' type='primary' onClick={this.toggleUnlock}>
+                      <i className='material-icons md-20'>lock</i>
+                    </Button>
+                  </Tooltip>
                 ) ||
                 !this.wallet.isLocked && this.wallet.isEncrypted &&
                 (
-                  <Button size='small' type='primary' onClick={this.lock}>
-                    <i className='material-icons md-18'>lock_open</i>
-                  </Button>
+                  <Tooltip placement='bottomRight' title='Wallet is unlocked'>
+                    <Button size='small' type='primary' onClick={this.lock}>
+                      <i className='material-icons md-20'>lock_open</i>
+                    </Button>
+                  </Tooltip>
                 ) ||
                 !this.wallet.isEncrypted && !this.wallet.isLocked &&
                 (
-                  <Button size='small' type='primary' onClick={this.toggleEncrypt}>
-                    <i className='material-icons md-18'>vpn_key</i>
-                  </Button>
+                  <Tooltip placement='bottomRight' title='Wallet is not encrypted'>
+                    <Button size='small' type='primary' onClick={this.toggleEncrypt}>
+                      <i className='material-icons md-20'>vpn_key</i>
+                    </Button>
+                  </Tooltip>
                 )
               }
             </Col>
           </Row>
         </header>
-        <section>{this.props.children}</section>
+        <main>{this.props.children}</main>
       </div>
     )
   }
 }
+
 export default Application
