@@ -4,15 +4,19 @@
 
 /** Elements */
 body { font-family: 'Roboto', sans-serif; font-size: 13px; }
-header { background: #B71C1C; color: #FFFFFF; }
+header { background: #B71C1C; color: #FFFFFF; overflow: hidden; }
 header #logo { margin: 10px; width: 36px; height: 36px; }
 header #logo img { width: 36px; height: 36px; }
 header #balance { margin-top: 10px; margin-left: 14px; }
-header nav { margin-top: 5px; margin-left: 12px; }
+header nav { margin-top: 5px; margin-right: 14px; float: right; }
 header nav i { vertical-align: text-bottom; }
 header p { padding: 0px; margin: 0px; line-height: 18px; font-weight: 500; }
 header p span { font-weight: 600; text-decoration: none; }
-main #transactions { min-height: 450px; padding-bottom: 10px; }
+header button { margin-left: 2px; }
+main #transactions { min-height: 457px; padding-bottom: 10px; }
+main #filterTransactions { margin: 10px; }
+main #chainBlender { overflow: hidden; }
+main #chainBlender button { margin-top: 10px; float: right; }
 
 /** Scrollbar */
 ::-webkit-scrollbar { -webkit-appearance: none; width: 7px; }
@@ -26,8 +30,12 @@ main #transactions { min-height: 450px; padding-bottom: 10px; }
 .ant-btn-primary { color: #FFFFFF; background-color: #43464B; border-color: #43464B; margin-top: 13px; min-height: 30px; }
 .ant-btn-primary i { vertical-align: middle; }
 .ant-btn-primary:hover, .ant-btn-primary:focus { color: #B71C1C; background-color: #43464B; border-color: #43464B; font-weight: bold; }
+.ant-btn:hover, .ant-btn:focus { color: #B71C1C; background-color: white; border-color: #B71C1C; }
+.ant-input:focus { border-color: #B71C1C; outline: 0; box-shadow: 0 0 0 2px rgba(183, 28, 28, 0.2); }
+.ant-input:hover { border-color: #B71C1C; outline: 0; }
 .shadow { box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12); }
 
 /** Material icons */
+.material-icons.md-16 { font-size: 16px; }
 .material-icons.md-18 { font-size: 18px; }
 .material-icons.md-20 { font-size: 20px; }
