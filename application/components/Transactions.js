@@ -3,10 +3,7 @@ import { inject, observer } from 'mobx-react'
 import { v4 } from 'node-uuid'
 import moment from 'moment'
 import { Table, Column, Cell } from 'fixed-data-table'
-import { Textfield, Grid, Cell as GridCell } from 'react-mdl'
-
-
-import { Switch, Icon as IconA } from 'antd'
+import { Col, Input, Row } from 'antd'
 
 import ChainBlender from './ChainBlender'
 import TransactionsChart from './TransactionsChart'
@@ -45,6 +42,9 @@ const CreateCell = ({ rowIndex, data, column, localCurrency, ...props }) => {
 
 /**
  * TODO: Colorize amounts according to category.
+ * TODO: Show icons if vote candidate & staking (config.dat pos:1 & unlocked).
+ *       Staking (gavel, flag, flash on, rowing, loyalty).
+ *       Vote candidate (thumbs up, verified user, present to all, all inclusinve,stars).
  */
 @inject('transaction')
 @inject('transactions')
@@ -87,47 +87,38 @@ class Transactions extends React.Component {
 
   render() {
     return (
-      <div>
-        <Grid shadow={1}>
-          <GridCell col={3}>
-            <Textfield
-              onChange={this.setFilters}
-              label='Filter transactions'
-              expandable
-              expandableIcon='search'
-            />
-          </GridCell>
-          <GridCell col={9}>
-            <ChainBlender />
+      <Row>
+        <Col span={15}>
+          Unconfirmed <span>{this.transactions.amountUnconfirmed.toFixed(6)}</span> XVC
 
-          <Switch checkedChildren={<IconA type="check" />} unCheckedChildren={<IconA type="cross" />} />
+          {
+            this.wallet.stake === 0 &&
+            (
+              <span>Staking <span>{this.wallet.stake.toFixed(6)}</span> XVC</span>
+            )
+          }
 
-                  <p>Unconfirmed <span>{this.transactions.amountUnconfirmed.toFixed(6)}</span> XVC</p>
+          {
+            this.wallet.newmint === 0 &&
+            (
+              <span>Immature <span>{this.wallet.newmint.toFixed(6)}</span> XVC</span>
+            )
+          }
+        </Col>
 
-                  {
-                    this.wallet.stake === 0 &&
-                    (
-                      <p>Staking <span>{this.wallet.stake.toFixed(6)}</span> XVC</p>
-                    )
-                  }
+        <Col span={3}>
+          <ChainBlender />
+        </Col>
 
-                  {
-                    this.wallet.newmint === 0 &&
-                    (
-                      <p>Immature <span>{this.wallet.newmint.toFixed(6)}</span> XVC</p>
-                    )
-                  }
+        <Col span={6}>
+          <div id='filterTransactions'>
+            <Input onChange={this.setFilters} placeholder='Filter transactions' addonBefore={<i className='material-icons md-16'>search</i>} autosize />
+          </div>
+        </Col>
 
-          </GridCell>
-
-          <GridCell col={12}>
-            <Table
-              rowHeight={50}
-              headerHeight={50}
-              rowsCount={this.transactions.filtered.length}
-              width={1100}
-              height={250}
-            >
+        <Col span={24}>
+          <div id='transactions' className='shadow'>
+            <Table rowsCount={this.transactions.filtered.length} rowHeight={50} headerHeight={50} width={1140} height={300}>
               <Column
                 header={<Cell>Date</Cell>}
                 cell={<CreateCell data={this.transactions.filtered} column='time' />}
@@ -159,11 +150,13 @@ class Transactions extends React.Component {
                 width={150}
               />
             </Table>
-          </GridCell>
-        </Grid>
+          </div>
+        </Col>
 
-        <TransactionsChart />
-      </div>
+        <Col span={24}>
+          <TransactionsChart />
+        </Col>
+      </Row>
     )
   }
 }
