@@ -1,35 +1,38 @@
 import React from 'react'
-import { Link, IndexLink, hashHistory } from 'react-router'
+import { hashHistory, IndexLink, Link } from 'react-router'
 import { inject, observer } from 'mobx-react'
-import { Button, Col, Icon, Menu, Row, Tooltip } from 'antd'
+import { Button, Col, Icon, Menu, Popover, Row, Tooltip } from 'antd'
 
-/** MobX devtools. */
+/** MobX DevTools. */
 import DevTools from 'mobx-react-devtools'
 
-/** Required components. */
+/** Dialog components. */
 import DaemonStatus from './DaemonStatus'
 import Transaction from './Transaction'
 import WalletEncrypt from './WalletEncrypt'
 import WalletLock from './WalletLock'
 import WalletUnlock from './WalletUnlock'
 
+/** Inject MobX stores to props. */
 @inject('rates')
 @inject('transactions')
 @inject('wallet')
 @inject('walletEncrypt')
 @inject('walletLock')
 @inject('walletUnlock')
+
+/** Make the component reactive. */
 @observer
 
-/**
- * TODO: Show icons if vote candidate & staking (config.dat pos:1 & unlocked).
- *       Staking (gavel, flag, flash on, rowing, loyalty).
- *       Vote candidate (thumbs up, verified user, present to all, all inclusinve,stars).
- */
-class Application extends React.Component {
+/** Root component class. */
+class Root extends React.Component {
   constructor(props) {
     super(props)
-    this.props = props
+
+    /** Set active nav menu item. */
+    this.activeRoute = '/'
+
+    /** Assign stores to component. */
     this.rates = props.rates
     this.transactions = props.transactions
     this.wallet = props.wallet
@@ -37,12 +40,11 @@ class Application extends React.Component {
     this.walletLock = props.walletLock
     this.walletUnlock = props.walletUnlock
 
+    /** Bind functions early. */
     this.lock = this.lock.bind(this)
     this.toggleEncrypt = this.toggleEncrypt.bind(this)
     this.toggleUnlock = this.toggleUnlock.bind(this)
-    this.setView = this.setView.bind(this)
-
-    this.selectedView = '/'
+    this.setRoute = this.setRoute.bind(this)
   }
 
   lock() {
@@ -57,9 +59,9 @@ class Application extends React.Component {
     this.walletUnlock.toggleDialog()
   }
 
-  setView(e) {
-    this.selectedView = e.key
-    hashHistory.push(this.selectedView)
+  setRoute(e) {
+    this.activeRoute = e.key
+    hashHistory.push(this.activeRoute)
   }
 
   componentWillReceiveProps(props) {
@@ -81,10 +83,21 @@ class Application extends React.Component {
           <Row>
             <Col span={1}>
               <div id='logo'>
-                <img src='./assets/images/logoGrey.png' />
+                <Tooltip
+                  placement='bottomLeft'
+                  title={
+                    <div>
+                      <p>Vcash {this.wallet.version}</p>
+                      <p>UI {process.env.npm_package_version}</p>
+                      <br />
+                      <p>Wallet {this.wallet.walletversion}</p>
+                    </div>
+                  }
+                >
+                  <img src='./assets/images/logoGrey.png' />
+                </Tooltip>
               </div>
             </Col>
-
             <Col span={9}>
               <div id='balance'>
                 <p>Balance</p>
@@ -95,10 +108,9 @@ class Application extends React.Component {
                 </Row>
               </div>
             </Col>
-
             <Col span={13}>
               <nav>
-                <Menu onClick={this.setView} selectedKeys={[this.selectedView]} mode='horizontal'>
+                <Menu onClick={this.setRoute} selectedKeys={[this.activeRoute]} mode='horizontal'>
                   <Menu.Item key="/"><i className='material-icons md-20'>receipt</i> Transactions</Menu.Item>
                   <Menu.Item key="send"><i className='material-icons md-20'>send</i> Send</Menu.Item>
                   <Menu.Item key="receive"><i className='material-icons md-20'>plus_one</i> Receive</Menu.Item>
@@ -107,7 +119,6 @@ class Application extends React.Component {
                 </Menu>
               </nav>
             </Col>
-
             <Col span={1}>
               {
                 this.wallet.isLocked && this.wallet.isEncrypted &&
@@ -144,4 +155,4 @@ class Application extends React.Component {
   }
 }
 
-export default Application
+export default Root
