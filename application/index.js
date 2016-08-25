@@ -2,7 +2,7 @@
 
 /**
  * IDEA: Guided tour (react-joyride).
- * TODO: Implement translations (i18next, react-i18next, moment-timezone).
+ * TODO: Translations (i18next, react-i18next, moment-timezone).
  * TODO: Implement right-click copy and paste menu.
  * TODO: Implement wallet dump.
  * TODO: Implement wallet backup.
@@ -33,7 +33,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
 
 /** Main UI components. */
-import Application from './components/Application'
+import Root from './components/Root'
 import Transactions from './components/Transactions'
 import AddressBook from './components/AddressBook'
 import Network from './components/Network'
@@ -77,7 +77,7 @@ render(
   <MuiThemeProvider muiTheme={getMuiTheme(muiTheme)}>
     <Provider {...stores}>
       <Router history={hashHistory}>
-        <Route path='/' component={Application}>
+        <Route path='/' component={Root}>
           <IndexRoute component={Transactions} />
           <Route path='send' component={Send} />
           <Route path='receive' component={AddressBook} />
