@@ -23,14 +23,14 @@ app.on('ready', () => {
   mainWindow = new BrowserWindow({
     width: 1152,
     height: 720,
-    icon: __dirname + '/application/assets/images/logoRed.png'
+    icon: __dirname + '/src/assets/images/logoRed.png'
   })
 
   /** Hide browser's menu bar. */
   mainWindow.setMenu(null)
 
   /** Load the application starting point. */
-  mainWindow.loadURL('file://' + __dirname + '/application/index.html')
+  mainWindow.loadURL('file://' + __dirname + '/src/index.html')
 
   /** Open Chromium DevTools if in dev mode. */
   process.env.NODE_ENV === 'dev' && mainWindow.webContents.openDevTools()

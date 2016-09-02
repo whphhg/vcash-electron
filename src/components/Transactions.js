@@ -3,7 +3,10 @@ import { inject, observer } from 'mobx-react'
 import { v4 } from 'node-uuid'
 import moment from 'moment'
 import { Table, Column, Cell } from 'fixed-data-table'
-import { Col, Input, Row } from 'antd'
+import { Col, Input, Radio, Row } from 'antd'
+
+const RadioButton = Radio.Button;
+const RadioGroup = Radio.Group;
 
 import ChainBlender from './ChainBlender'
 import TransactionsChart from './TransactionsChart'
@@ -75,8 +78,8 @@ class Transactions extends React.Component {
     }, 0.5 * 1000)
   }
 
-  setShowCategory(event, index, value) {
-    this.transactions.setShowCategory(value)
+  setShowCategory(e) {
+    this.transactions.setShowCategory(e.target.value)
   }
 
   toggleTransaction(rowNumber, columndId) {
@@ -88,22 +91,51 @@ class Transactions extends React.Component {
   render() {
     return (
       <Row>
-        <Col span={15}>
-          Unconfirmed <span>{this.transactions.amountUnconfirmed.toFixed(6)}</span> XVC
+        <Col span={6}>
+          <div className='transactionsShowCategory'>
+            <RadioGroup defaultValue="all" onChange={this.setShowCategory}>
+              <RadioButton value="all">All</RadioButton>
+              <RadioButton value="receive">Received</RadioButton>
+              <RadioButton value="send">Sent</RadioButton>
+              <RadioButton value="generate">Generated</RadioButton>
+            </RadioGroup>
+          </div>
+        </Col>
 
-          {
-            this.wallet.stake === 0 &&
-            (
-              <span>Staking <span>{this.wallet.stake.toFixed(6)}</span> XVC</span>
-            )
-          }
-
-          {
-            this.wallet.newmint === 0 &&
-            (
-              <span>Immature <span>{this.wallet.newmint.toFixed(6)}</span> XVC</span>
-            )
-          }
+        <Col span={9}>
+          <Row>
+            {
+              this.transactions.amountUnconfirmed === 0 &&
+              (
+                <Col span={8}>
+                  <p>Unconfirmed</p>
+                  <p><span>{this.transactions.amountUnconfirmed.toFixed(6)}</span> XVC</p>
+                </Col>
+              )
+            }
+            {
+              this.wallet.stake === 0 &&
+              (
+                <Col span={8}>
+                  <div>
+                    <p>Staking</p>
+                    <p><span>{this.wallet.stake.toFixed(6)}</span> XVC</p>
+                  </div>
+                </Col>
+              )
+            }
+            {
+              this.wallet.newmint === 0 &&
+              (
+                <Col span={8}>
+                  <div>
+                    <p>Immature</p>
+                    <p><span>{this.wallet.newmint.toFixed(6)}</span> XVC</p>
+                  </div>
+                </Col>
+              )
+            }
+          </Row>
         </Col>
 
         <Col span={3}>
@@ -118,7 +150,7 @@ class Transactions extends React.Component {
 
         <Col span={24}>
           <div id='transactions' className='shadow'>
-            <Table rowsCount={this.transactions.filtered.length} rowHeight={50} headerHeight={50} width={1140} height={300}>
+            <Table rowsCount={this.transactions.filtered.length} rowHeight={50} headerHeight={50} width={1140} height={447}>
               <Column
                 header={<Cell>Date</Cell>}
                 cell={<CreateCell data={this.transactions.filtered} column='time' />}

@@ -1,10 +1,8 @@
 import React from 'react'
 import { hashHistory, IndexLink, Link } from 'react-router'
 import { inject, observer } from 'mobx-react'
-import { Button, Col, Icon, Menu, Popover, Row, Tooltip } from 'antd'
-
-/** MobX DevTools. */
 import DevTools from 'mobx-react-devtools'
+import { Button, Col, Icon, Menu, Popover, Row, Tooltip } from 'antd'
 
 /** Dialog components. */
 import DaemonStatus from './DaemonStatus'
@@ -13,18 +11,9 @@ import WalletEncrypt from './WalletEncrypt'
 import WalletLock from './WalletLock'
 import WalletUnlock from './WalletUnlock'
 
-/** Inject MobX stores to props. */
-@inject('rates')
-@inject('transactions')
-@inject('wallet')
-@inject('walletEncrypt')
-@inject('walletLock')
-@inject('walletUnlock')
+/** Make the component reactive and inject MobX stores. */
+@observer(['rates', 'transactions', 'wallet', 'walletEncrypt', 'walletLock', 'walletUnlock'])
 
-/** Make the component reactive. */
-@observer
-
-/** Root component class. */
 class Root extends React.Component {
   constructor(props) {
     super(props)
@@ -83,19 +72,17 @@ class Root extends React.Component {
           <Row>
             <Col span={1}>
               <div id='logo'>
-                <Tooltip
+                <Popover
+                  trigger='click'
                   placement='bottomLeft'
-                  title={
-                    <div>
-                      <p>Vcash {this.wallet.version}</p>
-                      <p>UI {process.env.npm_package_version}</p>
-                      <br />
-                      <p>Wallet {this.wallet.walletversion}</p>
+                  content={
+                    <div style={{width:'205px'}}>
+                      <p>Vcash {this.wallet.version} &nbsp;&bull;&nbsp; Wallet {this.wallet.walletversion} &nbsp;&bull;&nbsp; UI {process.env.npm_package_version}</p>
                     </div>
                   }
                 >
                   <img src='./assets/images/logoGrey.png' />
-                </Tooltip>
+                </Popover>
               </div>
             </Col>
             <Col span={9}>
