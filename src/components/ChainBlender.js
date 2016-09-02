@@ -50,13 +50,13 @@ class ChainBlender extends React.Component {
             !this.wallet.isLocked &&
             (
               <Row style={{width:'280px'}}>
-                <Col span={10}>
+                <Col span={12}>
                   <p>Non-denominated</p>
                   <p>Denominated</p>
                   <p>Blended</p>
                 </Col>
 
-                <Col span={14}>
+                <Col span={12}>
                   <p><span>{this.chainBlender.nondenominatedbalance.toFixed(6)}</span> XVC</p>
                   <p><span>{this.chainBlender.denominatedbalance.toFixed(6)}</span> XVC</p>
                   <p><span>{this.chainBlender.blendedbalance.toFixed(6)}</span> XVC ({this.chainBlender.blendedpercentage.toFixed(2)}%)</p>

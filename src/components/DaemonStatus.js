@@ -18,7 +18,7 @@ class DaemonStatus extends React.Component {
         modal={true}
         open={this.daemon.isRunning === null || this.daemon.isRunning ? false : true}
       >
-        To continue using the GUI please re-start the Vcash daemon.
+        To continue using the UI please re-start the Vcash daemon.
       </Dialog>
     )
   }
