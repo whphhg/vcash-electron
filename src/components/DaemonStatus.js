@@ -1,9 +1,9 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
-import Dialog from 'material-ui/Dialog'
+import { Modal } from 'antd'
 
-@inject('daemon')
-@observer
+/** Make the component reactive and inject MobX stores. */
+@observer(['daemon'])
 
 class DaemonStatus extends React.Component {
   constructor(props) {
@@ -13,13 +13,13 @@ class DaemonStatus extends React.Component {
 
   render() {
     return (
-      <Dialog
-        title='Daemon not running!'
-        modal={true}
-        open={this.daemon.isRunning === null || this.daemon.isRunning ? false : true}
+      <Modal title='Daemon not running!'
+        footer=''
+        closable={false}
+        visible={this.daemon.isRunning === null || this.daemon.isRunning ? false : true}
       >
         To continue using the UI please re-start the Vcash daemon.
-      </Dialog>
+      </Modal>
     )
   }
 }
