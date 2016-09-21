@@ -56,7 +56,6 @@ import transaction from './stores/transaction'
 import transactions from './stores/transactions'
 import wallet from './stores/wallet'
 import walletEncrypt from './stores/walletEncrypt'
-import walletLock from './stores/walletLock'
 import walletUnlock from './stores/walletUnlock'
 import watchOnly from './stores/watchOnly'
 import watchOnlyAdd from './stores/watchOnlyAdd'
@@ -70,7 +69,7 @@ const stores = {
   rates, rewardCalculator,
   send,
   transaction, transactions,
-  wallet, walletEncrypt, walletLock, walletUnlock, watchOnly, watchOnlyAdd
+  wallet, walletEncrypt, walletUnlock, watchOnly, watchOnlyAdd
 }
 
 render(
