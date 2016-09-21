@@ -2,19 +2,13 @@ import React from 'react'
 import { inject, observer } from 'mobx-react'
 import { Switch, Icon, Row, Col, Popover, Button } from 'antd'
 
-/** Inject MobX stores to props. */
-@inject('chainBlender')
-@inject('wallet')
-
-/** Make the component reactive. */
-@observer
+/** Make the component reactive and inject MobX stores. */
+@observer(['chainBlender', 'wallet'])
 
 /** ChainBlender component class. */
 class ChainBlender extends React.Component {
   constructor(props) {
     super(props)
-
-    /** Assign stores to component. */
     this.chainBlender = props.chainBlender
     this.wallet = props.wallet
 

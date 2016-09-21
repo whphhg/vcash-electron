@@ -4,8 +4,8 @@ import { v4 } from 'node-uuid'
 import { Map, Marker, Popup, TileLayer } from 'react-leaflet'
 import { icon } from 'leaflet'
 
-@inject('network')
-@observer
+/** Make the component reactive and inject MobX stores. */
+@observer(['network'])
 
 class NetworkGeoMap extends React.Component {
   constructor(props) {
