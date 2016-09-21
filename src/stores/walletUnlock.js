@@ -6,52 +6,39 @@ import wallet from './wallet'
 
 /** WalletUnlock store class. */
 class WalletUnlock {
+  @observable modalOpen
   @observable passphrase
-  @observable button
-  @observable dialog
-  @observable snackbar
   @observable errors
 
   /**
    * Prepare observable variables.
    * @constructor
+   * @property {boolean} modalOpen - Modal status.
    * @property {string} passphrase - Entered passphrase.
-   * @property {boolean} button - Button enabled status.
-   * @property {boolean} dialog - Dialog open status.
-   * @property {boolean} snackbar - Snackbar open status.
    * @property {object} errors - Error status.
-   * @property {boolean} errors.incorrect - Incorrect passphrase error.
-   * @property {boolean} errors.missing - Missing passphrase error.
+   * @property {boolean} errors.incorrect - Incorrect passphrase.
    */
   constructor() {
+    this.modalOpen = false
     this.passphrase = ''
-    this.button = false
-    this.dialog = false
-    this.snackbar = false
     this.errors = {
-      incorrect: false,
-      missing: false
+      incorrect: false
     }
   }
 
   /**
-   * Set error and button.
+   * Set error.
    * @function setError
    * @param {string} error - Error key.
    */
-  @action setError(error) {
-    let button = true
-
+  @action setError(error = '') {
     for (let i in this.errors) {
       if (error === i) {
         this.errors[i] = true
-        button = false
       } else {
         this.errors[i] = false
       }
     }
-
-    this.button = button
   }
 
   /**
@@ -59,39 +46,26 @@ class WalletUnlock {
    * @function setPassphrase
    * @param {string} passphrase - Entered passphrase.
    */
-  @action setPassphrase(passphrase) {
+  @action setPassphrase(passphrase = '') {
     this.passphrase = passphrase
 
-    if (passphrase.length === 0) {
-      if (this.errors.missing === false) {
-        this.setError('missing')
-      }
-    } else {
-      if (this.errors.missing || this.errors.incorrect) {
-        this.setError('')
-      }
+    /** Clear previous error. */
+    if (this.errors.incorrect) {
+      this.setError()
     }
   }
 
   /**
-   * Toggle dialog.
-   * @function toggleDialog
+   * Toggle modal.
+   * @function toggleModal
    */
-  @action toggleDialog() {
-    this.dialog = !this.dialog
+  @action toggleModal() {
+    this.modalOpen = !this.modalOpen
 
     /** Reset passphrase on opening. */
-    if (this.dialog) {
-      this.setPassphrase('')
+    if (this.modalOpen) {
+      this.setPassphrase()
     }
-  }
-
-  /**
-   * Toggle snackbar.
-   * @function toggleSnackbar
-   */
-  @action toggleSnackbar() {
-    this.snackbar = !this.snackbar
   }
 
   /**
@@ -108,8 +82,7 @@ class WalletUnlock {
               return this.setError('incorrect')
           }
         } else {
-          this.toggleDialog()
-          this.toggleSnackbar()
+          this.toggleModal()
           wallet.lockCheck()
         }
       }

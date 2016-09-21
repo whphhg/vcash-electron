@@ -12,12 +12,19 @@ header nav { margin-top: 5px; margin-right: 14px; float: right; }
 header nav i { vertical-align: text-bottom; }
 header p { padding: 0px; margin: 0px; line-height: 18px; font-weight: 500; }
 header p span { font-weight: 600; text-decoration: none; }
-header button { margin-left: 2px; }
+header button { margin-left: 2px; margin-top: 13px; }
 main #transactions { min-height: 457px; padding-bottom: 10px; }
 main #filterTransactions { margin: 10px; }
 main #chainBlender { overflow: hidden; }
 main #chainBlender button { margin-top: 10px; float: right; }
 main .transactionsShowCategory { margin-top: 10px; margin-left: 10px; }
+
+.error-text { color: red; margin-top: 10px; }
+.input-label { vertical-align: 4px; padding-left: 10px; }
+.input-spacing { margin-top: 8px; }
+
+main #daemonStatus { position: fixed; top: 0; left: 0; background: rgba(0,0,0,0.6); z-index: 5; width: 100%; height: 100%; display: none; }
+
 
 /** Scrollbar */
 ::-webkit-scrollbar { -webkit-appearance: none; width: 7px; }
@@ -29,7 +36,7 @@ main .transactionsShowCategory { margin-top: 10px; margin-left: 10px; }
 .ant-menu-horizontal { border: none; }
 .ant-menu-horizontal > .ant-menu-item:hover, .ant-menu-horizontal > .ant-menu-item-selected { border-bottom: 2px solid #FFFFFF;color: #FFFFFF; }
 .ant-btn:hover, .ant-btn:focus { color: #B71C1C; background-color: #FFFFFF; border-color: #B71C1C; }
-.ant-btn-primary { color: #FFFFFF; background-color: #43464B; border-color: #43464B; margin-top: 13px; min-height: 30px; }
+.ant-btn-primary { color: #FFFFFF; background-color: #43464B; border-color: #43464B; min-height: 30px; }
 .ant-btn-primary i { vertical-align: middle; }
 .ant-btn-primary:hover, .ant-btn-primary:focus { color: #B71C1C; background-color: #43464B; border-color: #43464B; font-weight: bold; }
 .ant-input:focus { border-color: #B71C1C; outline: 0; box-shadow: 0 0 0 2px rgba(183, 28, 28, 0.2); }
