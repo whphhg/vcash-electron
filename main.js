@@ -1,4 +1,5 @@
 'use strict'
+
 import { app, BrowserWindow } from 'electron'
 
 /**
@@ -26,7 +27,7 @@ app.on('ready', () => {
     icon: __dirname + '/src/assets/images/logoRed.png'
   })
 
-  /** Hide browser's menu bar. */
+  /** Hide browsers menu bar. */
   mainWindow.setMenu(null)
 
   /** Load the application starting point. */
