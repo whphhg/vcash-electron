@@ -8,26 +8,22 @@ import { Button, Col, Icon, Menu, Popover, Row, Tooltip } from 'antd'
 import DaemonStatus from './DaemonStatus'
 import Transaction from './Transaction'
 import WalletEncrypt from './WalletEncrypt'
-import WalletLock from './WalletLock'
 import WalletUnlock from './WalletUnlock'
 
 /** Make the component reactive and inject MobX stores. */
-@observer(['rates', 'transactions', 'wallet', 'walletEncrypt', 'walletLock', 'walletUnlock'])
+@observer(['rates', 'transactions', 'wallet', 'walletEncrypt', 'walletUnlock'])
 
 class Root extends React.Component {
   constructor(props) {
     super(props)
-
-    /** Set active nav menu item. */
-    this.activeRoute = '/'
-
-    /** Assign stores to component. */
     this.rates = props.rates
     this.transactions = props.transactions
     this.wallet = props.wallet
     this.walletEncrypt = props.walletEncrypt
-    this.walletLock = props.walletLock
     this.walletUnlock = props.walletUnlock
+
+    /** Set active menu item. */
+    this.activeRoute = '/'
 
     /** Bind functions early. */
     this.lock = this.lock.bind(this)
@@ -37,15 +33,15 @@ class Root extends React.Component {
   }
 
   lock() {
-    this.walletLock.lock()
+    this.wallet.lock()
   }
 
   toggleEncrypt() {
-    this.walletEncrypt.toggleDialog()
+    this.walletEncrypt.toggleModal()
   }
 
   toggleUnlock() {
-    this.walletUnlock.toggleDialog()
+    this.walletUnlock.toggleModal()
   }
 
   setRoute(e) {
@@ -63,7 +59,6 @@ class Root extends React.Component {
         {process.env.NODE_ENV === 'dev' && <DevTools />}
 
         <WalletEncrypt />
-        <WalletLock />
         <WalletUnlock />
         <DaemonStatus />
         <Transaction />
@@ -89,7 +84,7 @@ class Root extends React.Component {
               <div id='balance'>
                 <p>Balance</p>
                 <Row>
-                  <Col span={8}><p><span>{this.wallet.balance}</span> XVC</p></Col>
+                  <Col span={8}><p><span>{(this.wallet.balance).toFixed(6)}</span> XVC</p></Col>
                   <Col span={8}><p><span>{(this.wallet.balance * this.rates.average).toFixed(8)}</span> BTC</p></Col>
                   <Col span={8}><p><span>{(this.wallet.balance * this.rates.average * this.rates.local).toFixed(2)}</span> {this.rates.localCurrency}</p></Col>
                 </Row>

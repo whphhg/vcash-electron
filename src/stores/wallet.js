@@ -1,6 +1,9 @@
 import { action, computed, observable } from 'mobx'
 import rpc from '../utilities/rpc'
 
+/** Required store instances. */
+import chainBlender from './chainBlender'
+
 /** Wallet store class. */
 class Wallet {
   @observable balance
@@ -89,6 +92,22 @@ class Wallet {
       }
 
       setTimeout(() => { this.info() }, 10 * 1000)
+    })
+  }
+
+  /**
+   * Lock wallet.
+   * @function lock
+   */
+  lock() {
+    rpc({ method: 'walletlock', params: [] }, (response) => {
+      if (response !== null) {
+        if (chainBlender.isActivated) {
+          chainBlender.setIsActivated(false)
+        }
+
+        this.lockCheck()
+      }
     })
   }
 

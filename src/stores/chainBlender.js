@@ -3,7 +3,7 @@ import rpc from '../utilities/rpc'
 
 /** Required store instances. */
 import daemon from './daemon'
-import wallet from './wallet'
+//import wallet from './wallet'
 
 /** ChainBlender store class. */
 class ChainBlender {
@@ -71,7 +71,7 @@ class ChainBlender {
    * @function info
    */
   info() {
-    if (wallet.isLocked === false || daemon.isRunning === null) {
+    if (daemon.isRunning === null) {
       rpc({ method: 'chainblender', params: ['info'] }, (response) => {
         if (response !== null) {
           if (response.hasOwnProperty('result')) {
