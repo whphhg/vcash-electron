@@ -35,7 +35,7 @@
     "node-uuid": "1.4.7",
     "react": "15.3.2",
     "react-dom": "15.3.2",
-    "react-leaflet": "0.12.2",
+    "react-leaflet": "0.12.3",
     "react-router": "2.8.1",
     "react-tap-event-plugin": "^1.0.0",
     "recharts": "0.14.2"
@@ -51,7 +51,7 @@
     "electron-compile": "3.3.5",
     "electron-compilers": "3.1.6",
     "electron-packager": "8.0.0",
-    "electron-prebuilt": "1.4.0",
+    "electron-prebuilt": "1.4.1",
     "mobx-react-devtools": "4.2.6",
     "regenerator-runtime": "0.9.5"
   }
