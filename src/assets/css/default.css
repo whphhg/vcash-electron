@@ -8,23 +8,23 @@ header { background: #B71C1C; color: #FFFFFF; overflow: hidden; }
 header #logo { margin: 10px; width: 36px; height: 36px; }
 header #logo img { width: 36px; height: 36px; }
 header #balance { margin-top: 10px; margin-left: 14px; }
+header #indicators { margin-top: 27px; text-align: right; }
 header nav { margin-top: 5px; margin-right: 14px; float: right; }
 header nav i { vertical-align: text-bottom; }
 header p { padding: 0px; margin: 0px; line-height: 18px; font-weight: 500; }
 header p span { font-weight: 600; text-decoration: none; }
 header button { margin-left: 2px; margin-top: 13px; }
-main #transactions { min-height: 457px; padding-bottom: 10px; }
-main #filterTransactions { margin: 10px; }
-main #chainBlender { overflow: hidden; }
-main #chainBlender button { margin-top: 10px; float: right; }
-main .transactionsShowCategory { margin-top: 10px; margin-left: 10px; }
+main #transactions { min-height: 457px; padding-bottom: 10px; margin-left: 10px; }
+main #network { min-height: 273px; padding-bottom: 10px; margin-left: 10px; }
+main .margin-10 { margin: 10px; }
 
 .error-text { color: red; margin-top: 10px; }
 .input-label { vertical-align: 4px; padding-left: 10px; }
 .input-spacing { margin-top: 8px; }
 
-main #daemonStatus { position: fixed; top: 0; left: 0; background: rgba(0,0,0,0.6); z-index: 5; width: 100%; height: 100%; display: none; }
-
+/** Shadows */
+.shadow { box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12); }
+.shadow-2 { box-shadow: 0 1px 0px 0 rgba(0, 0, 0, 0.14), 0 2px 0px 0px rgba(0, 0, 0, 0.2), 0 4px 1px 0 rgba(0, 0, 0, 0.12); }
 
 /** Scrollbar */
 ::-webkit-scrollbar { -webkit-appearance: none; width: 7px; }
@@ -46,10 +46,14 @@ main #daemonStatus { position: fixed; top: 0; left: 0; background: rgba(0,0,0,0.
 .ant-radio-button-wrapper-checked { background: #FFFFFF; border-color: #B71C1C; color: #B71C1C; box-shadow: -1px 0 0 0 #B71C1C; }
 .ant-radio-button-wrapper-checked:hover { border-color: #B71C1C; box-shadow: -1px 0 0 0 #B71C1C; color: #B71C1C;}
 
-
-.shadow { box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12); }
-
 /** Material icons */
+.material-icons { cursor: pointer; }
 .material-icons.md-16 { font-size: 16px; }
 .material-icons.md-18 { font-size: 18px; }
 .material-icons.md-20 { font-size: 20px; }
+
+.font-weight-500 {
+  font-weight:500;
+  border-bottom: 1px dotted #000;
+  text-decoration: none;
+}
