@@ -35,7 +35,7 @@ class WalletEncrypt extends React.Component {
 
   render() {
     return (
-      <Modal title='Encrypt this wallet'
+      <Modal title='Encrypt the wallet'
         visible={this.walletEncrypt.modalOpen}
         okText='Encrypt'
         onOk={this.encrypt}

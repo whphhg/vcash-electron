@@ -30,7 +30,7 @@ class WalletUnlock extends React.Component {
 
   render() {
     return (
-      <Modal title='Unlock this wallet'
+      <Modal title='Unlock the wallet'
         visible={this.walletUnlock.modalOpen}
         okText='Unlock'
         onOk={this.unlock}

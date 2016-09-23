@@ -35,7 +35,6 @@ injectTapEventPlugin()
 /** Main UI components. */
 import Root from './components/Root'
 import Transactions from './components/Transactions'
-import AddressBook from './components/AddressBook'
 import Network from './components/Network'
 import Maintenance from './components/Maintenance'
 import Send from './components/Send'
@@ -57,8 +56,6 @@ import transactions from './stores/transactions'
 import wallet from './stores/wallet'
 import walletEncrypt from './stores/walletEncrypt'
 import walletUnlock from './stores/walletUnlock'
-import watchOnly from './stores/watchOnly'
-import watchOnlyAdd from './stores/watchOnlyAdd'
 
 const stores = {
   addressBook, addressNew,
@@ -69,7 +66,7 @@ const stores = {
   rates, rewardCalculator,
   send,
   transaction, transactions,
-  wallet, walletEncrypt, walletUnlock, watchOnly, watchOnlyAdd
+  wallet, walletEncrypt, walletUnlock
 }
 
 render(
@@ -79,7 +76,6 @@ render(
         <Route path='/' component={Root}>
           <IndexRoute component={Transactions} />
           <Route path='send' component={Send} />
-          <Route path='receive' component={AddressBook} />
           <Route path='network' component={Network} />
           <Route path='maintenance' component={Maintenance} />
         </Route>
