@@ -215,7 +215,7 @@ class Network {
                 process.env.NODE_ENV === 'dev' && console.info('HTTPS: GeoIp lookup', ip, '('+i+').')
                 resolve(response)
               } else {
-                reject('')
+                reject(ip)
               }
             })
           }, i * 400)
@@ -225,10 +225,12 @@ class Network {
       Promise.all(promises)
         .then((geoData) => {
           geoData = geoData.reduce((geoData, data) => {
-            geoData[data.ip] = {
-              country: data.country.name,
-              lon: data.location.longitude,
-              lat: data.location.latitude
+            if (data !== '') {
+              geoData[data.ip] = {
+                country: data.country.name,
+                lon: data.location.longitude,
+                lat: data.location.latitude
+              }
             }
 
             return geoData

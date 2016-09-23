@@ -13,7 +13,7 @@ const geoIp = (ip, callback) => {
         return callback(data)
       }
 
-      return callback(null)
+      return callback('')
     })
     .catch((error) => {
       process.env.NODE_ENV === 'dev' && console.error('https://geoip.nekudo.com/api/' + ip, error.message)

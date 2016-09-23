@@ -1,26 +1,17 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
+import { Table, Column, Cell } from 'fixed-data-table'
+import { Button, Col, Row } from 'antd'
 import { v4 } from 'node-uuid'
 import moment from 'moment'
 
-import Paper from 'material-ui/Paper'
-import AddressIcon from 'material-ui/svg-icons/av/library-books'
-import AddressIpIcon from 'material-ui/svg-icons/hardware/computer'
-import BlockhashIcon from 'material-ui/svg-icons/action/extension'
-import CollateralIcon from 'material-ui/svg-icons/action/loyalty'
-import PeersIcon from 'material-ui/svg-icons/action/settings-input-antenna'
-import PortIcon from 'material-ui/svg-icons/av/hearing'
-import VerifiedUserIcon from 'material-ui/svg-icons/action/verified-user'
-import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table'
-import { Tab, Tabs } from 'material-ui/Tabs'
-
+/** Required components. */
+import TableCell from './TableCell'
 import NetworkGeoMap from './NetworkGeoMap'
 import RewardCalculator from './RewardCalculator'
-import RewardCalculatorChart from './RewardCalculatorChart'
 
-@inject('network')
-@inject('wallet')
-@observer
+/** Make the component reactive and inject MobX stores. */
+@observer(['network', 'wallet'])
 
 class Network extends React.Component {
   constructor(props) {
@@ -32,96 +23,92 @@ class Network extends React.Component {
   render() {
     return (
       <div>
-        <NetworkGeoMap />
+        <Row>
+          <Col span={8}>
+            <div className='margin-10'>
+              <i className='material-icons md-20' style={{float:'left'}}>computer</i>
+              <p style={{float:'left', paddingLeft:'8px', margin:'0px'}}>
+                <span className='font-weight-500'>{this.network.incentive.networkstatus === 'ok' ? 'Connectable' : 'Firewalled'}</span> node at {this.network.ip}:<span className='font-weight-500'>{this.network.port}</span>
+              </p>
+            </div>
+            <div style={{clear:'both'}}></div>
+          </Col>
+          <Col span={6}>
+            <div className='margin-10'>
+              <i className='material-icons md-20' style={{float:'left'}}>settings_input_antenna</i>
+              <p style={{float:'left', paddingLeft:'8px', margin:'0px'}}>
+                <span className='font-weight-500'>{this.network.tcp} TCP</span> and <span className='font-weight-500'>{this.network.udp} UDP</span> connections
+              </p>
+            </div>
+            <div style={{clear:'both'}}></div>
+          </Col>
+          <Col span={6}>
+            <div className='margin-10'>
+              <i className='material-icons md-20' style={{float:'left'}}>extension</i>
+              <p style={{float:'left', paddingLeft:'8px', margin:'0px'}}>
+                On block <span className='font-weight-500'>#{this.wallet.blocks}</span>
+              </p>
+            </div>
+            <div style={{clear:'both'}}></div>
+          </Col>
+          <Col span={4}>
+            <div className='margin-10' style={{textAlign:'right'}}>
+              <RewardCalculator />
+            </div>
+          </Col>
+        </Row>
 
-        <div className='container-fluid'>
-          <div className='row'>
-            <Tabs inkBarStyle={{background:'#FFFFFF'}}>
-              <Tab label='Network information'>
-                <div className='col-md-4'>
-                  <h5>Connection information</h5>
-                  <AddressIpIcon style={{height:'20px', float:'left'}} />
-                  <p style={{float:'left', paddingLeft:'8px', margin:'0px'}}>
-                    Your IP address is <span className='font-weight-500'>{this.network.ip}</span>
-                  </p>
-                  <div style={{clear:'both'}}></div>
+        <Row>
+          <Col span={24}>
+            <div className='shadow-2'>
+              <div id='network'>
+                <Table rowsCount={this.network.connectedNodes.length} rowHeight={50} headerHeight={50} width={1130} height={263}>
+                  <Column
+                    header={<Cell>Connected peers</Cell>}
+                    cell={<TableCell data={this.network.connectedNodes} column='addr' />}
+                    width={200}
+                  />
+                  <Column
+                    header={<Cell>Country</Cell>}
+                    cell={<TableCell data={this.network.connectedNodes} column='country' />}
+                    width={300}
+                  />
+                  <Column
+                    header={<Cell>Version</Cell>}
+                    cell={<TableCell data={this.network.connectedNodes} column='subverClean' />}
+                    width={110}
+                  />
+                  <Column
+                    header={<Cell>OS</Cell>}
+                    cell={<TableCell data={this.network.connectedNodes} column='os' />}
+                    width={110}
+                  />
+                  <Column
+                    header={<Cell>Connected</Cell>}
+                    cell={<TableCell data={this.network.connectedNodes} column='conntime' />}
+                    width={200}
+                  />
+                  <Column
+                    header={<Cell>Starting height</Cell>}
+                    cell={<TableCell data={this.network.connectedNodes} column='startingheight' />}
+                    width={130}
+                  />
+                  <Column
+                    header={<Cell>Ban score</Cell>}
+                    cell={<TableCell data={this.network.connectedNodes} column='banscore' />}
+                    width={80}
+                  />
+                </Table>
+              </div>
+            </div>
+          </Col>
+        </Row>
 
-                  <PortIcon style={{height:'20px', float:'left'}} />
-                  <p style={{float:'left', paddingLeft:'8px', margin:'0px'}}>
-                    Listening on <span className='font-weight-500'>{this.network.incentive.networkstatus === 'ok' ? 'open' : 'closed'}</span> port <span className='font-weight-500'>{this.network.port}</span>
-                  </p>
-                  <div style={{clear:'both'}}></div>
-
-                  <PeersIcon style={{height:'20px', float:'left'}} />
-                  <p style={{float:'left', paddingLeft:'8px', margin:'0px'}}>
-                    <span className='font-weight-500'>{this.network.tcp} TCP</span> and <span className='font-weight-500'>{this.network.udp} UDP</span> connections
-                  </p>
-                  <div style={{clear:'both'}}></div>
-
-                  <BlockhashIcon style={{height:'20px', float:'left'}} />
-                  <p style={{float:'left', paddingLeft:'8px', margin:'0px'}}>
-                    On block <span className='font-weight-500'>#{this.wallet.blocks}</span>
-                  </p>
-                  <div style={{clear:'both'}}></div>
-
-                  <h5 style={{marginTop:'20px'}}>Incentive information</h5>
-                  <AddressIcon style={{height:'20px', float:'left'}} />
-                  <p style={{float:'left', paddingLeft:'8px', margin:'0px'}}>
-                    Address <span className='font-weight-500'>{this.network.incentive.walletaddress === '' ? 'will be revealed after unlocking' : this.network.incentive.walletaddress}</span>
-                  </p>
-                  <div style={{clear:'both'}}></div>
-
-                  <CollateralIcon style={{height:'20px', float:'left'}} />
-                  <p style={{float:'left', paddingLeft:'8px', margin:'0px'}}>
-                    Valid collateral <span className='font-weight-500'>{this.network.incentive.votecandidate === true ? 'of ' + this.network.incentive.collateralbalance :'not'}</span> detected
-                  </p>
-                  <div style={{clear:'both'}}></div>
-
-                  <VerifiedUserIcon style={{height:'20px', float:'left'}} />
-                  <p style={{float:'left', paddingLeft:'8px', margin:'0px'}}>
-                    <span className='font-weight-500'>You {this.network.incentive.votecandidate === true ? 'are' : 'are not'}</span> a vote candidate</p>
-                  <div style={{clear:'both'}}></div>
-                </div>
-                <div className='col-md-8' style={{marginTop:'10px'}}>
-                  <Table height='192px' fixedHeader={true} showCheckboxes={false}>
-                    <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-                      <TableRow style={{fontSize:'13px'}}>
-                        <TableHeaderColumn style={{width:'21%'}}>Connected peers</TableHeaderColumn>
-                        <TableHeaderColumn style={{width:'18%'}}>Country</TableHeaderColumn>
-                        <TableHeaderColumn style={{width:'22%'}}>Version and OS</TableHeaderColumn>
-                        <TableHeaderColumn style={{width:'17%'}}>Connected</TableHeaderColumn>
-                        <TableHeaderColumn style={{width:'13%'}}>Starting height</TableHeaderColumn>
-                        <TableHeaderColumn style={{width:'9%'}}>Ban score</TableHeaderColumn>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody showRowHover={true} stripedRows={true} displayRowCheckbox={false}>
-                      {
-                        this.network.connectedNodes.map((peer) => (
-                          <TableRow key={v4()} displayBorder={false}>
-                            <TableRowColumn style={{width:'21%'}}>{peer.addr}</TableRowColumn>
-                            <TableRowColumn style={{width:'18%'}}>{peer.country}</TableRowColumn>
-                            <TableRowColumn style={{width:'22%'}}>{peer.subverClean} on {peer.os}</TableRowColumn>
-                            <TableRowColumn style={{width:'17%'}}>{moment(peer.conntime).fromNow()}</TableRowColumn>
-                            <TableRowColumn style={{width:'13%'}}>{peer.startingheight}</TableRowColumn>
-                            <TableRowColumn style={{width:'9%'}}>{peer.banscore}/100</TableRowColumn>
-                          </TableRow>
-                        ))
-                      }
-                    </TableBody>
-                  </Table>
-                </div>
-              </Tab>
-              <Tab label='Block reward calculator'>
-                <div className='col-md-4'>
-                  <RewardCalculator />
-                </div>
-                <div className='col-md-8'>
-                  <RewardCalculatorChart />
-                </div>
-              </Tab>
-            </Tabs>
-          </div>
-        </div>
+        <Row>
+          <Col span={24}>
+            <NetworkGeoMap />
+          </Col>
+        </Row>
       </div>
     )
   }
