@@ -38,7 +38,7 @@
     "react-leaflet": "0.12.3",
     "react-router": "2.8.1",
     "react-tap-event-plugin": "^1.0.0",
-    "recharts": "0.14.2"
+    "recharts": "0.15.0"
   },
   "devDependencies": {
     "babel-core": "6.14.0",
