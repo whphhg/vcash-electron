@@ -16,15 +16,14 @@ import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowCol
 import AddressNew from './AddressNew'
 import KeyDump from './KeyDump'
 import KeyImport from './KeyImport'
-import WatchOnly from './WatchOnly'
 
 @inject('addressBook')
 @inject('addressNew')
+@inject('network')
 @inject('keyDump')
 @inject('keyImport')
 @inject('rates')
 @inject('wallet')
-@inject('watchOnlyAdd')
 @observer
 
 class AddressBook extends React.Component {
@@ -34,15 +33,14 @@ class AddressBook extends React.Component {
     this.addressNew = props.addressNew
     this.keyDump = props.keyDump
     this.keyImport = props.keyImport
+    this.network = props.network
     this.rates = props.rates
     this.wallet = props.wallet
-    this.watchOnlyAdd = props.watchOnlyAdd
 
     this.setShowAccount = this.setShowAccount.bind(this)
     this.toggleAddressNew = this.toggleAddressNew.bind(this)
     this.toggleKeyDump = this.toggleKeyDump.bind(this)
     this.toggleKeyImport = this.toggleKeyImport.bind(this)
-    this.toggleWatchOnlyAdd = this.toggleWatchOnlyAdd.bind(this)
   }
 
   setShowAccount(event, index, value) {
@@ -61,10 +59,6 @@ class AddressBook extends React.Component {
     this.keyImport.toggleDialog()
   }
 
-  toggleWatchOnlyAdd() {
-    this.watchOnlyAdd.toggleDialog()
-  }
-
   render() {
     return (
       <div>
@@ -75,6 +69,14 @@ class AddressBook extends React.Component {
         <div className='container-fluid'>
           <div className='row'>
             <div className='col-md-6'>
+
+              <h5 style={{marginTop:'20px'}}>Incentive information</h5>
+              <i className='material-icons md-20' style={{float:'left'}}>library_books</i>
+              <p style={{float:'left', paddingLeft:'8px', margin:'0px'}}>
+                Default wallet address <span className='font-weight-500'>{this.network.incentive.walletaddress === '' ? 'will be revealed after unlocking' : this.network.incentive.walletaddress}</span>
+              </p>
+              <div style={{clear:'both'}}></div>
+
               <div style={{float:'left'}}>
                 <SelectField
                   autoWidth={true}
@@ -136,17 +138,6 @@ class AddressBook extends React.Component {
                   }
                 </TableBody>
               </Table>
-            </div>
-            <div className='col-md-6'>
-              <div className='text-right' style={{marginTop:'30px'}}>
-                <FlatButton
-                  label='Add watch-only address'
-                  primary={true}
-                  onTouchTap={this.toggleWatchOnlyAdd}
-                />
-              </div>
-
-              <WatchOnly />
             </div>
           </div>
         </div>

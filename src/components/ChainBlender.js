@@ -22,49 +22,47 @@ class ChainBlender extends React.Component {
 
   render() {
     return (
-      <div id='chainBlender'>
-        <Popover
-          trigger='click'
-          placement='bottom'
-          title={
-            <Row>
-              <Col span={17}><span>ChainBlender</span></Col>
-              <Col span={7} style={{textAlign:'right'}}>
-                <Switch
-                  checked={this.chainBlender.isActivated}
-                  disabled={this.wallet.isLocked}
-                  onChange={this.toggle}
-                  checkedChildren={<Icon type='check' />}
-                  unCheckedChildren={<Icon type='cross' />}
-                />
+      <Popover
+        trigger='click'
+        placement='bottomLeft'
+        title={
+          <Row>
+            <Col span={17}><span>ChainBlender</span></Col>
+            <Col span={7} style={{textAlign:'right'}}>
+              <Switch
+                checked={this.chainBlender.isActivated}
+                disabled={this.wallet.isLocked}
+                onChange={this.toggle}
+                checkedChildren={<Icon type='check' />}
+                unCheckedChildren={<Icon type='cross' />}
+              />
+            </Col>
+          </Row>
+        }
+        content={
+          !this.wallet.isLocked &&
+          (
+            <Row style={{width:'280px'}}>
+              <Col span={12}>
+                <p>Non-denominated</p>
+                <p>Denominated</p>
+                <p>Blended</p>
+              </Col>
+
+              <Col span={12}>
+                <p><span>{this.chainBlender.nondenominatedbalance.toFixed(6)}</span> XVC</p>
+                <p><span>{this.chainBlender.denominatedbalance.toFixed(6)}</span> XVC</p>
+                <p><span>{this.chainBlender.blendedbalance.toFixed(6)}</span> XVC ({this.chainBlender.blendedpercentage.toFixed(2)}%)</p>
               </Col>
             </Row>
-          }
-          content={
-            !this.wallet.isLocked &&
-            (
-              <Row style={{width:'280px'}}>
-                <Col span={12}>
-                  <p>Non-denominated</p>
-                  <p>Denominated</p>
-                  <p>Blended</p>
-                </Col>
-
-                <Col span={12}>
-                  <p><span>{this.chainBlender.nondenominatedbalance.toFixed(6)}</span> XVC</p>
-                  <p><span>{this.chainBlender.denominatedbalance.toFixed(6)}</span> XVC</p>
-                  <p><span>{this.chainBlender.blendedbalance.toFixed(6)}</span> XVC ({this.chainBlender.blendedpercentage.toFixed(2)}%)</p>
-                </Col>
-              </Row>
-            ) ||
-            (
-              <p>Requires the wallet to be unlocked.</p>
-            )
-          }
-        >
-          <Button>ChainBlender</Button>
-        </Popover>
-      </div>
+          ) ||
+          (
+            <p>Requires the wallet to be unlocked.</p>
+          )
+        }
+      >
+        <Button>ChainBlender</Button>
+      </Popover>
     )
   }
 }
