@@ -38,7 +38,7 @@
     "react-leaflet": "0.12.3",
     "react-router": "2.8.1",
     "react-tap-event-plugin": "^1.0.0",
-    "recharts": "0.15.0"
+    "recharts": "0.14.2"
   },
   "devDependencies": {
     "babel-core": "6.14.0",
@@ -49,7 +49,7 @@
     "babel-preset-stage-0": "6.5.0",
     "babel-runtime": "6.11.6",
     "electron-compile": "3.3.5",
-    "electron-compilers": "3.1.6",
+    "electron-compilers": "4.0.0",
     "electron-packager": "8.0.0",
     "electron-prebuilt": "1.4.1",
     "mobx-react-devtools": "4.2.6",
