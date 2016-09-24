@@ -16,11 +16,14 @@ header p span { font-weight: 600; text-decoration: none; }
 header button { margin-left: 2px; margin-top: 13px; }
 main #transactions { min-height: 457px; padding-bottom: 10px; margin-left: 10px; }
 main #network { min-height: 273px; padding-bottom: 10px; margin-left: 10px; }
-main .margin-10 { margin: 10px; }
 
+/** Helpers */
+.margin-10 { margin: 10px; }
 .error-text { color: red; margin-top: 10px; }
 .input-label { vertical-align: 4px; padding-left: 10px; }
 .input-spacing { margin-top: 8px; }
+.toolbar-text { margin-top: 14px; }
+.font-weight-500 { font-weight: 500; border-bottom: 1px dotted #000; text-decoration: none; }
 
 /** Shadows */
 .shadow { box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12); }
@@ -51,9 +54,3 @@ main .margin-10 { margin: 10px; }
 .material-icons.md-16 { font-size: 16px; }
 .material-icons.md-18 { font-size: 18px; }
 .material-icons.md-20 { font-size: 20px; }
-
-.font-weight-500 {
-  font-weight:500;
-  border-bottom: 1px dotted #000;
-  text-decoration: none;
-}
