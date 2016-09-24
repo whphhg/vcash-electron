@@ -15,7 +15,7 @@ class RewardCalculator extends React.Component {
     this.rewardCalculator = props.rewardCalculator
     this.wallet = props.wallet
 
-    /** Calculate current block when loading component. */
+    /** Calculate current block when loading the component. */
     this.rewardCalculator.setBlock(this.wallet.blocks)
 
     /** Bind functions early. */
@@ -30,7 +30,7 @@ class RewardCalculator extends React.Component {
     return (
       <Popover
         trigger='click'
-        placement='bottomRight'
+        placement='bottomLeft'
         title={
           <Row>
             <Col span={2}>
@@ -59,19 +59,16 @@ class RewardCalculator extends React.Component {
               <p>Miner share</p>
               <p>Incentive share</p>
             </Col>
-
-            <Col span={6}>
+            <Col span={5}>
               <p><span className='font-weight-500'>{this.rewardCalculator.powReward}</span> XVC</p>
               <p><span className='font-weight-500'>{(this.rewardCalculator.powReward - this.rewardCalculator.incentiveReward).toFixed(6)}</span> XVC</p>
               <p><span className='font-weight-500'>{this.rewardCalculator.incentiveReward}</span> XVC</p>
             </Col>
-
             <Col span={2}>
               <p>&nbsp;</p>
               <p><span className='font-weight-500'>{100 - this.rewardCalculator.powPercent}</span>%</p>
               <p><span className='font-weight-500'>{this.rewardCalculator.powPercent}</span>%</p>
             </Col>
-
             <Col span={24}>
               <RewardCalculatorChart />
             </Col>

@@ -12,6 +12,20 @@ import rates from './rates'
  * TODO: Implement balance tracking of individual addresses and accounts.
  */
 
+/*
+    notification.config({
+      top: '60px'
+    })
+    notification.open({
+      message: 'Locked',
+      description: 'Wallet has been locked.'
+    })
+
+    notifications for incoming transactions
+
+     notification from 'antd'
+
+
 /** Transactions store class. */
 class Transactions {
   @observable amountUnconfirmed
@@ -139,7 +153,7 @@ class Transactions {
 
     transactions = transactions.reduce((transactions, tx) => {
       /** Show only transactions since provided date. */
-      if (tx.time > threshold) {
+      if (tx.time) { // > threshold) {
         /** Show only selected category or all categories. */
         if (tx.category === this.showCategory || this.showCategory === 'all') {
           /** Set local amount. */

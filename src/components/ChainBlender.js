@@ -48,7 +48,6 @@ class ChainBlender extends React.Component {
                 <p>Denominated</p>
                 <p>Blended</p>
               </Col>
-
               <Col span={12}>
                 <p><span>{this.chainBlender.nondenominatedbalance.toFixed(6)}</span> XVC</p>
                 <p><span>{this.chainBlender.denominatedbalance.toFixed(6)}</span> XVC</p>
