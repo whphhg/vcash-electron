@@ -27,18 +27,10 @@ class Addresses extends React.Component {
         <Row>
           <Col span={15}>
             <div className='margin-10'>
-              <div style={{float:'left'}}>
-                <AddressNew />
-              </div>
-              <div style={{float:'left', marginLeft:'10px'}}>
-                <KeyImport />
-              </div>
-              <div style={{float:'left', marginLeft:'10px'}}>
-                <KeyDump />
-              </div>
-              <div style={{float:'left', marginLeft:'10px'}}>
-                <WalletDump />
-              </div>
+              <div style={{float:'left'}}><AddressNew /></div>
+              <div style={{float:'left', marginLeft:'10px'}}><KeyImport /></div>
+              <div style={{float:'left', marginLeft:'10px'}}><KeyDump /></div>
+              <div style={{float:'left', marginLeft:'10px'}}><WalletDump /></div>
               <div style={{clear:'both'}}></div>
             </div>
           </Col>
@@ -56,7 +48,6 @@ class Addresses extends React.Component {
             <div style={{clear:'both'}}></div>
           </Col>
         </Row>
-
         <Row>
           <Col span={24}>
             <div style={{marginLeft:'10px'}}>

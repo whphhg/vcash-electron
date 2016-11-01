@@ -46,9 +46,8 @@ class AddressNew extends React.Component {
         <Row>
           <Col span={24}>
           {
-            this.addressNew.errors.invalidCharacters === true &&
-            (
-              <p className='error-text'>Only alphanumerals, dash and space are allowed.</p>
+            this.addressNew.errors.invalidCharacters === true && (
+              <p className='error-text'>You can enter only alphanumerals, dash and space.</p>
             )
           }
           </Col>
