@@ -1,126 +1,113 @@
-import { action, computed, observable } from 'mobx'
-import rpc from '../utilities/rpc'
+import { action, autorun, computed, observable } from 'mobx'
+import { notification } from 'antd'
 
 /** Required store instances. */
-import addressBook from './addressBook'
+import rpc from './rpc'
+import addresses from './addresses'
 
-/** WalletUnlock store class. */
+/** AddressNew store class. */
 class AddressNew {
   @observable account
-  @observable button
-  @observable dialog
-  @observable snackbar
+  @observable popover
   @observable errors
 
   /**
-   * Prepare observable variables.
    * @constructor
-   * @property {string} account - Account assigned to the new address.
-   * @property {boolean} button - Button enabled status.
-   * @property {boolean} dialog - Dialog open status.
-   * @property {boolean} snackbar - Snackbar open status.
-   * @property {object} errors - Error status.
-   * @property {boolean} errors.invalid - Incorrect characters entered.
-   * @property {boolean} errors.missing - Missing passphrase.
+   * @property {string} account - Form element input value.
+   * @property {boolean} popover - Popover visibility status.
+   * @property {object} errors - Form input errors.
    */
   constructor() {
     this.account = ''
-    this.button = true
-    this.dialog = false
-    this.snackbar = false
+    this.popover = false
     this.errors = {
-      invalid: false,
-      missing: false
-    }
-  }
-
-  /**
-   * Set error and button.
-   * @function setError
-   * @param {string} error - Error key to toggle on.
-   */
-  @action setError(error) {
-    let button = true
-
-    for (let i in this.errors) {
-      if (error === i) {
-        this.errors[i] = true
-        button = false
-      } else {
-        this.errors[i] = false
-      }
+      invalidCharacters: false
     }
 
-    this.button = button
-  }
-
-  /**
-   * Set account.
-   * @function setAccount
-   * @param {string} account - Selected/entered account.
-   */
-  @action setAccount(account) {
-    if (account.match(/^[a-zA-Z0-9 ]{0,100}$/)) {
-      if (account.length === 0) {
-        if (this.errors.missing === false) {
-          this.setError('missing')
+    /** Auto validate account name on every change. */
+    autorun(() => {
+      if (this.account.match(/^[a-zA-Z0-9 -]{0,100}$/) === null) {
+        if (this.errors.invalidCharacters === false) {
+          this.setError('invalidCharacters')
         }
       } else {
-        if (this.errors.missing || this.errors.invalid) {
-          this.setError('')
-        }
-      }
-
-      this.account = account
-    } else {
-      if (!this.errors.invalid) {
-        this.setError('invalid')
-      }
-    }
-  }
-
-  /**
-   * Toggle dialog.
-   * @function toggleDialog
-   */
-  @action toggleDialog() {
-    this.dialog = !this.dialog
-
-    /** Set default account to the one being shown in AddressBook. */
-    if (this.dialog) {
-      this.setAccount(addressBook.showAccount)
-    }
-  }
-
-  /**
-   * Toggle snackbar.
-   * @function toggleSnackbar
-   */
-  @action toggleSnackbar() {
-    this.snackbar = !this.snackbar
-  }
-
-  /**
-   * Get new address.
-   * TODO: Handle error_code_wallet_keypool_ran_out.
-   * @function getnewaddress
-   */
-  getnewaddress() {
-    rpc({ method: 'getnewaddress', params: [this.account === 'Default' ? '' : this.account] }, (response) => {
-      if (response !== null) {
-        addressBook.list()
-        this.toggleDialog()
-        this.toggleSnackbar()
-
-        if (addressBook.showAccount !== this.account) {
-          addressBook.setShowAccount(this.account)
+        if (this.errors.invalidCharacters === true) {
+          this.setError('invalidCharacters')
         }
       }
     })
   }
+
+  /**
+   * Get new address.
+   * @function getnewaddress
+   *
+   * TODO: Handle error_code_wallet_keypool_ran_out.
+   */
+  getnewaddress() {
+    rpc.call([{ method: 'getnewaddress', params: [this.account] }], (response) => {
+      if (response !== null) {
+        this.togglePopover()
+        addresses.listreceivedbyaddress()
+        notification.success({
+          message: 'New address generated',
+          description: response[0].result,
+          duration: 10
+        })
+      }
+    })
+  }
+
+  /**
+   * Set account name.
+   * @function setAccount
+   * @param {string} account - Account name.
+   */
+  @action setAccount(account) {
+    this.account = account
+  }
+
+  /**
+   * Set error.
+   * @function setError
+   * @param {string} error - Error key.
+   */
+  @action setError(error) {
+    for (let i in this.errors) {
+      if (error === i) {
+        this.errors[i] = !this.errors[i]
+        break
+      }
+    }
+  }
+
+  /**
+   * Get form submit button status.
+   * @function button
+   * @return {boolean} Button status.
+   */
+  @computed get button() {
+    for (let i in this.errors) {
+      if (this.errors[i] === true) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  /**
+   * Toggle popover visibility.
+   * @function togglePopover
+   */
+  @action togglePopover() {
+    this.popover = !this.popover
+  }
 }
 
+/** Initialize a new globally used store. */
 const addressNew = new AddressNew()
 
+/** Export both, initialized store as default export, and store class as named export. */
 export default addressNew
 export { AddressNew }

@@ -18,9 +18,10 @@
 	top: 0;
 	}
 .leaflet-container {
-  margin-top: 3px;
-  height: 340px;
-  width: 100%;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  height: 344px;
+  width: 1130px;
 	overflow: hidden;
 	-ms-touch-action: none;
 	touch-action: none;

@@ -1,43 +1,37 @@
 import React from 'react'
-import { hashHistory, IndexLink, Link } from 'react-router'
+import { hashHistory } from 'react-router'
 import { inject, observer } from 'mobx-react'
-import DevTools from 'mobx-react-devtools'
 import { Button, Col, Menu, Popover, Row, Tooltip } from 'antd'
+import DevTools from 'mobx-react-devtools'
 
 /** Required components. */
 import DaemonStatus from './DaemonStatus'
-import Transaction from './Transaction'
+//import Transaction from './Transaction'
 import WalletEncrypt from './WalletEncrypt'
 import WalletUnlock from './WalletUnlock'
 
 /** Make the component reactive and inject MobX stores. */
-@observer(['network', 'rates', 'transactions', 'wallet', 'walletEncrypt', 'walletUnlock'])
+@observer(['rates', 'transactions', 'wallet', 'walletEncrypt', 'walletUnlock'])
 
-/**
- * TODO: Staking indicator if config pos:1 & unlocked (gavel, flag, flash on, rowing).
- */
 class Root extends React.Component {
   constructor(props) {
     super(props)
-    this.network = props.network
     this.rates = props.rates
     this.transactions = props.transactions
     this.wallet = props.wallet
     this.walletEncrypt = props.walletEncrypt
     this.walletUnlock = props.walletUnlock
-
-    /** Set active menu item. */
-    this.activeRoute = '/'
-
-    /** Bind functions early. */
     this.lock = this.lock.bind(this)
     this.toggleEncrypt = this.toggleEncrypt.bind(this)
     this.toggleUnlock = this.toggleUnlock.bind(this)
     this.setRoute = this.setRoute.bind(this)
+
+    /** Set active menu item. */
+    this.activeRoute = '/'
   }
 
   lock() {
-    this.wallet.lock()
+    this.wallet.walletlock()
   }
 
   toggleEncrypt() {
@@ -65,7 +59,6 @@ class Root extends React.Component {
         <WalletEncrypt />
         <WalletUnlock />
         <DaemonStatus />
-        <Transaction />
 
         <header className='shadow'>
           <Row>
@@ -78,64 +71,67 @@ class Root extends React.Component {
               <div id='balance'>
                 <p>Balance</p>
                 <Row>
-                  <Col span={8}><p><span>{(this.wallet.balance).toFixed(6)}</span> XVC</p></Col>
-                  <Col span={8}><p>~<span>{(this.wallet.balance * this.rates.average).toFixed(8)}</span> BTC</p></Col>
-                  <Col span={8}><p>~<span>{(this.wallet.balance * this.rates.average * this.rates.local).toFixed(2)}</span> {this.rates.localCurrency}</p></Col>
+                  <Col span={8}><p><span>{(this.wallet.info.balance).toFixed(6)}</span> XVC</p></Col>
+                  <Col span={8}><p>~<span>{(this.wallet.info.balance * this.rates.average).toFixed(8)}</span> BTC</p></Col>
+                  <Col span={8}><p>~<span>{(this.wallet.info.balance * this.rates.average * this.rates.local).toFixed(2)}</span> {this.rates.localCurrency}</p></Col>
                 </Row>
               </div>
             </Col>
-            <Col span={7}>
+            <Col span={6}>
               <Row>
                 <Col span={24}>
+                  <div>
+                    {
+                      this.transactions.amountUnconfirmed > 0 &&
+                      (
+                        <Col span={8}>
+                          <p>Unconfirmed</p>
+                          <p><span>{this.transactions.amountUnconfirmed.toFixed(6)}</span> XVC</p>
+                        </Col>
+                      )
+                    }
+                    {
+                      this.wallet.info.stake > 0 &&
+                      (
+                        <Col span={8}>
+                          <div>
+                            <p>Staking</p>
+                            <p><span>{this.wallet.info.stake.toFixed(6)}</span> XVC</p>
+                          </div>
+                        </Col>
+                      )
+                    }
+                    {
+                      this.wallet.info.newmint > 0 &&
+                      (
+                        <Col span={8}>
+                          <div>
+                            <p>Immature</p>
+                            <p><span>{this.wallet.info.newmint.toFixed(6)}</span> XVC</p>
+                          </div>
+                        </Col>
+                      )
+                    }
+                  </div>
                   <div id='indicators'>
-                    <Tooltip placement='bottom' title={<p>Valid collateral <span className='font-weight-500'>{this.network.incentive.votecandidate === true ? 'of ' + this.network.incentive.collateralbalance :'not'}</span> detected</p>}>
+                    <Tooltip placement='bottom' title={<p>Valid collateral <span className='font-weight-500'>{this.wallet.incentive.votecandidate === true ? 'of ' + this.wallet.incentive.collateralbalance :'not'}</span> detected</p>}>
                       <i className='material-icons md-20' style={{color:'#43464B'}}>loyalty</i>
                     </Tooltip>
-                    <Tooltip placement='bottom' title={<p><span className='font-weight-500'>You {this.network.incentive.votecandidate === true ? 'are' : 'are not'}</span> a vote candidate</p>}>
+                    <Tooltip placement='bottom' title={<p><span className='font-weight-500'>You {this.wallet.incentive.votecandidate === true ? 'are' : 'are not'}</span> a vote candidate</p>}>
                       <i className='material-icons md-20' style={{color:'#43464B'}}>verified_user</i>
                     </Tooltip>
                   </div>
                 </Col>
-                {
-                  this.transactions.amountUnconfirmed > 0 &&
-                  (
-                    <Col span={8}>
-                      <p>Unconfirmed</p>
-                      <p><span>{this.transactions.amountUnconfirmed.toFixed(6)}</span> XVC</p>
-                    </Col>
-                  )
-                }
-                {
-                  this.wallet.stake > 0 &&
-                  (
-                    <Col span={8}>
-                      <div>
-                        <p>Staking</p>
-                        <p><span>{this.wallet.stake.toFixed(6)}</span> XVC</p>
-                      </div>
-                    </Col>
-                  )
-                }
-                {
-                  this.wallet.newmint > 0 &&
-                  (
-                    <Col span={8}>
-                      <div>
-                        <p>Immature</p>
-                        <p><span>{this.wallet.newmint.toFixed(6)}</span> XVC</p>
-                      </div>
-                    </Col>
-                  )
-                }
               </Row>
             </Col>
-            <Col span={6}>
+            <Col span={7}>
               <nav>
                 <Menu onClick={this.setRoute} selectedKeys={[this.activeRoute]} mode='horizontal'>
-                  <Menu.Item key="/"><i className='material-icons md-20'>receipt</i></Menu.Item>
-                  <Menu.Item key="send"><i className='material-icons md-20'>send</i></Menu.Item>
-                  <Menu.Item key="network"><i className='material-icons md-20'>settings_input_antenna</i></Menu.Item>
-                  <Menu.Item key="maintenance"><i className='material-icons md-20'>settings</i></Menu.Item>
+                  <Menu.Item key='/'><i className='material-icons md-20'>receipt</i></Menu.Item>
+                  <Menu.Item key='send'><i className='material-icons md-20'>send</i></Menu.Item>
+                  <Menu.Item key='addresses'><i className='material-icons md-20'>account_balance_wallet</i></Menu.Item>
+                  <Menu.Item key='network'><i className='material-icons md-20'>settings_input_antenna</i></Menu.Item>
+                  <Menu.Item key='maintenance'><i className='material-icons md-20'>settings</i></Menu.Item>
                 </Menu>
               </nav>
             </Col>
@@ -170,6 +166,46 @@ class Root extends React.Component {
           </Row>
         </header>
         <main>{this.props.children}</main>
+        <div className='footer shadow'>
+          <Row>
+            <Col span={3}>
+              <div style={{float:'left'}}>
+                <img src='./assets/images/exchangePoloniex.png' style={{marginTop:'4px'}} />
+              </div>
+              <div style={{float:'left'}}>
+                <span style={{paddingLeft:'2px', verticalAlign:'5px'}}><span className='font-weight-500'>{parseFloat(this.rates.poloniex.last).toFixed(8)}</span> BTC</span>
+              </div>
+              <div style={{clear:'both'}}></div>
+            </Col>
+            <Col span={3}>
+              <div style={{float:'left'}}>
+                <img src='./assets/images/exchangeBittrex.png' style={{marginTop:'4px'}} />
+              </div>
+              <div style={{float:'left'}}>
+                <span style={{paddingLeft:'2px', verticalAlign:'5px'}}><span className='font-weight-500'>{parseFloat(this.rates.bittrex.Last).toFixed(8)}</span> BTC</span>
+              </div>
+              <div style={{clear:'both'}}></div>
+            </Col>
+            <Col span={3}>
+              <div style={{float:'left'}}>
+                <img src='./assets/images/exchangeRawx.png' style={{marginTop:'4px'}} />
+              </div>
+              <div style={{float:'left'}}>
+                <span style={{paddingLeft:'2px', verticalAlign:'5px'}}><span className='font-weight-500'>{parseFloat(this.rates.rawx.lastprice).toFixed(8)}</span> BTC</span>
+              </div>
+              <div style={{clear:'both'}}></div>
+            </Col>
+            <Col span={15}>
+              <div className='text-right' style={{paddingRight:'10px'}}>
+                <p>
+                  Vcash <span className='font-weight-500'>{this.wallet.info.version.split(':')[1]}</span> &nbsp;
+                  Wallet <span className='font-weight-500'>{this.wallet.info.walletversion}</span> &nbsp;
+                  UI <span className='font-weight-500'>{process.env.npm_package_version}</span>
+                </p>
+              </div>
+            </Col>
+          </Row>
+        </div>
       </div>
     )
   }

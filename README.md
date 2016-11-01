@@ -40,25 +40,24 @@ To update:
 
     $ git pull OR download zip
 
-Running the UI inside of a Linux VirtualBox guest might cause the window to be black. To fix this, open `package.json`, add `--disable-gpu` after `electron .` and try again.
+Running the UI inside of a Linux VirtualBox guest might cause the window to be black. To fix this, open `package.json`, add `--disable-gpu` after `electron .` and run again.
 
 
 ### IDEAs, NOTEs, TODOs and FIXMEs
 - Colorize amounts according to category. __TODO__ [src/components/Transactions.js](src/components/Transactions.js)
-- Show icons if vote candidate & staking (config.dat pos:1 & unlocked). __TODO__ [src/components/Transactions.js](src/components/Transactions.js)
-- Guided tour (react-joyride). __IDEA__ [src/index.js](src/index.js)
 - Implement right-click copy and paste menu. __TODO__ [src/index.js](src/index.js)
 - Implement wallet backup. __TODO__ [src/index.js](src/index.js)
 - Implement wallet check. __TODO__ [src/index.js](src/index.js)
-- Implement wallet dump. __TODO__ [src/index.js](src/index.js)
 - Implement wallet passphrase change. __TODO__ [src/index.js](src/index.js)
 - Implement wallet repair. __TODO__ [src/index.js](src/index.js)
+- Remote RPC using tunnel-ssh -> ssh -L9195:localhost:9195 user@ip). __TODO__ [src/index.js](src/index.js)
+- Staking indicator if config pos:1 & unlocked (gavel, flag, flash on, rowing). __TODO__ [src/index.js](src/index.js)
 - Translations (i18next, react-i18next, moment-timezone). __TODO__ [src/index.js](src/index.js)
 - Handle error_code_wallet_keypool_ran_out. __TODO__ [src/stores/addressNew.js](src/stores/addressNew.js)
 - Transaction dialog not complete, needs overhaul, fails opening if PoS. __FIXME__ [src/stores/transaction.js](src/stores/transaction.js)
 - Combine self-sends and correctly handle category names, similar to WebUI. __TODO__ [src/stores/transactions.js](src/stores/transactions.js)
 - Implement balance tracking of individual addresses and accounts. __TODO__ [src/stores/transactions.js](src/stores/transactions.js)
-- Allow selecting the daemon you're getting data from, local or remote (tunnel-ssh). __TODO__ [src/utilities/rpc.js](src/utilities/rpc.js)
+
 
 
 #### Tips are appreciated! :sparkles:
