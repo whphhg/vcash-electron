@@ -1,75 +1,74 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
+import { AutoComplete, Button, Col, Popover, Row } from 'antd'
 
-import AutoComplete from 'material-ui/AutoComplete'
-import Dialog from 'material-ui/Dialog'
-import FlatButton from 'material-ui/FlatButton'
-import Snackbar from 'material-ui/Snackbar'
-
-@inject('addressBook')
-@inject('addressNew')
-@observer
+/** Make the component reactive and inject MobX stores. */
+@observer(['addresses', 'addressNew'])
 
 class AddressNew extends React.Component {
   constructor(props) {
     super(props)
-    this.addressBook = props.addressBook
+    this.addresses = props.addresses
     this.addressNew = props.addressNew
-
     this.getnewaddress = this.getnewaddress.bind(this)
     this.setAccount = this.setAccount.bind(this)
-    this.toggleDialog = this.toggleDialog.bind(this)
-    this.toggleSnackbar = this.toggleSnackbar.bind(this)
+    this.togglePopover = this.togglePopover.bind(this)
   }
 
   getnewaddress() {
     this.addressNew.getnewaddress()
   }
 
-  setAccount(account) {
+  setAccount(account, label) {
     this.addressNew.setAccount(account)
   }
 
-  toggleDialog() {
-    this.addressNew.toggleDialog()
+  togglePopover() {
+    this.addressNew.togglePopover()
   }
 
-  toggleSnackbar() {
-    this.addressNew.toggleSnackbar()
+  popoverContent() {
+    return (
+      <div style={{width:'300px'}}>
+        <Row>
+          <Col span={24}>
+            <AutoComplete
+              placeholder='Account name (optional)'
+              style={{width:'215px', marginRight:'10px'}}
+              getPopupContainer={triggerNode => triggerNode.parentNode}
+              value={this.addressNew.account}
+              dataSource={this.addresses.accounts}
+              onChange={this.setAccount}
+            />
+            <Button onClick={this.getnewaddress} disabled={this.addressNew.button === false}>Confirm</Button>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+          {
+            this.addressNew.errors.invalidCharacters === true &&
+            (
+              <p className='error-text'>Only alphanumerals, dash and space are allowed.</p>
+            )
+          }
+          </Col>
+        </Row>
+      </div>
+    )
   }
 
   render() {
     return (
-      <div>
-        <Dialog
-          title='Assign your new address to an account'
-          actions={[
-            <FlatButton label='Cancel' onTouchTap={this.toggleDialog} />,
-            <FlatButton label='Get new address' onTouchTap={this.getnewaddress} disabled={this.addressNew.button === false} primary={true} />
-          ]}
-          modal={true}
-          autoScrollBodyContent={true}
-          open={this.addressNew.dialog}
-        >
-          <AutoComplete
-            onNewRequest={this.setAccount}
-            onUpdateInput={this.setAccount}
-            searchText={this.addressNew.account}
-            errorText={this.addressNew.errors.invalid && 'Account name can contain only alphanumerical characters and spaces.'}
-            floatingLabelText='Assign to account'
-            filter={AutoComplete.fuzzyFilter}
-            maxSearchResults={5}
-            dataSource={this.addressBook.accounts}
-            fullWidth={true}
-          />
-        </Dialog>
-        <Snackbar
-          open={this.addressNew.snackbar}
-          message={'New address added to account "' + this.addressNew.account + '".'}
-          autoHideDuration={5 * 1000}
-          onRequestClose={this.toggleSnackbar}
-        />
-      </div>
+      <Popover
+        title='Generate new address'
+        trigger='click'
+        placement='bottomLeft'
+        content={this.popoverContent()}
+        visible={this.addressNew.popover === true}
+        onVisibleChange={this.togglePopover}
+      >
+        <Button>New address</Button>
+      </Popover>
     )
   }
 }
