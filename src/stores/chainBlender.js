@@ -1,87 +1,73 @@
-import { action, observable } from 'mobx'
-import rpc from '../utilities/rpc'
+import { action, autorun, observable } from 'mobx'
+import { notification } from 'antd'
 
 /** Required store instances. */
-import daemon from './daemon'
-//import wallet from './wallet'
+import rpc from './rpc'
+import wallet from './wallet'
 
 /** ChainBlender store class. */
 class ChainBlender {
-  @observable blendstate
-  @observable balance
-  @observable denominatedbalance
-  @observable nondenominatedbalance
-  @observable blendedbalance
-  @observable blendedpercentage
-  @observable isActivated
+  @observable info
+  @observable status
 
   /**
-   * Prepare observable variables and run RPC list function.
    * @constructor
-   * @property {string} blendstate - Blending state (active/none).
-   * @property {number} balance - Wallet balance.
-   * @property {number} denominatedbalance - Denominated balance.
-   * @property {number} nondenominatedbalance - Nondenominated balance.
-   * @property {number} blendedbalance - Blended balance.
-   * @property {number} blendedpercentage - Percent of wallet balance blended.
-   * @property {boolean} isActivated - Is ChainBlender activated or not.
+   * @property {object} info - chainblender info RPC response.
+   * @property {boolean} status - ChainBlender status.
    */
   constructor() {
-    this.blendstate = 'none'
-    this.balance = 0
-    this.denominatedbalance = 0
-    this.nondenominatedbalance = 0
-    this.blendedbalance = 0
-    this.blendedpercentage = 0
-    this.isActivated = false
+    this.info = {
+      blendstate: 'none',
+      balance: 0,
+      denominatedbalance: 0,
+      nondenominatedbalance: 0,
+      blendedbalance: 0,
+      blendedpercentage: 0 }
+    this.status = false
 
-    this.info()
-  }
-
-  /**
-   * Set ChainBlender info.
-   * @function setInfo
-   * @param {object} info - New ChainBlender info.
-   */
-  @action setInfo(info) {
-    for (let i in info) {
-      if (this.hasOwnProperty(i)) {
-        if (this[i] !== info[i]) {
-          this[i] = info[i]
-        }
+    /** Auto start updating when the wallet unlocks. */
+    autorun(() => {
+      if (wallet.isLocked === false) {
+        this.getinfo()
       }
-    }
-
-    if (info.blendstate === 'active' && this.isActivated === false) {
-      this.setIsActivated(true)
-    }
-  }
-
-  /**
-   * Set ChainBlender status.
-   * @function setIsActivated
-   * @param {boolean} isActivated - ChainBlender activated/not.
-   */
-  @action setIsActivated(isActivated) {
-    this.isActivated = isActivated
+    })
   }
 
   /**
    * Get ChainBlender info.
-   * @function info
+   * @function getinfo
    */
-  info() {
-    if (daemon.isRunning === null) {
-      rpc({ method: 'chainblender', params: ['info'] }, (response) => {
-        if (response !== null) {
-          if (response.hasOwnProperty('result')) {
-            this.setInfo(response.result)
-          }
+  getinfo() {
+    rpc.call([{ method: 'chainblender', params: ['info'] }], (response) => {
+      if (response !== null) {
+        if (response[0].hasOwnProperty('result') === true) {
+          this.setResponse(response[0].result)
+
+          /** Loop every 10 seconds if the wallet is unlocked, else stop. */
+          setTimeout(() => { this.getinfo() }, 10 * 1000)
         }
-      })
+      }
+    })
+  }
+
+  /**
+   * Set RPC response.
+   * @function setResponse
+   * @param {object} response - RPC response object.
+   */
+  @action setResponse(response) {
+    for (let i in response) {
+      if (this.info.hasOwnProperty(i) === true) {
+        if (this.info[i] !== response[i]) {
+          this.info[i] = response[i]
+        }
+      }
     }
 
-    setTimeout(() => { this.info() }, 10 * 1000)
+    /** Correct status if the daemon is already blending prior to you connecting. */
+    if (response.blendstate === 'active' && this.status === false) {
+      this.setStatus(true)
+    }
   }
 
   /**
@@ -89,15 +75,33 @@ class ChainBlender {
    * @function toggle
    */
   toggle() {
-    rpc({ method: 'chainblender', params: [this.isActivated ? 'stop' : 'start'] }, (response) => {
+    rpc.call([{ method: 'chainblender', params: [this.status === true ? 'stop' : 'start'] }], (response) => {
       if (response !== null) {
-        this.setIsActivated(!this.isActivated)
+        this.setStatus(!this.status)
+
+        const suffix = this.status === true ? 'started.' : 'stopped.'
+        notification.success({
+          message: 'ChainBlender',
+          description: 'ChainBlender has been ' + suffix,
+          duration: 5
+        })
       }
     })
   }
+
+  /**
+   * Set status.
+   * @function setStatus
+   * @param {boolean} status - ChainBlender status.
+   */
+  @action setStatus(status) {
+    this.status = status
+  }
 }
 
+/** Initialize a new globally used store. */
 const chainBlender = new ChainBlender()
 
+/** Export both, initialized store as default export, and store class as named export. */
 export default chainBlender
 export { ChainBlender }

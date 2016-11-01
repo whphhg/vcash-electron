@@ -1,10 +1,9 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
-import TextField from 'material-ui/TextField'
+import { Button, Col, Input, Popover, Row } from 'antd'
 
-@inject('currencyConverter')
-@inject('rates')
-@observer
+/** Make the component reactive and inject MobX stores. */
+@observer(['currencyConverter', 'rates'])
 
 class CurrencyConverter extends React.Component {
   constructor(props) {
@@ -15,55 +14,33 @@ class CurrencyConverter extends React.Component {
   }
 
   onChange(event) {
-    const amount = event.target.value
-    const convertFrom = event.target.id
-    this.currencyConverter.setAmount(amount, convertFrom)
+    this.currencyConverter.setAmount(event.target.value, event.target.id)
+  }
+
+  popoverContent() {
+    return (
+      <Row style={{width:'400px'}}>
+        <Col span={7}>
+          <p style={{marginBottom:'5px'}}><span className='font-weight-500'>XVC</span></p>
+          <Input type='text' autosize id='vcash' placeholder='Amount' maxLength={7} onChange={this.onChange} value={this.currencyConverter.vcash} />
+        </Col>
+        <Col offset={1} span={8}>
+          <p style={{marginBottom:'5px'}}><span className='font-weight-500'>BTC</span></p>
+          <Input type='text' autosize id='bitcoin' placeholder='Amount' maxLength={7} onChange={this.onChange} value={this.currencyConverter.bitcoin} />
+        </Col>
+        <Col offset={1} span={7}>
+          <p style={{marginBottom:'5px'}}><span className='font-weight-500'>{this.rates.localCurrency}</span></p>
+          <Input type='text' autosize id='local' placeholder='Amount' maxLength={7} onChange={this.onChange} value={this.currencyConverter.local} />
+        </Col>
+      </Row>
+    )
   }
 
   render() {
     return (
-      <div className='container-fluid'>
-        <div className='row' style={{marginTop:'10px'}}>
-          <div className='col-md-12'>
-            <h4 style={{marginBottom:'0px'}}>Convert currencies</h4>
-          </div>
-        </div>
-        <div className='row'>
-          <div className='col-md-4'>
-            <TextField
-              id='vcash'
-              fullWidth={true}
-              hintText='Amount'
-              floatingLabelStyle={{fontWeight:'normal'}}
-              floatingLabelText='XVC'
-              onChange={this.onChange}
-              value={this.currencyConverter.vcash}
-            />
-          </div>
-          <div className='col-md-4'>
-            <TextField
-              id='local'
-              fullWidth={true}
-              hintText='Amount'
-              floatingLabelStyle={{fontWeight:'normal'}}
-              floatingLabelText={this.rates.localCurrency}
-              onChange={this.onChange}
-              value={this.currencyConverter.local}
-            />
-          </div>
-          <div className='col-md-4'>
-            <TextField
-              id='bitcoin'
-              fullWidth={true}
-              hintText='Amount'
-              floatingLabelStyle={{fontWeight:'normal'}}
-              floatingLabelText='BTC'
-              onChange={this.onChange}
-              value={this.currencyConverter.bitcoin}
-            />
-          </div>
-        </div>
-      </div>
+      <Popover trigger='click' placement='bottomLeft' title='Approximately convert between currencies' content={this.popoverContent()}>
+        <Button>Currency converter</Button>
+      </Popover>
     )
   }
 }

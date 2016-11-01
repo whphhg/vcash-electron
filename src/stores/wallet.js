@@ -1,112 +1,122 @@
-import { action, computed, observable } from 'mobx'
-import rpc from '../utilities/rpc'
+import { action, autorun, observable } from 'mobx'
+import { notification } from 'antd'
 
 /** Required store instances. */
+import rpc from './rpc'
 import chainBlender from './chainBlender'
 
 /** Wallet store class. */
 class Wallet {
-  @observable balance
-  @observable blocks
-  @observable connections
-  @observable ip
+  @observable info
+  @observable incentive
   @observable isEncrypted
   @observable isLocked
-  @observable moneysupply
-  @observable newmint
-  @observable port
-  @observable protocolversion
-  @observable stake
-  @observable version
-  @observable walletversion
 
   /**
-   * Prepare observable variables and run RPC info and lockCheck functions.
    * @constructor
-   * @property {number} balance - Wallet balance.
-   * @property {number} blocks - Daemon block height.
-   * @property {number} connections - TCP connections.
-   * @property {string} ip - Wallet IP.
-   * @property {boolean} isEncrypted - Is wallet encrypted/not.
-   * @property {boolean} isLocked - Is wallet locked/not.
-   * @property {number} moneysupply - Total money supply, with respect to daemon block height.
-   * @property {number} newmint - Amount of minted coins.
-   * @property {number} port - Wallet port.
-   * @property {number} protocolversion - Protocol version.
-   * @property {number} walletversion - Wallet version.
+   * @property {object} info - getinfo RPC response.
+   * @property {object} incentive - getincentiveinfo RPC response.
+   * @property {boolean} isEncrypted - Wallet encryption status.
+   * @property {boolean} isLocked - Wallet lock status.
    */
   constructor() {
-    this.balance = 0
-    this.blocks = 0
-    this.connections = 0
-    this.ip = '0.0.0.0'
+    this.info = {
+      balance: 0,
+      blocks: 0,
+      connections: 0,
+      ip: '0.0.0.0',
+      moneysupply: 0,
+      newmint: 0,
+      port: 0,
+      protocolversion: 0,
+      stake: 0,
+      version: ':',
+      walletversion: 0 }
+    this.incentive = {
+      walletaddress: '',
+      collateralrequired: 0,
+      collateralbalance: 0,
+      networkstatus: 'firewalled',
+      votecandidate: false }
     this.isEncrypted = false
     this.isLocked = false
-    this.moneysupply = 0
-    this.newmint = 0
-    this.port = 0
-    this.protocolversion = 0
-    this.stake = 0
-    this.version = 0
-    this.walletversion = 0
 
-    this.info()
+    /** Start (the only) infinite update loop. */
+    this.getinfo()
+
+    /** Auto start updating when RPC becomes available. */
+    autorun(() => {
+      if (rpc.status === true) {
+        this.getincentiveinfo()
+      }
+    })
+
+    /** Initial wallet lock status check. */
     this.lockCheck()
   }
 
   /**
-   * Set wallet info.
-   * @function setInfo
-   * @param {object} info - New wallet info.
+   * Get wallet info.
+   * @function getinfo
    */
-  @action setInfo(info) {
-    for (let i in info) {
-      if (this.hasOwnProperty(i)) {
-        if (this[i] !== info[i]) {
-          this[i] = info[i]
-        }
+  getinfo() {
+    rpc.call([{ method: 'getinfo', params: [] }], (response) => {
+      if (response !== null) {
+        this.setResponse('info', response[0].result)
+      }
+
+      /** Infinitely loop every 10 seconds. */
+      setTimeout(() => { this.getinfo() }, 10 * 1000)
+    })
+  }
+
+  /**
+   * Get incentive info.
+   * @function getincentiveinfo
+   */
+  getincentiveinfo() {
+    rpc.call([{ method: 'getincentiveinfo', params: [] }], (response) => {
+      if (response !== null) {
+        this.setResponse('incentive', response[0].result)
+
+        /** Loop every 20 seconds when RPC available, else stop. */
+        setTimeout(() => { this.getincentiveinfo() }, 20 * 1000)
+      }
+    })
+  }
+
+  /**
+   * Set RPC response.
+   * @function setResponse
+   * @param {string} key - Store key to compare against and update.
+   * @param {object} response - RPC response object.
+   */
+  @action setResponse(key, response) {
+    for (let i in this[key]) {
+      if (this[key][i] !== response[i]) {
+        this[key][i] = response[i]
       }
     }
   }
 
   /**
-   * Set wallet status (locked/encrypted).
-   * @function setStatus
-   * @param {boolean} isLocked - Is wallet locked/not.
-   * @param {boolean} isEncrypted - Is wallet encrypted/not.
+   * Lock the wallet.
+   * @function walletlock
    */
-  @action setStatus(isLocked, isEncrypted) {
-    this.isLocked = isLocked
-    this.isEncrypted = isEncrypted
-  }
+  walletlock() {
+    /** If active, toggle ChainBlender off before locking the wallet. */
+    if (chainBlender.status === true) {
+      chainBlender.toggle()
+    }
 
-  /**
-   * Get wallet info.
-   * @function info
-   */
-  info() {
-    rpc({ method: 'getinfo', params: [] }, (response) => {
+    rpc.call([{ method: 'walletlock', params: [] }], (response) => {
       if (response !== null) {
-        response.result.version = response.result.version.split(':')[1]
-        this.setInfo(response.result)
-      }
-
-      setTimeout(() => { this.info() }, 10 * 1000)
-    })
-  }
-
-  /**
-   * Lock wallet.
-   * @function lock
-   */
-  lock() {
-    rpc({ method: 'walletlock', params: [] }, (response) => {
-      if (response !== null) {
-        if (chainBlender.isActivated) {
-          chainBlender.setIsActivated(false)
-        }
-
         this.lockCheck()
+        notification.success({
+          message: 'Locked',
+          description: 'The wallet has been locked.',
+          duration: 5
+        })
       }
     })
   }
@@ -116,28 +126,40 @@ class Wallet {
    * @function lockCheck
    */
   lockCheck() {
-    rpc({ method: 'walletpassphrase', params: [] }, (response) => {
+    rpc.call([{ method: 'walletpassphrase', params: [] }], (response) => {
       if (response !== null) {
-        /**
-         * error_code_wallet_wrong_enc_state = -15 (unencrypted)
-         * error_code_wallet_already_unlocked = -17 (encrypted and unlocked)
-         * error_code_invalid_params = -32602 (encrypted and locked)
-         */
-        switch (response.error.code) {
-          case -17:
-            this.setStatus(false, true)
-            break
+        switch (response[0].error.code) {
+          /** Unencrypted: error_code_wallet_wrong_enc_state = -15 */
+          case -15:
+            return this.setStatus(false, false)
 
+          /** Encrypted and unlocked: error_code_wallet_already_unlocked = -17 */
+          case -17:
+            return this.setStatus(true, false)
+
+          /** Encrypted and locked: error_code_invalid_params = -32602 */
           case -32602:
-            this.setStatus(true, true)
-            break
+            return this.setStatus(true, true)
         }
       }
     })
   }
+
+  /**
+   * Set wallet lock status.
+   * @function setStatus
+   * @param {boolean} isEncrypted - Wallet encryption status.
+   * @param {boolean} isLocked - Wallet lock status.
+   */
+  @action setStatus(isEncrypted, isLocked) {
+    this.isLocked = isLocked
+    this.isEncrypted = isEncrypted
+  }
 }
 
+/** Initialize a new globally used store. */
 const wallet = new Wallet()
 
+/** Export both, initialized store as default export, and store class as named export. */
 export default wallet
 export { Wallet }
