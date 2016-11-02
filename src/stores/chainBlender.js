@@ -51,6 +51,25 @@ class ChainBlender {
   }
 
   /**
+   * Toggle ChainBlender.
+   * @function toggle
+   */
+  toggle() {
+    rpc.call([{ method: 'chainblender', params: [this.status === true ? 'stop' : 'start'] }], (response) => {
+      if (response !== null) {
+        this.setStatus(!this.status)
+
+        const suffix = this.status === true ? 'started.' : 'stopped.'
+        notification.success({
+          message: 'ChainBlender',
+          description: 'ChainBlender has been ' + suffix,
+          duration: 5
+        })
+      }
+    })
+  }
+
+  /**
    * Set RPC response.
    * @function setResponse
    * @param {object} response - RPC response object.
@@ -68,25 +87,6 @@ class ChainBlender {
     if (response.blendstate === 'active' && this.status === false) {
       this.setStatus(true)
     }
-  }
-
-  /**
-   * Toggle ChainBlender.
-   * @function toggle
-   */
-  toggle() {
-    rpc.call([{ method: 'chainblender', params: [this.status === true ? 'stop' : 'start'] }], (response) => {
-      if (response !== null) {
-        this.setStatus(!this.status)
-
-        const suffix = this.status === true ? 'started.' : 'stopped.'
-        notification.success({
-          message: 'ChainBlender',
-          description: 'ChainBlender has been ' + suffix,
-          duration: 5
-        })
-      }
-    })
   }
 
   /**
