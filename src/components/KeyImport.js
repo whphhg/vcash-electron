@@ -1,27 +1,20 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
+import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
 
-import AutoComplete from 'material-ui/AutoComplete'
-import Dialog from 'material-ui/Dialog'
-import FlatButton from 'material-ui/FlatButton'
-import Snackbar from 'material-ui/Snackbar'
-import TextField from 'material-ui/TextField'
-
-@inject('addressBook')
-@inject('keyImport')
-@observer
+/** Make the component reactive and inject MobX stores. */
+@observer(['addresses', 'keyImport', 'wallet'])
 
 class KeyImport extends React.Component {
   constructor(props) {
     super(props)
-    this.addressBook = props.addressBook
+    this.addresses = props.addresses
     this.keyImport = props.keyImport
-
+    this.wallet = props.wallet
     this.importprivkey = this.importprivkey.bind(this)
     this.setAccount = this.setAccount.bind(this)
     this.setPrivateKey = this.setPrivateKey.bind(this)
-    this.toggleDialog = this.toggleDialog.bind(this)
-    this.toggleSnackbar = this.toggleSnackbar.bind(this)
+    this.togglePopover = this.togglePopover.bind(this)
   }
 
   importprivkey() {
@@ -36,58 +29,58 @@ class KeyImport extends React.Component {
     this.keyImport.setPrivateKey(event.target.value)
   }
 
-  toggleDialog() {
-    this.keyImport.toggleDialog()
+  togglePopover() {
+    this.keyImport.togglePopover()
   }
 
-  toggleSnackbar() {
-    this.keyImport.toggleSnackbar()
+  popoverContent() {
+    return (
+      <div style={{width:'400px'}}>
+        <Row>
+          <Col span={24}>
+            <Input type='text' placeholder='Enter private key' style={{width:'100%'}} value={this.keyImport.privateKey} onChange={this.setPrivateKey} />
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24} style={{marginTop:'10px'}}>
+            <AutoComplete
+              placeholder='Account name (optional)'
+              style={{width:'315px',marginRight:'10px'}}
+              getPopupContainer={triggerNode => triggerNode.parentNode}
+              value={this.keyImport.account}
+              dataSource={this.addresses.accounts}
+              onChange={this.setAccount}
+            />
+            <Button onClick={this.importprivkey} disabled={this.keyImport.button === false}>Confirm</Button>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            {
+              this.keyImport.errors.invalidCharacters === true && (
+                <p className='error-text'>You can enter only alphanumerals, dash and space.</p>
+              ) ||
+              this.keyImport.errors.invalidKey === true && (
+                <p className='error-text'>The private key you have entered is invalid.</p>
+              ) ||
+              this.keyImport.errors.isMine === true && (
+                <p className='error-text'>The private key you have entered belongs to your wallet.</p>
+              )
+            }
+          </Col>
+        </Row>
+      </div>
+    )
   }
 
   render() {
     return (
-      <div>
-        <Dialog
-          title='Import private key'
-          actions={[
-            <FlatButton label='Cancel' onTouchTap={this.toggleDialog} />,
-            <FlatButton label='Import private key' onTouchTap={this.importprivkey} disabled={this.keyImport.button === false} primary={true} />
-          ]}
-          modal={true}
-          autoScrollBodyContent={true}
-          open={this.keyImport.dialog}
-        >
-          <TextField
-            onChange={this.setPrivateKey}
-            fullWidth={true}
-            value={this.keyImport.privateKey}
-            errorText={
-              this.keyImport.errors.privateKey.alreadyImported && 'The private key you have entered belongs to your wallet.'
-              || this.keyImport.errors.privateKey.invalid && 'The private key you have entered is invalid.'
-            }
-            floatingLabelText='Private key'
-            hintText='Enter the private key'
-          />
-          <AutoComplete
-            onNewRequest={this.setAccount}
-            onUpdateInput={this.setAccount}
-            searchText={this.keyImport.account}
-            errorText={this.keyImport.errors.account.invalid && 'Account name can contain only alphanumerical characters and spaces.'}
-            floatingLabelText='Assign to account'
-            filter={AutoComplete.fuzzyFilter}
-            maxSearchResults={5}
-            openOnFocus={true}
-            dataSource={this.addressBook.accounts}
-            fullWidth={true}
-          />
-        </Dialog>
-        <Snackbar
-          open={this.keyImport.snackbar}
-          message={'Imported the private key and assigned it to account "' + this.keyImport.account + '".'}
-          autoHideDuration={5 * 1000}
-          onRequestClose={this.toggleSnackbar}
-        />
-      </div>
+      <Popover trigger='click' placement='bottomLeft' title='Enter the private key you would like to import'
+        visible={this.keyImport.popover === true} onVisibleChange={this.togglePopover}
+        content={this.popoverContent()}
+      >
+        <Button disabled={this.wallet.isLocked === true}>Import private key</Button>
+      </Popover>
     )
   }
 }

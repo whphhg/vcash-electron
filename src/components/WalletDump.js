@@ -46,8 +46,8 @@ class WalletDump extends React.Component {
           </p>
           <Row style={{marginTop:'10px'}}>
             <Col span={24} className='text-right'>
-              <Button onClick={this.dumpwallet}>I understand, dump the wallet</Button>
-              <Button onClick={this.togglePopover} style={{marginLeft:'10px'}}>Cancel</Button>
+              <Button onClick={this.togglePopover}>Cancel</Button>
+              <Button onClick={this.dumpwallet} style={{marginLeft:'10px'}}>I understand, dump the wallet</Button>
             </Col>
           </Row>
         </Col>

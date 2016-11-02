@@ -1,149 +1,53 @@
-import { action, observable } from 'mobx'
-import rpc from '../utilities/rpc'
+import { action, autorun, computed, observable } from 'mobx'
+import { notification } from 'antd'
 
 /** Required store instances. */
-import addressBook from './addressBook'
+import rpc from './rpc'
+import addresses from './addresses'
 
 /** KeyImport store class. */
 class KeyImport {
   @observable privateKey
   @observable account
-  @observable button
-  @observable dialog
-  @observable snackbar
+  @observable popover
   @observable errors
 
   /**
-   * Prepare observable variables.
    * @constructor
-   * @property {string} privateKey - Private key to import.
-   * @property {string} account - Account assigned to the imported address.
-   * @property {boolean} button - Button enabled status.
-   * @property {boolean} dialog - Dialog open status.
-   * @property {boolean} snackbar - Snackbar open status.
-   * @property {object} errors - Error statuses.
-   * @property {object} errors.account - Account errors.
-   * @property {boolean} errors.account.invalid - Incorrect characters entered.
-   * @property {boolean} errors.account.missing - Missing account.
-   * @property {object} errors.privateKey - Private key errors.
-   * @property {boolean} errors.privateKey.alreadyImported - Key already imported.
-   * @property {boolean} errors.privateKey.incomplete - Key hasn't been entered fully yet.
-   * @property {boolean} errors.privateKey.invalid - Key entered is invalid.
+   * @property {string} privateKey - Form element input value.
+   * @property {string} account - Form element input value.
+   * @property {boolean} popover - Popover visibility status.
+   * @property {object} errors - Form input errors.
    */
   constructor() {
     this.privateKey = ''
     this.account = ''
-    this.button = false
-    this.dialog = false
-    this.snackbar = false
+    this.popover = false
     this.errors = {
-      account: {
-        invalid: false,
-        missing: false
-      },
-      privateKey: {
-        alreadyImported: false,
-        incomplete: true,
-        invalid: false
-      }
-    }
-  }
-
-  /**
-   * Set error and button.
-   * @function setError
-   * @param {string} error - Error key.
-   * @param {string} type - Error type.
-   */
-  @action setError(error, type) {
-    /** Set provided error to true and others of it's type to false. */
-    for (let i in this.errors[type]) {
-      if (error === i) {
-        this.errors[type][i] = true
-      } else {
-        this.errors[type][i] = false
-      }
+      invalidCharacters: false,
+      invalidKey: false,
+      isMine: false
     }
 
-    /** Set button to false if there are errors, otherwise true. */
-    let button = true
-
-    for (let i in this.errors) {
-      for (let j in this.errors[i]) {
-        if (this.errors[i][j]) {
-          button = false
-          break
-        }
-      }
-    }
-
-    this.button = button
-  }
-
-  /**
-   * Set account.
-   * @function setAccount
-   * @param {string} account - Selected/entered account.
-   */
-  @action setAccount(account) {
-    if (account.match(/^[a-zA-Z0-9 ]{0,100}$/)) {
-      if (account.length === 0) {
-        if (this.errors.account.missing === false) {
-          this.setError('missing', 'account')
+    /** Auto validate account name on every change. */
+    autorun(() => {
+      if (this.account.match(/^[a-zA-Z0-9 -]{0,100}$/) === null) {
+        if (this.errors.invalidCharacters === false) {
+          this.setError('invalidCharacters')
         }
       } else {
-        if (this.errors.account.missing || this.errors.account.invalid) {
-          this.setError('', 'account')
+        if (this.errors.invalidCharacters === true) {
+          this.setError('invalidCharacters')
         }
       }
+    })
 
-      this.account = account
-    } else {
-      if (!this.errors.account.invalid) {
-        this.setError('invalid', 'account')
+    /** Auto clear entered private key when popover closes. */
+    autorun(() => {
+      if (this.popover === false) {
+        this.setPrivateKey()
       }
-    }
-  }
-
-  /**
-   * Set private key.
-   * @function setPrivateKey
-   * @param {string} privateKey - Private key to import.
-   */
-  @action setPrivateKey(privateKey) {
-    if (privateKey.match(/^[a-zA-Z0-9]{0,52}$/)) {
-      if (privateKey.length < 51) {
-        if (this.errors.privateKey.incomplete === false) {
-          this.setError('incomplete', 'privateKey')
-        }
-      } else {
-        this.setError('', 'privateKey')
-      }
-
-      this.privateKey = privateKey
-    }
-  }
-
-  /**
-   * Toggle dialog.
-   * @function toggleDialog
-   */
-  @action toggleDialog() {
-    this.dialog = !this.dialog
-
-    /** Reset private key and set default account to the one being shown in AddressBook. */
-    if (this.dialog) {
-      this.setPrivateKey('')
-      this.setAccount(addressBook.showAccount)
-    }
-  }
-
-  /**
-   * Toggle snackbar.
-   * @function toggleSnackbar
-   */
-  @action toggleSnackbar() {
-    this.snackbar = !this.snackbar
+    })
   }
 
   /**
@@ -151,35 +55,107 @@ class KeyImport {
    * @function importprivkey
    */
   importprivkey() {
-    rpc({ method: 'importprivkey', params: [this.privateKey, this.account === 'Default' ? '' : this.account] }, (response) => {
+    rpc.call([{ method: 'importprivkey', params: [this.privateKey, this.account] }], (response) => {
       if (response !== null) {
-        if (response.hasOwnProperty('error')) {
-          /**
-           * error_code_wallet_error = -4 (already imported)
-           * error_code_invalid_address_or_key = -5 (invalid key)
-           */
-          switch (response.error.code) {
+        if (response[0].hasOwnProperty('error') === true) {
+          switch (response[0].error.code) {
+            /** Is mine: error_code_wallet_error = -4 */
             case -4:
-              return this.setError('alreadyImported', 'privateKey')
+              return this.setError('isMine')
 
+            /** Invalid key: error_code_invalid_address_or_key = -5 */
             case -5:
-              return this.setError('invalid', 'privateKey')
+              return this.setError('invalidKey')
           }
         }
 
-        addressBook.list()
-        this.toggleDialog()
-        this.toggleSnackbar()
-
-        if (addressBook.showAccount !== this.account) {
-          addressBook.setShowAccount(this.account)
+        if (this.popover === true) {
+          this.togglePopover()
         }
+
+        addresses.listreceivedbyaddress()
+        notification.success({
+          message: 'Imported',
+          description: 'Private key succcessfuly imported.',
+          duration: 5
+        })
       }
     })
   }
+
+  /**
+   * Get form submit button status.
+   * @function button
+   * @return {boolean} Button status.
+   */
+  @computed get button() {
+    /** Do not allow submitting less than full-length private keys. */
+    if (this.privateKey.length < 51) {
+      return false
+    }
+
+    for (let i in this.errors) {
+      if (this.errors[i] === true) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  /**
+   * Flip error status.
+   * @function setError
+   * @param {string} error - Error key to flip.
+   */
+  @action setError(error = '') {
+    this.errors[error] = !this.errors[error]
+
+    /** If no error key provided, clear all. */
+    if (error === '') {
+      for (let i in this.errors) {
+        this.errors[i] = false
+      }
+    }
+  }
+
+  /**
+   * Set account name.
+   * @function setAccount
+   * @param {string} account - Account name.
+   */
+  @action setAccount(account) {
+    this.account = account
+  }
+
+  /**
+   * Set private key.
+   * @function setPrivateKey
+   * @param {string} privateKey - Private key to import.
+   */
+  @action setPrivateKey(privateKey = '') {
+    if (privateKey.match(/^[a-zA-Z0-9]{0,52}$/)) {
+      this.privateKey = privateKey
+
+      /** Clear previously set errors. */
+      if (this.errors.invalidKey === true || this.errors.isMine === true) {
+        this.setError()
+      }
+    }
+  }
+
+  /**
+   * Toggle popover visibility.
+   * @function togglePopover
+   */
+  @action togglePopover() {
+    this.popover = !this.popover
+  }
 }
 
+/** Initialize a new globally used store. */
 const keyImport = new KeyImport()
 
+/** Export both, initialized store as default export, and store class as named export. */
 export default keyImport
 export { KeyImport }

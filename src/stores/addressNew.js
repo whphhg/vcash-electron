@@ -59,29 +59,6 @@ class AddressNew {
   }
 
   /**
-   * Set account name.
-   * @function setAccount
-   * @param {string} account - Account name.
-   */
-  @action setAccount(account) {
-    this.account = account
-  }
-
-  /**
-   * Set error.
-   * @function setError
-   * @param {string} error - Error key.
-   */
-  @action setError(error) {
-    for (let i in this.errors) {
-      if (error === i) {
-        this.errors[i] = !this.errors[i]
-        break
-      }
-    }
-  }
-
-  /**
    * Get form submit button status.
    * @function button
    * @return {boolean} Button status.
@@ -94,6 +71,24 @@ class AddressNew {
     }
 
     return true
+  }
+
+  /**
+   * Set account name.
+   * @function setAccount
+   * @param {string} account - Account name.
+   */
+  @action setAccount(account) {
+    this.account = account
+  }
+
+  /**
+   * Flip error status.
+   * @function setError
+   * @param {string} error - Error key to flip.
+   */
+  @action setError(error) {
+    this.errors[error] = !this.errors[error]
   }
 
   /**

@@ -86,20 +86,6 @@ class Wallet {
   }
 
   /**
-   * Set RPC response.
-   * @function setResponse
-   * @param {string} key - Store key to compare against and update.
-   * @param {object} response - RPC response object.
-   */
-  @action setResponse(key, response) {
-    for (let i in this[key]) {
-      if (this[key][i] !== response[i]) {
-        this[key][i] = response[i]
-      }
-    }
-  }
-
-  /**
    * Lock the wallet.
    * @function walletlock
    */
@@ -143,6 +129,20 @@ class Wallet {
         }
       }
     })
+  }
+
+  /**
+   * Set RPC response.
+   * @function setResponse
+   * @param {string} key - Store key to compare against and update.
+   * @param {object} response - RPC response object.
+   */
+  @action setResponse(key, response) {
+    for (let i in this[key]) {
+      if (this[key][i] !== response[i]) {
+        this[key][i] = response[i]
+      }
+    }
   }
 
   /**

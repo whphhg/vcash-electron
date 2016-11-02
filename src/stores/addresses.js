@@ -36,15 +36,6 @@ class Addresses {
   }
 
   /**
-   * Set RPC response.
-   * @function setResponse
-   * @param {array} response - RPC response array.
-   */
-  @action setResponse(response) {
-    this.receivedByAddress = response
-  }
-
-  /**
    * Get a list of account names in alphabetical order.
    * @function accounts
    * @return {array} Account list.
@@ -101,6 +92,15 @@ class Addresses {
 
       return addresses
     }, [])
+  }
+
+  /**
+   * Set RPC response.
+   * @function setResponse
+   * @param {array} response - RPC response array.
+   */
+  @action setResponse(response) {
+    this.receivedByAddress = response
   }
 }
 
