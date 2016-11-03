@@ -17,28 +17,25 @@ class WalletDump {
   }
 
   /**
+   * Toggle popover visibility.
+   * @function togglePopover
+   */
+  @action togglePopover() { this.popover = !this.popover }
+
+  /**
    * Dump wallet.
    * @function dumpwallet
    */
   dumpwallet() {
     rpc.call([{ 'method': 'dumpwallet', 'params': [] }], (response) => {
       if (response !== null) {
-        this.togglePopover()
         notification.success({
           message: 'Wallet dumped',
           description: 'Successfuly dumped wallet.csv in your Vcash data directory.',
-          duration: 5
+          duration: 6
         })
       }
     })
-  }
-
-  /**
-   * Toggle popover.
-   * @function togglePopover
-   */
-  @action togglePopover() {
-    this.popover = !this.popover
   }
 }
 

@@ -1,4 +1,4 @@
-import { action, autorun, observable } from 'mobx'
+import { action, autorun, computed, observable } from 'mobx'
 import { notification } from 'antd'
 
 /** Required store instances. */
@@ -27,11 +27,54 @@ class ChainBlender {
 
     /** Auto start updating when the wallet unlocks. */
     autorun(() => {
-      if (wallet.isLocked === false) {
-        this.getinfo()
-      }
+      if (wallet.isLocked === false) this.getinfo()
     })
   }
+
+  /**
+   * Get denominated percentage.
+   * @function denominatedPercentage
+   * @return {number} Denominated percentage.
+   */
+  @computed get denominatedPercentage() {
+    if (this.info.denominatedbalance > 0) return this.info.denominatedbalance / wallet.info.balance * 100
+    return 0
+  }
+
+  /**
+   * Get non-denominated percentage.
+   * @function nonDenominatedPercentage
+   * @return {number} Non-denominated percentage.
+   */
+  @computed get nonDenominatedPercentage() {
+    if (this.info.nondenominatedbalance > 0) return this.info.nondenominatedbalance / wallet.info.balance * 100
+    return 0
+  }
+
+  /**
+   * Set RPC response.
+   * @function setResponse
+   * @param {object} response - RPC response object.
+   */
+  @action setResponse(response) {
+    for (let i in response) {
+      if (this.info.hasOwnProperty(i) === true) {
+        if (this.info[i] !== response[i]) {
+          this.info[i] = response[i]
+        }
+      }
+    }
+
+    /** Correct status if the daemon is already blending prior to you connecting. */
+    if (response.blendstate === 'active' && this.status === false) this.setStatus(true)
+  }
+
+  /**
+   * Set status.
+   * @function setStatus
+   * @param {boolean} status - ChainBlender status.
+   */
+  @action setStatus(status) { this.status = status }
 
   /**
    * Get ChainBlender info.
@@ -67,35 +110,6 @@ class ChainBlender {
         })
       }
     })
-  }
-
-  /**
-   * Set RPC response.
-   * @function setResponse
-   * @param {object} response - RPC response object.
-   */
-  @action setResponse(response) {
-    for (let i in response) {
-      if (this.info.hasOwnProperty(i) === true) {
-        if (this.info[i] !== response[i]) {
-          this.info[i] = response[i]
-        }
-      }
-    }
-
-    /** Correct status if the daemon is already blending prior to you connecting. */
-    if (response.blendstate === 'active' && this.status === false) {
-      this.setStatus(true)
-    }
-  }
-
-  /**
-   * Set status.
-   * @function setStatus
-   * @param {boolean} status - ChainBlender status.
-   */
-  @action setStatus(status) {
-    this.status = status
   }
 }
 

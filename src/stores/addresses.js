@@ -17,21 +17,7 @@ class Addresses {
 
     /** Auto start updating when RPC becomes available. */
     autorun(() => {
-      if (rpc.status === true) {
-        this.listreceivedbyaddress()
-      }
-    })
-  }
-
-  /**
-   * Get all addresses, including unused.
-   * @function listreceivedbyaddress
-   */
-  listreceivedbyaddress() {
-    rpc.call([{ method: 'listreceivedbyaddress', params: [0, true] }], (response) => {
-      if (response !== null) {
-        this.setResponse(response[0].result)
-      }
+      if (rpc.status === true) this.listreceivedbyaddress()
     })
   }
 
@@ -101,6 +87,18 @@ class Addresses {
    */
   @action setResponse(response) {
     this.receivedByAddress = response
+  }
+
+  /**
+   * Get all addresses, including unused.
+   * @function listreceivedbyaddress
+   */
+  listreceivedbyaddress() {
+    rpc.call([{ method: 'listreceivedbyaddress', params: [0, true] }], (response) => {
+      if (response !== null) {
+        this.setResponse(response[0].result)
+      }
+    })
   }
 }
 

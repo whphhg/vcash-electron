@@ -51,19 +51,19 @@ class KeyImport extends React.Component {
               dataSource={this.addresses.accounts}
               onChange={this.setAccount}
             />
-            <Button onClick={this.importprivkey} disabled={this.keyImport.button === false}>Confirm</Button>
+            <Button onClick={this.importprivkey} disabled={this.keyImport.errorStatus !== false}>Confirm</Button>
           </Col>
         </Row>
         <Row>
           <Col span={24}>
             {
-              this.keyImport.errors.invalidCharacters === true && (
+              this.keyImport.errorStatus === 'invalidCharacters' && (
                 <p className='error-text'>You can enter only alphanumerals, dash and space.</p>
               ) ||
-              this.keyImport.errors.invalidKey === true && (
+              this.keyImport.errorStatus === 'invalidKey' && (
                 <p className='error-text'>The private key you have entered is invalid.</p>
               ) ||
-              this.keyImport.errors.isMine === true && (
+              this.keyImport.errorStatus === 'isMine' && (
                 <p className='error-text'>The private key you have entered belongs to your wallet.</p>
               )
             }

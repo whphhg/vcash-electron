@@ -41,19 +41,19 @@ class KeyDump extends React.Component {
               dataSource={this.addresses.list}
               onChange={this.setAddress}
             />
-            <Button onClick={this.dumpprivkey} disabled={this.keyDump.button === false}>Confirm</Button>
+            <Button onClick={this.dumpprivkey} disabled={this.keyDump.errorStatus !== false}>Confirm</Button>
           </Col>
         </Row>
         <Row>
           <Col span={24}>
             {
-              this.keyDump.errors.unknownAddress === true && (
+              this.keyDump.errorStatus === 'unknownAddress' && (
                 <p className='error-text'>The address you have entered does not belong to your wallet.</p>
               ) ||
-              this.keyDump.errors.invalidAddress === true && (
+              this.keyDump.errorStatus === 'invalidAddress' && (
                 <p className='error-text'>The address you have entered is not valid. Please double-check it.</p>
               ) ||
-              this.keyDump.errors.invalidCharacters === true && (
+              this.keyDump.errorStatus === 'invalidCharacters' && (
                 <p className='error-text'>The address you have entered contains invalid characters.</p>
               ) ||
               this.keyDump.privateKey !== '' && (

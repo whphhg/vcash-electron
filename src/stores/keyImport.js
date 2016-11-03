@@ -17,38 +17,82 @@ class KeyImport {
    * @property {string} privateKey - Form element input value.
    * @property {string} account - Form element input value.
    * @property {boolean} popover - Popover visibility status.
-   * @property {object} errors - Form input errors.
+   * @property {object} errors - RPC response errors.
    */
   constructor() {
     this.privateKey = ''
     this.account = ''
     this.popover = false
     this.errors = {
-      invalidCharacters: false,
       invalidKey: false,
       isMine: false
     }
 
-    /** Auto validate account name on every change. */
+    /** Auto clear previous RPC response errors on private key change. */
     autorun(() => {
-      if (this.account.match(/^[a-zA-Z0-9 -]{0,100}$/) === null) {
-        if (this.errors.invalidCharacters === false) {
-          this.setError('invalidCharacters')
-        }
-      } else {
-        if (this.errors.invalidCharacters === true) {
-          this.setError('invalidCharacters')
-        }
-      }
+      const trackPrivateKey = this.privateKey
+      this.toggleError()
     })
 
-    /** Auto clear entered private key when popover closes. */
+    /** Auto clear private key when popover closes. */
     autorun(() => {
       if (this.popover === false) {
-        this.setPrivateKey()
+        if (this.privateKey !== '') this.setPrivateKey()
       }
     })
   }
+
+  /**
+   * Get error status.
+   * @function errorStatus
+   * @return {string|boolean} Current error or false if none.
+   */
+  @computed get errorStatus() {
+    if (this.account.match(/^[a-zA-Z0-9 -]{0,100}$/) === null) return 'invalidCharacters'
+    if (this.privateKey.length < 51) return 'incompleteKey'
+    if (this.errors.invalidKey === true) return 'invalidKey'
+    if (this.errors.isMine === true) return 'isMine'
+
+    return false
+  }
+
+  /**
+   * Toggle RPC response error status.
+   * @function toggleError
+   * @param {string} key - Error key to toggle.
+   */
+  @action toggleError(key = '') {
+    if (key === '') {
+      /** Clear all errors if no key provided. */
+      for (let i in this.errors) {
+        if (this.errors[i] === true) {
+          this.errors[i] = false
+        }
+      }
+    } else {
+      this.errors[key] = !this.errors[key]
+    }
+  }
+
+  /**
+   * Set account name.
+   * @function setAccount
+   * @param {string} account - Account name.
+   */
+  @action setAccount(account) { this.account = account }
+
+  /**
+   * Set private key.
+   * @function setPrivateKey
+   * @param {string} privateKey - Private key.
+   */
+  @action setPrivateKey(privateKey = '') { if (privateKey.match(/^[a-zA-Z0-9]{0,52}$/)) this.privateKey = privateKey }
+
+  /**
+   * Toggle popover visibility.
+   * @function togglePopover
+   */
+  @action togglePopover() { this.popover = !this.popover }
 
   /**
    * Import private key.
@@ -61,16 +105,12 @@ class KeyImport {
           switch (response[0].error.code) {
             /** Is mine: error_code_wallet_error = -4 */
             case -4:
-              return this.setError('isMine')
+              return this.toggleError('isMine')
 
             /** Invalid key: error_code_invalid_address_or_key = -5 */
             case -5:
-              return this.setError('invalidKey')
+              return this.toggleError('invalidKey')
           }
-        }
-
-        if (this.popover === true) {
-          this.togglePopover()
         }
 
         addresses.listreceivedbyaddress()
@@ -79,77 +119,10 @@ class KeyImport {
           description: 'Private key succcessfuly imported.',
           duration: 5
         })
+
+        if (this.popover === true) this.togglePopover()
       }
     })
-  }
-
-  /**
-   * Get form submit button status.
-   * @function button
-   * @return {boolean} Button status.
-   */
-  @computed get button() {
-    /** Do not allow submitting less than full-length private keys. */
-    if (this.privateKey.length < 51) {
-      return false
-    }
-
-    for (let i in this.errors) {
-      if (this.errors[i] === true) {
-        return false
-      }
-    }
-
-    return true
-  }
-
-  /**
-   * Flip error status.
-   * @function setError
-   * @param {string} error - Error key to flip.
-   */
-  @action setError(error = '') {
-    this.errors[error] = !this.errors[error]
-
-    /** If no error key provided, clear all. */
-    if (error === '') {
-      for (let i in this.errors) {
-        this.errors[i] = false
-      }
-    }
-  }
-
-  /**
-   * Set account name.
-   * @function setAccount
-   * @param {string} account - Account name.
-   */
-  @action setAccount(account) {
-    this.account = account
-  }
-
-  /**
-   * Set private key.
-   * @function setPrivateKey
-   * @param {string} privateKey - Private key to import.
-   */
-  @action setPrivateKey(privateKey = '') {
-    if (privateKey.match(/^[a-zA-Z0-9]{0,52}$/)) {
-      this.privateKey = privateKey
-
-      /** Clear previously set errors. */
-      if (this.errors.invalidKey === true || this.errors.isMine === true) {
-        this.setError()
-      }
-    }
-  }
-
-  /**
-   * Toggle popover visibility.
-   * @function togglePopover
-   */
-  @action togglePopover() {
-    this.popover = !this.popover
   }
 }
 

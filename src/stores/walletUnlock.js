@@ -15,25 +15,74 @@ class WalletUnlock {
    * @constructor
    * @property {string} passphrase - Form element input value.
    * @property {boolean} modal - Modal visibility status.
-   * @property {object} errors - Form input errors.
+   * @property {object} errors - RPC response errors.
    */
   constructor() {
     this.passphrase = ''
     this.modal = false
     this.errors = {
-      incorrectPass: false
+      incorrectPassphrase: false
     }
 
-    /** Auto clear entered passphrase on modal closure. */
+    /** Auto clear previous RPC response errors on passphrase change. */
+    autorun(() => {
+      const trackPassphrase = this.passphrase
+      this.toggleError()
+    })
+
+    /** Auto clear passphrase field when modal closes. */
     autorun(() => {
       if (this.modal === false) {
-        this.setPassphrase()
+        if (this.passphrase !== '') this.setPassphrase()
       }
     })
   }
 
   /**
-   * Unlock the wallet.
+   * Get error status.
+   * @function errorStatus
+   * @return {string|boolean} Current error or false if none.
+   */
+  @computed get errorStatus() {
+    if (this.passphrase.length < 1) return 'emptyField'
+    if (this.errors.incorrectPassphrase === true) return 'incorrectPassphrase'
+
+    return false
+  }
+
+  /**
+   * Toggle RPC response error status.
+   * @function toggleError
+   * @param {string} key - Error key to toggle.
+   */
+  @action toggleError(key = '') {
+    if (key === '') {
+      /** Clear all errors if no key provided. */
+      for (let i in this.errors) {
+        if (this.errors[i] === true) {
+          this.errors[i] = false
+        }
+      }
+    } else {
+      this.errors[key] = !this.errors[key]
+    }
+  }
+
+  /**
+   * Set passphrase.
+   * @function setPassphrase
+   * @param {string} passphrase - Passphrase.
+   */
+  @action setPassphrase(passphrase = '') { this.passphrase = passphrase }
+
+  /**
+   * Toggle modal visibility.
+   * @function toggleModal
+   */
+  @action toggleModal() { this.modal = !this.modal }
+
+  /**
+   * Unlock wallet.
    * @function walletpassphrase
    */
   walletpassphrase() {
@@ -43,67 +92,19 @@ class WalletUnlock {
           switch (response[0].error.code) {
             /** Incorrect passphrase: error_code_wallet_passphrase_incorrect = -14 */
             case -14:
-              return this.setError('incorrectPass')
+              return this.toggleError('incorrectPassphrase')
           }
-        } else {
-          wallet.lockCheck()
-          this.toggleModal()
-          notification.success({
-            message: 'Unlocked',
-            description: 'The wallet has been unlocked.',
-            duration: 5
-          })
         }
+
+        this.toggleModal()
+        wallet.lockCheck()
+        notification.success({
+          message: 'Unlocked',
+          description: 'The wallet has been unlocked.',
+          duration: 6
+        })
       }
     })
-  }
-
-  /**
-   * Get form submit button status.
-   * @function button
-   * @return {boolean} Button status.
-   */
-  @computed get button() {
-    if (this.passphrase.length < 1) {
-      return false
-    }
-
-    if (this.errors.incorrectPass === true) {
-      return false
-    }
-
-    return true
-  }
-
-  /**
-   * Flip error status.
-   * @function setError
-   * @param {string} error - Error key to flip.
-   */
-  @action setError(error) {
-    this.errors[error] = !this.errors[error]
-  }
-
-  /**
-   * Set passphrase.
-   * @function setPassphrase
-   * @param {string} passphrase - Passphrase.
-   */
-  @action setPassphrase(passphrase = '') {
-    this.passphrase = passphrase
-
-    /** Clear previously incorrect passphrase error. */
-    if (this.errors.incorrectPass === true) {
-      this.setError('incorrectPass')
-    }
-  }
-
-  /**
-   * Toggle modal visibility.
-   * @function toggleModal
-   */
-  @action toggleModal() {
-    this.modal = !this.modal
   }
 }
 
