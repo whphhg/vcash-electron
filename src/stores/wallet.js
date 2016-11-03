@@ -48,11 +48,34 @@ class Wallet {
     autorun(() => {
       if (rpc.status === true) {
         this.getincentiveinfo()
+        this.lockCheck()
       }
     })
+  }
 
-    /** Initial wallet lock status check. */
-    this.lockCheck()
+  /**
+   * Set RPC response.
+   * @function setResponse
+   * @param {string} key - Store key to compare against and update.
+   * @param {object} response - RPC response object.
+   */
+  @action setResponse(key, response) {
+    for (let i in this[key]) {
+      if (this[key][i] !== response[i]) {
+        this[key][i] = response[i]
+      }
+    }
+  }
+
+  /**
+   * Set wallet lock status.
+   * @function setStatus
+   * @param {boolean} isEncrypted - Wallet encryption status.
+   * @param {boolean} isLocked - Wallet lock status.
+   */
+  @action setStatus(isEncrypted, isLocked) {
+    this.isLocked = isLocked
+    this.isEncrypted = isEncrypted
   }
 
   /**
@@ -86,14 +109,12 @@ class Wallet {
   }
 
   /**
-   * Lock the wallet.
+   * Lock wallet.
    * @function walletlock
    */
   walletlock() {
     /** If active, toggle ChainBlender off before locking the wallet. */
-    if (chainBlender.status === true) {
-      chainBlender.toggle()
-    }
+    if (chainBlender.status === true) chainBlender.toggle()
 
     rpc.call([{ method: 'walletlock', params: [] }], (response) => {
       if (response !== null) {
@@ -129,31 +150,6 @@ class Wallet {
         }
       }
     })
-  }
-
-  /**
-   * Set RPC response.
-   * @function setResponse
-   * @param {string} key - Store key to compare against and update.
-   * @param {object} response - RPC response object.
-   */
-  @action setResponse(key, response) {
-    for (let i in this[key]) {
-      if (this[key][i] !== response[i]) {
-        this[key][i] = response[i]
-      }
-    }
-  }
-
-  /**
-   * Set wallet lock status.
-   * @function setStatus
-   * @param {boolean} isEncrypted - Wallet encryption status.
-   * @param {boolean} isLocked - Wallet lock status.
-   */
-  @action setStatus(isEncrypted, isLocked) {
-    this.isLocked = isLocked
-    this.isEncrypted = isEncrypted
   }
 }
 

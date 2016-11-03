@@ -1,107 +1,90 @@
-import { action, observable } from 'mobx'
-import rpc from '../utilities/rpc'
+import { action, autorun, computed, observable } from 'mobx'
+import { notification } from 'antd'
 
 /** Required store instances. */
+import rpc from './rpc'
 import wallet from './wallet'
 
 /** WalletEncrypt store class. */
 class WalletEncrypt {
-  @observable modalOpen
   @observable passphrase
   @observable repeat
-  @observable errors
+  @observable modal
 
   /**
-   * Prepare observable variables.
    * @constructor
-   * @property {boolean} modalOpen - Modal status.
-   * @property {string} passphrase - Entered passphrase.
-   * @property {string} repeat - Passphrase repeat.
-   * @property {object} errors - Error status.
-   * @property {boolean} errors.different - Passphrases do not match.
-   * @property {boolean} errors.missing - Missing passphrase.
+   * @property {string} passphrase - Form element input value.
+   * @property {string} repeat - Form element input value.
+   * @property {boolean} modal - Modal visibility status.
    */
   constructor() {
-    this.modalOpen = false
     this.passphrase = ''
     this.repeat = ''
-    this.errors = {
-      different: false,
-      missing: false
-    }
+    this.modal = false
+
+    /** Auto clear passphrase fields when modal closes. */
+    autorun(() => {
+      if (this.modal === false) {
+        if (this.passphrase !== '') this.setPassphrase()
+        if (this.repeat !== '') this.setRepeat()
+      }
+    })
   }
 
   /**
-   * Set error.
-   * @function setError
-   * @param {string} error - Error key.
+   * Get error status.
+   * @function errorStatus
+   * @return {string|boolean} Current error or false if none.
    */
-  @action setError(error = '') {
-    for (let i in this.errors) {
-      if (error === i) {
-        this.errors[i] = true
-      } else {
-        this.errors[i] = false
-      }
-    }
+  @computed get errorStatus() {
+    if (this.passphrase.length < 1 || this.repeat.length < 1) return 'emptyFields'
+    if (this.passphrase.length !== this.repeat.length) return 'differentLengths'
+    if (this.passphrase !== this.repeat) return 'notMatching'
+
+    return false
   }
 
   /**
    * Set passphrase.
    * @function setPassphrase
-   * @param {string} passphrase - Entered passphrase.
+   * @param {string} passphrase - Passphrase.
    */
-  @action setPassphrase(passphrase = '') {
-    this.passphrase = passphrase
-  }
+  @action setPassphrase(passphrase = '') { this.passphrase = passphrase }
 
   /**
    * Set repeat.
    * @function setRepeat
-   * @param {string} repeat - Passphrase repeat.
+   * @param {string} repeat - Repeated passphrase.
    */
-  @action setRepeat(repeat = '') {
-    this.repeat = repeat
-  }
+  @action setRepeat(repeat = '') { this.repeat = repeat }
 
   /**
-   * Toggle modal.
+   * Toggle modal visibility.
    * @function toggleModal
    */
-  @action toggleModal() {
-    this.modalOpen = !this.modalOpen
-
-    /** Reset passphrase fields on opening. */
-    if (this.modalOpen) {
-      this.setPassphrase()
-      this.setRepeat()
-      this.setError()
-    }
-  }
+  @action toggleModal() { this.modal = !this.modal }
 
   /**
    * Encrypt wallet.
    * @function encryptwallet
    */
-  encrypt() {
-    if (this.passphrase.length === 0 || this.repeat.length === 0) {
-      return this.setError('missing')
-    } else {
-      if (this.passphrase !== this.repeat) {
-        return this.setError('different')
-      } else {
-        rpc({ method: 'encryptwallet', params: [this.passphrase] }, (response) => {
-          if (response !== null) {
-            this.toggleModal()
-            wallet.lockCheck()
-          }
+  encryptwallet() {
+    rpc.call([{ method: 'encryptwallet', params: [this.passphrase] }], (response) => {
+      if (response !== null) {
+        wallet.lockCheck()
+        notification.success({
+          message: 'Wallet encrypted',
+          description: 'Please re-start the daemon.',
+          duration: 0
         })
       }
-    }
+    })
   }
 }
 
+/** Initialize a new globally used store. */
 const walletEncrypt = new WalletEncrypt()
 
+/** Export both, initialized store as default export, and store class as named export. */
 export default walletEncrypt
 export { WalletEncrypt }

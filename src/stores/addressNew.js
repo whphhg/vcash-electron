@@ -1,4 +1,4 @@
-import { action, autorun, computed, observable } from 'mobx'
+import { action, computed, observable } from 'mobx'
 import { notification } from 'antd'
 
 /** Required store instances. */
@@ -15,38 +15,63 @@ class AddressNew {
    * @constructor
    * @property {string} account - Form element input value.
    * @property {boolean} popover - Popover visibility status.
-   * @property {object} errors - Form input errors.
+   * @property {object} errors - RPC response errors.
    */
   constructor() {
     this.account = ''
     this.popover = false
     this.errors = {
-      invalidCharacters: false
+      keypoolRanOut: false
     }
-
-    /** Auto validate account name on every change. */
-    autorun(() => {
-      if (this.account.match(/^[a-zA-Z0-9 -]{0,100}$/) === null) {
-        if (this.errors.invalidCharacters === false) {
-          this.setError('invalidCharacters')
-        }
-      } else {
-        if (this.errors.invalidCharacters === true) {
-          this.setError('invalidCharacters')
-        }
-      }
-    })
   }
+
+  /**
+   * Get error status.
+   * @function errorStatus
+   * @return {string|boolean} Current error or false if none.
+   */
+  @computed get errorStatus() {
+    if (this.account.match(/^[a-zA-Z0-9 -]{0,100}$/) === null) return 'invalidCharacters'
+    if (this.errors.keypoolRanOut === true) return 'keypoolRanOut'
+
+    return false
+  }
+
+  /**
+   * Toggle RPC response error status.
+   * @function toggleError
+   * @param {string} key - Error key to toggle.
+   */
+  @action toggleError(key) { this.errors[key] = !this.errors[key] }
+
+  /**
+   * Set account name.
+   * @function setAccount
+   * @param {string} account - Account name.
+   */
+  @action setAccount(account) { this.account = account }
+
+  /**
+   * Toggle popover visibility.
+   * @function togglePopover
+   */
+  @action togglePopover() { this.popover = !this.popover }
 
   /**
    * Get new address.
    * @function getnewaddress
-   *
-   * TODO: Handle error_code_wallet_keypool_ran_out.
    */
   getnewaddress() {
     rpc.call([{ method: 'getnewaddress', params: [this.account] }], (response) => {
       if (response !== null) {
+        if (response[0].hasOwnProperty('error') === true) {
+          switch (response[0].error.code) {
+            /** Keypool ran out: error_code_wallet_keypool_ran_out = -12 */
+            case -12:
+              return this.toggleError('keypoolRanOut')
+          }
+        }
+
         this.togglePopover()
         addresses.listreceivedbyaddress()
         notification.success({
@@ -56,47 +81,6 @@ class AddressNew {
         })
       }
     })
-  }
-
-  /**
-   * Get form submit button status.
-   * @function button
-   * @return {boolean} Button status.
-   */
-  @computed get button() {
-    for (let i in this.errors) {
-      if (this.errors[i] === true) {
-        return false
-      }
-    }
-
-    return true
-  }
-
-  /**
-   * Set account name.
-   * @function setAccount
-   * @param {string} account - Account name.
-   */
-  @action setAccount(account) {
-    this.account = account
-  }
-
-  /**
-   * Flip error status.
-   * @function setError
-   * @param {string} error - Error key to flip.
-   */
-  @action setError(error) {
-    this.errors[error] = !this.errors[error]
-  }
-
-  /**
-   * Toggle popover visibility.
-   * @function togglePopover
-   */
-  @action togglePopover() {
-    this.popover = !this.popover
   }
 }
 

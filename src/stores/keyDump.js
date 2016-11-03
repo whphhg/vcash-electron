@@ -15,39 +15,85 @@ class KeyDump {
    * @property {string} address - Form element input value.
    * @property {string} privateKey - Dumped private key.
    * @property {boolean} popover - Popover visibility status.
-   * @property {object} errors - Form input errors.
+   * @property {object} errors - RPC response errors.
    */
   constructor() {
     this.address = ''
     this.privateKey = ''
     this.popover = false
     this.errors = {
-      invalidCharacters: false,
       invalidAddress: false,
       unknownAddress: false
     }
 
-    /** Auto validate address on every change. */
+    /** Auto clear previous RPC response errors and private key on address change. */
     autorun(() => {
-      if (this.address.match(/^[a-zA-Z0-9]{0,34}$/) === null) {
-        if (this.errors.invalidCharacters === false) {
-          this.setError('invalidCharacters')
-        }
-      } else {
-        if (this.errors.invalidCharacters === true) {
-          this.setError('invalidCharacters')
-        }
-      }
+      const trackAddress = this.address
+      this.toggleError()
+      this.setPrivateKey()
     })
 
-    /** Auto clear entered address and private key when popover closes. */
+    /** Auto clear address and private key when popover closes. */
     autorun(() => {
       if (this.popover === false) {
-        this.setAddress()
-        this.setPrivateKey()
+        if (this.address !== '') this.setAddress()
+        if (this.privateKey !== '') this.setPrivateKey()
       }
     })
   }
+
+  /**
+   * Get error status.
+   * @function errorStatus
+   * @return {string|boolean} Current error or false if none.
+   */
+  @computed get errorStatus() {
+    if (this.address.match(/^[a-zA-Z0-9]{0,34}$/) === null) return 'invalidCharacters'
+    if (this.address.length < 34) return 'incompleteAddress'
+    if (this.errors.invalidAddress === true) return 'invalidAddress'
+    if (this.errors.unknownAddress === true) return 'unknownAddress'
+
+    return false
+  }
+
+  /**
+   * Toggle RPC response error status.
+   * @function toggleError
+   * @param {string} key - Error key to toggle.
+   */
+  @action toggleError(key = '') {
+    if (key === '') {
+      /** Clear all errors if no key provided. */
+      for (let i in this.errors) {
+        if (this.errors[i] === true) {
+          this.errors[i] = false
+        }
+      }
+    } else {
+      this.errors[key] = !this.errors[key]
+    }
+  }
+
+  /**
+   * Set address.
+   * @function setAddress
+   * @param {string} address - Address.
+   */
+  @action setAddress(address = '') { this.address = address }
+
+  /**
+   * Set private key.
+   * @function setPrivateKey
+   * @param {string} privateKey - Returned private key.
+   */
+  @action setPrivateKey(privateKey = '') { this.privateKey = privateKey }
+
+  /**
+   * Toggle popover visibility.
+   * @function togglePopover
+   */
+  @action togglePopover() { this.popover = !this.popover }
+
 
   /**
    * Dump private key.
@@ -60,89 +106,17 @@ class KeyDump {
           switch (response[0].error.code) {
             /** Unknown address: error_code_wallet_error = -4 */
             case -4:
-              return this.setError('unknownAddress')
+              return this.toggleError('unknownAddress')
 
             /** Invalid address: error_code_invalid_address_or_key = -5 */
             case -5:
-              return this.setError('invalidAddress')
+              return this.toggleError('invalidAddress')
           }
         }
 
         this.setPrivateKey(response[0].result)
       }
     })
-  }
-
-  /**
-   * Get form submit button status.
-   * @function button
-   * @return {boolean} Button status.
-   */
-  @computed get button() {
-    /** Do not allow submitting less than full-length addresses. */
-    if (this.address.length < 34) {
-      return false
-    }
-
-    for (let i in this.errors) {
-      if (this.errors[i] === true) {
-        return false
-      }
-    }
-
-    return true
-  }
-
-  /**
-   * Flip error status.
-   * @function setError
-   * @param {string} error - Error key to flip.
-   */
-  @action setError(error = '') {
-    this.errors[error] = !this.errors[error]
-
-    /** If no error key provided, clear all. */
-    if (error === '') {
-      for (let i in this.errors) {
-        this.errors[i] = false
-      }
-    }
-  }
-
-  /**
-   * Set address.
-   * @function setAddress
-   * @param {string} address - Address.
-   */
-  @action setAddress(address = '') {
-    this.address = address
-
-    /** Clear previously set private key. */
-    if (this.privateKey !== '') {
-      this.setPrivateKey()
-    }
-
-    /** Clear previously set errors. */
-    if (this.errors.unknownAddress === true || this.errors.invalidAddress === true) {
-      this.setError()
-    }
-  }
-
-  /**
-   * Set private key.
-   * @function setPrivateKey
-   * @param {string} privateKey - Returned private key.
-   */
-  @action setPrivateKey(privateKey = '') {
-    this.privateKey = privateKey
-  }
-
-  /**
-   * Toggle popover visibility.
-   * @function togglePopover
-   */
-  @action togglePopover() {
-    this.popover = !this.popover
   }
 }
 

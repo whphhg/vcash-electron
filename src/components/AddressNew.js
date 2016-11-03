@@ -40,14 +40,17 @@ class AddressNew extends React.Component {
               dataSource={this.addresses.accounts}
               onChange={this.setAccount}
             />
-            <Button onClick={this.getnewaddress} disabled={this.addressNew.button === false}>Confirm</Button>
+            <Button onClick={this.getnewaddress} disabled={this.addressNew.errorStatus !== false}>Confirm</Button>
           </Col>
         </Row>
         <Row>
           <Col span={24}>
           {
-            this.addressNew.errors.invalidCharacters === true && (
+            this.addressNew.errorStatus === 'invalidCharacters' && (
               <p className='error-text'>You can enter only alphanumerals, dash and space.</p>
+            ) ||
+            this.addressNew.errorStatus === 'keypoolRanOut' && (
+              <p className='error-text'>Keypool ran out.</p>
             )
           }
           </Col>

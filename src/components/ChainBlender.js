@@ -51,8 +51,8 @@ class ChainBlender extends React.Component {
             <p><span>{this.chainBlender.info.blendedbalance.toFixed(6)}</span> XVC</p>
           </Col>
           <Col span={5} className='text-right'>
-            <p>{((this.chainBlender.info.nondenominatedbalance / this.wallet.info.balance) * 100).toFixed(2)}%</p>
-            <p>{((this.chainBlender.info.denominatedbalance / this.wallet.info.balance) * 100).toFixed(2)}%</p>
+            <p>{this.chainBlender.nonDenominatedPercentage.toFixed(2)}%</p>
+            <p>{this.chainBlender.denominatedPercentage.toFixed(2)}%</p>
             <p>{this.chainBlender.info.blendedpercentage.toFixed(2)}%</p>
           </Col>
         </Row>

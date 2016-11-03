@@ -1,27 +1,14 @@
-'use strict'
-
-/**
- * TODO: Translations (i18next, react-i18next, moment-timezone).
- * TODO: Implement right-click copy and paste menu.
- * TODO: Implement wallet backup.
- * TODO: Implement wallet check.
- * TODO: Implement wallet repair.
- * TODO: Implement wallet passphrase change.
- * TODO: Remote RPC using tunnel-ssh -> ssh -L9195:localhost:9195 user@ip).
- * TODO: Staking indicator if config pos:1 & unlocked (gavel, flag, flash on, rowing).
- */
-
 import React from 'react'
 import { render } from 'react-dom'
-import { hashHistory, IndexRoute, Router, Route } from 'react-router'
+import { Router, Route, IndexRoute, hashHistory } from 'react-router'
 import { Provider } from 'mobx-react'
-
-/** Use MobX strict mode. Only actions can change the state. */
 import { useStrict } from 'mobx'
+import { notification } from 'antd'
+
+/** Use MobX strict mode, allowing only actions to alter the state. */
 useStrict(true)
 
-/** Set notification top margin. */
-import { notification } from 'antd'
+/** Set notification's top margin. */
 notification.config({ top: 65 })
 
 /** Required components. */

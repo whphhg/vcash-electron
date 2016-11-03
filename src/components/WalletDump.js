@@ -16,6 +16,7 @@ class WalletDump extends React.Component {
 
   dumpwallet() {
     this.walletDump.dumpwallet()
+    this.walletDump.togglePopover()
   }
 
   togglePopover() {

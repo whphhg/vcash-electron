@@ -4,10 +4,27 @@ import { action, observable } from 'mobx'
 class RPC {
   @observable status
 
+  /**
+   * @constructor
+   * @property {null|boolean} status - RPC connection status.
+   */
   constructor() {
     this.status = null
   }
 
+  /**
+   * Set RPC status.
+   * @function setStatus
+   * @param {string} status - RPC status.
+   */
+  @action setStatus(status) { this.status = status }
+
+  /**
+   * Execute RPC request.
+   * @function call
+   * @param {array} options - RPC request objects.
+   * @param {function} callback - Function to call with RPC response.
+   */
   call(options, callback) {
     options.map((option) => {
       option.jsonrpc = '2.0'
@@ -24,20 +41,12 @@ class RPC {
     })
     .then((data) => {
       if (this.status !== true) this.setStatus(true)
-
-      /** Return RPC response. */
       return callback(data)
     })
     .catch((error) => {
       if (this.status !== false) this.setStatus(false)
-
-      /** Return null, signaling failed RPC. */
       return callback(null)
     })
-  }
-
-  @action setStatus(status) {
-    this.status = status
   }
 }
 

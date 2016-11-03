@@ -25,7 +25,7 @@ class Addresses extends React.Component {
     return (
       <div>
         <Row>
-          <Col span={15}>
+          <Col span={13}>
             <div className='margin-10'>
               <div style={{float:'left'}}><AddressNew /></div>
               <div style={{float:'left', marginLeft:'10px'}}><KeyImport /></div>
@@ -34,7 +34,7 @@ class Addresses extends React.Component {
               <div style={{clear:'both'}}></div>
             </div>
           </Col>
-          <Col span={9}>
+          <Col span={11}>
             <div style={{float:'right'}}>
               <div className='margin-10'>
                 <div className='toolbar-text'>

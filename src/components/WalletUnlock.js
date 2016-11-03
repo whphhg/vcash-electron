@@ -31,7 +31,7 @@ class WalletUnlock extends React.Component {
       <Row>
         <Col span={24} className='text-right'>
           <Button onClick={this.toggleModal} style={{marginTop:'1px'}}>Cancel</Button>
-          <Button onClick={this.walletpassphrase} disabled={this.walletUnlock.button === false} type='primary'>Unlock</Button>
+          <Button onClick={this.walletpassphrase} disabled={this.walletUnlock.errorStatus !== false} type='primary'>Unlock</Button>
         </Col>
       </Row>
     )
@@ -51,7 +51,7 @@ class WalletUnlock extends React.Component {
         <Row>
           <Col span={24}>
             {
-              this.walletUnlock.errors.incorrectPass === true && (
+              this.walletUnlock.errorStatus === 'incorrectPassphrase' && (
                 <p className='error-text'>The passphrase you have entered is incorrect. Please try again.</p>
               )
             }
