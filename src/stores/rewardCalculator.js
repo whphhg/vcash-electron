@@ -1,87 +1,69 @@
-import { action, computed, observable } from 'mobx'
+import { action, autorun, computed, observable } from 'mobx'
 import { calculateIncentive, calculatePoW } from '../utilities/blockRewards'
-import rpc from '../utilities/rpc'
 
 /** Required store instances. */
+import rpc from './rpc'
 import wallet from './wallet'
 
 /** Block reward calculator store class. */
 class RewardCalculator {
   @observable block
-  @observable time
-  @observable estimate
-  @observable incentiveReward
-  @observable powPercent
-  @observable powReward
+  @observable blocktime
 
   /**
-   * Prepare observable variables.
    * @constructor
-   * @property {string} block - User entered block height.
-   * @property {string} time - Date and time.
-   * @property {boolean} estimate - Estimate or already mined / staked.
-   * @property {number} incentiveReward - Incentive reward amount.
-   * @property {number} powPercent - Miner share of PoW reward.
-   * @property {number} powReward - PoW reward amount.
+   * @property {string} block - Form element input value.
+   * @property {number} blocktime - Time property of RPC getblock response.
    */
   constructor() {
     this.block = ''
-    this.time = new Date()
-    this.estimate = false
-    this.incentiveReward = 0
-    this.powPercent = 0
-    this.powReward = 0
+    this.blocktime = 0
+
+    /** Auto check if block exists and retrieve block time. */
+    autorun(() => {
+      rpc.call([{ method: 'getblockhash', params: [this.blockInt] }], (response) => {
+        if (response !== null) {
+          /** If block exists, get data. */
+          if (response[0].hasOwnProperty('result') === true) {
+            rpc.call([{ method: 'getblock', params: [response[0].result] }], (response) => {
+              if (response !== null) {
+                return this.setBlocktime(response[0].result.time * 1000)
+              }
+            })
+          }
+
+          /** Clear previous blocktime. */
+          if (this.blocktime !== 0) this.setBlocktime()
+        }
+      })
+    })
   }
 
   /**
-   * Set block height.
-   * @function setBlock
-   * @param {number} block - Block height.
+   * Get block string converted to number.
+   * @function blockInt
+   * @return {number} Block.
    */
-  @action setBlock(block) {
-    /** Clear if text input is empty. */
-    if (!block) {
-      this.block = ''
-    } else {
-      if (block.toString().match(/^[0-9]{0,7}$/)) {
-        this.block = block
-        this.calculate()
-      }
-    }
-  }
-  /**
-   * Set calculated data.
-   * @function setData
-   * @param {object} data - Calculated data.
-   */
-  @action setData(data) {
-    this.time = data.time
-    this.estimate = data.estimate
-    this.incentiveReward = parseFloat(data.incentiveReward).toFixed(6)
-    this.powPercent = data.powPercent
-    this.powReward = parseFloat(data.powReward).toFixed(6)
-  }
+  @computed get blockInt() { return this.block === '' ? 0 : parseInt(this.block) }
 
   /**
-   * Get next 100k rewards data in 2.5k increments,
-   * in a format that recharts can read.
+   * Get data for the next 100k rewards in 2.5k increments.
    * @function chartData
    * @return {array} Chart data.
    */
   @computed get chartData() {
-    const blockHeight = this.block === '' ? parseInt(wallet.blocks) : parseInt(this.block)
     let data = []
 
-    for (let i = blockHeight; i <= blockHeight + 100000; i += 2500) {
-      const powPercent = calculateIncentive(i)
+    for (let i = this.blockInt; i <= this.blockInt + 100000; i += 2500) {
+      const incentivePercent = calculateIncentive(i)
       const powReward = calculatePoW(i)
-      const incentiveReward = (powReward / 100) * powPercent
+      const incentiveReward = (powReward / 100) * incentivePercent
 
       data.push({
         block: i,
-        'Incentive share': parseFloat(parseFloat(incentiveReward).toFixed(6)),
-        'Miner share': parseFloat(parseFloat(powReward - incentiveReward).toFixed(6)),
-        'PoW reward': parseFloat(parseFloat(powReward.toFixed(6)))
+        'Incentive share': Math.round(incentiveReward * 1e6 ) / 1e6,
+        'Miner share': Math.round((powReward - incentiveReward) * 1e6) / 1e6,
+        'PoW reward': Math.round(powReward * 1e6) / 1e6
       })
     }
 
@@ -89,49 +71,64 @@ class RewardCalculator {
   }
 
   /**
-   * Calculate block rewards.
-   * @function calculate
+   * Get block PoW reward.
+   * @function powReward
+   * @return {number} PoW reward.
    */
-  calculate() {
-    const powPercent = calculateIncentive(this.block)
-    const powReward = calculatePoW(this.block)
-    const incentiveReward = (powReward / 100) * powPercent
+  @computed get powReward() { return calculatePoW(this.block) }
 
-    if (this.block <= wallet.blocks) {
-      rpc({ method: 'getblockhash', params: [this.block] }, (response) => {
-        if (response !== null) {
-          rpc({ method: 'getblock', params: [response.result] }, (response) => {
-            if (response !== null) {
-              this.setData({
-                time: new Date(response.result.time * 1000),
-                estimate: false,
-                incentiveReward,
-                powPercent,
-                powReward
-              })
-            }
-          })
-        }
-      })
-    } else {
-      /**
-       * Variable block time targeting 80-200 seconds.
-       * 200 - 80 = 120 / 2 = 60 + 80 = 140
-       */
-      let time = new Date()
-      time.setSeconds(time.getSeconds() + (this.block - wallet.blocks) * 140)
-      this.setData({
-        time,
-        estimate: true,
-        incentiveReward,
-        powPercent,
-        powReward
-      })
-    }
+  /**
+   * Get block incentive percentage.
+   * @function incentivePercent
+   * @return {number} Incentive percentage.
+   */
+  @computed get incentivePercent() { return calculateIncentive(this.block) }
+
+  /**
+   * Get block incentive reward.
+   * @function incentiveReward
+   * @return {number} Incentive reward.
+   */
+  @computed get incentiveReward() { return (this.powReward / 100) * this.incentivePercent }
+
+  /**
+   * Check if datetime is exact or an estimation.
+   * @function estimation
+   * @return {boolean} Estimated.
+   */
+  @computed get estimation() {
+    if (this.blocktime === 0) return true
+    return false
   }
+
+  /**
+   * Get block time or an approximate estimation.
+   * @function time
+   * @return {number} Blocktime.
+   */
+  @computed get time() {
+    if (this.blocktime !== 0) return this.blocktime
+    return new Date().getTime() + (1000 * 140 * (this.blockInt - wallet.info.blocks))
+  }
+
+  /**
+   * Set block.
+   * @function setBlock
+   * @param {number} block - Block number.
+   */
+  @action setBlock(block = '') { if (block.toString().match(/^[0-9]{0,7}$/) !== null) this.block = block }
+
+  /**
+   * Set RPC response block time.
+   * @function setBlocktime
+   * @param {number} blocktime - Blocktime.
+   */
+  @action setBlocktime(blocktime = 0) { this.blocktime = blocktime }
 }
 
+/** Initialize a new globally used store. */
 const rewardCalculator = new RewardCalculator()
 
+/** Export both, initialized store as default export, and store class as named export. */
 export default rewardCalculator
 export { RewardCalculator }

@@ -86,7 +86,7 @@ class KeyImport {
    * @function setPrivateKey
    * @param {string} privateKey - Private key.
    */
-  @action setPrivateKey(privateKey = '') { if (privateKey.match(/^[a-zA-Z0-9]{0,52}$/)) this.privateKey = privateKey }
+  @action setPrivateKey(privateKey = '') { if (privateKey.match(/^[a-zA-Z0-9]{0,52}$/) !== null) this.privateKey = privateKey }
 
   /**
    * Toggle popover visibility.

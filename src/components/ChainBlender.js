@@ -1,6 +1,6 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
-import { Button, Col, Icon, Popover, Row, Switch } from 'antd'
+import { Button, Col, Popover, Row, Switch } from 'antd'
 
 /** Make the component reactive and inject MobX stores. */
 @observer(['chainBlender', 'wallet'])
@@ -19,17 +19,17 @@ class ChainBlender extends React.Component {
 
   popoverTitle() {
     return (
-      <Row>
+      <Row style={{width:'265px'}}>
         <Col span={17}>
-          <span>ChainBlender</span>
+          <p>Blended <span className='font-weight-500'>{this.chainBlender.info.blendedbalance.toFixed(6)}</span> XVC ({this.chainBlender.info.blendedpercentage.toFixed(2)}%)</p>
         </Col>
         <Col span={7} style={{textAlign:'right'}}>
           <Switch
             checked={this.chainBlender.status === true}
             disabled={this.wallet.isLocked === true}
             onChange={this.toggle}
-            checkedChildren={<Icon type='check' />}
-            unCheckedChildren={<Icon type='cross' />}
+            checkedChildren={<i className='material-icons md-20'>done</i>}
+            unCheckedChildren={<i className='material-icons md-20'>clear</i>}
           />
         </Col>
       </Row>
@@ -39,21 +39,14 @@ class ChainBlender extends React.Component {
   popoverContent() {
     return (
       this.wallet.isLocked === false && (
-        <Row style={{width:'290px'}}>
-          <Col span={9}>
-            <p>Non-denominated</p>
+        <Row>
+          <Col span={12}>
             <p>Denominated</p>
-            <p>Blended</p>
+            <p>Non-denominated</p>
           </Col>
-          <Col span={10} className='text-right'>
-            <p><span>{this.chainBlender.info.nondenominatedbalance.toFixed(6)}</span> XVC</p>
+          <Col span={12} className='text-right'>
             <p><span>{this.chainBlender.info.denominatedbalance.toFixed(6)}</span> XVC</p>
-            <p><span>{this.chainBlender.info.blendedbalance.toFixed(6)}</span> XVC</p>
-          </Col>
-          <Col span={5} className='text-right'>
-            <p>{this.chainBlender.nonDenominatedPercentage.toFixed(2)}%</p>
-            <p>{this.chainBlender.denominatedPercentage.toFixed(2)}%</p>
-            <p>{this.chainBlender.info.blendedpercentage.toFixed(2)}%</p>
+            <p><span>{this.chainBlender.info.nondenominatedbalance.toFixed(6)}</span> XVC</p>
           </Col>
         </Row>
       ) || (

@@ -14,67 +14,64 @@ class RewardCalculator extends React.Component {
     super(props)
     this.rewardCalculator = props.rewardCalculator
     this.wallet = props.wallet
+    this.setBlock = this.setBlock.bind(this)
 
     /** Calculate current block when loading the component. */
-    this.rewardCalculator.setBlock(this.wallet.blocks)
-
-    /** Bind functions early. */
-    this.onChange = this.onChange.bind(this)
+    this.rewardCalculator.setBlock(this.wallet.info.blocks)
   }
 
-  onChange(event) {
+  setBlock(event) {
     this.rewardCalculator.setBlock(event.target.value)
+  }
+
+  popoverTitle() {
+    return (
+      <Row>
+        <Col span={2}>
+          <span>Block</span>
+        </Col>
+        <Col span={4}>
+          <Input autosize type='text' placeholder='Height' value={this.rewardCalculator.block} onChange={this.setBlock} maxLength={7} />
+        </Col>
+        <Col span={18}>
+          <p style={{textAlign:'right'}}>
+            {this.rewardCalculator.estimation === true ? 'Confirmation est. ' : 'Confirmed on '}
+            <span className='font-weight-500'>{moment(this.rewardCalculator.time).format('YYYY-MM-DD HH:mm:ss')}</span> ({moment().to(this.rewardCalculator.time)})
+          </p>
+        </Col>
+      </Row>
+    )
+  }
+
+  popoverContent() {
+    return (
+      <div style={{width:'500px',marginTop:'10px'}}>
+        <Row>
+          <Col span={6} offset={3}>
+            <p>PoW reward</p>
+            <p><span className='font-weight-500'>{this.rewardCalculator.powReward.toFixed(6)}</span> XVC</p>
+          </Col>
+          <Col span={7}>
+            <p>Miner share</p>
+            <p><span className='font-weight-500'>{(this.rewardCalculator.powReward - this.rewardCalculator.incentiveReward).toFixed(6)}</span> XVC ({100 - this.rewardCalculator.incentivePercent}%)</p>
+          </Col>
+          <Col span={7}>
+            <p>Incentive share</p>
+            <p><span className='font-weight-500'>{this.rewardCalculator.incentiveReward.toFixed(6)}</span> XVC ({this.rewardCalculator.incentivePercent}%)</p>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <RewardCalculatorChart />
+          </Col>
+        </Row>
+      </div>
+    )
   }
 
   render() {
     return (
-      <Popover
-        trigger='click'
-        placement='bottomLeft'
-        title={
-          <Row>
-            <Col span={2}>
-              <span>Block</span>
-            </Col>
-            <Col span={4}>
-              <Input type='text' autosize
-                placeholder='Enter block number'
-                value={this.rewardCalculator.block}
-                onChange={this.onChange}
-                maxLength={7}
-              />
-            </Col>
-            <Col span={18}>
-              <p style={{textAlign:'right'}}>
-                {this.rewardCalculator.estimate ? 'Confirmation est. ' : 'Confirmed on '}
-                <span className='font-weight-500'>{moment(this.rewardCalculator.time).format('YYYY-MM-DD HH:mm:ss')}</span> ({moment().to(this.rewardCalculator.time.toISOString())})
-              </p>
-            </Col>
-          </Row>
-        }
-        content={
-          <Row style={{width:'500px', marginTop:'10px'}}>
-            <Col offset={6} span={6}>
-              <p>PoW reward</p>
-              <p>Miner share</p>
-              <p>Incentive share</p>
-            </Col>
-            <Col span={5}>
-              <p><span className='font-weight-500'>{this.rewardCalculator.powReward}</span> XVC</p>
-              <p><span className='font-weight-500'>{(this.rewardCalculator.powReward - this.rewardCalculator.incentiveReward).toFixed(6)}</span> XVC</p>
-              <p><span className='font-weight-500'>{this.rewardCalculator.incentiveReward}</span> XVC</p>
-            </Col>
-            <Col span={2}>
-              <p>&nbsp;</p>
-              <p><span className='font-weight-500'>{100 - this.rewardCalculator.powPercent}</span>%</p>
-              <p><span className='font-weight-500'>{this.rewardCalculator.powPercent}</span>%</p>
-            </Col>
-            <Col span={24}>
-              <RewardCalculatorChart />
-            </Col>
-          </Row>
-        }
-      >
+      <Popover trigger='click' placement='bottomLeft' title={this.popoverTitle()} content={this.popoverContent()}>
         <Button>Reward calculator</Button>
       </Popover>
     )

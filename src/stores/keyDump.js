@@ -94,7 +94,6 @@ class KeyDump {
    */
   @action togglePopover() { this.popover = !this.popover }
 
-
   /**
    * Dump private key.
    * @function dumpprivkey

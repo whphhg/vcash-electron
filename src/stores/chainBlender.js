@@ -32,26 +32,6 @@ class ChainBlender {
   }
 
   /**
-   * Get denominated percentage.
-   * @function denominatedPercentage
-   * @return {number} Denominated percentage.
-   */
-  @computed get denominatedPercentage() {
-    if (this.info.denominatedbalance > 0) return this.info.denominatedbalance / wallet.info.balance * 100
-    return 0
-  }
-
-  /**
-   * Get non-denominated percentage.
-   * @function nonDenominatedPercentage
-   * @return {number} Non-denominated percentage.
-   */
-  @computed get nonDenominatedPercentage() {
-    if (this.info.nondenominatedbalance > 0) return this.info.nondenominatedbalance / wallet.info.balance * 100
-    return 0
-  }
-
-  /**
    * Set RPC response.
    * @function setResponse
    * @param {object} response - RPC response object.
@@ -66,7 +46,9 @@ class ChainBlender {
     }
 
     /** Correct status if the daemon is already blending prior to you connecting. */
-    if (response.blendstate === 'active' && this.status === false) this.setStatus(true)
+    if (response.blendstate === 'active' || response.blendstate === 'passive') {
+      if (this.status === false) this.setStatus(true)
+    }
   }
 
   /**
