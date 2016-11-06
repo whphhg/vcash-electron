@@ -5,6 +5,9 @@ import { Provider } from 'mobx-react'
 import { useStrict } from 'mobx'
 import { notification } from 'antd'
 
+/** Enable right click menu. */
+import rightClickMenu from './utilities/rightClickMenu'
+
 /** Use MobX strict mode, allowing only actions to alter the state. */
 useStrict(true)
 
