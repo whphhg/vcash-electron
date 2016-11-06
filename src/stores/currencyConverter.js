@@ -30,20 +30,20 @@ class CurrencyConverter {
       switch (this.convertFrom) {
         case 'vcash':
           return this.setData({
-            bitcoin: parseFloat(this[this.convertFrom] * rates.average).toFixed(8),
-            local: parseFloat(this[this.convertFrom] * rates.local * rates.average).toFixed(3)
+            bitcoin: Math.round((this[this.convertFrom] * rates.average) * 1e8) / 1e8,
+            local: Math.round((this[this.convertFrom] * rates.local * rates.average) * 1e3) / 1e3
           })
 
         case 'bitcoin':
           return this.setData({
-            local: parseFloat(this[this.convertFrom] * rates.local).toFixed(3),
-            vcash: parseFloat(this[this.convertFrom] / rates.average).toFixed(6)
+            local: Math.round((this[this.convertFrom] * rates.local) * 1e3) / 1e3,
+            vcash: Math.round((this[this.convertFrom] / rates.average) * 1e6) / 1e6
           })
 
         case 'local':
           return this.setData({
-            bitcoin: parseFloat(1 / rates.local * this[this.convertFrom]).toFixed(8),
-            vcash: parseFloat((1 / rates.local * this[this.convertFrom]) / rates.average).toFixed(6)
+            bitcoin: Math.round((this[this.convertFrom] * 1 / rates.local) * 1e8) / 1e8,
+            vcash: Math.round(((this[this.convertFrom] * 1 / rates.local) / rates.average) * 1e6) / 1e6
           })
       }
     })

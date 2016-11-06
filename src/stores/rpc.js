@@ -15,15 +15,15 @@ class RPC {
   /**
    * Set RPC status.
    * @function setStatus
-   * @param {string} status - RPC status.
+   * @param {boolean} status - RPC status.
    */
   @action setStatus(status) { this.status = status }
 
   /**
-   * Execute RPC request.
+   * Execute RPC request(s).
    * @function call
    * @param {array} options - RPC request objects.
-   * @param {function} callback - Function to call with RPC response.
+   * @param {function} callback - Function to call with RPC response or null if error.
    */
   call(options, callback) {
     options.map((option) => {
@@ -36,9 +36,7 @@ class RPC {
       headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify(options)
     })
-    .then((response) => {
-      if (response.ok) return response.json()
-    })
+    .then((response) => { if (response.ok) return response.json() })
     .then((data) => {
       if (this.status !== true) this.setStatus(true)
       return callback(data)

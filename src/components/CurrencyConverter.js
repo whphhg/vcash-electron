@@ -22,15 +22,15 @@ class CurrencyConverter extends React.Component {
       <Row style={{width:'400px'}}>
         <Col span={7}>
           <p style={{marginBottom:'5px'}}><span className='font-weight-500'>XVC</span></p>
-          <Input type='text' autosize id='vcash' placeholder='Amount' maxLength={7} onChange={this.onChange} value={this.currencyConverter.vcash} />
+          <Input type='text' autosize id='vcash' placeholder='Amount' onChange={this.onChange} value={this.currencyConverter.vcash} />
         </Col>
         <Col offset={1} span={8}>
           <p style={{marginBottom:'5px'}}><span className='font-weight-500'>BTC</span></p>
-          <Input type='text' autosize id='bitcoin' placeholder='Amount' maxLength={7} onChange={this.onChange} value={this.currencyConverter.bitcoin} />
+          <Input type='text' autosize id='bitcoin' placeholder='Amount' onChange={this.onChange} value={this.currencyConverter.bitcoin} />
         </Col>
         <Col offset={1} span={7}>
           <p style={{marginBottom:'5px'}}><span className='font-weight-500'>{this.rates.localCurrency}</span></p>
-          <Input type='text' autosize id='local' placeholder='Amount' maxLength={7} onChange={this.onChange} value={this.currencyConverter.local} />
+          <Input type='text' autosize id='local' placeholder='Amount' onChange={this.onChange} value={this.currencyConverter.local} />
         </Col>
       </Row>
     )

@@ -47,7 +47,7 @@ class AddressNew extends React.Component {
           <Col span={24}>
           {
             this.addressNew.errorStatus === 'invalidCharacters' && (
-              <p className='error-text'>You can enter only alphanumerals, dash and space.</p>
+              <p className='error-text'>You can only enter alphanumerals, dash and space.</p>
             ) ||
             this.addressNew.errorStatus === 'keypoolRanOut' && (
               <p className='error-text'>Keypool ran out.</p>
