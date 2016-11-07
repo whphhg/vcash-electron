@@ -5,17 +5,31 @@
 /** Elements */
 body { font-family: 'Roboto', sans-serif; font-size: 13px; }
 header { background: #B71C1C; color: #FFFFFF; overflow: hidden; }
-header #logo { margin: 10px; width: 36px; height: 36px; }
-header #logo img { width: 36px; height: 36px; }
-header #balance { margin-top: 10px; margin-left: 14px; }
-header #indicators { margin-top: 27px; text-align: right; }
-header nav { margin-top: 5px; margin-right: 14px; float: right; }
+header img { float: left; margin: 10px 0 10px 10px; width: 36px; height: 36px; }
+header p { float: left; margin: 9px 0 0 20px; padding: 0px; }
+header p span { font-weight: 600; }
+header p.balance { margin: 28px 0 0 20px; }
+header .incoming { float: left; margin: 0 0 0 10px; }
+header .indicators { float: right; margin: 30px 15px 0 20px; }
+header .controls { float: right; margin: 0 10px 0 0; }
+header nav { float: right; margin: 5px 14px 0 0; }
 header nav i { vertical-align: text-bottom; }
-header p { padding: 0px; margin: 0px; line-height: 18px; font-weight: 500; }
-header p span { font-weight: 600; text-decoration: none; }
-header button { margin-left: 2px; margin-top: 13px; }
-main #transactions { min-height: 427px; padding-bottom: 10px; margin-left: 10px; }
-main #network { min-height: 227px; padding-bottom: 10px; margin-left: 10px; }
+header button { margin: 13px 0 0 0; }
+main #transactions { min-height: 437px; margin: 0 0 10px 10px; }
+main #network { min-height: 227px; margin: 0 0 10px 10px; }
+footer { width: 100%; height: 25px; bottom: 0; position: fixed; z-index: 1; }
+footer img { float: left; margin: 5px 6px 0 10px; }
+footer p { float: left; font-size: 12px; color: #757575; line-height: 26px; }
+footer p span { font-weight: 500; }
+footer p.right { float: right; margin: 0 10px 0 0; }
+
+/** Scrollbar */
+::-webkit-scrollbar { -webkit-appearance: none; width: 7px; }
+::-webkit-scrollbar-thumb { border-radius: 4px; background-color: rgba(0,0,0,.5); -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5); }
+
+/** Shadows */
+.shadow { box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12); }
+.shadow-2 { box-shadow: 0 1px 0px 0 rgba(0, 0, 0, 0.14), 0 2px 0px 0px rgba(0, 0, 0, 0.2), 0 4px 1px 0 rgba(0, 0, 0, 0.12); }
 
 /** Helpers */
 .margin-10 { margin: 10px; }
@@ -27,30 +41,6 @@ main #network { min-height: 227px; padding-bottom: 10px; margin-left: 10px; }
 .text-right { text-align: right; }
 .fdt-last-column { text-align: right; padding-right: 13px; }
 .text-mono { font-family: 'Roboto Mono'; font-size: 13px; }
-.footer {
-  width:100%;
-  height:25px;
-  bottom:0;
-  position:fixed;
-  z-index:1;
-}
-.footer div {
-  color:#757575;
-  font-size:12px;
-  padding:0px;
-  padding-left:3px;
-  margin:0px;
-  line-height:25px;
-}
-
-
-/** Shadows */
-.shadow { box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12); }
-.shadow-2 { box-shadow: 0 1px 0px 0 rgba(0, 0, 0, 0.14), 0 2px 0px 0px rgba(0, 0, 0, 0.2), 0 4px 1px 0 rgba(0, 0, 0, 0.12); }
-
-/** Scrollbar */
-::-webkit-scrollbar { -webkit-appearance: none; width: 7px; }
-::-webkit-scrollbar-thumb { border-radius: 4px; background-color: rgba(0,0,0,.5); -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5); }
 
 /** Ant.Design */
 .ant-switch-checked { border-color: #B71C1C; background-color: #B71C1C; }

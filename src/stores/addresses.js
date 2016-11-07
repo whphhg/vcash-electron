@@ -29,10 +29,7 @@ class Addresses {
   @computed get accounts() {
     /** Reduce the array and add account names to the Set. */
     let accounts = this.receivedByAddress.reduce((accounts, obj) => {
-      if (obj.account !== '') {
-        accounts.add(obj.account)
-      }
-
+      if (obj.account !== '') accounts.add(obj.account)
       return accounts
     }, new Set())
 
@@ -71,23 +68,24 @@ class Addresses {
    */
   @computed get all() {
     return this.receivedByAddress.reduce((addresses, obj) => {
-      addresses.push({
-        ...obj,
-        localAmount: obj.amount * rates.local * rates.average
-      })
-
+      addresses.push({ ...obj, localAmount: obj.amount * rates.local * rates.average })
       return addresses
     }, [])
   }
+
+  /**
+   * Get table height.
+   * @function tableHeight
+   * @return {number} Height.
+   */
+  @computed get tableHeight() { return this.all.length * 25 < 580 ? this.all.length * 25 + 27 : 580 }
 
   /**
    * Set RPC response.
    * @function setResponse
    * @param {array} response - RPC response array.
    */
-  @action setResponse(response) {
-    this.receivedByAddress = response
-  }
+  @action setResponse(response) { this.receivedByAddress = response }
 
   /**
    * Get all addresses, including unused.

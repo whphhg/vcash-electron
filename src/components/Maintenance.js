@@ -3,15 +3,16 @@ import { inject, observer } from 'mobx-react'
 import { Col, Row, Select } from 'antd'
 
 /** Make the component reactive and inject MobX stores. */
-@observer(['rates', 'wallet'])
+@observer(['rates'])
 
+/**
+ * TODO: Implement wallet check and repair.
+ * TODO: Implement wallet passphrase change.
+ */
 class Maintenance extends React.Component {
   constructor(props) {
     super(props)
     this.rates = props.rates
-    this.wallet = props.wallet
-
-    /** Bind functions early. */
     this.setLocalCurrency = this.setLocalCurrency.bind(this)
   }
 
@@ -42,11 +43,6 @@ class Maintenance extends React.Component {
               ))
             }
           </Select>
-        </Col>
-        <Col offset={11} span={6}>
-          <div className='margin-10' style={{textAlign:'right'}}>
-            <p className='toolbar-text'>Vcash {this.wallet.version} &nbsp;&bull;&nbsp; Wallet {this.wallet.walletversion} &nbsp;&bull;&nbsp; UI {process.env.npm_package_version}</p>
-          </div>
         </Col>
       </Row>
     )

@@ -13,6 +13,9 @@ import TableCell from './TableCell'
 /** Make the component reactive and inject MobX stores. */
 @observer(['addresses', 'rates', 'wallet'])
 
+/**
+ * TODO: Implement wallet backup.
+ */
 class Addresses extends React.Component {
   constructor(props) {
     super(props)
@@ -51,7 +54,7 @@ class Addresses extends React.Component {
         <Row>
           <Col span={24}>
             <div style={{marginLeft:'10px'}}>
-              <Table rowsCount={this.addresses.all.length} rowHeight={25} headerHeight={25} width={1130} height={580}>
+              <Table rowsCount={this.addresses.all.length} rowHeight={25} headerHeight={25} width={1130} height={this.addresses.tableHeight}>
                 <Column header={<Cell>Addresses</Cell>} cell={<TableCell data={this.addresses.all} column='address' />} width={285} />
                 <Column header={<Cell>Account</Cell>} cell={<TableCell data={this.addresses.all} column='account' />} width={445} />
                 <Column header={<Cell>Received</Cell>} cell={<TableCell data={this.addresses.all} column='amount' />} width={200} />
