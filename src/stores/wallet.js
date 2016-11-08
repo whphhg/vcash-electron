@@ -1,4 +1,4 @@
-import { action, autorun, observable } from 'mobx'
+import { action, observable, reaction } from 'mobx'
 import { notification } from 'antd'
 
 /** Required store instances. */
@@ -45,8 +45,8 @@ class Wallet {
     this.getinfo()
 
     /** Auto start updating when RPC becomes available. */
-    autorun(() => {
-      if (rpc.status === true) {
+    reaction(() => rpc.status, (status) => {
+      if (status === true) {
         this.getincentiveinfo()
         this.lockCheck()
       }

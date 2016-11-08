@@ -45,13 +45,15 @@ class KeyImport extends React.Component {
           <Col span={24} style={{marginTop:'10px'}}>
             <AutoComplete
               placeholder='Account name (optional)'
-              style={{width:'315px',marginRight:'10px'}}
+              style={{width:'296px'}}
               getPopupContainer={triggerNode => triggerNode.parentNode}
               value={this.keyImport.account}
               dataSource={this.addresses.accounts}
               onChange={this.setAccount}
             />
-            <Button onClick={this.importprivkey} disabled={this.keyImport.errorStatus !== false}>Confirm</Button>
+            <div style={{float:'right'}}>
+              <Button onClick={this.importprivkey} disabled={this.keyImport.errorStatus !== false} loading={this.keyImport.loading === true}>Confirm</Button>
+            </div>
           </Col>
         </Row>
         <Row>

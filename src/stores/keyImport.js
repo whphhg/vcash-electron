@@ -1,4 +1,4 @@
-import { action, autorun, computed, observable } from 'mobx'
+import { action, computed, observable, reaction } from 'mobx'
 import { notification } from 'antd'
 
 /** Required store instances. */
@@ -9,6 +9,7 @@ import addresses from './addresses'
 class KeyImport {
   @observable privateKey
   @observable account
+  @observable loading
   @observable popover
   @observable errors
 
@@ -16,12 +17,14 @@ class KeyImport {
    * @constructor
    * @property {string} privateKey - Form element input value.
    * @property {string} account - Form element input value.
+   * @property {boolean} loading - Button loading status.
    * @property {boolean} popover - Popover visibility status.
    * @property {object} errors - RPC response errors.
    */
   constructor() {
     this.privateKey = ''
     this.account = ''
+    this.loading = false
     this.popover = false
     this.errors = {
       invalidKey: false,
@@ -29,14 +32,13 @@ class KeyImport {
     }
 
     /** Auto clear previous RPC response errors on private key change. */
-    autorun(() => {
-      const trackPrivateKey = this.privateKey
-      this.toggleError()
+    reaction(() => this.privateKey, (privateKey) => {
+      if (privateKey !== '') this.toggleError()
     })
 
     /** Auto clear private key when popover closes. */
-    autorun(() => {
-      if (this.popover === false) {
+    reaction(() => this.popover, (popover) => {
+      if (popover === false) {
         if (this.privateKey !== '') this.setPrivateKey()
       }
     })
@@ -89,6 +91,12 @@ class KeyImport {
   @action setPrivateKey(privateKey = '') { if (privateKey.match(/^[a-zA-Z0-9]{0,52}$/) !== null) this.privateKey = privateKey }
 
   /**
+   * Toggle button loading animation.
+   * @function toggleLoading
+   */
+  @action toggleLoading() { this.loading = !this.loading }
+
+  /**
    * Toggle popover visibility.
    * @function togglePopover
    */
@@ -99,8 +107,12 @@ class KeyImport {
    * @function importprivkey
    */
   importprivkey() {
+    this.toggleLoading()
+
     rpc.call([{ method: 'importprivkey', params: [this.privateKey, this.account] }], (response) => {
       if (response !== null) {
+        this.toggleLoading()
+
         if (response[0].hasOwnProperty('error') === true) {
           switch (response[0].error.code) {
             /** Is mine: error_code_wallet_error = -4 */
