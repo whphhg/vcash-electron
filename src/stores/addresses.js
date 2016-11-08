@@ -1,4 +1,4 @@
-import { action, autorun, computed, observable } from 'mobx'
+import { action, computed, observable, reaction } from 'mobx'
 
 /** Required store instances. */
 import rpc from './rpc'
@@ -16,8 +16,8 @@ class Addresses {
     this.receivedByAddress = []
 
     /** Auto start updating when RPC becomes available. */
-    autorun(() => {
-      if (rpc.status === true) this.listreceivedbyaddress()
+    reaction(() => rpc.status, (status) => {
+      if (status === true) this.listreceivedbyaddress()
     })
   }
 

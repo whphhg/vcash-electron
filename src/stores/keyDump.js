@@ -1,4 +1,4 @@
-import { action, autorun, computed, observable } from 'mobx'
+import { action, computed, observable, reaction } from 'mobx'
 
 /** Required store instances. */
 import rpc from './rpc'
@@ -27,15 +27,14 @@ class KeyDump {
     }
 
     /** Auto clear previous RPC response errors and private key on address change. */
-    autorun(() => {
-      const trackAddress = this.address
+    reaction(() => this.address, (address) => {
+      if (this.privateKey !== '') this.setPrivateKey()
       this.toggleError()
-      this.setPrivateKey()
     })
 
     /** Auto clear address and private key when popover closes. */
-    autorun(() => {
-      if (this.popover === false) {
+    reaction(() => this.popover, (popover) => {
+      if (popover === false) {
         if (this.address !== '') this.setAddress()
         if (this.privateKey !== '') this.setPrivateKey()
       }

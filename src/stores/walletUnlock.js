@@ -1,4 +1,4 @@
-import { action, autorun, computed, observable } from 'mobx'
+import { action, computed, observable, reaction } from 'mobx'
 import { notification } from 'antd'
 
 /** Required store instances. */
@@ -25,14 +25,13 @@ class WalletUnlock {
     }
 
     /** Auto clear previous RPC response errors on passphrase change. */
-    autorun(() => {
-      const trackPassphrase = this.passphrase
+    reaction(() => this.passphrase, (passphrase) => {
       this.toggleError()
     })
 
     /** Auto clear passphrase field when modal closes. */
-    autorun(() => {
-      if (this.modal === false) {
+    reaction(() => this.modal, (modal) => {
+      if (modal === false) {
         if (this.passphrase !== '') this.setPassphrase()
       }
     })

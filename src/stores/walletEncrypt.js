@@ -1,4 +1,4 @@
-import { action, autorun, computed, observable } from 'mobx'
+import { action, computed, observable, reaction } from 'mobx'
 import { notification } from 'antd'
 
 /** Required store instances. */
@@ -23,8 +23,8 @@ class WalletEncrypt {
     this.modal = false
 
     /** Auto clear passphrase fields when modal closes. */
-    autorun(() => {
-      if (this.modal === false) {
+    reaction(() => this.modal, (modal) => {
+      if (modal === false) {
         if (this.passphrase !== '') this.setPassphrase()
         if (this.repeat !== '') this.setRepeat()
       }
