@@ -1,4 +1,4 @@
-import { action, computed, observable, reaction } from 'mobx'
+import { action, autorun, computed, observable } from 'mobx'
 import { notification } from 'antd'
 
 /** Required store instances. */
@@ -26,8 +26,8 @@ class ChainBlender {
     this.status = false
 
     /** Auto start updating when the wallet unlocks. */
-    reaction(() => wallet.isLocked, (isLocked) => {
-      if (isLocked === false) this.getinfo()
+    autorun(() => {
+      if (wallet.isLocked === false) this.getinfo()
     })
   }
 
