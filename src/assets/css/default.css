@@ -15,6 +15,13 @@ header .controls { float: right; margin: 0 10px 0 0; }
 header nav { float: right; margin: 5px 14px 0 0; }
 header nav i { vertical-align: text-bottom; }
 header button { margin: 13px 0 0 0; }
+main .toolbar { margin: 10px; min-height: 28px; line-height: 28px; }
+main .toolbar button:nth-of-type(n+2) { margin: 0 0 0 10px; }
+main .toolbar p { display: inline; padding: 0 10px 0 6px; }
+main .toolbar p:last-child { padding: 0 3px 0 6px; }
+main .toolbar i { vertical-align: middle; padding: 0 0 0 10px; }
+main .toolbar .left { float: left; }
+main .toolbar .right { float: right; }
 main #transactions { min-height: 437px; margin: 0 0 10px 10px; }
 main #network { min-height: 227px; margin: 0 0 10px 10px; }
 footer { width: 100%; height: 25px; bottom: 0; position: fixed; z-index: 1; }
@@ -31,16 +38,20 @@ footer p.right { float: right; margin: 0 10px 0 0; }
 .shadow { box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12); }
 .shadow-2 { box-shadow: 0 1px 0px 0 rgba(0, 0, 0, 0.14), 0 2px 0px 0px rgba(0, 0, 0, 0.2), 0 4px 1px 0 rgba(0, 0, 0, 0.12); }
 
+/** Material icons */
+.material-icons.md-16 { font-size: 16px; }
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-20 { font-size: 20px; }
+
 /** Helpers */
-.margin-10 { margin: 10px; }
+.text-mono { font-family: 'Roboto Mono'; font-size: 13px; }
+.text-dotted { font-weight: 500; border-bottom: 1px dotted #000; }
+.text-right { text-align: right; }
+.text-center { text-align: center; }
 .error-text { color: red; margin-top: 10px; }
 .input-label { vertical-align: 4px; padding-left: 10px; }
 .input-spacing { margin-top: 8px; }
-.toolbar-text { margin-top: 14px; }
-.font-weight-500 { font-weight: 500; border-bottom: 1px dotted #000; text-decoration: none; }
-.text-right { text-align: right; }
 .fdt-last-column { text-align: right; padding-right: 13px; }
-.text-mono { font-family: 'Roboto Mono'; font-size: 13px; }
 
 /** Ant.Design */
 .ant-switch-checked { border-color: #B71C1C; background-color: #B71C1C; }
@@ -58,8 +69,3 @@ footer p.right { float: right; margin: 0 10px 0 0; }
 .ant-radio-button-wrapper-checked:first-child { border-color: #B71C1C; }
 .ant-radio-button-wrapper-checked { background: #FFFFFF; border-color: #B71C1C; color: #B71C1C; box-shadow: -1px 0 0 0 #B71C1C; }
 .ant-radio-button-wrapper-checked:hover { border-color: #B71C1C; box-shadow: -1px 0 0 0 #B71C1C; color: #B71C1C;}
-
-/** Material icons */
-.material-icons.md-16 { font-size: 16px; }
-.material-icons.md-18 { font-size: 18px; }
-.material-icons.md-20 { font-size: 20px; }

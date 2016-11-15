@@ -1,5 +1,5 @@
 import React from 'react'
-import { inject, observer } from 'mobx-react'
+import { observer } from 'mobx-react'
 import { Button, Col, Input, Popover, Row } from 'antd'
 import moment from 'moment'
 
@@ -36,7 +36,7 @@ class RewardCalculator extends React.Component {
         <Col span={18}>
           <p style={{textAlign:'right'}}>
             {this.rewardCalculator.estimation === true ? 'Confirmation est. ' : 'Confirmed on '}
-            <span className='font-weight-500'>{moment(this.rewardCalculator.time).format('YYYY-MM-DD HH:mm:ss')}</span> ({moment().to(this.rewardCalculator.time)})
+            <span className='text-dotted'>{moment(this.rewardCalculator.time).format('YYYY-MM-DD HH:mm:ss')}</span> ({moment().to(this.rewardCalculator.time)})
           </p>
         </Col>
       </Row>
@@ -49,15 +49,15 @@ class RewardCalculator extends React.Component {
         <Row>
           <Col span={6} offset={3}>
             <p>PoW reward</p>
-            <p><span className='font-weight-500'>{this.rewardCalculator.powReward.toFixed(6)}</span> XVC</p>
+            <p><span className='text-dotted'>{this.rewardCalculator.powReward.toFixed(6)}</span> XVC</p>
           </Col>
           <Col span={7}>
             <p>Miner share</p>
-            <p><span className='font-weight-500'>{(this.rewardCalculator.powReward - this.rewardCalculator.incentiveReward).toFixed(6)}</span> XVC ({100 - this.rewardCalculator.incentivePercent}%)</p>
+            <p><span className='text-dotted'>{(this.rewardCalculator.powReward - this.rewardCalculator.incentiveReward).toFixed(6)}</span> XVC ({100 - this.rewardCalculator.incentivePercent}%)</p>
           </Col>
           <Col span={7}>
             <p>Incentive share</p>
-            <p><span className='font-weight-500'>{this.rewardCalculator.incentiveReward.toFixed(6)}</span> XVC ({this.rewardCalculator.incentivePercent}%)</p>
+            <p><span className='text-dotted'>{this.rewardCalculator.incentiveReward.toFixed(6)}</span> XVC ({this.rewardCalculator.incentivePercent}%)</p>
           </Col>
         </Row>
         <Row>

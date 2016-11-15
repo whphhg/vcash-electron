@@ -1,5 +1,5 @@
 import React from 'react'
-import { inject, observer } from 'mobx-react'
+import { observer } from 'mobx-react'
 import { Button, Tooltip } from 'antd'
 
 /** Make the component reactive and inject MobX stores. */

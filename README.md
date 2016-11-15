@@ -7,7 +7,7 @@ This is a **unofficial** UI for Vcash, a decentralized currency for the internet
 
 
 ### Starting and updating
-Right now there are no pre-built binaries, so you have to follow the steps below to install. I will be adding the binaries as soon as I'm done experimenting with the packager.
+There are no pre-built binaries, so you have to follow the steps below to install. The binaries will be added once the code base is sufficiently mature.
 
 User data is safely stored in Electron's local storage, depending on the operating system:
 - Linux `~/.config/vcash-electron`
@@ -44,14 +44,12 @@ Running the UI inside of a Linux VirtualBox guest might cause the window to be b
 
 
 ### IDEAs, NOTEs, TODOs and FIXMEs
-- Implement wallet backup. __TODO__ [src/components/Maintenance.js](src/components/Maintenance.js)
 - Implement wallet check and repair. __TODO__ [src/components/Maintenance.js](src/components/Maintenance.js)
 - Implement wallet passphrase change. __TODO__ [src/components/Maintenance.js](src/components/Maintenance.js)
-- Staking indicator if config pos:1 & unlocked (gavel, flag, flash on, rowing). __TODO__ [src/components/Root.js](src/components/Root.js)
+- Staking indicator if config pos:1 & unlocked (gavel, loyalty, flag, flash on, rowing). __TODO__ [src/components/Root.js](src/components/Root.js)
 - Remote RPC using tunnel-ssh -> ssh -L9195:localhost:9195 user@ip). __TODO__ [src/components/RpcManager.js](src/components/RpcManager.js)
 - Complete rewrite. Fail. __TODO__ [src/components/Transaction.js](src/components/Transaction.js)
 - Implement custom balance tracking. __TODO__ [src/stores/transactions.js](src/stores/transactions.js)
-
 
 
 #### Tips are appreciated! :sparkles:
@@ -59,3 +57,6 @@ Running the UI inside of a Linux VirtualBox guest might cause the window to be b
 XVC: Vsaj7MMLwSMgzBQEonfMLR9QxqkKprFVGR
 BTC: 1Pay4nywPa1qkP5no3rcrLhfVo6Bc1JE8s
 ```
+
+
+[![JavaScript Style Guide](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)

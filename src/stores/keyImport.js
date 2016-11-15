@@ -67,9 +67,7 @@ class KeyImport {
     if (key === '') {
       /** Clear all errors if no key provided. */
       for (let i in this.errors) {
-        if (this.errors[i] === true) {
-          this.errors[i] = false
-        }
+        if (this.errors[i] === true) this.errors[i] = false
       }
     } else {
       this.errors[key] = !this.errors[key]
@@ -129,7 +127,7 @@ class KeyImport {
         notification.success({
           message: 'Imported',
           description: 'Private key succcessfuly imported.',
-          duration: 5
+          duration: 6
         })
 
         if (this.popover === true) this.togglePopover()

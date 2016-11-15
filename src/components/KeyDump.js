@@ -1,5 +1,5 @@
 import React from 'react'
-import { inject, observer } from 'mobx-react'
+import { observer } from 'mobx-react'
 import { AutoComplete, Button, Col, Popover, Row } from 'antd'
 
 /** Make the component reactive and inject MobX stores. */
@@ -60,7 +60,7 @@ class KeyDump extends React.Component {
                 <div style={{marginTop:'10px'}}>
                   <p><i className='material-icons md-20'>vpn_key</i>
                     <span className='input-label'>
-                      <span className='font-weight-500'>{this.keyDump.privateKey}</span>
+                      <span className='text-dotted'>{this.keyDump.privateKey}</span>
                     </span>
                   </p>
                 </div>
