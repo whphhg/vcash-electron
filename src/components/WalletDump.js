@@ -1,6 +1,7 @@
 import React from 'react'
-import { inject, observer } from 'mobx-react'
-import { Button, Col, Popconfirm, Popover, Row } from 'antd'
+import { observer } from 'mobx-react'
+import { Button, Col, Popover, Row } from 'antd'
+import { dataPath } from '../utilities/common'
 
 /** Make the component reactive and inject MobX stores. */
 @observer(['wallet', 'walletDump'])
@@ -27,23 +28,12 @@ class WalletDump extends React.Component {
     return (
       <Row style={{width:'370px'}}>
         <Col span={24}>
-          <p style={{textAlign:'justify'}}>
+          <p style={{textAlign:'justify', marginBottom:'10px'}}>
             Public and private key combinations will be dumped into a <b><i>wallet.csv</i></b> file and saved in your Vcash data folder. The folder is located in:
           </p>
-          <Row style={{marginTop:'10px'}}>
-            <Col span={5} offset={1}>
-              <p>Linux</p>
-              <p>OS X</p>
-              <p>Windows</p>
-            </Col>
-            <Col span={18}>
-              <p><b>~/.Vcash/data</b></p>
-              <p><b>~/Library/Application Support/Vcash/data</b></p>
-              <p><b>%APPDATA%\Vcash\data</b></p>
-            </Col>
-          </Row>
+          <b>{dataPath()}</b>
           <p style={{textAlign:'justify'}} className='error-text'>
-            Make sure not to move or alter other files in the data folder. Do not leave your private keys exposed, remember to clean up afterwards.
+            Make sure not to move or alter other files in the data folder. Do not leave your wallet.csv exposed, remember to clean up afterwards.
           </p>
           <Row style={{marginTop:'10px'}}>
             <Col span={24} className='text-right'>
@@ -59,7 +49,7 @@ class WalletDump extends React.Component {
   render() {
     return (
       <Popover
-        title='You are about to dump your whole wallet'
+        title='You are about to dump the whole wallet'
         trigger='click'
         placement='bottomLeft'
         content={this.popoverContent()}

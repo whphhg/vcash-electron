@@ -51,7 +51,6 @@ class KeyDump {
     if (this.address.length < 34) return 'incompleteAddress'
     if (this.errors.invalidAddress === true) return 'invalidAddress'
     if (this.errors.unknownAddress === true) return 'unknownAddress'
-
     return false
   }
 
@@ -64,9 +63,7 @@ class KeyDump {
     if (key === '') {
       /** Clear all errors if no key provided. */
       for (let i in this.errors) {
-        if (this.errors[i] === true) {
-          this.errors[i] = false
-        }
+        if (this.errors[i] === true) this.errors[i] = false
       }
     } else {
       this.errors[key] = !this.errors[key]

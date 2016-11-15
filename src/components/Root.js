@@ -1,7 +1,7 @@
 import React from 'react'
 import { hashHistory } from 'react-router'
-import { inject, observer } from 'mobx-react'
-import { Col, Menu, Row, Tooltip } from 'antd'
+import { observer } from 'mobx-react'
+import { Menu, Tooltip } from 'antd'
 import DevTools from 'mobx-react-devtools'
 
 /** Required components. */
@@ -70,7 +70,7 @@ class Root extends React.Component {
           <div className='indicators'>
             {
               this.wallet.incentive.votecandidate === true && (
-                <Tooltip placement='bottom' title={<p>Valid collateral of <span className='font-weight-500'>{(this.wallet.incentive.collateralbalance).toFixed(6)}</span> XVC.</p>}>
+                <Tooltip placement='bottom' title={<p>Valid collateral of <span className='text-dotted'>{(this.wallet.incentive.collateralbalance).toFixed(6)}</span> XVC.</p>}>
                   <i className='material-icons md-20' style={{color:'#43464B'}}>verified_user</i>
                 </Tooltip>
               )
@@ -83,8 +83,6 @@ class Root extends React.Component {
           <p><span>{parseFloat(this.rates.poloniex.last).toFixed(8)}</span> BTC</p>
           <img src='./assets/images/exchangeBittrex.png' />
           <p><span>{parseFloat(this.rates.bittrex.Last).toFixed(8)}</span> BTC</p>
-          <img src='./assets/images/exchangeRawx.png' />
-          <p><span>{parseFloat(this.rates.rawx.lastprice).toFixed(8)}</span> BTC</p>
           <p className='right'>UI <span>{process.env.npm_package_version}</span></p>
           <p className='right'>Wallet <span>{this.wallet.info.walletversion}</span></p>
           <p className='right'>Vcash <span>{this.wallet.info.version.split(':')[1]}</span></p>

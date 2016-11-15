@@ -1,4 +1,4 @@
-import { action, autorun, computed, observable } from 'mobx'
+import { action, autorun, observable } from 'mobx'
 import { notification } from 'antd'
 
 /** Required store instances. */
@@ -26,9 +26,7 @@ class ChainBlender {
     this.status = false
 
     /** Auto start updating when the wallet unlocks. */
-    autorun(() => {
-      if (wallet.isLocked === false) this.getinfo()
-    })
+    autorun(() => { if (wallet.isLocked === false) this.getinfo() })
   }
 
   /**
@@ -39,9 +37,7 @@ class ChainBlender {
   @action setResponse(response) {
     for (let i in response) {
       if (this.info.hasOwnProperty(i) === true) {
-        if (this.info[i] !== response[i]) {
-          this.info[i] = response[i]
-        }
+        if (this.info[i] !== response[i]) this.info[i] = response[i]
       }
     }
 
@@ -88,7 +84,7 @@ class ChainBlender {
         notification.success({
           message: 'ChainBlender',
           description: 'ChainBlender has been ' + suffix,
-          duration: 5
+          duration: 6
         })
       }
     })

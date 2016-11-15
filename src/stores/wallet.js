@@ -61,9 +61,7 @@ class Wallet {
    */
   @action setResponse(key, response) {
     for (let i in this[key]) {
-      if (this[key][i] !== response[i]) {
-        this[key][i] = response[i]
-      }
+      if (this[key][i] !== response[i]) this[key][i] = response[i]
     }
   }
 
@@ -122,7 +120,7 @@ class Wallet {
         notification.success({
           message: 'Locked',
           description: 'The wallet has been locked.',
-          duration: 5
+          duration: 6
         })
       }
     })

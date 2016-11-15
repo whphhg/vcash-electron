@@ -1,5 +1,5 @@
 import React from 'react'
-import { inject, observer } from 'mobx-react'
+import { observer } from 'mobx-react'
 import { Button, Col, Popover, Row, Switch } from 'antd'
 
 /** Make the component reactive and inject MobX stores. */
@@ -21,7 +21,7 @@ class ChainBlender extends React.Component {
     return (
       <Row style={{width:'265px'}}>
         <Col span={17}>
-          <p>Blended <span className='font-weight-500'>{this.chainBlender.info.blendedbalance.toFixed(6)}</span> XVC ({this.chainBlender.info.blendedpercentage.toFixed(2)}%)</p>
+          <p>Blended <span className='text-dotted'>{this.chainBlender.info.blendedbalance.toFixed(6)}</span> XVC ({this.chainBlender.info.blendedpercentage.toFixed(2)}%)</p>
         </Col>
         <Col span={7} style={{textAlign:'right'}}>
           <Switch

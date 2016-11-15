@@ -25,9 +25,7 @@ class WalletUnlock {
     }
 
     /** Auto clear previous RPC response errors on passphrase change. */
-    reaction(() => this.passphrase, (passphrase) => {
-      this.toggleError()
-    })
+    reaction(() => this.passphrase, (passphrase) => { this.toggleError() })
 
     /** Auto clear passphrase field when modal closes. */
     reaction(() => this.modal, (modal) => {
@@ -45,7 +43,6 @@ class WalletUnlock {
   @computed get errorStatus() {
     if (this.passphrase.length < 1) return 'emptyField'
     if (this.errors.incorrectPassphrase === true) return 'incorrectPassphrase'
-
     return false
   }
 
@@ -58,9 +55,7 @@ class WalletUnlock {
     if (key === '') {
       /** Clear all errors if no key provided. */
       for (let i in this.errors) {
-        if (this.errors[i] === true) {
-          this.errors[i] = false
-        }
+        if (this.errors[i] === true) this.errors[i] = false
       }
     } else {
       this.errors[key] = !this.errors[key]

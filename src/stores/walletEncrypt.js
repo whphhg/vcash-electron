@@ -40,7 +40,6 @@ class WalletEncrypt {
     if (this.passphrase.length < 1 || this.repeat.length < 1) return 'emptyFields'
     if (this.passphrase.length !== this.repeat.length) return 'differentLengths'
     if (this.passphrase !== this.repeat) return 'notMatching'
-
     return false
   }
 

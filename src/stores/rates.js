@@ -7,7 +7,6 @@ class Rates {
   @observable bitcoinAverage
   @observable poloniex
   @observable bittrex
-  @observable rawx
 
   /**
    * @constructor
@@ -15,20 +14,17 @@ class Rates {
    * @property {object} bitcoinAverage - Bitcoin average price index.
    * @property {object} poloniex - Poloniex ticker.
    * @property {object} bittrex - Bittrex ticker.
-   * @property {object} rawx - Rawx ticker.
    */
   constructor() {
     this.localCurrency = getItem('localCurrency') || 'EUR'
     this.bitcoinAverage = {}
     this.poloniex = { last: 0 }
     this.bittrex = { Last: 0 }
-    this.rawx = { lastprice: 0 }
 
     /** Start rates update loops. */
     this.fetchBitcoinAverage()
     this.fetchPoloniex()
     this.fetchBittrex()
-    this.fetchRawx()
   }
 
   /**
@@ -37,7 +33,7 @@ class Rates {
    * @return {number} Vcash price average.
    */
   @computed get average() {
-    const rates = [this.poloniex.last, this.bittrex.Last, this.rawx.lastprice]
+    const rates = [this.poloniex.last, this.bittrex.Last]
     const result = rates.reduce((result, rate) => {
       rate = parseFloat(rate)
 
@@ -95,29 +91,6 @@ class Rates {
   @action setBittrex(ticker) { this.bittrex = ticker.result[0] }
 
   /**
-   * Set Rawx ticker.
-   * @function setRawx
-   * @param {string} ticker - Ticker.
-   */
-  @action setRawx(ticker) {
-    for (let i in ticker.pairs) {
-      if (ticker.pairs[i].other === 'XVC') {
-        const internalDecimals = Math.pow(10, 12)
-
-        ticker.pairs[i].lastprice = parseInt('0x' + ticker.pairs[i].lastprice) / internalDecimals
-        ticker.pairs[i].volume = parseInt('0x' + ticker.pairs[i].volume) / internalDecimals
-        ticker.pairs[i].bestask = parseInt('0x' + ticker.pairs[i].bestask) / internalDecimals
-        ticker.pairs[i].bestbid = parseInt('0x' + ticker.pairs[i].bestbid) / internalDecimals
-        ticker.pairs[i].minbase = parseInt('0x' + ticker.pairs[i].minbase) / internalDecimals
-        ticker.pairs[i].depthbid = parseInt('0x' + ticker.pairs[i].depthbid) / internalDecimals
-
-        this.rawx = ticker.pairs[i]
-        break
-      }
-    }
-  }
-
-  /**
    * Set local currency and save to localStorage.
    * @function setLocalCurrency
    * @param {string} localCurrency - Local currency.
@@ -161,18 +134,6 @@ class Rates {
       .then((ticker) => { this.setBittrex(ticker) })
       .catch((error) => { process.env.NODE_ENV === 'dev' && console.error('https://bittrex.com/api/v1.1/public/getmarketsummary?market=btc-xvc:', error.message) })
     setTimeout(() => { this.fetchBittrex() }, 60 * 1000)
-  }
-
-  /**
-   * Fetch Rawx ticker.
-   * @function fetchRawx
-   */
-  fetchRawx() {
-    fetch('https://beta.rawx.io/m')
-      .then((response) => { if (response.ok) return response.json() })
-      .then((ticker) => { this.setRawx(ticker) })
-      .catch((error) => { process.env.NODE_ENV === 'dev' && console.error('https://beta.rawx.io/m:', error.message) })
-    setTimeout(() => { this.fetchRawx() }, 60 * 1000)
   }
 }
 

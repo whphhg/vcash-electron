@@ -1,5 +1,5 @@
 import React from 'react'
-import { inject, observer } from 'mobx-react'
+import { observer } from 'mobx-react'
 import { Button, Col, Input, Popover, Row } from 'antd'
 
 /** Make the component reactive and inject MobX stores. */
@@ -21,15 +21,15 @@ class CurrencyConverter extends React.Component {
     return (
       <Row style={{width:'400px'}}>
         <Col span={7}>
-          <p style={{marginBottom:'5px'}}><span className='font-weight-500'>XVC</span></p>
+          <p style={{marginBottom:'5px'}}><span className='text-dotted'>XVC</span></p>
           <Input type='text' autosize id='vcash' placeholder='Amount' onChange={this.onChange} value={this.currencyConverter.vcash} />
         </Col>
         <Col offset={1} span={8}>
-          <p style={{marginBottom:'5px'}}><span className='font-weight-500'>BTC</span></p>
+          <p style={{marginBottom:'5px'}}><span className='text-dotted'>BTC</span></p>
           <Input type='text' autosize id='bitcoin' placeholder='Amount' onChange={this.onChange} value={this.currencyConverter.bitcoin} />
         </Col>
         <Col offset={1} span={7}>
-          <p style={{marginBottom:'5px'}}><span className='font-weight-500'>{this.rates.localCurrency}</span></p>
+          <p style={{marginBottom:'5px'}}><span className='text-dotted'>{this.rates.localCurrency}</span></p>
           <Input type='text' autosize id='local' placeholder='Amount' onChange={this.onChange} value={this.currencyConverter.local} />
         </Col>
       </Row>
