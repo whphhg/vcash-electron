@@ -37,7 +37,6 @@ class WalletDump extends React.Component {
           </p>
           <Row style={{marginTop:'10px'}}>
             <Col span={24} className='text-right'>
-              <Button onClick={this.togglePopover}>Cancel</Button>
               <Button onClick={this.dumpwallet} style={{marginLeft:'10px'}}>I understand, dump the wallet</Button>
             </Col>
           </Row>
@@ -49,7 +48,7 @@ class WalletDump extends React.Component {
   render() {
     return (
       <Popover
-        title='You are about to dump the whole wallet'
+        title='Dump wallet key combinations to a .csv file'
         trigger='click'
         placement='bottomLeft'
         content={this.popoverContent()}

@@ -34,27 +34,44 @@ class AddressNew extends React.Component {
           <Col span={24}>
             <AutoComplete
               placeholder='Account name (optional)'
-              style={{width:'215px', marginRight:'10px'}}
+              style={{width:'100%'}}
               getPopupContainer={triggerNode => triggerNode.parentNode}
               value={this.addressNew.account}
               dataSource={this.addresses.accounts}
               onChange={this.setAccount}
             />
-            <Button onClick={this.getnewaddress} disabled={this.addressNew.errorStatus !== false}>Confirm</Button>
+            {
+              this.addressNew.errorStatus === 'invalidCharacters' && (
+                <p className='text-error'>You can only enter alphanumerals, dash and space.</p>
+              ) ||
+              this.addressNew.errorStatus === 'keypoolRanOut' && (
+                <p className='text-error'>Keypool ran out.</p>
+              )
+            }
           </Col>
         </Row>
         <Row>
-          <Col span={24}>
-          {
-            this.addressNew.errorStatus === 'invalidCharacters' && (
-              <p className='error-text'>You can only enter alphanumerals, dash and space.</p>
-            ) ||
-            this.addressNew.errorStatus === 'keypoolRanOut' && (
-              <p className='error-text'>Keypool ran out.</p>
-            )
-          }
+          <Col span={24} style={{textAlign:'right',marginTop:'3px'}}>
+            <Button onClick={this.getnewaddress} disabled={this.addressNew.errorStatus !== false}>Generate new address</Button>
           </Col>
         </Row>
+        {
+          this.addressNew.address !== '' && (
+            <div style={{margin:'8px -16px 0 -16px',borderTop:'1px solid #e9e9e9'}}>
+              <Row style={{padding:'0 16px 0 16px'}}>
+                <Col span={24}>
+                  <div style={{marginTop:'10px'}}>
+                    <p><i className='material-icons md-20'>account_balance</i>
+                      <span className='input-label'>
+                        <span className='text-dotted'>{this.addressNew.address}</span>
+                      </span>
+                    </p>
+                  </div>
+                </Col>
+              </Row>
+            </div>
+          )
+        }
       </div>
     )
   }
@@ -62,7 +79,7 @@ class AddressNew extends React.Component {
   render() {
     return (
       <Popover
-        title='Generate new address'
+        title='Generate a new receiving address'
         trigger='click'
         placement='bottomLeft'
         content={this.popoverContent()}

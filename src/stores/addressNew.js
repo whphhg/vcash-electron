@@ -1,4 +1,4 @@
-import { action, computed, observable } from 'mobx'
+import { action, computed, observable, reaction } from 'mobx'
 import { notification } from 'antd'
 
 /** Required store instances. */
@@ -8,21 +8,31 @@ import addresses from './addresses'
 /** AddressNew store class. */
 class AddressNew {
   @observable account
+  @observable address
   @observable popover
   @observable errors
 
   /**
    * @constructor
    * @property {string} account - Form element input value.
+   * @property {string} address - Generated address.
    * @property {boolean} popover - Popover visibility status.
    * @property {object} errors - RPC response errors.
    */
   constructor() {
     this.account = ''
+    this.address = ''
     this.popover = false
     this.errors = {
       keypoolRanOut: false
     }
+
+    /** Auto clear address when popover closes. */
+    reaction(() => this.popover, (popover) => {
+      if (popover === false) {
+        if (this.address !== '') this.setAddress()
+      }
+    })
   }
 
   /**
@@ -33,7 +43,6 @@ class AddressNew {
   @computed get errorStatus() {
     if (this.account.match(/^[a-zA-Z0-9 -]{0,100}$/) === null) return 'invalidCharacters'
     if (this.errors.keypoolRanOut === true) return 'keypoolRanOut'
-
     return false
   }
 
@@ -50,6 +59,13 @@ class AddressNew {
    * @param {string} account - Account name.
    */
   @action setAccount(account) { this.account = account }
+
+  /**
+   * Set address.
+   * @function setAddress
+   * @param {string} address - Generated address.
+   */
+  @action setAddress(address = '') { this.address = address }
 
   /**
    * Toggle popover visibility.
@@ -72,7 +88,7 @@ class AddressNew {
           }
         }
 
-        this.togglePopover()
+        this.setAddress(response[0].result)
         addresses.listreceivedbyaddress()
         notification.success({
           message: 'New address generated',
