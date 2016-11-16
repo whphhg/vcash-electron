@@ -48,6 +48,7 @@ footer p.right { float: right; margin: 0 10px 0 0; }
 .text-dotted { font-weight: 500; border-bottom: 1px dotted #000; }
 .text-right { text-align: right; }
 .text-center { text-align: center; }
+.text-error { font-size: 10px; margin: 0 0 3px 1px; color: red; }
 .error-text { color: red; margin-top: 10px; }
 .input-label { vertical-align: 4px; padding-left: 10px; }
 .input-spacing { margin-top: 8px; }

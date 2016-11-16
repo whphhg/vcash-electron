@@ -38,37 +38,37 @@ class KeyImport extends React.Component {
       <div style={{width:'400px'}}>
         <Row>
           <Col span={24}>
-            <Input type='text' placeholder='Enter private key' style={{width:'100%'}} value={this.keyImport.privateKey} onChange={this.setPrivateKey} />
+            <Input type='text' placeholder='Private key' style={{width:'100%'}} value={this.keyImport.privateKey} onChange={this.setPrivateKey} />
+            {
+              this.keyImport.errorStatus === 'invalidKey' && (
+                <p className='text-error'>The private key you have entered is invalid.</p>
+              ) ||
+              this.keyImport.errorStatus === 'isMine' && (
+                <p className='text-error'>The private key you have entered belongs to your wallet.</p>
+              )
+            }
           </Col>
         </Row>
         <Row>
-          <Col span={24} style={{marginTop:'10px'}}>
+          <Col span={24} style={{marginTop:'5px'}}>
             <AutoComplete
               placeholder='Account name (optional)'
-              style={{width:'296px'}}
+              style={{width:'100%'}}
               getPopupContainer={triggerNode => triggerNode.parentNode}
               value={this.keyImport.account}
               dataSource={this.addresses.accounts}
               onChange={this.setAccount}
             />
-            <div style={{float:'right'}}>
-              <Button onClick={this.importprivkey} disabled={this.keyImport.errorStatus !== false} loading={this.keyImport.loading === true}>Confirm</Button>
-            </div>
+            {
+              this.keyImport.errorStatus === 'invalidCharacters' && (
+                <p className='text-error'>You can enter only alphanumerals, dash and space.</p>
+              )
+            }
           </Col>
         </Row>
         <Row>
-          <Col span={24}>
-            {
-              this.keyImport.errorStatus === 'invalidCharacters' && (
-                <p className='error-text'>You can enter only alphanumerals, dash and space.</p>
-              ) ||
-              this.keyImport.errorStatus === 'invalidKey' && (
-                <p className='error-text'>The private key you have entered is invalid.</p>
-              ) ||
-              this.keyImport.errorStatus === 'isMine' && (
-                <p className='error-text'>The private key you have entered belongs to your wallet.</p>
-              )
-            }
+          <Col span={24} style={{textAlign:'right',marginTop:'3px'}}>
+            <Button onClick={this.importprivkey} disabled={this.keyImport.errorStatus !== false} loading={this.keyImport.loading === true}>Import the private key</Button>
           </Col>
         </Row>
       </div>

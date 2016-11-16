@@ -31,22 +31,19 @@ class WalletBackup extends React.Component {
     return (
       <div style={{width:'370px'}}>
         <Row>
-          <Col span={6}><Button onClick={this.getPath}>Browse</Button></Col>
-          <Col span={18}><Input disabled={true} value={this.walletBackup.path} /></Col>
-        </Row>
-        <Row>
           <Col span={24}>
+            <Input disabled={true} value={this.walletBackup.path} />
             {
               this.walletBackup.errorStatus === 'backupFailed' && (
-                <p className='error-text'>Backup failed. Wallet restart necessary.</p>
+                <p className='text-error'>Backup failed. Wallet restart necessary.</p>
               )
             }
           </Col>
         </Row>
         <Row style={{marginTop:'10px'}}>
           <Col span={24} className='text-right'>
-            <Button onClick={this.togglePopover} style={{marginLeft:'10px'}}>Cancel</Button>
-            <Button onClick={this.backupwallet} style={{marginLeft:'10px'}}>Backup</Button>
+            <Button onClick={this.getPath}>Browse</Button>
+            <Button onClick={this.backupwallet} style={{marginLeft:'10px'}}>Backup wallet</Button>
           </Col>
         </Row>
       </div>
