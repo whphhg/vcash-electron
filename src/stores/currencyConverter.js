@@ -5,25 +5,20 @@ import rates from './rates'
 
 /** CurrencyConverter store class. */
 class CurrencyConverter {
-  @observable convertFrom
-  @observable vcash
-  @observable bitcoin
-  @observable local
-
   /**
-   * @constructor
+   * Observable properties.
    * @property {string} convertFrom - Converting currency.
    * @property {number} vcash - Amount in vcash
    * @property {number} bitcoin - Amount in bitcoin.
    * @property {number} local - Amount in local.
    */
-  constructor() {
-    this.convertFrom = 'vcash'
-    this.vcash = 1
-    this.bitcoin = 0
-    this.local = 0
+  @observable convertFrom = 'vcash'
+  @observable vcash = 1
+  @observable bitcoin = 0
+  @observable local = 0
 
-    /** Auto convert amounts on changes to them and rates. */
+  constructor() {
+    /** Convert amounts on changes to them or rates. */
     autorun(() => {
       let trackLocal = rates.localCurrency
 

@@ -5,34 +5,26 @@ import rpc from './rpc'
 
 /** KeyDump store class. */
 class KeyDump {
-  @observable address
-  @observable privateKey
-  @observable popover
-  @observable errors
-
   /**
-   * @constructor
+   * Observable properties.
    * @property {string} address - Form element input value.
    * @property {string} privateKey - Dumped private key.
    * @property {boolean} popover - Popover visibility status.
    * @property {object} errors - RPC response errors.
    */
-  constructor() {
-    this.address = ''
-    this.privateKey = ''
-    this.popover = false
-    this.errors = {
-      invalidAddress: false,
-      unknownAddress: false
-    }
+  @observable address = ''
+  @observable privateKey = ''
+  @observable popover = false
+  @observable errors = { invalidAddress: false, unknownAddress: false }
 
-    /** Auto clear previous RPC response errors and private key on address change. */
+  constructor() {
+    /** Clear private key and previous RPC response errors on address change. */
     reaction(() => this.address, (address) => {
       if (this.privateKey !== '') this.setPrivateKey()
       this.toggleError()
     })
 
-    /** Auto clear address and private key when popover closes. */
+    /** Clear address and private key when popover closes. */
     reaction(() => this.popover, (popover) => {
       if (popover === false) {
         if (this.address !== '') this.setAddress()

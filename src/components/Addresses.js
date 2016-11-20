@@ -2,6 +2,9 @@ import React from 'react'
 import { observer } from 'mobx-react'
 import { Table, Column, Cell } from 'fixed-data-table'
 
+/** Required utilities. */
+import { tableHeight } from '../utilities/common'
+
 /** Required components. */
 import AddressNew from './AddressNew'
 import KeyDump from './KeyDump'
@@ -34,7 +37,7 @@ class Addresses extends React.Component {
           </div>
         </div>
         <div style={{marginLeft:'10px'}}>
-          <Table rowsCount={this.addresses.all.length} rowHeight={25} headerHeight={25} width={1130} height={this.addresses.tableHeight}>
+          <Table rowsCount={this.addresses.all.length} rowHeight={25} headerHeight={25} width={1130} height={tableHeight(this.addresses.all.length, 580)}>
             <Column header={<Cell>Addresses</Cell>} cell={<TableCell data={this.addresses.all} column='address' />} width={285} />
             <Column header={<Cell>Account</Cell>} cell={<TableCell data={this.addresses.all} column='account' />} width={445} />
             <Column header={<Cell>Received</Cell>} cell={<TableCell data={this.addresses.all} column='amount' />} width={200} />

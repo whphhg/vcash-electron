@@ -6,15 +6,11 @@ import rpc from './rpc'
 
 /** WalletDump store class. */
 class WalletDump {
-  @observable popover
-
   /**
-   * @constructor
+   * Observable properties.
    * @property {boolean} popover - Popover visibility status.
    */
-  constructor() {
-    this.popover = false
-  }
+  @observable popover = false
 
   /**
    * Toggle popover visibility.

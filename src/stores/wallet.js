@@ -7,44 +7,23 @@ import chainBlender from './chainBlender'
 
 /** Wallet store class. */
 class Wallet {
-  @observable info
-  @observable incentive
-  @observable isEncrypted
-  @observable isLocked
-
   /**
-   * @constructor
+   * Observable properties.
    * @property {object} info - getinfo RPC response.
    * @property {object} incentive - getincentiveinfo RPC response.
    * @property {boolean} isEncrypted - Wallet encryption status.
    * @property {boolean} isLocked - Wallet lock status.
    */
-  constructor() {
-    this.info = {
-      balance: 0,
-      blocks: 0,
-      connections: 0,
-      ip: '0.0.0.0',
-      moneysupply: 0,
-      newmint: 0,
-      port: 0,
-      protocolversion: 0,
-      stake: 0,
-      version: ':',
-      walletversion: 0 }
-    this.incentive = {
-      walletaddress: '',
-      collateralrequired: 0,
-      collateralbalance: 0,
-      networkstatus: 'firewalled',
-      votecandidate: false }
-    this.isEncrypted = false
-    this.isLocked = false
+  @observable info = { balance: 0, blocks: 0, connections: 0, ip: '0.0.0.0', moneysupply: 0, newmint: 0, port: 0, protocolversion: 0, stake: 0, version: ':', walletversion: 0 }
+  @observable incentive = { walletaddress: '', collateralrequired: 0, collateralbalance: 0, networkstatus: 'firewalled', votecandidate: false }
+  @observable isEncrypted = false
+  @observable isLocked = false
 
-    /** Start (the only) infinite update loop. */
+  constructor() {
+    /** Start the only infinite RPC update loop. */
     this.getinfo()
 
-    /** Auto start updating when RPC becomes available. */
+    /** Start update loop and check lock status when RPC becomes available. */
     reaction(() => rpc.status, (status) => {
       if (status === true) {
         this.getincentiveinfo()
@@ -100,7 +79,7 @@ class Wallet {
       if (response !== null) {
         this.setResponse('incentive', response[0].result)
 
-        /** Loop every 20 seconds when RPC available, else stop. */
+        /** Loop every 20 seconds when RPC is available, else stop. */
         setTimeout(() => { this.getincentiveinfo() }, 20 * 1000)
       }
     })

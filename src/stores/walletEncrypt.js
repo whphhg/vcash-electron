@@ -7,22 +7,18 @@ import wallet from './wallet'
 
 /** WalletEncrypt store class. */
 class WalletEncrypt {
-  @observable passphrase
-  @observable repeat
-  @observable modal
-
   /**
-   * @constructor
+   * Observable properties.
    * @property {string} passphrase - Form element input value.
    * @property {string} repeat - Form element input value.
    * @property {boolean} modal - Modal visibility status.
    */
-  constructor() {
-    this.passphrase = ''
-    this.repeat = ''
-    this.modal = false
+  @observable passphrase = ''
+  @observable repeat = ''
+  @observable modal = false
 
-    /** Auto clear passphrase fields when modal closes. */
+  constructor() {
+    /** Clear passphrase fields when modal closes. */
     reaction(() => this.modal, (modal) => {
       if (modal === false) {
         if (this.passphrase !== '') this.setPassphrase()

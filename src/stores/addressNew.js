@@ -7,27 +7,20 @@ import addresses from './addresses'
 
 /** AddressNew store class. */
 class AddressNew {
-  @observable account
-  @observable address
-  @observable popover
-  @observable errors
-
   /**
-   * @constructor
+   * Observable properties.
    * @property {string} account - Form element input value.
    * @property {string} address - Generated address.
    * @property {boolean} popover - Popover visibility status.
    * @property {object} errors - RPC response errors.
    */
-  constructor() {
-    this.account = ''
-    this.address = ''
-    this.popover = false
-    this.errors = {
-      keypoolRanOut: false
-    }
+  @observable account = ''
+  @observable address = ''
+  @observable popover = false
+  @observable errors = { keypoolRanOut: false }
 
-    /** Auto clear address when popover closes. */
+  constructor() {
+    /** Clear address when popover closes. */
     reaction(() => this.popover, (popover) => {
       if (popover === false) {
         if (this.address !== '') this.setAddress()

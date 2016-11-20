@@ -2,15 +2,11 @@ import { action, observable } from 'mobx'
 
 /** RPC store class. */
 class RPC {
-  @observable status
-
   /**
-   * @constructor
+   * Observable properties.
    * @property {null|boolean} status - RPC connection status.
    */
-  constructor() {
-    this.status = null
-  }
+  @observable status = null
 
   /**
    * Set RPC status.

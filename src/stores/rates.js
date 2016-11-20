@@ -1,27 +1,24 @@
 import { action, computed, observable } from 'mobx'
+
+/** Required utilities. */
 import { getItem, setItem } from '../utilities/localStorage'
 
 /** Rates store class. */
 class Rates {
-  @observable localCurrency
-  @observable bitcoinAverage
-  @observable poloniex
-  @observable bittrex
-
   /**
-   * @constructor
+   * Observable properties.
    * @property {string} localCurrency - Selected local currency.
    * @property {object} bitcoinAverage - Bitcoin average price index.
    * @property {object} poloniex - Poloniex ticker.
    * @property {object} bittrex - Bittrex ticker.
    */
-  constructor() {
-    this.localCurrency = getItem('localCurrency') || 'EUR'
-    this.bitcoinAverage = {}
-    this.poloniex = { last: 0 }
-    this.bittrex = { Last: 0 }
+  @observable localCurrency = getItem('localCurrency') || 'EUR'
+  @observable bitcoinAverage = {}
+  @observable poloniex = { last: 0 }
+  @observable bittrex = { Last: 0 }
 
-    /** Start rates update loops. */
+  constructor() {
+    /** Start update loops. */
     this.fetchBitcoinAverage()
     this.fetchPoloniex()
     this.fetchBittrex()

@@ -7,27 +7,21 @@ import wallet from './wallet'
 
 /** WalletUnlock store class. */
 class WalletUnlock {
-  @observable passphrase
-  @observable modal
-  @observable errors
-
   /**
-   * @constructor
+   * Observable properties.
    * @property {string} passphrase - Form element input value.
    * @property {boolean} modal - Modal visibility status.
    * @property {object} errors - RPC response errors.
    */
-  constructor() {
-    this.passphrase = ''
-    this.modal = false
-    this.errors = {
-      incorrectPassphrase: false
-    }
+  @observable passphrase = ''
+  @observable modal = false
+  @observable errors = { incorrectPassphrase: false }
 
-    /** Auto clear previous RPC response errors on passphrase change. */
+  constructor() {
+    /** Clear previous RPC response errors on passphrase change. */
     reaction(() => this.passphrase, (passphrase) => { this.toggleError() })
 
-    /** Auto clear passphrase field when modal closes. */
+    /** Clear passphrase field when modal closes. */
     reaction(() => this.modal, (modal) => {
       if (modal === false) {
         if (this.passphrase !== '') this.setPassphrase()
