@@ -1,289 +1,238 @@
-import { action, computed, observable } from 'mobx'
+import { action, asMap, autorunAsync, computed, observable, reaction } from 'mobx'
+
+/** Required utilities. */
 import { getItem, setItem } from '../utilities/localStorage'
-import rpc from '../utilities/rpc'
 import geoIp from '../utilities/geoIp'
+
+/** Required store instances. */
+import rpc from './rpc'
 
 /** Network store class. */
 class Network {
-  @observable ip
-  @observable port
-  @observable tcp
-  @observable udp
-  @observable connectedNodes
-  @observable endpoints
-  @observable geoData
-  @observable incentive
-
   /**
-   * Prepare observable variables and run RPC info functions.
-   * @constructor
-   * @property {string} ip - Wallet IP.
-   * @property {number} port - Wallet port.
-   * @property {number} tcp - TCP connections.
-   * @property {number} udp - UDP connections.
-   * @property {array} connectedNodes - Connected nodes
-   * @property {array} endpoints - All known endpoints.
-   * @property {object} geoData - IP lookup data.
-   * @property {object} incentive - Incentive data.
-   * @property {string} incentive.walletaddress - Primary wallet address.
-   * @property {number} incentive.collateralrequired - Required collateral amount.
-   * @property {number} incentive.collateralbalance - Collateral balance.
-   * @property {string} incentive.networkstatus - Shows if your port is open.
-   * @property {boolean} incentive.votecandidate - Shows if you're a vote candidate.
+   * @property {object} networkInfo - getnetworkinfo RPC response.
+   * @property {array} peerInfo - getpeerinfo RPC response.
+   * @property {map} geoData - IP lookup data.
    */
+  @observable networkInfo = {}
+  @observable peerInfo = []
+  @observable geoData = asMap(getItem('geoData') || {})
+
   constructor() {
-    this.ip = ''
-    this.port = 0
-    this.tcp = 0
-    this.udp = 0
-    this.connectedNodes = []
-    this.endpoints = []
-    this.geoData = getItem('geoData') || {}
-    this.incentive = {
-      walletaddress: '',
-      collateralrequired: 0,
-      collateralbalance: 0,
-      networkstatus: 'firewalled',
-      votecandidate: false
-    }
+    reaction(() => rpc.status, (status) => {
+      /** Start update loop when RPC becomes available. */
+      if (status === true) { this.getnetworkinfo() }
 
-    this.incentiveInfo()
-    this.networkInfo()
-  }
+      /** Clear previous data when RPC becomes unavailable. */
+      if (status === false) { this.setResponse() }
+    })
 
-  /**
-   * Set incentive info.
-   * @function setIncentiveInfo
-   * @param {object} info - New incentive info.
-   */
-  @action setIncentiveInfo(info) {
-    for (let i in info) {
-      if (this.incentive.hasOwnProperty(i)) {
-        if (this.incentive[i] !== info[i]) {
-          this.incentive[i] = info[i]
-        }
-      }
-    }
-  }
+    /** Fetch missing IP geo data (with a 2s delay) on RPC update. */
+    autorunAsync(() => {
+      const nodes = [...this.peers, ...this.endpoints]
+      let lookupCount = 0
+      let promises = []
 
-  /**
-   * Set network info.
-   * @function setNetworkInfo
-   * @param {object} info - New network info.
-   */
-  @action setNetworkInfo(info) {
-    for (let i in info) {
-      if (this.hasOwnProperty(i)) {
-        if (this[i] !== info[i]) {
-          this[i] = info[i]
-        }
-      }
-    }
-  }
+      /** Fetch in batches of 10 or less. */
+      for (let i = 0; i < nodes.length; i++) {
+        if (lookupCount >= 10) break
 
-  /**
-   * Set nodes and geo data info.
-   * @function setNodes
-   * @param {array} connectedNodes - New connected nodes info.
-   * @param {array} endpoints - New endpoints info.
-   * @param {object} geoData - Geodata lookups.
-   */
-  @action setNodes(connectedNodes, endpoints, geoData) {
-    this.connectedNodes = connectedNodes
-    this.endpoints = endpoints
+        /** Very loosely check if IPv4. */
+        if (nodes[i].ip.match('\\.') !== null) {
+          /** Check if geo data already exists. */
+          if (this.geoData.has(nodes[i].ip) === false) {
+            /** Push new promise to the promises array. */
+            promises.push(new Promise((resolve, reject) => {
+              /** Execute the promise with a 0.5s delay. */
+              setTimeout(() => {
+                geoIp(nodes[i].ip, (response) => {
+                  if (response !== null) {
+                    process.env.NODE_ENV === 'dev' && console.info('HTTPS: Geo IP lookup for ' + nodes[i].ip)
+                    resolve(response)
+                  } else {
+                    reject(nodes[i].ip)
+                  }
+                })
+              }, lookupCount * 500)
+            }))
 
-    if (Object.keys(geoData).length > 0) {
-      this.geoData = {
-        ...this.geoData,
-        ...geoData
-      }
-
-      /** Write new geoData to localStorage. */
-      setItem('geoData', {
-        ...this.geoData,
-        ...geoData
-      })
-    }
-  }
-
-  /**
-   * Get unique endpoint locations.
-   * @function uniqueEndpointLocations
-   * @return {array} Unique endpoint locations.
-   */
-  @computed get uniqueEndpointLocations() {
-    /** Add connected nodes locations to the uniqueLocations array. */
-    let uniqueLocations = this.connectedNodes.reduce((uniqueLocations, node) => {
-      if (node.lat && node.lon) {
-        uniqueLocations.push({
-          lat: node.lat,
-          lon: node.lon
-        })
-      }
-
-      return uniqueLocations
-    }, [])
-
-    /** Add endpoints with unique location to the uniqueEndpoints array. */
-    const uniqueEndpoints = this.endpoints.reduce((uniqueEndpoints, endpoint) => {
-      if (endpoint.lat && endpoint.lon) {
-        for (let i in uniqueLocations) {
-          if (uniqueLocations[i].lat === endpoint.lat && uniqueLocations[i].lon === endpoint.lon) {
-            return uniqueEndpoints
+            lookupCount += 1
           }
         }
-
-        uniqueEndpoints.push(endpoint)
-        uniqueLocations.push({
-          lat: endpoint.lat,
-          lon: endpoint.lon
-        })
       }
 
-      return uniqueEndpoints
-    }, [])
-
-    return uniqueEndpoints
+      if (promises.length > 0) {
+        Promise.all(promises)
+          .then(response => { this.setGeoData(response) })
+          .catch(error => { process.env.NODE_ENV === 'dev' && console.error('RPC: IP geo lookups promises error.', error) })
+      }
+    }, 2 * 1000)
   }
 
   /**
-   * Get incentive info.
-   * @function incentiveInfo
+   * Get tcp connection count.
+   * @function tcp
+   * @return {number} TCP connections.
    */
-  incentiveInfo() {
-    rpc({ method: 'getincentiveinfo', params: [] }, (response) => {
-      if (response !== null) {
-        this.setIncentiveInfo(response.result)
+  @computed get tcp() {
+    if (this.networkInfo.hasOwnProperty('tcp') === true) return this.networkInfo.tcp.connections
+    return 0
+  }
+
+  /**
+   * Get udp connection count.
+   * @function udp
+   * @return {number} UDP connections.
+   */
+  @computed get udp() {
+    if (this.networkInfo.hasOwnProperty('udp') === true) return this.networkInfo.udp.connections
+    return 0
+  }
+
+  /**
+   * Get array of peers with available geo data.
+   * @function peers
+   * @return {array} Peers.
+   */
+  @computed get peers() {
+    if (this.peerInfo.length > 0) {
+      return this.peerInfo.reduce((peers, item) => {
+        if (item.lastsend !== 0) {
+          let peer = {
+            ...item,
+            ip: item.addr.split(':')[0],
+            lastsend: item.lastsend * 1000,
+            lastrecv: item.lastrecv * 1000,
+            conntime: item.conntime * 1000,
+            version: item.subver.match(/\/(.*)\(/).pop().replace(':', ' '),
+            os: item.subver.split(' ')[1].replace(')/', '')
+          }
+
+          if (this.geoData.has(peer.ip) === true) peer = { ...peer, ...this.geoData.get(peer.ip) }
+          peers.push(peer)
+        }
+
+        return peers
+      }, [])
+    }
+
+    return []
+  }
+
+  /**
+   * Get array of endpoints with available geo data.
+   * @function endpoints
+   * @return {array} Endpoints.
+   */
+  @computed get endpoints() {
+    if (this.networkInfo.hasOwnProperty('endpoints') === true) {
+      return this.networkInfo.endpoints.reduce((endpoints, item) => {
+        let endpoint = {
+          addr: item,
+          ip: item.split(':')[0]
+        }
+
+        if (this.geoData.has(endpoint.ip) === true) endpoint = { ...endpoint, ...this.geoData.get(endpoint.ip) }
+        endpoints.push(endpoint)
+        return endpoints
+      }, [])
+    }
+
+    return []
+  }
+
+  /**
+   * Get counts of known endpoints grouped by country.
+   * @function byCountry
+   * @return {array} Known endpoints counts grouped by country.
+   */
+  @computed get byCountry() {
+    const countries = this.endpoints.reduce((countries, item) => {
+      if (item.hasOwnProperty('country') === true) {
+        const prev = countries.has(item.country) === true ? countries.get(item.country) : 0
+
+        countries.set(item.country, {
+          country: item.country,
+          count: prev === 0 ? 1 : prev.count + 1
+        })
       }
 
-      setTimeout(() => { this.incentiveInfo() }, 45 * 1000)
+      return countries
+    }, new Map())
+
+    return [...countries.values()].sort((a, b) => {
+      if (a.count > b.count) return -1
+      if (a.count < b.count) return 1
+      return 0
     })
+  }
+
+  /**
+   * Get number of known endpoints.
+   * @function knownEndpoints
+   * @return {number} Known endpoints.
+   */
+  @computed get knownEndpoints() {
+    if (this.networkInfo.hasOwnProperty('endpoints') === true) return this.networkInfo.endpoints.length
+    return 0
+  }
+
+  /**
+   * Set geo IP lookups response.
+   * @function setGeoData
+   * @param {array} response - Geo IP lookups promises response.
+   */
+  @action setGeoData(response) {
+    response.forEach((lookup) => {
+      if (lookup.country.name !== '') {
+        this.geoData.set(lookup.ip, {
+          country: lookup.country.name,
+          lon: lookup.location.longitude,
+          lat: lookup.location.latitude
+        })
+      }
+    })
+
+    /** Save updated geo data to local storage. */
+    const geoData = this.geoData.toJS()
+    setItem('geoData', geoData)
+  }
+
+  /**
+   * Set RPC response.
+   * @function setResponse
+   * @param {array} networkInfo - getnetworkinfo result.
+   * @param {array} peerInfo - getpeerinfo result.
+   */
+  @action setResponse(networkInfo = null, peerInfo = null) {
+    if (networkInfo === null && peerInfo === null) {
+      this.networkInfo = {}
+      this.peerInfo = []
+    } else {
+      this.networkInfo = networkInfo
+      this.peerInfo = peerInfo
+    }
   }
 
   /**
    * Get network info.
-   * @function networkInfo
+   * @function getnetworkinfo
    */
-  networkInfo() {
-    rpc([{ method: 'getpeerinfo', params: [] }, { method: 'getnetworkinfo', params: [] }], (response) => {
-      if (response === null) {
-        return setTimeout(() => { this.networkInfo() }, 10 * 1000)
+  getnetworkinfo() {
+    rpc.call([{ method: 'getnetworkinfo', params: [] }, { method: 'getpeerinfo', params: [] }], (response) => {
+      if (response !== null) {
+        this.setResponse(response[0].result, response[1].result)
+
+        /** Loop every 60 seconds when RPC is available, else stop. */
+        setTimeout(() => { this.getnetworkinfo() }, 60 * 1000)
       }
-
-      this.setNetworkInfo({
-        ip: response[1].result.tcp.ip || response[1].result.udp.ip,
-        port: response[1].result.tcp.port || response[1].result.udp.port,
-        tcp: response[1].result.tcp.connections,
-        udp: response[1].result.udp.connections
-      })
-
-      let promises = []
-      let lookups = []
-
-      let connectedNodes = response[0].result.reduce((nodes, peer) => {
-        /** Filter out dropped connections. */
-        if (parseInt(peer.lastsend) !== 0) {
-          const ip = peer.addr.split(':')[0]
-          const index = response[1].result.endpoints.indexOf(peer.addr)
-
-          /** Remove connected node from endpoints array. */
-          if (index > -1) response[1].result.endpoints.splice(index, 1)
-
-          if (!this.geoData[ip]) lookups.push(ip)
-          nodes.push(peer)
-        }
-
-        return nodes
-      }, [])
-
-      let endpoints = response[1].result.endpoints.reduce((endpoints, endpoint) => {
-        const ip = endpoint.split(':')[0]
-
-        if (ip.length > 0) {
-          if (!this.geoData[ip]) lookups.push(ip)
-          endpoints.push({ addr: endpoint })
-        }
-
-        return endpoints
-      }, [])
-
-      lookups.map((ip, i) => {
-        promises.push(new Promise((resolve, reject) => {
-          setTimeout(() => {
-            geoIp(ip, (response) => {
-              if (response !== null) {
-                process.env.NODE_ENV === 'dev' && console.info('HTTPS: GeoIp lookup', ip, '('+i+').')
-                resolve(response)
-              } else {
-                reject(ip)
-              }
-            })
-          }, i * 400)
-        }))
-      })
-
-      Promise.all(promises)
-        .then((geoData) => {
-          geoData = geoData.reduce((geoData, data) => {
-            if (data !== '') {
-              geoData[data.ip] = {
-                country: data.country.name,
-                lon: data.location.longitude,
-                lat: data.location.latitude
-              }
-            }
-
-            return geoData
-          }, {})
-
-          /** Combine geoData from current lookups and state. */
-          const combinedGeoData = {
-            ...this.geoData,
-            ...geoData
-          }
-
-          connectedNodes.map((peer) => {
-            const ip = peer.addr.split(':')[0]
-
-            /** Convert to miliseconds. */
-            peer.lastsend *= 1000
-            peer.lastrecv *= 1000
-            peer.conntime *= 1000
-
-            const subver = peer.subver.replace('/', '').replace('/', '').replace(':',' ').replace(')', '').split('(Peer; ')
-
-            peer.subverClean = subver[0]
-            peer.os = subver[1]
-
-            if (combinedGeoData[ip]) {
-              peer.country = combinedGeoData[ip].country
-              peer.lat = combinedGeoData[ip].lat
-              peer.lon = combinedGeoData[ip].lon
-            }
-          })
-
-          endpoints.map((peer) => {
-            const ip = peer.addr.split(':')[0]
-
-            if (combinedGeoData[ip]) {
-              peer.country = combinedGeoData[ip].country
-              peer.lat = combinedGeoData[ip].lat
-              peer.lon = combinedGeoData[ip].lon
-            }
-          })
-
-          this.setNodes(connectedNodes, endpoints, geoData)
-          setTimeout(() => { this.networkInfo() }, 60 * 1000)
-        },
-        (error) => {
-          process.env.NODE_ENV === 'dev' && console.error('RPC: Network geo ip lookups promises error.', error)
-        }
-      )
     })
   }
 }
 
+/** Initialize a new globally used store. */
 const network = new Network()
 
+/** Export both, initialized store as default export, and store class as named export. */
 export default network
 export { Network }

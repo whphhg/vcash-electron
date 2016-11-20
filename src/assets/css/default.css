@@ -23,12 +23,17 @@ main .toolbar i { vertical-align: middle; padding: 0 0 0 10px; }
 main .toolbar .left { float: left; }
 main .toolbar .right { float: right; }
 main #transactions { min-height: 437px; margin: 0 0 10px 10px; }
-main #network { min-height: 227px; margin: 0 0 10px 10px; }
+main #maintenance { min-height: 352px; margin: 0 10px 0 10px; }
+main #maintenance-tables { min-height: 227px; margin: 0 10px 10px 10px; }
 footer { width: 100%; height: 25px; bottom: 0; position: fixed; z-index: 1; }
-footer img { float: left; margin: 5px 6px 0 10px; }
+footer i { float: left; margin: 4px 5px 0 10px; }
 footer p { float: left; font-size: 12px; color: #757575; line-height: 26px; }
 footer p span { font-weight: 500; }
 footer p.right { float: right; margin: 0 10px 0 0; }
+.popoverTitle img { float: left; margin: 8px 6px 0 0px; }
+.popoverTitle img:nth-of-type(n+2) { margin: 8px 6px 0 10px; }
+.popoverTitle p { float: left; font-size: 12px; color: #757575; line-height: 33px; }
+.popoverTitle p span { font-weight: 500; }
 
 /** Scrollbar */
 ::-webkit-scrollbar { -webkit-appearance: none; width: 7px; }

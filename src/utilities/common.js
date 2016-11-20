@@ -28,3 +28,17 @@ export const dataPath = () => {
       return homedir() + '/.Vcash/data' + sep
   }
 }
+
+/**
+ * Calculate fixed-data-table height.
+ * @function tableHeight
+ * @param {number} entries - Number of entries in array.
+ * @param {number} height - Height of the table.
+ * @return {number} Table height.
+ */
+export const tableHeight = (entries = 0, height = 0) => {
+  return entries * 25 < height
+    ? entries * 25 + 27
+    : height
+
+}

@@ -12,7 +12,7 @@ import WalletUnlock from './WalletUnlock'
 import WalletEncrypt from './WalletEncrypt'
 
 /** Make the component reactive and inject MobX stores. */
-@observer(['rates', 'transactions', 'wallet'])
+@observer(['network', 'rates', 'transactions', 'wallet'])
 
 /**
  * TODO: Staking indicator if config pos:1 & unlocked (gavel, loyalty, flag, flash on, rowing).
@@ -20,6 +20,7 @@ import WalletEncrypt from './WalletEncrypt'
 class Root extends React.Component {
   constructor(props) {
     super(props)
+    this.network = props.network
     this.rates = props.rates
     this.transactions = props.transactions
     this.wallet = props.wallet
@@ -63,7 +64,6 @@ class Root extends React.Component {
               <Menu.Item key='/'><i className='material-icons md-20'>receipt</i></Menu.Item>
               <Menu.Item key='send'><i className='material-icons md-20'>send</i></Menu.Item>
               <Menu.Item key='addresses'><i className='material-icons md-20'>account_balance_wallet</i></Menu.Item>
-              <Menu.Item key='network'><i className='material-icons md-20'>settings_input_antenna</i></Menu.Item>
               <Menu.Item key='maintenance'><i className='material-icons md-20'>settings</i></Menu.Item>
             </Menu>
           </nav>
@@ -79,10 +79,10 @@ class Root extends React.Component {
         </header>
         <main>{this.props.children}</main>
         <footer className='shadow'>
-          <img src='./assets/images/exchangePoloniex.png' />
-          <p><span>{parseFloat(this.rates.poloniex.last).toFixed(8)}</span> BTC</p>
-          <img src='./assets/images/exchangeBittrex.png' />
-          <p><span>{parseFloat(this.rates.bittrex.Last).toFixed(8)}</span> BTC</p>
+          <i className='material-icons md-16'>extension</i>
+          <p>On block <span>{this.wallet.info.blocks}</span></p>
+          <i className='material-icons md-16'>settings_input_antenna</i>
+          <p><span>{this.network.tcp} TCP</span> and <span>{this.network.udp} UDP</span> connections</p>
           <p className='right'>UI <span>{process.env.npm_package_version}</span></p>
           <p className='right'>Wallet <span>{this.wallet.info.walletversion}</span></p>
           <p className='right'>Vcash <span>{this.wallet.info.version.split(':')[1]}</span></p>
