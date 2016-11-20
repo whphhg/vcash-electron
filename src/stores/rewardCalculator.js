@@ -1,4 +1,6 @@
 import { action, autorun, computed, observable } from 'mobx'
+
+/** Required utilities. */
 import { calculateIncentive, calculatePoW } from '../utilities/blockRewards'
 
 /** Required store instances. */
@@ -7,23 +9,20 @@ import wallet from './wallet'
 
 /** Block reward calculator store class. */
 class RewardCalculator {
-  @observable block
-  @observable blocktime
-
   /**
-   * @constructor
+   * Observable properties.
    * @property {string} block - Form element input value.
-   * @property {number} blocktime - Time property of RPC getblock response.
+   * @property {number} blocktime - getblock.result.time RPC response.
    */
-  constructor() {
-    this.block = ''
-    this.blocktime = 0
+  @observable block = ''
+  @observable blocktime = 0
 
+  constructor() {
     /** Auto check if block exists and retrieve block time. */
     autorun(() => {
       rpc.call([{ method: 'getblockhash', params: [this.blockInt] }], (response) => {
         if (response !== null) {
-          /** If block exists, get data. */
+          /** If block exists, get blocktime. */
           if (response[0].hasOwnProperty('result') === true) {
             rpc.call([{ method: 'getblock', params: [response[0].result] }], (response) => {
               if (response !== null) {

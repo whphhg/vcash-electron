@@ -10,6 +10,7 @@ import rpc from './rpc'
 /** Network store class. */
 class Network {
   /**
+   * Observable properties.
    * @property {object} networkInfo - getnetworkinfo RPC response.
    * @property {array} peerInfo - getpeerinfo RPC response.
    * @property {map} geoData - IP lookup data.

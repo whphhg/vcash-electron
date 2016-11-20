@@ -11,27 +11,21 @@ import rpc from './rpc'
 
 /** WalletBackup store class. */
 class WalletBackup {
-  @observable path
-  @observable popover
-  @observable errors
-
   /**
-   * @constructor
+   * Observable properties.
    * @property {string} path - Dumping location.
    * @property {boolean} popover - Popover visibility status.
    * @property {object} errors - RPC response errors.
    */
-  constructor() {
-    this.path = dataPath()
-    this.popover = false
-    this.errors = {
-      backupFailed: false
-    }
+  @observable path = dataPath()
+  @observable popover = false
+  @observable errors = { backupFailed: false }
 
-    /** Auto clear previous RPC response errors on path change. */
+  constructor() {
+    /** Clear previous RPC response errors on path change. */
     reaction(() => this.path, (path) => { this.toggleError() })
 
-    /** Auto clear previous RPC response errors when popover closes. */
+    /** Clear previous RPC response errors when popover closes. */
     reaction(() => this.popover, (popover) => { if (popover === false) this.toggleError() })
   }
 

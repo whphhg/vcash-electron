@@ -7,25 +7,16 @@ import wallet from './wallet'
 
 /** ChainBlender store class. */
 class ChainBlender {
-  @observable info
-  @observable status
-
   /**
-   * @constructor
+   * Observable properties.
    * @property {object} info - chainblender info RPC response.
    * @property {boolean} status - ChainBlender status.
    */
-  constructor() {
-    this.info = {
-      blendstate: 'none',
-      balance: 0,
-      denominatedbalance: 0,
-      nondenominatedbalance: 0,
-      blendedbalance: 0,
-      blendedpercentage: 0 }
-    this.status = false
+  @observable info = { blendstate: 'none', balance: 0, denominatedbalance: 0, nondenominatedbalance: 0, blendedbalance: 0, blendedpercentage: 0 }
+  @observable status = false
 
-    /** Auto start updating when the wallet unlocks. */
+  constructor() {
+    /** Start updating when the wallet unlocks. */
     autorun(() => { if (wallet.isLocked === false) this.getinfo() })
   }
 
@@ -79,7 +70,6 @@ class ChainBlender {
     rpc.call([{ method: 'chainblender', params: [this.status === true ? 'stop' : 'start'] }], (response) => {
       if (response !== null) {
         this.setStatus(!this.status)
-
         const suffix = this.status === true ? 'started.' : 'stopped.'
         notification.success({
           message: 'ChainBlender',

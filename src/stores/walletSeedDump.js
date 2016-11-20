@@ -5,24 +5,18 @@ import rpc from './rpc'
 
 /** WalletSeedDump store class. */
 class WalletSeedDump {
-  @observable seed
-  @observable popover
-  @observable errors
-
   /**
-   * @constructor
+   * Observable properties.
    * @property {string} seed - Dumped seed.
    * @property {boolean} popover - Popover visibility status.
    * @property {object} errors - RPC response errors.
    */
-  constructor() {
-    this.seed = ''
-    this.popover = false
-    this.errors = {
-      notDeterministic: false
-    }
+  @observable seed = ''
+  @observable popover = false
+  @observable errors = { notDeterministic: false }
 
-    /** Auto clear previous RPC response errors and dumped seed when popover closes. */
+  constructor() {
+    /** Clear previous RPC response errors and dumped seed when popover closes. */
     reaction(() => this.popover, (popover) => {
       if (popover === false) {
         if (this.seed !== '') this.setSeed()

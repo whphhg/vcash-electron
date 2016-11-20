@@ -7,36 +7,25 @@ import addresses from './addresses'
 
 /** KeyImport store class. */
 class KeyImport {
-  @observable privateKey
-  @observable account
-  @observable loading
-  @observable popover
-  @observable errors
-
   /**
-   * @constructor
+   * Observable properties.
    * @property {string} privateKey - Form element input value.
    * @property {string} account - Form element input value.
    * @property {boolean} loading - Button loading status.
    * @property {boolean} popover - Popover visibility status.
    * @property {object} errors - RPC response errors.
    */
+  @observable privateKey = ''
+  @observable account = ''
+  @observable loading = false
+  @observable popover = false
+  @observable errors = { invalidKey: false, isMine: false }
+
   constructor() {
-    this.privateKey = ''
-    this.account = ''
-    this.loading = false
-    this.popover = false
-    this.errors = {
-      invalidKey: false,
-      isMine: false
-    }
+    /** Clear previous RPC response errors on private key change. */
+    reaction(() => this.privateKey, (privateKey) => { if (privateKey !== '') this.toggleError() })
 
-    /** Auto clear previous RPC response errors on private key change. */
-    reaction(() => this.privateKey, (privateKey) => {
-      if (privateKey !== '') this.toggleError()
-    })
-
-    /** Auto clear private key when popover closes. */
+    /** Clear private key when popover closes. */
     reaction(() => this.popover, (popover) => {
       if (popover === false) {
         if (this.privateKey !== '') this.setPrivateKey()
@@ -54,7 +43,6 @@ class KeyImport {
     if (this.privateKey.length < 51) return 'incompleteKey'
     if (this.errors.invalidKey === true) return 'invalidKey'
     if (this.errors.isMine === true) return 'isMine'
-
     return false
   }
 
@@ -105,10 +93,12 @@ class KeyImport {
    * @function importprivkey
    */
   importprivkey() {
+    /** Disable button and toggle on loading indicator. */
     this.toggleLoading()
 
     rpc.call([{ method: 'importprivkey', params: [this.privateKey, this.account] }], (response) => {
       if (response !== null) {
+        /** Re-enable button and toggle off loading indicator. */
         this.toggleLoading()
 
         if (response[0].hasOwnProperty('error') === true) {

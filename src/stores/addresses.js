@@ -6,16 +6,14 @@ import rates from './rates'
 
 /** Addresses store class. */
 class Addresses {
-  @observable receivedByAddress
-
   /**
-   * @constructor
+   * Observable properties.
    * @property {array} receivedByAddress - listreceivedbyaddress RPC response.
    */
-  constructor() {
-    this.receivedByAddress = []
+  @observable receivedByAddress = []
 
-    /** Auto start updating when RPC becomes available. */
+  constructor() {
+    /** Start update loop when RPC becomes available. */
     reaction(() => rpc.status, (status) => {
       if (status === true) this.listreceivedbyaddress()
     })
@@ -36,14 +34,11 @@ class Addresses {
     /** Convert Set to Array. */
     accounts = [...accounts]
 
-    /** Sort accounts by name. */
-    accounts.sort((a, b) => {
+    return accounts.sort((a, b) => {
       if (a.toLowerCase() < b.toLowerCase()) return -1
       if (a.toLowerCase() > b.toLowerCase()) return 1
       return 0
     })
-
-    return accounts
   }
 
   /**
@@ -72,13 +67,6 @@ class Addresses {
       return addresses
     }, [])
   }
-
-  /**
-   * Get table height.
-   * @function tableHeight
-   * @return {number} Height.
-   */
-  @computed get tableHeight() { return this.all.length * 25 < 580 ? this.all.length * 25 + 27 : 580 }
 
   /**
    * Set RPC response.
