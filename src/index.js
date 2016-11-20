@@ -16,11 +16,10 @@ notification.config({ top: 65 })
 
 /** Required components. */
 import Root from './components/Root'
-import Addresses from './components/Addresses'
 import Transactions from './components/Transactions'
-import Network from './components/Network'
+// import Send from './components/Send'
+import Addresses from './components/Addresses'
 import Maintenance from './components/Maintenance'
-//import Send from './components/Send'
 
 /** Required store instances. */
 import addresses from './stores/addresses'
@@ -61,7 +60,6 @@ render(
         <IndexRoute component={Transactions} />
         <Route path='send' component={Transactions} />
         <Route path='addresses' component={Addresses} />
-        <Route path='network' component={Network} />
         <Route path='maintenance' component={Maintenance} />
       </Route>
     </Router>

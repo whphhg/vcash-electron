@@ -17,9 +17,23 @@ class CurrencyConverter extends React.Component {
     this.currencyConverter.setAmount(event.target.value, event.target.id)
   }
 
+  popoverTitle() {
+    return (
+      <div className='popoverTitle'>
+        <p>Approximately convert between currencies</p>
+        <div style={{float:'right'}}>
+          <img src='./assets/images/exchangePoloniex.png' />
+          <p><span>{parseFloat(this.rates.poloniex.last).toFixed(8)}</span> BTC</p>
+          <img src='./assets/images/exchangeBittrex.png' />
+          <p><span>{parseFloat(this.rates.bittrex.Last).toFixed(8)}</span> BTC</p>
+        </div>
+      </div>
+    )
+  }
+
   popoverContent() {
     return (
-      <Row style={{width:'400px'}}>
+      <Row>
         <Col span={7}>
           <p style={{marginBottom:'5px'}}><span className='text-dotted'>XVC</span></p>
           <Input type='text' autosize id='vcash' placeholder='Amount' onChange={this.onChange} value={this.currencyConverter.vcash} />
@@ -38,7 +52,7 @@ class CurrencyConverter extends React.Component {
 
   render() {
     return (
-      <Popover trigger='click' placement='bottomLeft' title='Approximately convert between currencies' content={this.popoverContent()}>
+      <Popover trigger='click' placement='bottomLeft' title={this.popoverTitle()} content={this.popoverContent()}>
         <Button>Currency converter</Button>
       </Popover>
     )
