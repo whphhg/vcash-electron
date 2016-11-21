@@ -1,7 +1,7 @@
 {
   "name": "vcash-electron",
   "productName": "vcash-electron",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "description": "Electron UI for Vcash, a decentralized currency for the internet.",
   "main": "initialize.js",
   "scripts": {
@@ -49,6 +49,6 @@
     "electron-packager": "8.3.0",
     "electron-prebuilt": "1.4.7",
     "mobx-react-devtools": "4.2.9",
-    "regenerator-runtime": "0.9.6"
+    "regenerator-runtime": "0.10.0"
   }
 }

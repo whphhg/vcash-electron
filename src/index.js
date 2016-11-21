@@ -39,6 +39,7 @@ import wallet from './stores/wallet'
 import walletBackup from './stores/walletBackup'
 import walletDump from './stores/walletDump'
 import walletEncrypt from './stores/walletEncrypt'
+import walletPassphraseChange from './stores/walletPassphraseChange'
 import walletSeedDump from './stores/walletSeedDump'
 import walletUnlock from './stores/walletUnlock'
 
@@ -50,7 +51,7 @@ const stores = {
   rates, rewardCalculator, rpc,
   send,
   transaction, transactions,
-  wallet, walletBackup, walletDump, walletEncrypt, walletSeedDump, walletUnlock
+  wallet, walletBackup, walletDump, walletEncrypt, walletPassphraseChange, walletSeedDump, walletUnlock
 }
 
 render(
