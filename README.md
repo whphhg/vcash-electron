@@ -34,7 +34,6 @@ To update:
 
 ### TODOs
 - Implement wallet check and repair. __TODO__ [src/components/Maintenance.js](src/components/Maintenance.js)
-- Implement wallet passphrase change. __TODO__ [src/components/Maintenance.js](src/components/Maintenance.js)
 - Staking indicator if config pos:1 & unlocked (gavel, loyalty, flag, flash on, rowing). __TODO__ [src/components/Root.js](src/components/Root.js)
 - Remote RPC using tunnel-ssh -> ssh -L9195:localhost:9195 user@ip). __TODO__ [src/components/RpcManager.js](src/components/RpcManager.js)
 - Complete rewrite. Fail. __TODO__ [src/components/Transaction.js](src/components/Transaction.js)

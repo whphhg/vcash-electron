@@ -12,6 +12,7 @@ import RewardCalculator from './RewardCalculator'
 import TableCell from './TableCell'
 import WalletBackup from './WalletBackup'
 import WalletDump from './WalletDump'
+import WalletPassphraseChange from './WalletPassphraseChange'
 import WalletSeedDump from './WalletSeedDump'
 
 /** Make the component reactive and inject MobX stores. */
@@ -41,7 +42,12 @@ class Maintenance extends React.Component {
             <LocalCurrency />
           </div>
         </div>
-        <div id='maintenance'></div>
+        <div id='maintenance'>
+          <Row>
+            <Col span={12}></Col>
+            <Col span={12}><WalletPassphraseChange /></Col>
+          </Row>
+        </div>
         <div id='maintenance-tables'>
           <Row>
             <Col span={19}>
