@@ -1,9 +1,6 @@
 import { action, computed, observable } from 'mobx'
-
-/** Required utilities. */
 import { getItem, setItem } from '../utilities/localStorage'
 
-/** Rates store class. */
 class Rates {
   /**
    * Observable properties.
@@ -52,7 +49,7 @@ class Rates {
    * @return {number} Local bitcoin price.
    */
   @computed get local() {
-    if (this.localCurrency in this.bitcoinAverage === true) return this.bitcoinAverage[this.localCurrency].last
+    if (this.bitcoinAverage.hasOwnProperty(this.localCurrency) === true) return this.bitcoinAverage[this.localCurrency].last
     return 0
   }
 
@@ -61,7 +58,9 @@ class Rates {
    * @function localCurrencies
    * @return {array} Local currencies.
    */
-  @computed get localCurrencies() { return Object.keys(this.bitcoinAverage) }
+  @computed get localCurrencies() {
+    return Object.keys(this.bitcoinAverage)
+  }
 
   /**
    * Set bitcoin average price index.
@@ -78,14 +77,18 @@ class Rates {
    * @function setPoloniex
    * @param {string} ticker - Ticker.
    */
-  @action setPoloniex(ticker) { this.poloniex = ticker['BTC_XVC'] }
+  @action setPoloniex(ticker) {
+    this.poloniex = ticker['BTC_XVC']
+  }
 
   /**
    * Set Bittrex ticker.
    * @function setBittrex
    * @param {string} ticker - Ticker.
    */
-  @action setBittrex(ticker) { this.bittrex = ticker.result[0] }
+  @action setBittrex(ticker) {
+    this.bittrex = ticker.result[0]
+  }
 
   /**
    * Set local currency and save to localStorage.

@@ -5,25 +5,26 @@ import { notification } from 'antd'
 import rpc from './rpc'
 import wallet from './wallet'
 
-/** WalletUnlock store class. */
 class WalletUnlock {
   /**
    * Observable properties.
-   * @property {string} passphrase - Form element input value.
-   * @property {boolean} modal - Modal visibility status.
+   * @property {string} passphrase - Passphrase.
+   * @property {boolean} popover - Popover visibility status.
    * @property {object} errors - RPC response errors.
    */
   @observable passphrase = ''
-  @observable modal = false
+  @observable popover = false
   @observable errors = { incorrectPassphrase: false }
 
   constructor() {
     /** Clear previous RPC response errors on passphrase change. */
-    reaction(() => this.passphrase, (passphrase) => { this.toggleError() })
+    reaction(() => this.passphrase, (passphrase) => {
+      this.toggleError()
+    })
 
-    /** Clear passphrase field when modal closes. */
-    reaction(() => this.modal, (modal) => {
-      if (modal === false) {
+    /** Clear passphrase field when popover closes. */
+    reaction(() => this.popover, (popover) => {
+      if (popover === false) {
         if (this.passphrase !== '') this.setPassphrase()
       }
     })
@@ -61,16 +62,20 @@ class WalletUnlock {
    * @function setPassphrase
    * @param {string} passphrase - Passphrase.
    */
-  @action setPassphrase(passphrase = '') { this.passphrase = passphrase }
+  @action setPassphrase(passphrase = '') {
+    this.passphrase = passphrase
+  }
 
   /**
-   * Toggle modal visibility.
-   * @function toggleModal
+   * Toggle popover visibility.
+   * @function togglePopover
    */
-  @action toggleModal() { this.modal = !this.modal }
+  @action togglePopover() {
+    this.popover = !this.popover
+  }
 
   /**
-   * Unlock wallet.
+   * Unlock the wallet.
    * @function walletpassphrase
    */
   walletpassphrase() {
@@ -84,7 +89,7 @@ class WalletUnlock {
           }
         }
 
-        this.toggleModal()
+        this.togglePopover()
         wallet.lockCheck()
         notification.success({
           message: 'Unlocked',

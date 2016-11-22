@@ -33,16 +33,33 @@ class WalletBackup extends React.Component {
             <p style={{margin: '4px 0 0 0'}}>Save into</p>
           </Col>
           <Col span={21}>
-            <Input disabled value={this.walletBackup.path} />
+            <Input
+              disabled
+              value={this.walletBackup.path}
+            />
           </Col>
         </Row>
         <Row>
           <Col offset={3} span={12}>
-            { this.walletBackup.errorStatus === 'backupFailed' && (<p className='text-error'>Recently changed the passphrase? Please restart the wallet.</p>) }
+            {
+              this.walletBackup.errorStatus === 'backupFailed' && (
+                <p className='text-error'>Recently changed the passphrase? Please restart the wallet.</p>
+              )
+            }
           </Col>
-          <Col span={9} className='text-right' style={{margin: '5px 0 0 0'}}>
-            <Button onClick={this.getPath}>Browse</Button>
-            <Button onClick={this.backupwallet} style={{margin: '0 0 0 5px'}}>Make a backup</Button>
+          <Col span={9} className='text-right'>
+            <Button
+              style={{margin: '5px 0 0 0'}}
+              onClick={this.getPath}
+            >
+              Browse
+            </Button>
+            <Button
+              style={{margin: '5px 0 0 5px'}}
+              onClick={this.backupwallet}
+            >
+              Make a backup
+            </Button>
           </Col>
         </Row>
       </div>

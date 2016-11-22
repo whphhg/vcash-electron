@@ -1,9 +1,9 @@
 import React from 'react'
-import { observer } from 'mobx-react'
-import { AutoComplete, Button, Col, Popover, Row } from 'antd'
+import { inject, observer } from 'mobx-react'
+import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
 
 /** Make the component reactive and inject MobX stores. */
-@observer(['addresses', 'keyDump', 'wallet'])
+@inject('addresses', 'keyDump', 'wallet') @observer
 
 class KeyDump extends React.Component {
   constructor(props) {
@@ -30,52 +30,55 @@ class KeyDump extends React.Component {
 
   popoverContent() {
     return (
-      <div style={{width:'400px'}}>
+      <div style={{width: '400px'}}>
         <Row>
-          <Col span={24}>
+          <Col span={24} style={{height: '28px'}}>
             <AutoComplete
               placeholder='Address'
-              style={{width:'100%'}}
+              style={{width: '100%'}}
               getPopupContainer={triggerNode => triggerNode.parentNode}
               value={this.keyDump.address}
               dataSource={this.addresses.list}
               onChange={this.setAddress}
             />
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
             {
-              this.keyDump.errorStatus === 'invalidCharacters' && (
-                <p className='text-error'>The address you have entered contains invalid characters.</p>
-              ) ||
-              this.keyDump.errorStatus === 'unknownAddress' && (
-                <p className='text-error'>The address you have entered does not belong to your wallet.</p>
-              ) ||
-              this.keyDump.errorStatus === 'invalidAddress' && (
-                <p className='text-error'>The address you have entered is not valid. Please double-check it.</p>
+              this.keyDump.privateKey !== '' && (
+                <Input
+                  style={{margin: '5px 0 0 0'}}
+                  value={this.keyDump.privateKey}
+                />
               )
             }
           </Col>
         </Row>
         <Row>
-          <Col span={24} style={{textAlign:'right',marginTop:'3px'}}>
-            <Button onClick={this.dumpprivkey} disabled={this.keyDump.errorStatus !== false}>Dump the private key</Button>
+          <Col span={16}>
+            {
+              this.keyDump.errorStatus === 'invalidCharacters' && (
+                <p className='text-error'>The address contains invalid characters.</p>
+              ) ||
+              this.keyDump.errorStatus === 'unknownAddress' && (
+                <p className='text-error'>The address does not belong to your wallet.</p>
+              ) ||
+              this.keyDump.errorStatus === 'invalidAddress' && (
+                <p className='text-error'>The address is not valid.</p>
+              )
+            }
+          </Col>
+          <Col span={8} className='text-right'>
+            <Button
+              style={{margin: '5px 0 0 0'}}
+              onClick={this.dumpprivkey}
+              disabled={this.keyDump.errorStatus !== false}
+            >
+              Dump the key
+            </Button>
           </Col>
         </Row>
-        {
-          this.keyDump.privateKey !== '' && (
-            <div style={{margin:'8px -16px 0 -16px',borderTop:'1px solid #e9e9e9'}}>
-              <Row style={{padding:'0 16px 0 16px'}}>
-                <Col span={24}>
-                  <div style={{marginTop:'10px'}}>
-                    <p><i className='material-icons md-20'>vpn_key</i>
-                      <span className='input-label'>
-                        <span className='text-dotted'>{this.keyDump.privateKey}</span>
-                      </span>
-                    </p>
-                  </div>
-                </Col>
-              </Row>
-            </div>
-          )
-        }
       </div>
     )
   }
@@ -90,7 +93,11 @@ class KeyDump extends React.Component {
         visible={this.keyDump.popover === true}
         onVisibleChange={this.togglePopover}
       >
-        <Button disabled={this.wallet.isLocked === true}>Dump private key</Button>
+        <Button
+          disabled={this.wallet.isLocked === true}
+        >
+          Dump private key
+        </Button>
       </Popover>
     )
   }

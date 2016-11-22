@@ -1,83 +1,72 @@
 import React from 'react'
-import { observer } from 'mobx-react'
-import { Button, Col, Input, Modal, Row, Tooltip } from 'antd'
+import { inject, observer } from 'mobx-react'
+import { Button, Col, Input, Row } from 'antd'
 
 /** Make the component reactive and inject MobX stores. */
-@observer(['wallet', 'walletEncrypt'])
+@inject('walletEncrypt') @observer
 
 class WalletEncrypt extends React.Component {
   constructor(props) {
     super(props)
-    this.wallet = props.wallet
     this.walletEncrypt = props.walletEncrypt
     this.encryptwallet = this.encryptwallet.bind(this)
     this.setPassphrase = this.setPassphrase.bind(this)
-    this.setRepeat = this.setRepeat.bind(this)
-    this.toggleModal = this.toggleModal.bind(this)
   }
 
   encryptwallet() {
     this.walletEncrypt.encryptwallet()
-    this.walletEncrypt.toggleModal()
   }
 
   setPassphrase(event) {
-    this.walletEncrypt.setPassphrase(event.target.value)
-  }
-
-  setRepeat(event) {
-    this.walletEncrypt.setRepeat(event.target.value)
-  }
-
-  toggleModal() {
-    this.walletEncrypt.toggleModal()
-  }
-
-  modalFooter() {
-    return (
-      <Row>
-        <Col span={24} className='text-right'>
-          <Button onClick={this.toggleModal} style={{marginTop:'1px'}}>Cancel</Button>
-          <Button onClick={this.encryptwallet} disabled={this.walletEncrypt.errorStatus !== false} type='primary'>Encrypt</Button>
-        </Col>
-      </Row>
-    )
+    this.walletEncrypt.setPassphrase(event.target.value, event.target.name)
   }
 
   render() {
     return (
       <div>
-        <Modal title='Encrypt the wallet' visible={this.walletEncrypt.modal === true} footer={this.modalFooter()}>
-          <Row>
-            <Col span={6}>
-              <p><i className='material-icons md-20'>vpn_key</i> <span className='input-label'>Passphrase</span></p>
-              <p className='input-spacing'><i className='material-icons md-20'>vpn_key</i> <span className='input-label'>Repeat</span></p>
-            </Col>
-            <Col span={18}>
-              <Input type='text' placeholder='Enter passphrase' value={this.walletEncrypt.passphrase} onChange={this.setPassphrase} />
-              <Input type='text' placeholder='Repeat passphrase' value={this.walletEncrypt.repeat} onChange={this.setRepeat} className='input-spacing' />
-            </Col>
-          </Row>
-          <Row>
-            <Col span={24}>
-              {
-                this.walletEncrypt.errorStatus === 'notMatching' && (
-                  <p className='error-text'>The passphrases you have entered do not match. Please try again.</p>
-                )
-              }
-            </Col>
-          </Row>
-        </Modal>
-
-        {
-          this.wallet.isEncrypted === false && this.wallet.isLocked === false && (
-            <Tooltip placement='bottomRight' title='Wallet is not encrypted'>
-              <Button size='small' type='primary' onClick={this.toggleModal}>
-                <i className='material-icons md-20'>vpn_key</i>
-              </Button>
-            </Tooltip>
-          )
-        }
+        <p style={{margin: '0 0 5px 0'}}>
+          <i className='material-icons md-18'>vpn_key</i>
+          <span className='text-icon'>Encrypt the wallet using a passphrase for increased security</span>
+        </p>
+        <Row>
+          <Col span={4}>
+            <p style={{margin: '4px 0 0 0'}}>Passphrase</p>
+            <p style={{margin: '14px 0 0 0'}}>Repeat</p>
+          </Col>
+          <Col span={20}>
+            <Input
+              name='passphrase'
+              placeholder='Enter passphrase'
+              value={this.walletEncrypt.passphrase}
+              onChange={this.setPassphrase}
+            />
+            <Input
+              name='repeat'
+              placeholder='Repeat passphrase'
+              style={{margin: '5px 0 0 0'}}
+              value={this.walletEncrypt.repeat}
+              onChange={this.setPassphrase}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col offset={4} span={13}>
+            {
+              this.walletEncrypt.errorStatus === 'notMatching' && (
+                <p className='text-error'>The passphrases you have entered do not match.</p>
+              )
+            }
+          </Col>
+          <Col span={7} className='text-right'>
+            <Button
+              style={{margin: '5px 0 0 0'}}
+              onClick={this.encryptwallet}
+              disabled={this.walletEncrypt.errorStatus !== false}
+            >
+              Encrypt the wallet
+            </Button>
+          </Col>
+        </Row>
       </div>
     )
   }

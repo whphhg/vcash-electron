@@ -1,17 +1,14 @@
 import { action, autorun, computed, observable } from 'mobx'
-
-/** Required utilities. */
 import { calculateIncentive, calculatePoW } from '../utilities/blockRewards'
 
 /** Required store instances. */
 import rpc from './rpc'
 import wallet from './wallet'
 
-/** Block reward calculator store class. */
 class RewardCalculator {
   /**
    * Observable properties.
-   * @property {string} block - Form element input value.
+   * @property {string} block - Block number.
    * @property {number} blocktime - getblock.result.time RPC response.
    */
   @observable block = ''
@@ -43,7 +40,9 @@ class RewardCalculator {
    * @function blockInt
    * @return {number} Block.
    */
-  @computed get blockInt() { return this.block === '' ? 0 : parseInt(this.block) }
+  @computed get blockInt() {
+    return this.block === '' ? 0 : parseInt(this.block)
+  }
 
   /**
    * Get data for the next 100k rewards in 2.5k increments.
@@ -74,21 +73,27 @@ class RewardCalculator {
    * @function powReward
    * @return {number} PoW reward.
    */
-  @computed get powReward() { return calculatePoW(this.block) }
+  @computed get powReward() {
+    return calculatePoW(this.block)
+  }
 
   /**
    * Get block incentive percentage.
    * @function incentivePercent
    * @return {number} Incentive percentage.
    */
-  @computed get incentivePercent() { return calculateIncentive(this.block) }
+  @computed get incentivePercent() {
+    return calculateIncentive(this.block)
+  }
 
   /**
    * Get block incentive reward.
    * @function incentiveReward
    * @return {number} Incentive reward.
    */
-  @computed get incentiveReward() { return (this.powReward / 100) * this.incentivePercent }
+  @computed get incentiveReward() {
+    return (this.powReward / 100) * this.incentivePercent
+  }
 
   /**
    * Check if datetime is exact or an estimation.
@@ -115,14 +120,18 @@ class RewardCalculator {
    * @function setBlock
    * @param {number} block - Block number.
    */
-  @action setBlock(block = '') { if (block.toString().match(/^[0-9]{0,7}$/) !== null) this.block = block }
+  @action setBlock(block = '') {
+    if (block.toString().match(/^[0-9]{0,7}$/) !== null) this.block = block
+  }
 
   /**
    * Set RPC response block time.
    * @function setBlocktime
    * @param {number} blocktime - Blocktime.
    */
-  @action setBlocktime(blocktime = 0) { this.blocktime = blocktime }
+  @action setBlocktime(blocktime = 0) {
+    this.blocktime = blocktime
+  }
 }
 
 /** Initialize a new globally used store. */

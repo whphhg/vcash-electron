@@ -3,11 +3,10 @@ import { action, computed, observable, reaction } from 'mobx'
 /** Required store instances. */
 import rpc from './rpc'
 
-/** KeyDump store class. */
 class KeyDump {
   /**
    * Observable properties.
-   * @property {string} address - Form element input value.
+   * @property {string} address - Address to dump.
    * @property {string} privateKey - Dumped private key.
    * @property {boolean} popover - Popover visibility status.
    * @property {object} errors - RPC response errors.
@@ -67,20 +66,26 @@ class KeyDump {
    * @function setAddress
    * @param {string} address - Address.
    */
-  @action setAddress(address = '') { this.address = address }
+  @action setAddress(address = '') {
+    this.address = address
+  }
 
   /**
    * Set private key.
    * @function setPrivateKey
    * @param {string} privateKey - Returned private key.
    */
-  @action setPrivateKey(privateKey = '') { this.privateKey = privateKey }
+  @action setPrivateKey(privateKey = '') {
+    this.privateKey = privateKey
+  }
 
   /**
    * Toggle popover visibility.
    * @function togglePopover
    */
-  @action togglePopover() { this.popover = !this.popover }
+  @action togglePopover() {
+    this.popover = !this.popover
+  }
 
   /**
    * Dump private key.

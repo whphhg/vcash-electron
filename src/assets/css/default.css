@@ -22,8 +22,9 @@ main .toolbar p:last-child { padding: 0 3px 0 6px; }
 main .toolbar i { vertical-align: middle; padding: 0 0 0 10px; }
 main .toolbar .left { float: left; }
 main .toolbar .right { float: right; }
+main #addresses { min-height: 569px; margin: 10px; }
 main #transactions { min-height: 437px; margin: 0 0 10px 10px; }
-main #maintenance { min-height: 342px; margin: 10px 10px 0 10px; }
+main #maintenance { min-height: 342px; margin: 0 0 10px 0; }
 main #maintenance-tables { min-height: 227px; margin: 0 10px 10px 10px; }
 footer { width: 100%; height: 25px; bottom: 0; position: fixed; z-index: 1; }
 footer i { float: left; margin: 4px 5px 0 10px; }
@@ -56,9 +57,6 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #e9e9e9; padd
 .text-center { text-align: center; }
 .text-icon { margin: 0 0 0 7px; vertical-align: 4px; }
 .text-error { font-size: 10px; margin: 3px 0 3px 1px; color: red; }
-.error-text { color: red; margin-top: 10px; }
-.input-label { vertical-align: 4px; padding-left: 10px; }
-.input-spacing { margin-top: 8px; }
 .fdt-last-column { text-align: right; padding-right: 13px; }
 
 /** Ant.Design */

@@ -1,13 +1,10 @@
 import { action, asMap, autorunAsync, computed, observable, reaction } from 'mobx'
-
-/** Required utilities. */
 import { getItem, setItem } from '../utilities/localStorage'
 import geoIp from '../utilities/geoIp'
 
 /** Required store instances. */
 import rpc from './rpc'
 
-/** Network store class. */
 class Network {
   /**
    * Observable properties.
@@ -22,10 +19,10 @@ class Network {
   constructor() {
     reaction(() => rpc.status, (status) => {
       /** Start update loop when RPC becomes available. */
-      if (status === true) { this.getnetworkinfo() }
+      if (status === true) this.getnetworkinfo()
 
       /** Clear previous data when RPC becomes unavailable. */
-      if (status === false) { this.setResponse() }
+      if (status === false) this.setResponse()
     })
 
     /** Fetch missing IP geo data (with a 2s delay) on RPC update. */
@@ -98,7 +95,7 @@ class Network {
   @computed get peers() {
     if (this.peerInfo.length > 0) {
       return this.peerInfo.reduce((peers, item) => {
-        if (item.lastsend !== 0) {
+        if (item.lastsend !== 0 && item.startingheight !== -1) {
           let peer = {
             ...item,
             ip: item.addr.split(':')[0],
@@ -185,12 +182,14 @@ class Network {
    */
   @action setGeoData(response) {
     response.forEach((lookup) => {
-      if (lookup.country.name !== '') {
-        this.geoData.set(lookup.ip, {
-          country: lookup.country.name,
-          lon: lookup.location.longitude,
-          lat: lookup.location.latitude
-        })
+      if (lookup.hasOwnProperty('country') === true) {
+        if (lookup.country.name !== '') {
+          this.geoData.set(lookup.ip, {
+            country: lookup.country.name,
+            lon: lookup.location.longitude,
+            lat: lookup.location.latitude
+          })
+        }
       }
     })
 

@@ -4,7 +4,6 @@ import { action, computed, observable, reaction } from 'mobx'
 import rpc from './rpc'
 import rates from './rates'
 
-/** Addresses store class. */
 class Addresses {
   /**
    * Observable properties.
@@ -73,7 +72,9 @@ class Addresses {
    * @function setResponse
    * @param {array} response - RPC response array.
    */
-  @action setResponse(response) { this.receivedByAddress = response }
+  @action setResponse(response) {
+    this.receivedByAddress = response
+  }
 
   /**
    * Get all addresses, including unused.

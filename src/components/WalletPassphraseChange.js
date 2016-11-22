@@ -3,12 +3,11 @@ import { inject, observer } from 'mobx-react'
 import { Button, Col, Input, Row } from 'antd'
 
 /** Make the component reactive and inject MobX stores. */
-@inject('wallet', 'walletPassphraseChange') @observer
+@inject('walletPassphraseChange') @observer
 
 class WalletPassphraseChange extends React.Component {
   constructor(props) {
     super(props)
-    this.wallet = props.wallet
     this.walletPassphraseChange = props.walletPassphraseChange
     this.walletpassphrasechange = this.walletpassphrasechange.bind(this)
     this.setPassphrase = this.setPassphrase.bind(this)
@@ -42,19 +41,50 @@ class WalletPassphraseChange extends React.Component {
             <p style={{margin: '14px 0 0 0'}}>Repeat</p>
           </Col>
           <Col span={21}>
-            <Input name='oldPassphrase' placeholder='Current passphrase' value={this.walletPassphraseChange.oldPassphrase} onChange={this.setPassphrase} />
-            <Input name='newPassphrase' placeholder='New passphrase' style={{margin: '5px 0 0 0'}} value={this.walletPassphraseChange.newPassphrase} onChange={this.setPassphrase} />
-            <Input name='repeat' placeholder='Repeat passphrase' style={{margin: '5px 0 0 0'}} value={this.walletPassphraseChange.repeat} onChange={this.setPassphrase} />
+            <Input
+              name='oldPassphrase'
+              placeholder='Current passphrase'
+              value={this.walletPassphraseChange.oldPassphrase}
+              onChange={this.setPassphrase}
+            />
+            <Input
+              name='newPassphrase'
+              placeholder='New passphrase'
+              style={{margin: '5px 0 0 0'}}
+              value={this.walletPassphraseChange.newPassphrase}
+              onChange={this.setPassphrase}
+            />
+            <Input
+              name='repeat'
+              placeholder='Repeat passphrase'
+              style={{margin: '5px 0 0 0'}}
+              value={this.walletPassphraseChange.repeat}
+              onChange={this.setPassphrase}
+            />
           </Col>
         </Row>
         <Row>
           <Col offset={3} span={14}>
-            { this.walletPassphraseChange.errorStatus === 'notMatching' && (<p className='text-error'>The passphrases you have entered do not match.</p>) }
-            { this.walletPassphraseChange.errorStatus === 'incorrectPassphrase' && (<p className='text-error'>The current passphrase you have entered is incorrect.</p>) }
-            { this.walletPassphraseChange.errorStatus === 'sameAsBefore' && (<p className='text-error'>The current passphrase you have entered is the same as the new one.</p>) }
+            {
+              this.walletPassphraseChange.errorStatus === 'notMatching' && (
+                <p className='text-error'>The passphrases you have entered do not match.</p>
+              ) ||
+              this.walletPassphraseChange.errorStatus === 'incorrectPassphrase' && (
+                <p className='text-error'>The current passphrase you have entered is incorrect.</p>
+              ) ||
+              this.walletPassphraseChange.errorStatus === 'oldEqualsNew' && (
+                <p className='text-error'>The current passphrase you have entered is the same as the new one.</p>
+              )
+            }
           </Col>
-          <Col span={7} className='text-right' style={{margin: '5px 0 0 0'}}>
-            <Button onClick={this.walletpassphrasechange} disabled={this.walletPassphraseChange.errorStatus !== false || this.wallet.isEncrypted === false}>Change passphrase</Button>
+          <Col span={7} className='text-right'>
+            <Button
+              style={{margin: '5px 0 0 0'}}
+              onClick={this.walletpassphrasechange}
+              disabled={this.walletPassphraseChange.errorStatus !== false}
+            >
+              Change passphrase
+            </Button>
           </Col>
         </Row>
       </div>
