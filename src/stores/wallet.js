@@ -5,7 +5,6 @@ import { notification } from 'antd'
 import rpc from './rpc'
 import chainBlender from './chainBlender'
 
-/** Wallet store class. */
 class Wallet {
   /**
    * Observable properties.
@@ -99,6 +98,22 @@ class Wallet {
         notification.success({
           message: 'Locked',
           description: 'The wallet has been locked.',
+          duration: 6
+        })
+      }
+    })
+  }
+
+  /**
+   * Dump wallet.
+   * @function dumpwallet
+   */
+  dumpwallet() {
+    rpc.call([{ 'method': 'dumpwallet', 'params': [] }], (response) => {
+      if (response !== null) {
+        notification.success({
+          message: 'Wallet dumped',
+          description: 'Successfuly dumped wallet.csv in your Vcash data directory.',
           duration: 6
         })
       }

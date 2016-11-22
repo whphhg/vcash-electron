@@ -1,33 +1,20 @@
-import { action, computed, observable, reaction } from 'mobx'
+import { action, computed, observable } from 'mobx'
 import { notification } from 'antd'
 import { remote } from 'electron'
-
-/** Path separator and data folder path getter. */
 import { sep } from 'path'
 import { dataPath } from '../utilities/common'
 
 /** Required store instances. */
 import rpc from './rpc'
 
-/** WalletBackup store class. */
 class WalletBackup {
   /**
    * Observable properties.
    * @property {string} path - Dumping location.
-   * @property {boolean} popover - Popover visibility status.
    * @property {object} errors - RPC response errors.
    */
   @observable path = dataPath()
-  @observable popover = false
   @observable errors = { backupFailed: false }
-
-  constructor() {
-    /** Clear previous RPC response errors on path change. */
-    reaction(() => this.path, (path) => { this.toggleError() })
-
-    /** Clear previous RPC response errors when popover closes. */
-    reaction(() => this.popover, (popover) => { if (popover === false) this.toggleError() })
-  }
 
   /**
    * Get error status.
@@ -56,16 +43,12 @@ class WalletBackup {
   }
 
   /**
-   * Toggle popover visibility.
-   * @function togglePopover
-   */
-  @action togglePopover() { this.popover = !this.popover }
-
-  /**
    * Set path.
    * @function setPath
    */
-  @action setPath(path) { this.path = path }
+  @action setPath(path) {
+    this.path = path
+  }
 
   /**
    * Open electron dialog and set selected path.
@@ -91,7 +74,6 @@ class WalletBackup {
           }
         }
 
-        this.togglePopover()
         notification.success({
           message: 'Backup successful',
           description: 'Saved into ' + this.path,

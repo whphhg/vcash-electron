@@ -5,13 +5,12 @@ import { notification } from 'antd'
 import rpc from './rpc'
 import wallet from './wallet'
 
-/** WalletPassphraseChange store class. */
 class WalletPassphraseChange {
   /**
    * Observable properties.
-   * @property {string} oldPassphrase - Form element input value.
-   * @property {string} newPassphrase - Form element input value.
-   * @property {string} repeat - Form element input value.
+   * @property {string} oldPassphrase - Current passphrase.
+   * @property {string} newPassphrase - New passphrase.
+   * @property {string} repeat - New passphrase repeated.
    * @property {object} errors - RPC response errors.
    */
   @observable oldPassphrase = ''
@@ -21,7 +20,9 @@ class WalletPassphraseChange {
 
   constructor() {
     /** Clear previous RPC errors on oldPassphrase change. */
-    reaction(() => this.oldPassphrase, (oldPassphrase) => { if (this.errors.incorrectPassphrase === true) this.toggleError() })
+    reaction(() => this.oldPassphrase, (oldPassphrase) => {
+      if (this.errors.incorrectPassphrase === true) this.toggleError()
+    })
   }
 
   /**
@@ -58,9 +59,11 @@ class WalletPassphraseChange {
    * Set passphrase.
    * @function setPassphrase
    * @param {string} passphrase - Passphrase.
-   * @param {string} key - Key of passphrase (old, new, repeat).
+   * @param {string} key - Set provided passphrase to this key.
    */
-  @action setPassphrase(passphrase = '', key) { this[key] = passphrase }
+  @action setPassphrase(passphrase = '', key) {
+    this[key] = passphrase
+  }
 
   /**
    * Change wallet passphrase.

@@ -8,14 +8,10 @@ export const calculateIncentive = (block) => {
   const percents = incentivePercents()
   const percentsLen = percents.length - 1
 
-  if (block >= percents[percentsLen].block) {
-    return percents[percentsLen].percent
-  }
+  if (block >= percents[percentsLen].block) return percents[percentsLen].percent
 
   for (let i in percents) {
-    if (block < percents[i].block) {
-      return percents[i].percent - 1
-    }
+    if (block < percents[i].block) return percents[i].percent - 1
   }
 }
 

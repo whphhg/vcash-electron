@@ -45,6 +45,3 @@ To update:
 XVC: Vsaj7MMLwSMgzBQEonfMLR9QxqkKprFVGR
 BTC: 1Pay4nywPa1qkP5no3rcrLhfVo6Bc1JE8s
 ```
-
-
-[![JavaScript Style Guide](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
