@@ -1,9 +1,9 @@
 import React from 'react'
-import { observer } from 'mobx-react'
+import { inject, observer } from 'mobx-react'
 import { Modal } from 'antd'
 
 /** Make the component reactive and inject MobX stores. */
-@observer(['rpc'])
+@inject('rpc') @observer
 
 /** TODO: Remote RPC using tunnel-ssh -> ssh -L9195:localhost:9195 user@ip). */
 class RpcManager extends React.Component {
@@ -14,7 +14,12 @@ class RpcManager extends React.Component {
 
   render() {
     return (
-      <Modal title='RPC connection lost' footer='' closable={false} visible={this.rpc.status === null || this.rpc.status === true ? false : true}>
+      <Modal
+        title='RPC connection lost'
+        footer=''
+        closable={false}
+        visible={this.rpc.status === null || this.rpc.status === true ? false : true}
+      >
         To continue using the UI please re-start the Vcash daemon.
       </Modal>
     )

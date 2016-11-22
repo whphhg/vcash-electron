@@ -3,7 +3,6 @@ import { action, autorun, observable } from 'mobx'
 /** Required store instances. */
 import rates from './rates'
 
-/** CurrencyConverter store class. */
 class CurrencyConverter {
   /**
    * Observable properties.

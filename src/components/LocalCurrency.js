@@ -1,9 +1,9 @@
 import React from 'react'
-import { observer } from 'mobx-react'
+import { inject, observer } from 'mobx-react'
 import { Select } from 'antd'
 
 /** Make the component reactive and inject MobX stores. */
-@observer(['rates'])
+@inject('rates') @observer
 
 class LocalCurrency extends React.Component {
   constructor(props) {
@@ -18,8 +18,9 @@ class LocalCurrency extends React.Component {
 
   render() {
     return (
-      <Select showSearch
-        style={{width:'80px'}}
+      <Select
+        showSearch
+        style={{width: '80px'}}
         placeholder={this.rates.localCurrency}
         optionFilterProp='children'
         notFoundContent='Not found.'
@@ -27,7 +28,12 @@ class LocalCurrency extends React.Component {
       >
         {
           this.rates.localCurrencies.map((currency) => (
-            <Select.Option key={currency} value={currency}>{currency}</Select.Option>
+            <Select.Option
+              key={currency}
+              value={currency}
+            >
+              {currency}
+            </Select.Option>
           ))
         }
       </Select>

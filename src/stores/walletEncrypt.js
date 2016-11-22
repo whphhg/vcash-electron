@@ -1,31 +1,18 @@
-import { action, computed, observable, reaction } from 'mobx'
+import { action, computed, observable } from 'mobx'
 import { notification } from 'antd'
 
 /** Required store instances. */
 import rpc from './rpc'
 import wallet from './wallet'
 
-/** WalletEncrypt store class. */
 class WalletEncrypt {
   /**
    * Observable properties.
-   * @property {string} passphrase - Form element input value.
-   * @property {string} repeat - Form element input value.
-   * @property {boolean} modal - Modal visibility status.
+   * @property {string} passphrase - Passphrase to encrypt with.
+   * @property {string} repeat - Passphrase repeated.
    */
   @observable passphrase = ''
   @observable repeat = ''
-  @observable modal = false
-
-  constructor() {
-    /** Clear passphrase fields when modal closes. */
-    reaction(() => this.modal, (modal) => {
-      if (modal === false) {
-        if (this.passphrase !== '') this.setPassphrase()
-        if (this.repeat !== '') this.setRepeat()
-      }
-    })
-  }
 
   /**
    * Get error status.
@@ -43,21 +30,11 @@ class WalletEncrypt {
    * Set passphrase.
    * @function setPassphrase
    * @param {string} passphrase - Passphrase.
+   * @param {string} key - Set provided passphrase to this key.
    */
-  @action setPassphrase(passphrase = '') { this.passphrase = passphrase }
-
-  /**
-   * Set repeat.
-   * @function setRepeat
-   * @param {string} repeat - Repeated passphrase.
-   */
-  @action setRepeat(repeat = '') { this.repeat = repeat }
-
-  /**
-   * Toggle modal visibility.
-   * @function toggleModal
-   */
-  @action toggleModal() { this.modal = !this.modal }
+  @action setPassphrase(passphrase = '', key) {
+    this[key] = passphrase
+  }
 
   /**
    * Encrypt wallet.

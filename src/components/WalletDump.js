@@ -1,8 +1,6 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
 import { Button, Col, Input, Row } from 'antd'
-
-/** Required utilities. */
 import { dataPath } from '../utilities/common'
 
 /** Make the component reactive and inject MobX stores. */
@@ -31,12 +29,21 @@ class WalletDump extends React.Component {
             <p style={{margin: '4px 0 0 0'}}>Save into</p>
           </Col>
           <Col span={21}>
-            <Input disabled value={dataPath()} />
+            <Input
+              disabled
+              value={dataPath()}
+            />
           </Col>
         </Row>
         <Row>
-          <Col className='text-right' style={{margin: '5px 0 0 0'}}>
-            <Button onClick={this.dumpwallet} disabled={this.wallet.isLocked === true}>Dump the wallet</Button>
+          <Col className='text-right'>
+            <Button
+              style={{margin: '5px 0 0 0'}}
+              onClick={this.dumpwallet}
+              disabled={this.wallet.isLocked === true}
+            >
+              Dump the wallet
+            </Button>
           </Col>
         </Row>
       </div>

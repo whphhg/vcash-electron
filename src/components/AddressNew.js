@@ -1,9 +1,9 @@
 import React from 'react'
-import { observer } from 'mobx-react'
-import { AutoComplete, Button, Col, Popover, Row } from 'antd'
+import { inject, observer } from 'mobx-react'
+import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
 
 /** Make the component reactive and inject MobX stores. */
-@observer(['addresses', 'addressNew'])
+@inject('addresses', 'addressNew') @observer
 
 class AddressNew extends React.Component {
   constructor(props) {
@@ -29,17 +29,31 @@ class AddressNew extends React.Component {
 
   popoverContent() {
     return (
-      <div style={{width:'300px'}}>
+      <div style={{width: '400px'}}>
         <Row>
-          <Col span={24}>
+          <Col span={24} style={{height: '28px'}}>
             <AutoComplete
               placeholder='Account name (optional)'
-              style={{width:'100%'}}
+              style={{width: '100%'}}
               getPopupContainer={triggerNode => triggerNode.parentNode}
               value={this.addressNew.account}
               dataSource={this.addresses.accounts}
               onChange={this.setAccount}
             />
+          </Col>
+        </Row>
+        <div>
+          {
+            this.addressNew.address !== '' && (
+              <Input
+                style={{margin: '5px 0 0 0'}}
+                value={this.addressNew.address}
+              />
+            )
+          }
+        </div>
+        <Row>
+          <Col span={14}>
             {
               this.addressNew.errorStatus === 'invalidCharacters' && (
                 <p className='text-error'>You can only enter alphanumerals, dash and space.</p>
@@ -49,29 +63,16 @@ class AddressNew extends React.Component {
               )
             }
           </Col>
-        </Row>
-        <Row>
-          <Col span={24} style={{textAlign:'right',marginTop:'3px'}}>
-            <Button onClick={this.getnewaddress} disabled={this.addressNew.errorStatus !== false}>Generate new address</Button>
+          <Col span={10} className='text-right'>
+            <Button
+              style={{margin: '5px 0 0 0'}}
+              onClick={this.getnewaddress}
+              disabled={this.addressNew.errorStatus !== false}
+            >
+              Generate new address
+            </Button>
           </Col>
         </Row>
-        {
-          this.addressNew.address !== '' && (
-            <div style={{margin:'8px -16px 0 -16px',borderTop:'1px solid #e9e9e9'}}>
-              <Row style={{padding:'0 16px 0 16px'}}>
-                <Col span={24}>
-                  <div style={{marginTop:'10px'}}>
-                    <p><i className='material-icons md-20'>account_balance</i>
-                      <span className='input-label'>
-                        <span className='text-dotted'>{this.addressNew.address}</span>
-                      </span>
-                    </p>
-                  </div>
-                </Col>
-              </Row>
-            </div>
-          )
-        }
       </div>
     )
   }
@@ -86,7 +87,7 @@ class AddressNew extends React.Component {
         visible={this.addressNew.popover === true}
         onVisibleChange={this.togglePopover}
       >
-        <Button>New address</Button>
+        <Button>Get new address</Button>
       </Popover>
     )
   }

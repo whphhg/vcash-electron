@@ -37,5 +37,7 @@ export const dataPath = () => {
  * @return {number} Table height.
  */
 export const tableHeight = (entries = 0, height = 0) => {
-  return entries * 25 < height ? entries * 25 + 27 : height
+  return entries * 25 + 27 < height
+    ? entries * 25 + 27
+    : height
 }

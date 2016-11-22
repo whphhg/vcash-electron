@@ -5,7 +5,6 @@ import { notification } from 'antd'
 import rpc from './rpc'
 import wallet from './wallet'
 
-/** ChainBlender store class. */
 class ChainBlender {
   /**
    * Observable properties.
@@ -17,7 +16,9 @@ class ChainBlender {
 
   constructor() {
     /** Start updating when the wallet unlocks. */
-    autorun(() => { if (wallet.isLocked === false) this.getinfo() })
+    autorun(() => {
+      if (wallet.isLocked === false) this.getinfo()
+    })
   }
 
   /**
@@ -43,7 +44,9 @@ class ChainBlender {
    * @function setStatus
    * @param {boolean} status - ChainBlender status.
    */
-  @action setStatus(status) { this.status = status }
+  @action setStatus(status) {
+    this.status = status
+  }
 
   /**
    * Get ChainBlender info.
@@ -70,6 +73,7 @@ class ChainBlender {
     rpc.call([{ method: 'chainblender', params: [this.status === true ? 'stop' : 'start'] }], (response) => {
       if (response !== null) {
         this.setStatus(!this.status)
+
         const suffix = this.status === true ? 'started.' : 'stopped.'
         notification.success({
           message: 'ChainBlender',

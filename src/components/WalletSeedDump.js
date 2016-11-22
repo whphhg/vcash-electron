@@ -33,15 +33,28 @@ class WalletSeedDump extends React.Component {
             <p style={{margin: '4px 0 0 0'}}>The seed</p>
           </Col>
           <Col span={21}>
-            <Input disabled={this.walletSeedDump.seed === ''} value={this.walletSeedDump.seed} />
+            <Input
+              value={this.walletSeedDump.seed}
+              disabled={this.walletSeedDump.seed === ''}
+            />
           </Col>
         </Row>
         <Row>
           <Col offset={3} span={8}>
-            { this.walletSeedDump.errorStatus === 'notDeterministic' && (<p className='text-error'>The wallet is not deterministic.</p>) }
+            {
+              this.walletSeedDump.errorStatus === 'notDeterministic' && (
+                <p className='text-error'>The wallet is not deterministic.</p>
+              )
+            }
           </Col>
-          <Col span={13} className='text-right' style={{margin: '5px 0 0 0'}}>
-            <Button onClick={this.dumpwalletseed} disabled={this.walletSeedDump.errorStatus !== false || this.wallet.isLocked === true} style={{margin: '0 0 0 5px'}}>Dump the seed</Button>
+          <Col span={13} className='text-right'>
+            <Button
+              style={{margin: '5px 0 0 0'}}
+              onClick={this.dumpwalletseed}
+              disabled={this.walletSeedDump.errorStatus !== false || this.wallet.isLocked === true}
+            >
+              Dump the seed
+            </Button>
           </Col>
         </Row>
       </div>

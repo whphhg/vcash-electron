@@ -1,9 +1,9 @@
 import React from 'react'
-import { observer } from 'mobx-react'
+import { inject, observer } from 'mobx-react'
 import { Button, Col, Popover, Row, Switch } from 'antd'
 
 /** Make the component reactive and inject MobX stores. */
-@observer(['chainBlender', 'wallet'])
+@inject('chainBlender', 'wallet') @observer
 
 class ChainBlender extends React.Component {
   constructor(props) {
@@ -19,11 +19,15 @@ class ChainBlender extends React.Component {
 
   popoverTitle() {
     return (
-      <Row style={{width:'265px'}}>
+      <Row style={{width: '265px'}}>
         <Col span={17}>
-          <p>Blended <span className='text-dotted'>{this.chainBlender.info.blendedbalance.toFixed(6)}</span> XVC ({this.chainBlender.info.blendedpercentage.toFixed(2)}%)</p>
+          <p>
+            <span>Blended </span>
+            <span className='text-dotted'>{this.chainBlender.info.blendedbalance.toFixed(6)}</span>
+            <span> XVC ({this.chainBlender.info.blendedpercentage.toFixed(2)}%)</span>
+          </p>
         </Col>
-        <Col span={7} style={{textAlign:'right'}}>
+        <Col span={7} className='text-right'>
           <Switch
             checked={this.chainBlender.status === true}
             disabled={this.wallet.isLocked === true}
@@ -45,8 +49,8 @@ class ChainBlender extends React.Component {
             <p>Non-denominated</p>
           </Col>
           <Col span={12} className='text-right'>
-            <p><span>{this.chainBlender.info.denominatedbalance.toFixed(6)}</span> XVC</p>
-            <p><span>{this.chainBlender.info.nondenominatedbalance.toFixed(6)}</span> XVC</p>
+            <p><span className='text-dotted'>{this.chainBlender.info.denominatedbalance.toFixed(6)}</span> XVC</p>
+            <p><span className='text-dotted'>{this.chainBlender.info.nondenominatedbalance.toFixed(6)}</span> XVC</p>
           </Col>
         </Row>
       ) || (
@@ -57,7 +61,12 @@ class ChainBlender extends React.Component {
 
   render() {
     return (
-      <Popover trigger='click' placement='bottomLeft' title={this.popoverTitle()} content={this.popoverContent()}>
+      <Popover
+        trigger='click'
+        placement='bottomLeft'
+        title={this.popoverTitle()}
+        content={this.popoverContent()}
+      >
         <Button>ChainBlender</Button>
       </Popover>
     )

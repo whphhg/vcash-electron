@@ -1,9 +1,9 @@
 import React from 'react'
-import { observer } from 'mobx-react'
+import { inject, observer } from 'mobx-react'
 import { Button, Tooltip } from 'antd'
 
 /** Make the component reactive and inject MobX stores. */
-@observer(['wallet'])
+@inject('wallet') @observer
 
 class WalletLock extends React.Component {
   constructor(props) {
@@ -21,8 +21,15 @@ class WalletLock extends React.Component {
       <div>
         {
           this.wallet.isLocked === false && this.wallet.isEncrypted === true && (
-            <Tooltip placement='bottomRight' title='Wallet is unlocked'>
-              <Button size='small' type='primary' onClick={this.walletlock}>
+            <Tooltip
+              title='Wallet is unlocked'
+              placement='bottomRight'
+            >
+              <Button
+                size='small'
+                type='primary'
+                onClick={this.walletlock}
+              >
                 <i className='material-icons md-20'>lock_open</i>
               </Button>
             </Tooltip>

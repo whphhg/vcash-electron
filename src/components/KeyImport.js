@@ -1,9 +1,9 @@
 import React from 'react'
-import { observer } from 'mobx-react'
+import { inject, observer } from 'mobx-react'
 import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
 
 /** Make the component reactive and inject MobX stores. */
-@observer(['addresses', 'keyImport', 'wallet'])
+@inject('addresses', 'keyImport', 'wallet') @observer
 
 class KeyImport extends React.Component {
   constructor(props) {
@@ -35,40 +35,52 @@ class KeyImport extends React.Component {
 
   popoverContent() {
     return (
-      <div style={{width:'400px'}}>
+      <div style={{width: '400px'}}>
         <Row>
           <Col span={24}>
-            <Input type='text' placeholder='Private key' style={{width:'100%'}} value={this.keyImport.privateKey} onChange={this.setPrivateKey} />
-            {
-              this.keyImport.errorStatus === 'invalidKey' && (
-                <p className='text-error'>The private key you have entered is invalid.</p>
-              ) ||
-              this.keyImport.errorStatus === 'isMine' && (
-                <p className='text-error'>The private key you have entered belongs to your wallet.</p>
-              )
-            }
+            <Input
+              style={{margin: '0 0 5px 0'}}
+              placeholder='Private key'
+              value={this.keyImport.privateKey}
+              onChange={this.setPrivateKey}
+            />
           </Col>
         </Row>
         <Row>
-          <Col span={24} style={{marginTop:'5px'}}>
+          <Col span={24} style={{height: '28px'}}>
             <AutoComplete
               placeholder='Account name (optional)'
-              style={{width:'100%'}}
+              style={{width: '100%'}}
               getPopupContainer={triggerNode => triggerNode.parentNode}
               value={this.keyImport.account}
               dataSource={this.addresses.accounts}
               onChange={this.setAccount}
             />
-            {
-              this.keyImport.errorStatus === 'invalidCharacters' && (
-                <p className='text-error'>You can enter only alphanumerals, dash and space.</p>
-              )
-            }
           </Col>
         </Row>
         <Row>
-          <Col span={24} style={{textAlign:'right',marginTop:'3px'}}>
-            <Button onClick={this.importprivkey} disabled={this.keyImport.errorStatus !== false} loading={this.keyImport.loading === true}>Import the private key</Button>
+          <Col span={16}>
+            {
+              this.keyImport.errorStatus === 'invalidCharacters' && (
+                <p className='text-error'>You can enter only alphanumerals, dash and space.</p>
+              ) ||
+              this.keyImport.errorStatus === 'invalidKey' && (
+                <p className='text-error'>The private key is invalid.</p>
+              ) ||
+              this.keyImport.errorStatus === 'isMine' && (
+                <p className='text-error'>The private key belongs to your wallet.</p>
+              )
+            }
+          </Col>
+          <Col span={8} className='text-right'>
+            <Button
+              style={{margin: '5px 0 0 0'}}
+              onClick={this.importprivkey}
+              disabled={this.keyImport.errorStatus !== false}
+              loading={this.keyImport.loading === true}
+            >
+              Import the key
+            </Button>
           </Col>
         </Row>
       </div>
@@ -77,11 +89,19 @@ class KeyImport extends React.Component {
 
   render() {
     return (
-      <Popover trigger='click' placement='bottomLeft' title='Enter the private key you would like to import'
-        visible={this.keyImport.popover === true} onVisibleChange={this.togglePopover}
+      <Popover
+        trigger='click'
+        placement='bottomLeft'
+        title='Enter the private key you would like to import'
+        visible={this.keyImport.popover === true}
+        onVisibleChange={this.togglePopover}
         content={this.popoverContent()}
       >
-        <Button disabled={this.wallet.isLocked === true}>Import private key</Button>
+        <Button
+          disabled={this.wallet.isLocked === true}
+        >
+          Import the key
+        </Button>
       </Popover>
     )
   }

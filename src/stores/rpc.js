@@ -1,6 +1,5 @@
 import { action, observable } from 'mobx'
 
-/** RPC store class. */
 class RPC {
   /**
    * Observable properties.
@@ -13,7 +12,9 @@ class RPC {
    * @function setStatus
    * @param {boolean} status - RPC status.
    */
-  @action setStatus(status) { this.status = status }
+  @action setStatus(status) {
+    this.status = status
+  }
 
   /**
    * Execute RPC request(s).

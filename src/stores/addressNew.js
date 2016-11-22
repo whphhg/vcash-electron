@@ -5,11 +5,10 @@ import { notification } from 'antd'
 import rpc from './rpc'
 import addresses from './addresses'
 
-/** AddressNew store class. */
 class AddressNew {
   /**
    * Observable properties.
-   * @property {string} account - Form element input value.
+   * @property {string} account - Account to assign to.
    * @property {string} address - Generated address.
    * @property {boolean} popover - Popover visibility status.
    * @property {object} errors - RPC response errors.
@@ -44,27 +43,35 @@ class AddressNew {
    * @function toggleError
    * @param {string} key - Error key to toggle.
    */
-  @action toggleError(key) { this.errors[key] = !this.errors[key] }
+  @action toggleError(key) {
+    this.errors[key] = !this.errors[key]
+  }
 
   /**
    * Set account name.
    * @function setAccount
    * @param {string} account - Account name.
    */
-  @action setAccount(account) { this.account = account }
+  @action setAccount(account) {
+    this.account = account
+  }
 
   /**
    * Set address.
    * @function setAddress
    * @param {string} address - Generated address.
    */
-  @action setAddress(address = '') { this.address = address }
+  @action setAddress(address = '') {
+    this.address = address
+  }
 
   /**
    * Toggle popover visibility.
    * @function togglePopover
    */
-  @action togglePopover() { this.popover = !this.popover }
+  @action togglePopover() {
+    this.popover = !this.popover
+  }
 
   /**
    * Get new address.

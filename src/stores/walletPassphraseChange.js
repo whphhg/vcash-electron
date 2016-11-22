@@ -32,7 +32,7 @@ class WalletPassphraseChange {
    */
   @computed get errorStatus() {
     if (this.oldPassphrase.length < 1 || this.newPassphrase < 1 || this.repeat.length < 1) return 'emptyFields'
-    if (this.newPassphrase === this.oldPassphrase) return 'sameAsBefore'
+    if (this.newPassphrase === this.oldPassphrase) return 'oldEqualsNew'
     if (this.newPassphrase.length !== this.repeat.length) return 'differentLengths'
     if (this.newPassphrase !== this.repeat) return 'notMatching'
     if (this.errors.incorrectPassphrase === true) return 'incorrectPassphrase'
