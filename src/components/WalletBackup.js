@@ -1,18 +1,16 @@
 import React from 'react'
-import { observer } from 'mobx-react'
-import { Button, Col, Input, Popover, Row } from 'antd'
+import { inject, observer } from 'mobx-react'
+import { Button, Col, Input, Row } from 'antd'
 
 /** Make the component reactive and inject MobX stores. */
-@observer(['wallet', 'walletBackup'])
+@inject('walletBackup') @observer
 
 class WalletBackup extends React.Component {
   constructor(props) {
     super(props)
-    this.wallet = props.wallet
     this.walletBackup = props.walletBackup
     this.backupwallet = this.backupwallet.bind(this)
     this.getPath = this.getPath.bind(this)
-    this.togglePopover = this.togglePopover.bind(this)
   }
 
   backupwallet() {
@@ -23,45 +21,31 @@ class WalletBackup extends React.Component {
     this.walletBackup.getPath()
   }
 
-  togglePopover() {
-    this.walletBackup.togglePopover()
-  }
-
-  popoverContent() {
+  render() {
     return (
-      <div style={{width:'370px'}}>
+      <div>
+        <p style={{margin: '0 0 5px 0'}}>
+          <i className='material-icons md-18'>save</i>
+          <span className='text-icon'>Make a timestamped wallet backup</span>
+        </p>
         <Row>
-          <Col span={24}>
-            <Input disabled={true} value={this.walletBackup.path} />
-            {
-              this.walletBackup.errorStatus === 'backupFailed' && (
-                <p className='text-error'>Backup failed. Wallet restart necessary.</p>
-              )
-            }
+          <Col span={3}>
+            <p style={{margin: '4px 0 0 0'}}>Save into</p>
+          </Col>
+          <Col span={21}>
+            <Input disabled value={this.walletBackup.path} />
           </Col>
         </Row>
-        <Row style={{marginTop:'10px'}}>
-          <Col span={24} className='text-right'>
+        <Row>
+          <Col offset={3} span={12}>
+            { this.walletBackup.errorStatus === 'backupFailed' && (<p className='text-error'>Recently changed the passphrase? Please restart the wallet.</p>) }
+          </Col>
+          <Col span={9} className='text-right' style={{margin: '5px 0 0 0'}}>
             <Button onClick={this.getPath}>Browse</Button>
-            <Button onClick={this.backupwallet} style={{marginLeft:'10px'}}>Backup wallet</Button>
+            <Button onClick={this.backupwallet} style={{margin: '0 0 0 5px'}}>Make a backup</Button>
           </Col>
         </Row>
       </div>
-    )
-  }
-
-  render() {
-    return (
-      <Popover
-        title='Save timestamped wallet backup into the folder below'
-        trigger='click'
-        placement='bottomLeft'
-        content={this.popoverContent()}
-        visible={this.walletBackup.popover === true}
-        onVisibleChange={this.togglePopover}
-      >
-        <Button disabled={this.wallet.isLocked === true}>Backup wallet</Button>
-      </Popover>
     )
   }
 }

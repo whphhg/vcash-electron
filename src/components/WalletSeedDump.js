@@ -1,9 +1,9 @@
 import React from 'react'
-import { observer } from 'mobx-react'
-import { Button, Col, Popover, Row } from 'antd'
+import { inject, observer } from 'mobx-react'
+import { Button, Col, Input, Row } from 'antd'
 
 /** Make the component reactive and inject MobX stores. */
-@observer(['wallet', 'walletSeedDump'])
+@inject('wallet', 'walletSeedDump') @observer
 
 class WalletSeedDump extends React.Component {
   constructor(props) {
@@ -11,72 +11,40 @@ class WalletSeedDump extends React.Component {
     this.wallet = props.wallet
     this.walletSeedDump = props.walletSeedDump
     this.dumpwalletseed = this.dumpwalletseed.bind(this)
-    this.togglePopover = this.togglePopover.bind(this)
   }
 
   dumpwalletseed() {
     this.walletSeedDump.dumpwalletseed()
   }
 
-  togglePopover() {
-    this.walletSeedDump.togglePopover()
-  }
-
-  popoverContent() {
-    return (
-      <div style={{width:'470px'}}>
-        <Row>
-          <Col span={24}>
-            <p style={{textAlign:'justify'}}>
-              Hierarchical deterministic wallet can be shared partially or entirely with different systems, each with or without the ability to spend coins.
-            </p>
-          </Col>
-        </Row>
-        <Row style={{marginTop:'10px'}}>
-          <Col span={14}>
-            {
-              this.walletSeedDump.errorStatus === 'notDeterministic' && (
-                <p className='error-text'>The wallet is not deterministic.</p>
-              )
-            }
-          </Col>
-          <Col span={10} className='text-right'>
-            <Button onClick={this.dumpwalletseed} disabled={this.walletSeedDump.errorStatus !== false} style={{marginLeft:'10px'}}>Dump the seed</Button>
-          </Col>
-        </Row>
-        {
-          this.walletSeedDump.seed !== '' && (
-            <div style={{margin:'8px -16px 0 -16px',borderTop:'1px solid #e9e9e9'}}>
-              <Row style={{padding:'0 16px 0 16px'}}>
-                <Col span={24}>
-                  <div style={{marginTop:'10px'}}>
-                    <p><i className='material-icons md-20'>vpn_key</i>
-                      <span className='input-label'>
-                        <span className='text-dotted'>{this.walletSeedDump.seed}</span>
-                      </span>
-                    </p>
-                  </div>
-                </Col>
-              </Row>
-            </div>
-          )
-        }
-      </div>
-    )
+  componentWillUnmount() {
+    this.walletSeedDump.setSeed()
   }
 
   render() {
     return (
-      <Popover
-        title='Dump the hierarchical deterministic wallet seed'
-        trigger='click'
-        placement='bottomLeft'
-        content={this.popoverContent()}
-        visible={this.walletSeedDump.popover === true}
-        onVisibleChange={this.togglePopover}
-      >
-        <Button disabled={this.wallet.isLocked === true}>Dump wallet seed</Button>
-      </Popover>
+      <div>
+        <p style={{margin: '0 0 5px 0'}}>
+          <i className='material-icons md-18'>fingerprint</i>
+          <span className='text-icon'>Dump the hierarchical deterministic wallet seed</span>
+        </p>
+        <Row>
+          <Col span={3}>
+            <p style={{margin: '4px 0 0 0'}}>The seed</p>
+          </Col>
+          <Col span={21}>
+            <Input disabled={this.walletSeedDump.seed === ''} value={this.walletSeedDump.seed} />
+          </Col>
+        </Row>
+        <Row>
+          <Col offset={3} span={8}>
+            { this.walletSeedDump.errorStatus === 'notDeterministic' && (<p className='text-error'>The wallet is not deterministic.</p>) }
+          </Col>
+          <Col span={13} className='text-right' style={{margin: '5px 0 0 0'}}>
+            <Button onClick={this.dumpwalletseed} disabled={this.walletSeedDump.errorStatus !== false || this.wallet.isLocked === true} style={{margin: '0 0 0 5px'}}>Dump the seed</Button>
+          </Col>
+        </Row>
+      </div>
     )
   }
 }

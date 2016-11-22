@@ -1,29 +1,16 @@
-import { action, computed, observable, reaction } from 'mobx'
+import { action, computed, observable } from 'mobx'
 
 /** Required store instances. */
 import rpc from './rpc'
 
-/** WalletSeedDump store class. */
 class WalletSeedDump {
   /**
    * Observable properties.
    * @property {string} seed - Dumped seed.
-   * @property {boolean} popover - Popover visibility status.
    * @property {object} errors - RPC response errors.
    */
   @observable seed = ''
-  @observable popover = false
   @observable errors = { notDeterministic: false }
-
-  constructor() {
-    /** Clear previous RPC response errors and dumped seed when popover closes. */
-    reaction(() => this.popover, (popover) => {
-      if (popover === false) {
-        if (this.seed !== '') this.setSeed()
-        this.toggleError()
-      }
-    })
-  }
 
   /**
    * Get error status.
@@ -52,16 +39,12 @@ class WalletSeedDump {
   }
 
   /**
-   * Toggle popover visibility.
-   * @function togglePopover
-   */
-  @action togglePopover() { this.popover = !this.popover }
-
-  /**
    * Set path.
    * @function setPath
    */
-  @action setSeed(seed = '') { this.seed = seed }
+  @action setSeed(seed = '') {
+    this.seed = seed
+  }
 
   /**
    * Dump wallet seed.

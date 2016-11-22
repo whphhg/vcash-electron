@@ -22,7 +22,7 @@ export const dataPath = () => {
       return homedir() + '/Library/Application Support/Vcash/data' + sep
 
     case 'win32':
-      return homedir() + '\%APPDATA%\Vcash\data' + sep
+      return homedir() + '/%APPDATA%/Vcash/data' + sep
 
     default:
       return homedir() + '/.Vcash/data' + sep
@@ -37,8 +37,5 @@ export const dataPath = () => {
  * @return {number} Table height.
  */
 export const tableHeight = (entries = 0, height = 0) => {
-  return entries * 25 < height
-    ? entries * 25 + 27
-    : height
-
+  return entries * 25 < height ? entries * 25 + 27 : height
 }

@@ -2,7 +2,7 @@
  * Get item from local storage.
  * @function getItem
  * @param {string} key - Retrieve the value of this key.
- * @return {string|number|array|object|undefined} Stored key's value or undefined if it doesn't exist.
+ * @return {string|number|array|object|undefined} Stored key value or undefined if it doesn't exist.
  */
 export const getItem = (key) => {
   const item = localStorage.getItem(key)

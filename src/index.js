@@ -4,9 +4,29 @@ import { Router, Route, IndexRoute, hashHistory } from 'react-router'
 import { Provider } from 'mobx-react'
 import { useStrict } from 'mobx'
 import { notification } from 'antd'
+import { remote } from 'electron'
 
-/** Enable right click menu. */
-import rightClickMenu from './utilities/rightClickMenu'
+/** Build the context menu. */
+const Menu = remote.Menu.buildFromTemplate([
+  { label: 'Undo', role: 'undo', accelerator: 'CmdOrCtrl+Z' },
+  { label: 'Redo', role: 'redo', accelerator: 'Shift+CmdOrCtrl+Z' },
+  { type: 'separator' },
+  { label: 'Cut', role: 'cut', accelerator: 'CmdOrCtrl+X' },
+  { label: 'Copy', role: 'copy', accelerator: 'CmdOrCtrl+C' },
+  { label: 'Paste', role: 'paste', accelerator: 'CmdOrCtrl+V' },
+  { label: 'Select all', role: 'selectall', accelerator: 'CmdOrCtrl+A' }
+])
+
+/** Add event listener for context (right click) menu. */
+document.body.addEventListener('contextmenu', (e) => {
+  e.preventDefault()
+  e.stopPropagation()
+
+  while (e.target) {
+    Menu.popup(remote.getCurrentWindow())
+    break
+  }
+})
 
 /** Use MobX strict mode, allowing only actions to alter the state. */
 useStrict(true)
@@ -37,21 +57,31 @@ import transaction from './stores/transaction'
 import transactions from './stores/transactions'
 import wallet from './stores/wallet'
 import walletBackup from './stores/walletBackup'
-import walletDump from './stores/walletDump'
 import walletEncrypt from './stores/walletEncrypt'
 import walletPassphraseChange from './stores/walletPassphraseChange'
 import walletSeedDump from './stores/walletSeedDump'
 import walletUnlock from './stores/walletUnlock'
 
 const stores = {
-  addresses, addressNew,
-  chainBlender, currencyConverter,
-  keyDump, keyImport,
+  addresses,
+  addressNew,
+  chainBlender,
+  currencyConverter,
+  keyDump,
+  keyImport,
   network,
-  rates, rewardCalculator, rpc,
+  rates,
+  rewardCalculator,
+  rpc,
   send,
-  transaction, transactions,
-  wallet, walletBackup, walletDump, walletEncrypt, walletPassphraseChange, walletSeedDump, walletUnlock
+  transaction,
+  transactions,
+  wallet,
+  walletBackup,
+  walletEncrypt,
+  walletPassphraseChange,
+  walletSeedDump,
+  walletUnlock
 }
 
 render(
