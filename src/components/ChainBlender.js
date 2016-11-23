@@ -32,8 +32,8 @@ class ChainBlender extends React.Component {
             checked={this.chainBlender.status === true}
             disabled={this.wallet.isLocked === true}
             onChange={this.toggle}
-            checkedChildren={<i className='material-icons md-20'>done</i>}
-            unCheckedChildren={<i className='material-icons md-20'>clear</i>}
+            checkedChildren={<i className='material-icons md-18' style={{margin: '1px 0 0 0'}}>done</i>}
+            unCheckedChildren={<i className='material-icons md-18' style={{margin: '1px 0 0 0'}}>clear</i>}
           />
         </Col>
       </Row>
