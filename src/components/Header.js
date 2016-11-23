@@ -84,7 +84,7 @@ class Header extends React.Component {
                   </p>
                 }
               >
-                <i className='material-icons md-20' style={{color:'#43464B'}}>verified_user</i>
+                <i className='material-icons md-20' style={{color: '#43464B'}}>verified_user</i>
               </Tooltip>
             )
           }
