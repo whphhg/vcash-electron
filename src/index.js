@@ -55,6 +55,7 @@ import rpc from './stores/rpc'
 import send from './stores/send'
 import transaction from './stores/transaction'
 import transactions from './stores/transactions'
+import ui from './stores/ui'
 import wallet from './stores/wallet'
 import walletBackup from './stores/walletBackup'
 import walletEncrypt from './stores/walletEncrypt'
@@ -76,6 +77,7 @@ const stores = {
   send,
   transaction,
   transactions,
+  ui,
   wallet,
   walletBackup,
   walletEncrypt,

@@ -13,8 +13,26 @@ class Wallet {
    * @property {boolean} isEncrypted - Wallet encryption status.
    * @property {boolean} isLocked - Wallet lock status.
    */
-  @observable info = { balance: 0, blocks: 0, connections: 0, ip: '0.0.0.0', moneysupply: 0, newmint: 0, port: 0, protocolversion: 0, stake: 0, version: ':', walletversion: 0 }
-  @observable incentive = { walletaddress: '', collateralrequired: 0, collateralbalance: 0, networkstatus: 'firewalled', votecandidate: false }
+  @observable info = {
+    balance: 0,
+    blocks: 0,
+    connections: 0,
+    ip: '0.0.0.0',
+    moneysupply: 0,
+    newmint: 0,
+    port: 0,
+    protocolversion: 0,
+    stake: 0,
+    version: ':',
+    walletversion: 0
+  }
+  @observable incentive = {
+    walletaddress: '',
+    collateralrequired: 0,
+    collateralbalance: 0,
+    networkstatus: 'firewalled',
+    votecandidate: false
+  }
   @observable isEncrypted = false
   @observable isLocked = false
 

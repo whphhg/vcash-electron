@@ -11,7 +11,14 @@ class ChainBlender {
    * @property {object} info - chainblender info RPC response.
    * @property {boolean} status - ChainBlender status.
    */
-  @observable info = { blendstate: 'none', balance: 0, denominatedbalance: 0, nondenominatedbalance: 0, blendedbalance: 0, blendedpercentage: 0 }
+  @observable info = {
+    blendstate: 'none',
+    balance: 0,
+    denominatedbalance: 0,
+    nondenominatedbalance: 0,
+    blendedbalance: 0,
+    blendedpercentage: 0
+  }
   @observable status = false
 
   constructor() {

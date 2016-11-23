@@ -100,7 +100,7 @@ class KeyImport extends React.Component {
         <Button
           disabled={this.wallet.isLocked === true}
         >
-          Import the key
+          Import private key
         </Button>
       </Popover>
     )
