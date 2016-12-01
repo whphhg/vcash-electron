@@ -1,5 +1,5 @@
 ## Vcash Electron UI
-This is a **unofficial** UI for [Vcash](https://v.cash/), a decentralized currency for the internet. The UI communicates with the vcash daemon using RPC and is available for Linux, OS X and Windows.
+This is a UI for [Vcash](https://v.cash/), a decentralized currency for the internet. The UI communicates with the Vcash daemon using RPC and is available for Linux, OS X and Windows.
 
 :hatching_chick: **Warning**: This is beta software that is being actively developed.
 
@@ -8,8 +8,8 @@ This is a **unofficial** UI for [Vcash](https://v.cash/), a decentralized curren
 
 ### Installing and updating
 The following dependencies are required to be installed:
-* latest version of [Node.js](https://nodejs.org/en/download/current/) ([Ubuntu users](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions))
 * latest version of [Vcash](https://v.cash/wallets.php) (either GUI or daemon)
+* latest version of [Node.js](https://nodejs.org/en/download/current/) ([Ubuntu users](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions))
 * git (if cloning)
 
 To install:
