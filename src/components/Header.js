@@ -32,8 +32,8 @@ class Header extends React.Component {
         <p className='balance'>~<span>{(this.wallet.info.balance * this.rates.average * this.rates.local).toFixed(2)}</span> {this.rates.localCurrency}</p>
         <div className='incoming'>
           {
-            this.transactions.amountUnconfirmed > 0 && (
-              <p>Pending <br /> <span>{this.transactions.amountUnconfirmed.toFixed(6)}</span> XVC</p>
+            this.transactions.pendingAmount > 0 && (
+              <p>Pending <br /> <span>{this.transactions.pendingAmount.toFixed(6)}</span> XVC</p>
             )
           }
           {
