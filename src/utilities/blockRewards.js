@@ -63,7 +63,6 @@ export const calculatePoW = (block) => {
  * Get incentive reward percent schedule.
  * @function incentivePercents
  * @return {array} Reward schedule.
- * @see {@link https://gist.github.com/john-connor/967ba7f7e9dd0ec1f7a9|GitHub Gist}
  */
 export const incentivePercents = () => {
   return [
@@ -103,6 +102,9 @@ export const incentivePercents = () => {
     { block: 447400, percent: 34 },
     { block: 461800, percent: 35 },
     { block: 476700, percent: 36 },
-    { block: 492000, percent: 37 }
+    { block: 492000, percent: 37 },
+    { block: 508000, percent: 38 },
+    { block: 523919, percent: 39 },
+    { block: 540570, percent: 40 }
   ]
 }

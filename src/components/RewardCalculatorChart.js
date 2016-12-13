@@ -2,6 +2,9 @@ import React from 'react'
 import { inject, observer } from 'mobx-react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 
+/** Required components. */
+import ChartTooltip from './ChartTooltip'
+
 /** Make the component reactive and inject MobX stores. */
 @inject('rewardCalculator') @observer
 
@@ -38,7 +41,11 @@ class RewardCalculatorChart extends React.Component {
           dataKey='Incentive share'
           stroke='#33691E'
         />
-        <Tooltip />
+        <Tooltip
+          content={
+            <ChartTooltip labelText='Reward split for block' />
+          }
+        />
         <XAxis dataKey='block' />
         <YAxis />
       </LineChart>

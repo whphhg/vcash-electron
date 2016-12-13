@@ -7,7 +7,9 @@ const TableCell = ({ rowIndex, data, column, type, extra, ...props }) => {
   switch (type) {
     case 'localAmount':
       return (
-        <Cell {...props} className='fdt-last-column'>{parseFloat(data[rowIndex][column]).toFixed(2)} {extra}</Cell>
+        <Cell {...props} className={'fdt-last-column ' + (data[rowIndex][column] > 0 ? 'green' : 'red')}>
+          {parseFloat(data[rowIndex][column]).toFixed(2)} {extra}
+        </Cell>
       )
 
     default:
@@ -30,12 +32,14 @@ const TableCell = ({ rowIndex, data, column, type, extra, ...props }) => {
 
         case 'amount':
           return (
-            <Cell {...props} className='text-right'>{parseFloat(data[rowIndex][column]).toFixed(6)} XVC</Cell>
+            <Cell {...props} className={'text-right ' + (data[rowIndex][column] > 0 ? 'green' : 'red')}>
+              {parseFloat(data[rowIndex][column]).toFixed(6)} XVC
+            </Cell>
           )
 
         case 'time':
           return (
-            <Cell {...props}>{moment(new Date(data[rowIndex][column] * 1000)).format('YYYY-MM-DD - HH:mm:ss')}</Cell>
+            <Cell {...props}>{moment(new Date(data[rowIndex][column])).format('YYYY-MM-DD - HH:mm:ss')}</Cell>
           )
 
         case 'conntime':
