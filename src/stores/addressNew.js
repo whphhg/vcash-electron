@@ -18,7 +18,7 @@ class AddressNew {
   @observable popover = false
   @observable errors = { keypoolRanOut: false }
 
-  constructor() {
+  constructor () {
     /** Clear address when popover closes. */
     reaction(() => this.popover, (popover) => {
       if (popover === false) {
@@ -32,7 +32,7 @@ class AddressNew {
    * @function errorStatus
    * @return {string|boolean} Current error or false if none.
    */
-  @computed get errorStatus() {
+  @computed get errorStatus () {
     if (this.account.match(/^[a-zA-Z0-9 -]{0,100}$/) === null) return 'invalidCharacters'
     if (this.errors.keypoolRanOut === true) return 'keypoolRanOut'
     return false
@@ -43,7 +43,7 @@ class AddressNew {
    * @function toggleError
    * @param {string} key - Error key to toggle.
    */
-  @action toggleError(key) {
+  @action toggleError (key) {
     this.errors[key] = !this.errors[key]
   }
 
@@ -52,7 +52,7 @@ class AddressNew {
    * @function setAccount
    * @param {string} account - Account name.
    */
-  @action setAccount(account) {
+  @action setAccount (account) {
     this.account = account
   }
 
@@ -61,7 +61,7 @@ class AddressNew {
    * @function setAddress
    * @param {string} address - Generated address.
    */
-  @action setAddress(address = '') {
+  @action setAddress (address = '') {
     this.address = address
   }
 
@@ -69,7 +69,7 @@ class AddressNew {
    * Toggle popover visibility.
    * @function togglePopover
    */
-  @action togglePopover() {
+  @action togglePopover () {
     this.popover = !this.popover
   }
 
@@ -77,7 +77,7 @@ class AddressNew {
    * Get new address.
    * @function getnewaddress
    */
-  getnewaddress() {
+  getnewaddress () {
     rpc.call([{ method: 'getnewaddress', params: [this.account] }], (response) => {
       if (response !== null) {
         if (response[0].hasOwnProperty('error') === true) {

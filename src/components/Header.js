@@ -10,7 +10,7 @@ import WalletUnlock from './WalletUnlock'
 @inject('rates', 'transactions', 'ui', 'wallet') @observer
 
 class Header extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.rates = props.rates
     this.transactions = props.transactions
@@ -19,11 +19,11 @@ class Header extends React.Component {
     this.setRoute = this.setRoute.bind(this)
   }
 
-  setRoute(e) {
+  setRoute (e) {
     this.ui.setRoute(e.key)
   }
 
-  render() {
+  render () {
     return (
       <header className='shadow'>
         <img src='./assets/images/logoGrey.png' />

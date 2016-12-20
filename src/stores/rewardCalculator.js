@@ -14,7 +14,7 @@ class RewardCalculator {
   @observable block = ''
   @observable blocktime = 0
 
-  constructor() {
+  constructor () {
     /** Auto check if block exists and retrieve block time. */
     autorun(() => {
       rpc.call([{ method: 'getblockhash', params: [this.blockInt] }], (response) => {
@@ -40,7 +40,7 @@ class RewardCalculator {
    * @function blockInt
    * @return {number} Block.
    */
-  @computed get blockInt() {
+  @computed get blockInt () {
     return this.block === '' ? 0 : parseInt(this.block)
   }
 
@@ -49,7 +49,7 @@ class RewardCalculator {
    * @function chartData
    * @return {array} Chart data.
    */
-  @computed get chartData() {
+  @computed get chartData () {
     let data = []
 
     for (let i = this.blockInt; i <= this.blockInt + 100000; i += 2500) {
@@ -59,7 +59,7 @@ class RewardCalculator {
 
       data.push({
         block: i,
-        'Incentive share': Math.round(incentiveReward * 1e6 ) / 1e6,
+        'Incentive share': Math.round(incentiveReward * 1e6) / 1e6,
         'Miner share': Math.round((powReward - incentiveReward) * 1e6) / 1e6,
         'PoW reward': Math.round(powReward * 1e6) / 1e6
       })
@@ -73,7 +73,7 @@ class RewardCalculator {
    * @function powReward
    * @return {number} PoW reward.
    */
-  @computed get powReward() {
+  @computed get powReward () {
     return calculatePoW(this.block)
   }
 
@@ -82,7 +82,7 @@ class RewardCalculator {
    * @function incentivePercent
    * @return {number} Incentive percentage.
    */
-  @computed get incentivePercent() {
+  @computed get incentivePercent () {
     return calculateIncentive(this.block)
   }
 
@@ -91,7 +91,7 @@ class RewardCalculator {
    * @function incentiveReward
    * @return {number} Incentive reward.
    */
-  @computed get incentiveReward() {
+  @computed get incentiveReward () {
     return (this.powReward / 100) * this.incentivePercent
   }
 
@@ -100,7 +100,7 @@ class RewardCalculator {
    * @function estimation
    * @return {boolean} Estimated.
    */
-  @computed get estimation() {
+  @computed get estimation () {
     if (this.blocktime === 0) return true
     return false
   }
@@ -110,7 +110,7 @@ class RewardCalculator {
    * @function time
    * @return {number} Blocktime.
    */
-  @computed get time() {
+  @computed get time () {
     if (this.blocktime !== 0) return this.blocktime
     return new Date().getTime() + (1000 * 140 * (this.blockInt - wallet.info.blocks))
   }
@@ -120,7 +120,7 @@ class RewardCalculator {
    * @function setBlock
    * @param {number} block - Block number.
    */
-  @action setBlock(block = '') {
+  @action setBlock (block = '') {
     if (block.toString().match(/^[0-9]{0,7}$/) !== null) this.block = block
   }
 
@@ -129,7 +129,7 @@ class RewardCalculator {
    * @function setBlocktime
    * @param {number} blocktime - Blocktime.
    */
-  @action setBlocktime(blocktime = 0) {
+  @action setBlocktime (blocktime = 0) {
     this.blocktime = blocktime
   }
 }

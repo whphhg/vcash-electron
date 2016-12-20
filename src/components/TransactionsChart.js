@@ -9,12 +9,12 @@ import ChartTooltip from './ChartTooltip'
 @inject('transactions') @observer
 
 class TransactionsChart extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.transactions = props.transactions
   }
 
-  render() {
+  render () {
     return (
       <LineChart
         width={1099}

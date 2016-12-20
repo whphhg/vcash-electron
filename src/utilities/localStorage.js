@@ -5,7 +5,7 @@
  * @return {string|number|array|object|undefined} Stored key value or undefined if it doesn't exist.
  */
 export const getItem = (key) => {
-  const item = localStorage.getItem(key)
+  const item = window.localStorage.getItem(key)
 
   if (item === null) {
     process.env.NODE_ENV === 'dev' && console.warn('LocalStorage: ' + key + ' not found.')
@@ -23,5 +23,5 @@ export const getItem = (key) => {
  * @param {string|number|array|object} value - Value to be stored.
  */
 export const setItem = (key, value) => {
-  localStorage.setItem(key, JSON.stringify(value))
+  window.localStorage.setItem(key, JSON.stringify(value))
 }

@@ -6,17 +6,17 @@ import { Select } from 'antd'
 @inject('rates') @observer
 
 class LocalCurrency extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.rates = props.rates
     this.setLocalCurrency = this.setLocalCurrency.bind(this)
   }
 
-  setLocalCurrency(value) {
+  setLocalCurrency (value) {
     this.rates.setLocalCurrency(value)
   }
 
-  render() {
+  render () {
     return (
       <Select
         showSearch

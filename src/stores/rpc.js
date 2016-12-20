@@ -12,7 +12,7 @@ class RPC {
    * @function setStatus
    * @param {boolean} status - RPC status.
    */
-  @action setStatus(status) {
+  @action setStatus (status) {
     this.status = status
   }
 
@@ -22,26 +22,29 @@ class RPC {
    * @param {array} options - RPC request objects.
    * @param {function} callback - Function to call with RPC response or null if error.
    */
-  call(options, callback) {
+  call (options, callback) {
     options.map((option) => {
       option.jsonrpc = '2.0'
       option.id = Math.floor(Math.random() * 10000)
     })
 
-    fetch('http://127.0.0.1:9195', {
+    const init = {
       method: 'POST',
       headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify(options)
-    })
-    .then((response) => { if (response.ok) return response.json() })
-    .then((data) => {
-      if (this.status !== true) this.setStatus(true)
-      return callback(data)
-    })
-    .catch((error) => {
-      if (this.status !== false) this.setStatus(false)
-      return callback(null)
-    })
+    }
+
+    window.fetch('http://127.0.0.1:9195', init)
+      .then((response) => { if (response.ok) return response.json() })
+      .then((data) => {
+        if (this.status !== true) this.setStatus(true)
+        return callback(data)
+      })
+      .catch((error) => {
+        if (this.status !== false) this.setStatus(false)
+        process.env.NODE_ENV === 'dev' && console.error('RPC:', error.message)
+        return callback(null)
+      })
   }
 }
 

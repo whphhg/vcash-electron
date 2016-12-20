@@ -16,7 +16,7 @@ class Network {
   @observable peerInfo = []
   @observable geoData = asMap(getItem('geoData') || {})
 
-  constructor() {
+  constructor () {
     reaction(() => rpc.status, (status) => {
       /** Start update loop when RPC becomes available. */
       if (status === true) this.getnetworkinfo()
@@ -72,7 +72,7 @@ class Network {
    * @function tcp
    * @return {number} TCP connections.
    */
-  @computed get tcp() {
+  @computed get tcp () {
     if (this.networkInfo.hasOwnProperty('tcp') === true) return this.networkInfo.tcp.connections
     return 0
   }
@@ -82,7 +82,7 @@ class Network {
    * @function udp
    * @return {number} UDP connections.
    */
-  @computed get udp() {
+  @computed get udp () {
     if (this.networkInfo.hasOwnProperty('udp') === true) return this.networkInfo.udp.connections
     return 0
   }
@@ -92,7 +92,7 @@ class Network {
    * @function peers
    * @return {array} Peers.
    */
-  @computed get peers() {
+  @computed get peers () {
     if (this.peerInfo.length > 0) {
       return this.peerInfo.reduce((peers, item) => {
         if (item.lastsend !== 0 && item.startingheight !== -1) {
@@ -122,7 +122,7 @@ class Network {
    * @function endpoints
    * @return {array} Endpoints.
    */
-  @computed get endpoints() {
+  @computed get endpoints () {
     if (this.networkInfo.hasOwnProperty('endpoints') === true) {
       return this.networkInfo.endpoints.reduce((endpoints, item) => {
         let endpoint = {
@@ -144,7 +144,7 @@ class Network {
    * @function byCountry
    * @return {array} Known endpoints counts grouped by country.
    */
-  @computed get byCountry() {
+  @computed get byCountry () {
     const countries = this.endpoints.reduce((countries, item) => {
       if (item.hasOwnProperty('country') === true) {
         const prev = countries.has(item.country) === true ? countries.get(item.country) : 0
@@ -170,7 +170,7 @@ class Network {
    * @function knownEndpoints
    * @return {number} Known endpoints.
    */
-  @computed get knownEndpoints() {
+  @computed get knownEndpoints () {
     if (this.networkInfo.hasOwnProperty('endpoints') === true) return this.networkInfo.endpoints.length
     return 0
   }
@@ -180,7 +180,7 @@ class Network {
    * @function setGeoData
    * @param {array} response - Geo IP lookups promises response.
    */
-  @action setGeoData(response) {
+  @action setGeoData (response) {
     response.forEach((lookup) => {
       if (lookup.hasOwnProperty('country') === true) {
         if (lookup.country.name !== '') {
@@ -204,7 +204,7 @@ class Network {
    * @param {array} networkInfo - getnetworkinfo result.
    * @param {array} peerInfo - getpeerinfo result.
    */
-  @action setResponse(networkInfo = null, peerInfo = null) {
+  @action setResponse (networkInfo = null, peerInfo = null) {
     if (networkInfo === null && peerInfo === null) {
       this.networkInfo = {}
       this.peerInfo = []
@@ -218,7 +218,7 @@ class Network {
    * Get network info.
    * @function getnetworkinfo
    */
-  getnetworkinfo() {
+  getnetworkinfo () {
     rpc.call([{ method: 'getnetworkinfo', params: [] }, { method: 'getpeerinfo', params: [] }], (response) => {
       if (response !== null) {
         this.setResponse(response[0].result, response[1].result)

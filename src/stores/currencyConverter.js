@@ -16,11 +16,9 @@ class CurrencyConverter {
   @observable bitcoin = 0
   @observable local = 0
 
-  constructor() {
+  constructor () {
     /** Convert amounts on changes to them or rates. */
     autorun(() => {
-      let trackLocal = rates.localCurrency
-
       switch (this.convertFrom) {
         case 'vcash':
           return this.setData({
@@ -49,7 +47,7 @@ class CurrencyConverter {
    * @param {number} amount - Amount to convert.
    * @param {string} convertFrom - Converting currency.
    */
-  @action setAmount(amount, convertFrom) {
+  @action setAmount (amount, convertFrom) {
     /** Check if value is in 0000000[.,]00000000 format. */
     if (amount.match(/^\d{0,7}(?:\.\d{0,8})?$/) !== null || amount.match(/^\d{0,7}(?:,\d{0,8})?$/) !== null) {
       this.convertFrom = convertFrom
@@ -62,7 +60,7 @@ class CurrencyConverter {
    * @function setData
    * @param {object} Converted data.
    */
-  @action setData(data) {
+  @action setData (data) {
     for (let i in data) {
       this[i] = data[i]
     }

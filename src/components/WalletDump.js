@@ -7,17 +7,17 @@ import { dataPath } from '../utilities/common'
 @inject('wallet') @observer
 
 class WalletDump extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.wallet = props.wallet
     this.dumpwallet = this.dumpwallet.bind(this)
   }
 
-  dumpwallet() {
+  dumpwallet () {
     this.wallet.dumpwallet()
   }
 
-  render() {
+  render () {
     return (
       <div>
         <p style={{margin: '0 0 5px 0'}}>

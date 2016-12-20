@@ -21,7 +21,7 @@ class WalletBackup {
    * @function errorStatus
    * @return {string|boolean} Current error or false if none.
    */
-  @computed get errorStatus() {
+  @computed get errorStatus () {
     if (this.errors.backupFailed === true) return 'backupFailed'
     return false
   }
@@ -31,7 +31,7 @@ class WalletBackup {
    * @function toggleError
    * @param {string} key - Error key to toggle.
    */
-  @action toggleError(key = '') {
+  @action toggleError (key = '') {
     if (key === '') {
       /** Clear all errors if no key provided. */
       for (let i in this.errors) {
@@ -46,7 +46,7 @@ class WalletBackup {
    * Set path.
    * @function setPath
    */
-  @action setPath(path) {
+  @action setPath (path) {
     this.path = path
   }
 
@@ -54,7 +54,7 @@ class WalletBackup {
    * Open electron dialog and set selected path.
    * @function getPath
    */
-  getPath() {
+  getPath () {
     const path = remote.dialog.showOpenDialog({ properties: ['openDirectory'] })
     if (typeof path !== 'undefined') this.setPath(path[0] + sep)
   }
@@ -63,7 +63,7 @@ class WalletBackup {
    * Backup wallet.
    * @function backupwallet
    */
-  backupwallet() {
+  backupwallet () {
     rpc.call([{ 'method': 'backupwallet', 'params': [this.path] }], (response) => {
       if (response !== null) {
         if (response[0].hasOwnProperty('error') === true) {

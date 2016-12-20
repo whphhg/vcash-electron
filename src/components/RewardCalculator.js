@@ -10,7 +10,7 @@ import RewardCalculatorChart from './RewardCalculatorChart'
 @inject('rewardCalculator', 'wallet') @observer
 
 class RewardCalculator extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.rewardCalculator = props.rewardCalculator
     this.wallet = props.wallet
@@ -20,11 +20,11 @@ class RewardCalculator extends React.Component {
     this.rewardCalculator.setBlock(this.wallet.info.blocks)
   }
 
-  setBlock(event) {
+  setBlock (event) {
     this.rewardCalculator.setBlock(event.target.value)
   }
 
-  popoverTitle() {
+  popoverTitle () {
     return (
       <Row>
         <Col span={2}>
@@ -53,7 +53,7 @@ class RewardCalculator extends React.Component {
     )
   }
 
-  popoverContent() {
+  popoverContent () {
     return (
       <div style={{width: '500px', margin: '10px 0 0 0'}}>
         <Row>
@@ -85,7 +85,7 @@ class RewardCalculator extends React.Component {
     )
   }
 
-  render() {
+  render () {
     return (
       <Popover
         trigger='click'

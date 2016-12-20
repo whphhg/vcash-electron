@@ -16,7 +16,7 @@ class KeyDump {
   @observable popover = false
   @observable errors = { invalidAddress: false, unknownAddress: false }
 
-  constructor() {
+  constructor () {
     /** Clear private key and previous RPC response errors on address change. */
     reaction(() => this.address, (address) => {
       if (this.privateKey !== '') this.setPrivateKey()
@@ -37,7 +37,7 @@ class KeyDump {
    * @function errorStatus
    * @return {string|boolean} Current error or false if none.
    */
-  @computed get errorStatus() {
+  @computed get errorStatus () {
     if (this.address.match(/^[a-zA-Z0-9]{0,34}$/) === null) return 'invalidCharacters'
     if (this.address.length < 34) return 'incompleteAddress'
     if (this.errors.invalidAddress === true) return 'invalidAddress'
@@ -50,7 +50,7 @@ class KeyDump {
    * @function toggleError
    * @param {string} key - Error key to toggle.
    */
-  @action toggleError(key = '') {
+  @action toggleError (key = '') {
     if (key === '') {
       /** Clear all errors if no key provided. */
       for (let i in this.errors) {
@@ -66,7 +66,7 @@ class KeyDump {
    * @function setAddress
    * @param {string} address - Address.
    */
-  @action setAddress(address = '') {
+  @action setAddress (address = '') {
     this.address = address
   }
 
@@ -75,7 +75,7 @@ class KeyDump {
    * @function setPrivateKey
    * @param {string} privateKey - Returned private key.
    */
-  @action setPrivateKey(privateKey = '') {
+  @action setPrivateKey (privateKey = '') {
     this.privateKey = privateKey
   }
 
@@ -83,7 +83,7 @@ class KeyDump {
    * Toggle popover visibility.
    * @function togglePopover
    */
-  @action togglePopover() {
+  @action togglePopover () {
     this.popover = !this.popover
   }
 
@@ -91,7 +91,7 @@ class KeyDump {
    * Dump private key.
    * @function dumpprivkey
    */
-  dumpprivkey() {
+  dumpprivkey () {
     rpc.call([{ method: 'dumpprivkey', params: [this.address] }], (response) => {
       if (response !== null) {
         if (response[0].hasOwnProperty('error') === true) {

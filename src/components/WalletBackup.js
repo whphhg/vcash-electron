@@ -6,22 +6,22 @@ import { Button, Col, Input, Row } from 'antd'
 @inject('walletBackup') @observer
 
 class WalletBackup extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.walletBackup = props.walletBackup
     this.backupwallet = this.backupwallet.bind(this)
     this.getPath = this.getPath.bind(this)
   }
 
-  backupwallet() {
+  backupwallet () {
     this.walletBackup.backupwallet()
   }
 
-  getPath() {
+  getPath () {
     this.walletBackup.getPath()
   }
 
-  render() {
+  render () {
     return (
       <div>
         <p style={{margin: '0 0 5px 0'}}>

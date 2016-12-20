@@ -6,28 +6,28 @@ import { Button, Col, Input, Row } from 'antd'
 @inject('walletPassphraseChange') @observer
 
 class WalletPassphraseChange extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.walletPassphraseChange = props.walletPassphraseChange
     this.walletpassphrasechange = this.walletpassphrasechange.bind(this)
     this.setPassphrase = this.setPassphrase.bind(this)
   }
 
-  walletpassphrasechange() {
+  walletpassphrasechange () {
     this.walletPassphraseChange.walletpassphrasechange()
   }
 
-  setPassphrase(event) {
+  setPassphrase (event) {
     this.walletPassphraseChange.setPassphrase(event.target.value, event.target.name)
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     this.walletPassphraseChange.setPassphrase('', 'oldPassphrase')
     this.walletPassphraseChange.setPassphrase('', 'newPassphrase')
     this.walletPassphraseChange.setPassphrase('', 'repeat')
   }
 
-  render() {
+  render () {
     return (
       <div>
         <p style={{margin: '0 0 5px 0'}}>

@@ -17,7 +17,7 @@ class WalletSeedDump {
    * @function errorStatus
    * @return {string|boolean} Current error or false if none.
    */
-  @computed get errorStatus() {
+  @computed get errorStatus () {
     if (this.errors.notDeterministic === true) return 'notDeterministic'
     return false
   }
@@ -27,7 +27,7 @@ class WalletSeedDump {
    * @function toggleError
    * @param {string} key - Error key to toggle.
    */
-  @action toggleError(key = '') {
+  @action toggleError (key = '') {
     if (key === '') {
       /** Clear all errors if no key provided. */
       for (let i in this.errors) {
@@ -42,7 +42,7 @@ class WalletSeedDump {
    * Set path.
    * @function setPath
    */
-  @action setSeed(seed = '') {
+  @action setSeed (seed = '') {
     this.seed = seed
   }
 
@@ -50,7 +50,7 @@ class WalletSeedDump {
    * Dump wallet seed.
    * @function dumpwalletseed
    */
-  dumpwalletseed() {
+  dumpwalletseed () {
     rpc.call([{ 'method': 'dumpwalletseed', 'params': [] }], (response) => {
       if (response !== null) {
         if (response[0].hasOwnProperty('error') === true) {

@@ -18,13 +18,13 @@ import WalletSeedDump from './WalletSeedDump'
 @inject('network', 'wallet') @observer
 
 class Maintenance extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.network = props.network
     this.wallet = props.wallet
   }
 
-  render() {
+  render () {
     return (
       <div>
         <Row>

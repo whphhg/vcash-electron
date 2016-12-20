@@ -36,7 +36,7 @@ class Wallet {
   @observable isEncrypted = false
   @observable isLocked = false
 
-  constructor() {
+  constructor () {
     /** Start the only infinite RPC update loop. */
     this.getinfo()
 
@@ -55,7 +55,7 @@ class Wallet {
    * @param {string} key - Store key to compare against and update.
    * @param {object} response - RPC response object.
    */
-  @action setResponse(key, response) {
+  @action setResponse (key, response) {
     for (let i in this[key]) {
       if (this[key][i] !== response[i]) this[key][i] = response[i]
     }
@@ -67,7 +67,7 @@ class Wallet {
    * @param {boolean} isEncrypted - Wallet encryption status.
    * @param {boolean} isLocked - Wallet lock status.
    */
-  @action setStatus(isEncrypted, isLocked) {
+  @action setStatus (isEncrypted, isLocked) {
     this.isLocked = isLocked
     this.isEncrypted = isEncrypted
   }
@@ -76,7 +76,7 @@ class Wallet {
    * Get wallet info.
    * @function getinfo
    */
-  getinfo() {
+  getinfo () {
     rpc.call([{ method: 'getinfo', params: [] }], (response) => {
       if (response !== null) {
         this.setResponse('info', response[0].result)
@@ -91,7 +91,7 @@ class Wallet {
    * Get incentive info.
    * @function getincentiveinfo
    */
-  getincentiveinfo() {
+  getincentiveinfo () {
     rpc.call([{ method: 'getincentiveinfo', params: [] }], (response) => {
       if (response !== null) {
         this.setResponse('incentive', response[0].result)
@@ -106,7 +106,7 @@ class Wallet {
    * Lock wallet.
    * @function walletlock
    */
-  walletlock() {
+  walletlock () {
     /** If active, toggle ChainBlender off before locking the wallet. */
     if (chainBlender.status === true) chainBlender.toggle()
 
@@ -126,7 +126,7 @@ class Wallet {
    * Dump wallet.
    * @function dumpwallet
    */
-  dumpwallet() {
+  dumpwallet () {
     rpc.call([{ 'method': 'dumpwallet', 'params': [] }], (response) => {
       if (response !== null) {
         notification.success({
@@ -142,7 +142,7 @@ class Wallet {
    * Wallet lock check.
    * @function lockCheck
    */
-  lockCheck() {
+  lockCheck () {
     rpc.call([{ method: 'walletpassphrase', params: [] }], (response) => {
       if (response !== null) {
         switch (response[0].error.code) {

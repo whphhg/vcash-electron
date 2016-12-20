@@ -6,22 +6,22 @@ import { Button, Col, Input, Row } from 'antd'
 @inject('wallet', 'walletSeedDump') @observer
 
 class WalletSeedDump extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.wallet = props.wallet
     this.walletSeedDump = props.walletSeedDump
     this.dumpwalletseed = this.dumpwalletseed.bind(this)
   }
 
-  dumpwalletseed() {
+  dumpwalletseed () {
     this.walletSeedDump.dumpwalletseed()
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     this.walletSeedDump.setSeed()
   }
 
-  render() {
+  render () {
     return (
       <div>
         <p style={{margin: '0 0 5px 0'}}>
