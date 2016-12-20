@@ -19,7 +19,7 @@ class WalletEncrypt {
    * @function errorStatus
    * @return {string|boolean} Current error or false if none.
    */
-  @computed get errorStatus() {
+  @computed get errorStatus () {
     if (this.passphrase.length < 1 || this.repeat.length < 1) return 'emptyFields'
     if (this.passphrase.length !== this.repeat.length) return 'differentLengths'
     if (this.passphrase !== this.repeat) return 'notMatching'
@@ -32,7 +32,7 @@ class WalletEncrypt {
    * @param {string} passphrase - Passphrase.
    * @param {string} key - Set provided passphrase to this key.
    */
-  @action setPassphrase(passphrase = '', key) {
+  @action setPassphrase (passphrase = '', key) {
     this[key] = passphrase
   }
 
@@ -40,7 +40,7 @@ class WalletEncrypt {
    * Encrypt wallet.
    * @function encryptwallet
    */
-  encryptwallet() {
+  encryptwallet () {
     rpc.call([{ method: 'encryptwallet', params: [this.passphrase] }], (response) => {
       if (response !== null) {
         wallet.lockCheck()

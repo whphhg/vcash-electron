@@ -9,12 +9,12 @@ import ChartTooltip from './ChartTooltip'
 @inject('rewardCalculator') @observer
 
 class RewardCalculatorChart extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.rewardCalculator = props.rewardCalculator
   }
 
-  render() {
+  render () {
     return (
       <LineChart
         width={480}

@@ -6,7 +6,7 @@ import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
 @inject('addresses', 'keyDump', 'wallet') @observer
 
 class KeyDump extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.addresses = props.addresses
     this.keyDump = props.keyDump
@@ -16,19 +16,19 @@ class KeyDump extends React.Component {
     this.togglePopover = this.togglePopover.bind(this)
   }
 
-  dumpprivkey() {
+  dumpprivkey () {
     this.keyDump.dumpprivkey()
   }
 
-  setAddress(address) {
+  setAddress (address) {
     this.keyDump.setAddress(address)
   }
 
-  togglePopover() {
+  togglePopover () {
     this.keyDump.togglePopover()
   }
 
-  popoverContent() {
+  popoverContent () {
     return (
       <div style={{width: '400px'}}>
         <Row>
@@ -83,7 +83,7 @@ class KeyDump extends React.Component {
     )
   }
 
-  render() {
+  render () {
     return (
       <Popover
         title='Enter the address you would like to dump'

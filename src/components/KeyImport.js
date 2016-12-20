@@ -6,7 +6,7 @@ import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
 @inject('addresses', 'keyImport', 'wallet') @observer
 
 class KeyImport extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.addresses = props.addresses
     this.keyImport = props.keyImport
@@ -17,23 +17,23 @@ class KeyImport extends React.Component {
     this.togglePopover = this.togglePopover.bind(this)
   }
 
-  importprivkey() {
+  importprivkey () {
     this.keyImport.importprivkey()
   }
 
-  setAccount(account) {
+  setAccount (account) {
     this.keyImport.setAccount(account)
   }
 
-  setPrivateKey(event) {
+  setPrivateKey (event) {
     this.keyImport.setPrivateKey(event.target.value)
   }
 
-  togglePopover() {
+  togglePopover () {
     this.keyImport.togglePopover()
   }
 
-  popoverContent() {
+  popoverContent () {
     return (
       <div style={{width: '400px'}}>
         <Row>
@@ -87,7 +87,7 @@ class KeyImport extends React.Component {
     )
   }
 
-  render() {
+  render () {
     return (
       <Popover
         trigger='click'

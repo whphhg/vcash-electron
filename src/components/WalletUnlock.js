@@ -6,7 +6,7 @@ import { Button, Col, Input, Popover, Row, Tooltip } from 'antd'
 @inject('wallet', 'walletUnlock') @observer
 
 class WalletUnlock extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.wallet = props.wallet
     this.walletUnlock = props.walletUnlock
@@ -15,19 +15,19 @@ class WalletUnlock extends React.Component {
     this.togglePopover = this.togglePopover.bind(this)
   }
 
-  walletpassphrase() {
+  walletpassphrase () {
     this.walletUnlock.walletpassphrase()
   }
 
-  setPassphrase(event) {
+  setPassphrase (event) {
     this.walletUnlock.setPassphrase(event.target.value)
   }
 
-  togglePopover() {
+  togglePopover () {
     this.walletUnlock.togglePopover()
   }
 
-  popoverContent() {
+  popoverContent () {
     return (
       <div style={{width: '400px'}}>
         <Row>
@@ -62,7 +62,7 @@ class WalletUnlock extends React.Component {
     )
   }
 
-  render() {
+  render () {
     return (
       <div>
         {

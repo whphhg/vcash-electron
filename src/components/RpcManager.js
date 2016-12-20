@@ -7,18 +7,18 @@ import { Modal } from 'antd'
 
 /** TODO: Remote RPC using tunnel-ssh -> ssh -L9195:localhost:9195 user@ip). */
 class RpcManager extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.rpc = props.rpc
   }
 
-  render() {
+  render () {
     return (
       <Modal
         title='RPC connection lost'
         footer=''
         closable={false}
-        visible={this.rpc.status === null || this.rpc.status === true ? false : true}
+        visible={this.rpc.status !== null && !this.rpc.status}
       >
         To continue using the UI please re-start the Vcash daemon.
       </Modal>

@@ -6,7 +6,7 @@ import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
 @inject('addresses', 'addressNew') @observer
 
 class AddressNew extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.addresses = props.addresses
     this.addressNew = props.addressNew
@@ -15,19 +15,19 @@ class AddressNew extends React.Component {
     this.togglePopover = this.togglePopover.bind(this)
   }
 
-  getnewaddress() {
+  getnewaddress () {
     this.addressNew.getnewaddress()
   }
 
-  setAccount(account, label) {
+  setAccount (account, label) {
     this.addressNew.setAccount(account)
   }
 
-  togglePopover() {
+  togglePopover () {
     this.addressNew.togglePopover()
   }
 
-  popoverContent() {
+  popoverContent () {
     return (
       <div style={{width: '400px'}}>
         <Row>
@@ -77,7 +77,7 @@ class AddressNew extends React.Component {
     )
   }
 
-  render() {
+  render () {
     return (
       <Popover
         title='Generate a new receiving address'

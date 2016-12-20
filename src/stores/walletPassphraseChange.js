@@ -18,7 +18,7 @@ class WalletPassphraseChange {
   @observable repeat = ''
   @observable errors = { incorrectPassphrase: false }
 
-  constructor() {
+  constructor () {
     /** Clear previous RPC errors on oldPassphrase change. */
     reaction(() => this.oldPassphrase, (oldPassphrase) => {
       if (this.errors.incorrectPassphrase === true) this.toggleError()
@@ -30,7 +30,7 @@ class WalletPassphraseChange {
    * @function errorStatus
    * @return {string|boolean} Current error or false if none.
    */
-  @computed get errorStatus() {
+  @computed get errorStatus () {
     if (this.oldPassphrase.length < 1 || this.newPassphrase < 1 || this.repeat.length < 1) return 'emptyFields'
     if (this.newPassphrase === this.oldPassphrase) return 'oldEqualsNew'
     if (this.newPassphrase.length !== this.repeat.length) return 'differentLengths'
@@ -44,7 +44,7 @@ class WalletPassphraseChange {
    * @function toggleError
    * @param {string} key - Error key to toggle.
    */
-  @action toggleError(key = '') {
+  @action toggleError (key = '') {
     if (key === '') {
       /** Clear all errors if no key provided. */
       for (let i in this.errors) {
@@ -61,7 +61,7 @@ class WalletPassphraseChange {
    * @param {string} passphrase - Passphrase.
    * @param {string} key - Set provided passphrase to this key.
    */
-  @action setPassphrase(passphrase = '', key) {
+  @action setPassphrase (passphrase = '', key) {
     this[key] = passphrase
   }
 
@@ -69,7 +69,7 @@ class WalletPassphraseChange {
    * Change wallet passphrase.
    * @function walletpassphrasechange
    */
-  walletpassphrasechange() {
+  walletpassphrasechange () {
     rpc.call([{ method: 'walletpassphrasechange', params: [this.oldPassphrase, this.newPassphrase] }], (response) => {
       if (response !== null) {
         if (response[0].hasOwnProperty('error') === true) {

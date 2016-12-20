@@ -6,7 +6,7 @@
  * @return {callback} Callback with response object or null.
  */
 const geoIp = (ip, callback) => {
-  fetch('https://geoip.nekudo.com/api/' + ip)
+  window.fetch('https://geoip.nekudo.com/api/' + ip)
     .then((response) => { if (response.ok) return response.json() })
     .then((data) => {
       if (data.hasOwnProperty('type') === false) return callback(data)

@@ -32,6 +32,4 @@ To update:
     $ git pull OR download zip
 
 
-### TODOs
-- Staking indicator if config pos:1 & unlocked (gavel, loyalty, flag, flash on, rowing). __TODO__ [src/components/Root.js](src/components/Root.js)
-- Remote RPC using tunnel-ssh -> ssh -L9195:localhost:9195 user@ip). __TODO__ [src/components/RpcManager.js](src/components/RpcManager.js)
+[![Standard - JavaScript Style Guide](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)

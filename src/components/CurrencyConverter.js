@@ -6,18 +6,18 @@ import { Button, Col, Input, Popover, Row } from 'antd'
 @inject('currencyConverter', 'rates') @observer
 
 class CurrencyConverter extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.currencyConverter = props.currencyConverter
     this.rates = props.rates
     this.onChange = this.onChange.bind(this)
   }
 
-  onChange(event) {
+  onChange (event) {
     this.currencyConverter.setAmount(event.target.value, event.target.name)
   }
 
-  popoverTitle() {
+  popoverTitle () {
     return (
       <div className='popoverTitle'>
         <p>Approximately convert between currencies</p>
@@ -31,7 +31,7 @@ class CurrencyConverter extends React.Component {
     )
   }
 
-  popoverContent() {
+  popoverContent () {
     return (
       <Row>
         <Col span={7}>
@@ -74,7 +74,7 @@ class CurrencyConverter extends React.Component {
     )
   }
 
-  render() {
+  render () {
     return (
       <Popover
         trigger='click'

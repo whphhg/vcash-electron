@@ -21,7 +21,7 @@ class ChainBlender {
   }
   @observable status = false
 
-  constructor() {
+  constructor () {
     /** Start updating when the wallet unlocks. */
     autorun(() => {
       if (wallet.isLocked === false) this.getinfo()
@@ -33,7 +33,7 @@ class ChainBlender {
    * @function setResponse
    * @param {object} response - RPC response object.
    */
-  @action setResponse(response) {
+  @action setResponse (response) {
     for (let i in response) {
       if (this.info.hasOwnProperty(i) === true) {
         if (this.info[i] !== response[i]) this.info[i] = response[i]
@@ -51,7 +51,7 @@ class ChainBlender {
    * @function setStatus
    * @param {boolean} status - ChainBlender status.
    */
-  @action setStatus(status) {
+  @action setStatus (status) {
     this.status = status
   }
 
@@ -59,7 +59,7 @@ class ChainBlender {
    * Get ChainBlender info.
    * @function getinfo
    */
-  getinfo() {
+  getinfo () {
     rpc.call([{ method: 'chainblender', params: ['info'] }], (response) => {
       if (response !== null) {
         if (response[0].hasOwnProperty('result') === true) {
@@ -76,7 +76,7 @@ class ChainBlender {
    * Toggle ChainBlender.
    * @function toggle
    */
-  toggle() {
+  toggle () {
     rpc.call([{ method: 'chainblender', params: [this.status === true ? 'stop' : 'start'] }], (response) => {
       if (response !== null) {
         this.setStatus(!this.status)

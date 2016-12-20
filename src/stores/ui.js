@@ -13,7 +13,7 @@ class UI {
    * @function setRoute
    * @param {string} route - Active route.
    */
-  @action setRoute(route) {
+  @action setRoute (route) {
     this.activeRoute = route
     hashHistory.push(route)
   }

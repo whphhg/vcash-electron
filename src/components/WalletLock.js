@@ -6,17 +6,17 @@ import { Button, Tooltip } from 'antd'
 @inject('wallet') @observer
 
 class WalletLock extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.wallet = props.wallet
     this.walletlock = this.walletlock.bind(this)
   }
 
-  walletlock() {
+  walletlock () {
     this.wallet.walletlock()
   }
 
-  render() {
+  render () {
     return (
       <div>
         {

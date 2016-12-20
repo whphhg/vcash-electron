@@ -14,7 +14,7 @@ class Rates {
   @observable poloniex = { last: 0 }
   @observable bittrex = { Last: 0 }
 
-  constructor() {
+  constructor () {
     /** Start update loops. */
     this.fetchBitcoinAverage()
     this.fetchPoloniex()
@@ -26,7 +26,7 @@ class Rates {
    * @function average
    * @return {number} Vcash price average.
    */
-  @computed get average() {
+  @computed get average () {
     const rates = [this.poloniex.last, this.bittrex.Last]
     const result = rates.reduce((result, rate) => {
       rate = parseFloat(rate)
@@ -48,7 +48,7 @@ class Rates {
    * @function local
    * @return {number} Local bitcoin price.
    */
-  @computed get local() {
+  @computed get local () {
     if (this.bitcoinAverage.hasOwnProperty(this.localCurrency) === true) return this.bitcoinAverage[this.localCurrency].last
     return 0
   }
@@ -58,7 +58,7 @@ class Rates {
    * @function localCurrencies
    * @return {array} Local currencies.
    */
-  @computed get localCurrencies() {
+  @computed get localCurrencies () {
     return Object.keys(this.bitcoinAverage)
   }
 
@@ -67,7 +67,7 @@ class Rates {
    * @function setBitcoinAverage
    * @param {string} priceIndex - Price index.
    */
-  @action setBitcoinAverage(priceIndex) {
+  @action setBitcoinAverage (priceIndex) {
     delete priceIndex.timestamp
     this.bitcoinAverage = priceIndex
   }
@@ -77,7 +77,7 @@ class Rates {
    * @function setPoloniex
    * @param {string} ticker - Ticker.
    */
-  @action setPoloniex(ticker) {
+  @action setPoloniex (ticker) {
     this.poloniex = ticker['BTC_XVC']
   }
 
@@ -86,7 +86,7 @@ class Rates {
    * @function setBittrex
    * @param {string} ticker - Ticker.
    */
-  @action setBittrex(ticker) {
+  @action setBittrex (ticker) {
     this.bittrex = ticker.result[0]
   }
 
@@ -95,7 +95,7 @@ class Rates {
    * @function setLocalCurrency
    * @param {string} localCurrency - Local currency.
    */
-  @action setLocalCurrency(localCurrency) {
+  @action setLocalCurrency (localCurrency) {
     this.localCurrency = localCurrency
     setItem('localCurrency', localCurrency)
   }
@@ -104,8 +104,8 @@ class Rates {
    * Fetch BitcoinAverage price index.
    * @function fetchBitcoinAverage
    */
-  fetchBitcoinAverage() {
-    fetch('https://api.bitcoinaverage.com/ticker/global/all')
+  fetchBitcoinAverage () {
+    window.fetch('https://api.bitcoinaverage.com/ticker/global/all')
       .then((response) => { if (response.ok) return response.json() })
       .then((priceIndex) => { this.setBitcoinAverage(priceIndex) })
       .catch((error) => { process.env.NODE_ENV === 'dev' && console.error('https://api.bitcoinaverage.com/ticker/global/all:', error.message) })
@@ -116,8 +116,8 @@ class Rates {
    * Fetch Poloniex ticker.
    * @function fetchPoloniex
    */
-  fetchPoloniex() {
-    fetch('https://poloniex.com/public?command=returnTicker')
+  fetchPoloniex () {
+    window.fetch('https://poloniex.com/public?command=returnTicker')
       .then((response) => { if (response.ok) return response.json() })
       .then((ticker) => { this.setPoloniex(ticker) })
       .catch((error) => { process.env.NODE_ENV === 'dev' && console.error('https://poloniex.com/public?command=returnTicker:', error.message) })
@@ -128,8 +128,8 @@ class Rates {
    * Fetch Bittrex ticker.
    * @function fetchBittrex
    */
-  fetchBittrex() {
-    fetch('https://bittrex.com/api/v1.1/public/getmarketsummary?market=btc-xvc')
+  fetchBittrex () {
+    window.fetch('https://bittrex.com/api/v1.1/public/getmarketsummary?market=btc-xvc')
       .then((response) => { if (response.ok) return response.json() })
       .then((ticker) => { this.setBittrex(ticker) })
       .catch((error) => { process.env.NODE_ENV === 'dev' && console.error('https://bittrex.com/api/v1.1/public/getmarketsummary?market=btc-xvc:', error.message) })

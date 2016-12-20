@@ -16,7 +16,7 @@ class WalletUnlock {
   @observable popover = false
   @observable errors = { incorrectPassphrase: false }
 
-  constructor() {
+  constructor () {
     /** Clear previous RPC response errors on passphrase change. */
     reaction(() => this.passphrase, (passphrase) => {
       this.toggleError()
@@ -35,7 +35,7 @@ class WalletUnlock {
    * @function errorStatus
    * @return {string|boolean} Current error or false if none.
    */
-  @computed get errorStatus() {
+  @computed get errorStatus () {
     if (this.passphrase.length < 1) return 'emptyField'
     if (this.errors.incorrectPassphrase === true) return 'incorrectPassphrase'
     return false
@@ -46,7 +46,7 @@ class WalletUnlock {
    * @function toggleError
    * @param {string} key - Error key to toggle.
    */
-  @action toggleError(key = '') {
+  @action toggleError (key = '') {
     if (key === '') {
       /** Clear all errors if no key provided. */
       for (let i in this.errors) {
@@ -62,7 +62,7 @@ class WalletUnlock {
    * @function setPassphrase
    * @param {string} passphrase - Passphrase.
    */
-  @action setPassphrase(passphrase = '') {
+  @action setPassphrase (passphrase = '') {
     this.passphrase = passphrase
   }
 
@@ -70,7 +70,7 @@ class WalletUnlock {
    * Toggle popover visibility.
    * @function togglePopover
    */
-  @action togglePopover() {
+  @action togglePopover () {
     this.popover = !this.popover
   }
 
@@ -78,7 +78,7 @@ class WalletUnlock {
    * Unlock the wallet.
    * @function walletpassphrase
    */
-  walletpassphrase() {
+  walletpassphrase () {
     rpc.call([{ method: 'walletpassphrase', params: [this.passphrase] }], (response) => {
       if (response !== null) {
         if (response[0].hasOwnProperty('error') === true) {

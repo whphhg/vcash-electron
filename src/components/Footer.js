@@ -5,13 +5,13 @@ import { inject, observer } from 'mobx-react'
 @inject('network', 'wallet') @observer
 
 class Footer extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.network = props.network
     this.wallet = props.wallet
   }
 
-  render() {
+  render () {
     return (
       <footer className='shadow'>
         <i className='material-icons md-16'>extension</i>

@@ -6,18 +6,18 @@ import { Button, Col, Popover, Row, Switch } from 'antd'
 @inject('chainBlender', 'wallet') @observer
 
 class ChainBlender extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.chainBlender = props.chainBlender
     this.wallet = props.wallet
     this.toggle = this.toggle.bind(this)
   }
 
-  toggle() {
+  toggle () {
     this.chainBlender.toggle()
   }
 
-  popoverTitle() {
+  popoverTitle () {
     return (
       <Row style={{width: '265px'}}>
         <Col span={17}>
@@ -40,7 +40,7 @@ class ChainBlender extends React.Component {
     )
   }
 
-  popoverContent() {
+  popoverContent () {
     return (
       this.wallet.isLocked === false && (
         <Row>
@@ -59,7 +59,7 @@ class ChainBlender extends React.Component {
     )
   }
 
-  render() {
+  render () {
     return (
       <Popover
         trigger='click'

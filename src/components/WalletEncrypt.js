@@ -6,22 +6,22 @@ import { Button, Col, Input, Row } from 'antd'
 @inject('walletEncrypt') @observer
 
 class WalletEncrypt extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.walletEncrypt = props.walletEncrypt
     this.encryptwallet = this.encryptwallet.bind(this)
     this.setPassphrase = this.setPassphrase.bind(this)
   }
 
-  encryptwallet() {
+  encryptwallet () {
     this.walletEncrypt.encryptwallet()
   }
 
-  setPassphrase(event) {
+  setPassphrase (event) {
     this.walletEncrypt.setPassphrase(event.target.value, event.target.name)
   }
 
-  render() {
+  render () {
     return (
       <div>
         <p style={{margin: '0 0 5px 0'}}>

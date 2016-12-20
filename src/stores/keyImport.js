@@ -20,7 +20,7 @@ class KeyImport {
   @observable popover = false
   @observable errors = { invalidKey: false, isMine: false }
 
-  constructor() {
+  constructor () {
     /** Clear previous RPC response errors on private key change. */
     reaction(() => this.privateKey, (privateKey) => {
       if (privateKey !== '') this.toggleError()
@@ -39,7 +39,7 @@ class KeyImport {
    * @function errorStatus
    * @return {string|boolean} Current error or false if none.
    */
-  @computed get errorStatus() {
+  @computed get errorStatus () {
     if (this.account.match(/^[a-zA-Z0-9 -]{0,100}$/) === null) return 'invalidCharacters'
     if (this.privateKey.length < 51) return 'incompleteKey'
     if (this.errors.invalidKey === true) return 'invalidKey'
@@ -52,7 +52,7 @@ class KeyImport {
    * @function toggleError
    * @param {string} key - Error key to toggle.
    */
-  @action toggleError(key = '') {
+  @action toggleError (key = '') {
     if (key === '') {
       /** Clear all errors if no key provided. */
       for (let i in this.errors) {
@@ -68,7 +68,7 @@ class KeyImport {
    * @function setAccount
    * @param {string} account - Account name.
    */
-  @action setAccount(account) {
+  @action setAccount (account) {
     this.account = account
   }
 
@@ -77,7 +77,7 @@ class KeyImport {
    * @function setPrivateKey
    * @param {string} privateKey - Private key.
    */
-  @action setPrivateKey(privateKey = '') {
+  @action setPrivateKey (privateKey = '') {
     if (privateKey.match(/^[a-zA-Z0-9]{0,52}$/) !== null) this.privateKey = privateKey
   }
 
@@ -85,7 +85,7 @@ class KeyImport {
    * Toggle button loading animation.
    * @function toggleLoading
    */
-  @action toggleLoading() {
+  @action toggleLoading () {
     this.loading = !this.loading
   }
 
@@ -93,7 +93,7 @@ class KeyImport {
    * Toggle popover visibility.
    * @function togglePopover
    */
-  @action togglePopover() {
+  @action togglePopover () {
     this.popover = !this.popover
   }
 
@@ -101,7 +101,7 @@ class KeyImport {
    * Import private key.
    * @function importprivkey
    */
-  importprivkey() {
+  importprivkey () {
     /** Disable button and toggle on loading indicator. */
     this.toggleLoading()
 

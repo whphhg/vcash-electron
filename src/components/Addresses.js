@@ -14,14 +14,14 @@ import TableCell from './TableCell'
 @inject('addresses', 'rates', 'wallet') @observer
 
 class Addresses extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.addresses = props.addresses
     this.rates = props.rates
     this.wallet = props.wallet
   }
 
-  render() {
+  render () {
     return (
       <div>
         <Row>
@@ -34,12 +34,13 @@ class Addresses extends React.Component {
               </div>
               <div className='right'>
                 <i className='material-icons md-20'>library_books</i>
-                <p>Default wallet address <span className='text-dotted'>
-                  {
-                    this.wallet.incentive.walletaddress === ''
-                      ? 'will be revealed after first unlocking'
-                      : this.wallet.incentive.walletaddress
-                  }
+                <p>Default wallet address&nbsp;
+                  <span className='text-dotted'>
+                    {
+                      this.wallet.incentive.walletaddress === ''
+                        ? 'will be revealed after first unlocking'
+                        : this.wallet.incentive.walletaddress
+                    }
                   </span>
                 </p>
               </div>
@@ -71,12 +72,13 @@ class Addresses extends React.Component {
             />
             <Column
               header={<Cell>{this.rates.localCurrency}</Cell>}
-              cell={<TableCell
-                      data={this.addresses.all}
-                      column='localAmount'
-                      type='localAmount'
-                      extra={this.rates.localCurrency}
-                    />}
+              cell={
+                <TableCell
+                  data={this.addresses.all}
+                  column='localAmount'
+                  type='localAmount'
+                  extra={this.rates.localCurrency}
+                />}
               width={200}
             />
           </Table>
