@@ -1,9 +1,7 @@
 ## Vcash UI
-A multi-platform UI for [Vcash](https://vcash.info/), a decentralized currency for the internet.
+A multi-platform UI for [Vcash](https://vcash.info/), a decentralized currency for the internet. Latest packaged releases for Linux, OS X and Windows can be found [here](https://github.com/whphhg/vcash-ui/releases).
 
 :hatching_chick: **Warning**: This is beta software that is being actively developed.
-
-Latest packaged releases for Linux, OS X and Windows can be found [here](https://github.com/whphhg/vcash-ui/releases).
 
 ![Screenshots](http://i.imgur.com/zfjel56.gif)
 

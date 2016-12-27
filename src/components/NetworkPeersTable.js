@@ -9,7 +9,7 @@ import TableCell from './TableCell'
 /** Make the component reactive and inject MobX stores. */
 @inject('network') @observer
 
-class PeersTable extends React.Component {
+class NetworkPeersTable extends React.Component {
   constructor (props) {
     super(props)
     this.network = props.network
@@ -64,4 +64,4 @@ class PeersTable extends React.Component {
   }
 }
 
-export default PeersTable
+export default NetworkPeersTable
