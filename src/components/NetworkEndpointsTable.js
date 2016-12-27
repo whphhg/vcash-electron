@@ -7,9 +7,9 @@ import { tableHeight } from '../utilities/common'
 import TableCell from './TableCell'
 
 /** Make the component reactive and inject MobX stores. */
-@inject('network', 'wallet') @observer
+@inject('network') @observer
 
-class EndpointsTable extends React.Component {
+class NetworkEndpointsTable extends React.Component {
   constructor (props) {
     super(props)
     this.network = props.network
@@ -39,4 +39,4 @@ class EndpointsTable extends React.Component {
   }
 }
 
-export default EndpointsTable
+export default NetworkEndpointsTable

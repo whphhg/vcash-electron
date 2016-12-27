@@ -9,13 +9,11 @@ import KeyDump from './KeyDump'
 import KeyImport from './KeyImport'
 
 /** Make the component reactive and inject MobX stores. */
-@inject('addresses', 'rates', 'wallet') @observer
+@inject('wallet') @observer
 
 class Addresses extends React.Component {
   constructor (props) {
     super(props)
-    this.addresses = props.addresses
-    this.rates = props.rates
     this.wallet = props.wallet
   }
 

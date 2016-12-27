@@ -5,7 +5,7 @@ import { Select } from 'antd'
 /** Make the component reactive and inject MobX stores. */
 @inject('rates') @observer
 
-class LocalCurrency extends React.Component {
+class SelectCurrency extends React.Component {
   constructor (props) {
     super(props)
     this.rates = props.rates
@@ -41,4 +41,4 @@ class LocalCurrency extends React.Component {
   }
 }
 
-export default LocalCurrency
+export default SelectCurrency
