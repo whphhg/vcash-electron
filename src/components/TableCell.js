@@ -15,14 +15,21 @@ const TableCell = ({ rowIndex, data, column, type, extra, ...props }) => {
     default:
       switch (column) {
         case 'account':
-          if (data[rowIndex][column] === '') {
-            return (
-              <Cell {...props}><i>Default</i></Cell>
-            )
-          } else {
-            return (
-              <Cell {...props}>{data[rowIndex][column]}</Cell>
-            )
+          switch (data[rowIndex][column]) {
+            case '*':
+              return (
+                <Cell {...props}><i>Multiple</i></Cell>
+              )
+
+            case '':
+              return (
+                <Cell {...props}><i>Default</i></Cell>
+              )
+
+            default:
+              return (
+                <Cell {...props}>{data[rowIndex][column]}</Cell>
+              )
           }
 
         case 'address':
@@ -33,6 +40,13 @@ const TableCell = ({ rowIndex, data, column, type, extra, ...props }) => {
         case 'amount':
           return (
             <Cell {...props} className={'text-right ' + (data[rowIndex][column] > 0 ? 'green' : 'red')}>
+              {parseFloat(data[rowIndex][column]).toFixed(6)} XVC
+            </Cell>
+          )
+
+        case 'value':
+          return (
+            <Cell {...props}>
               {parseFloat(data[rowIndex][column]).toFixed(6)} XVC
             </Cell>
           )

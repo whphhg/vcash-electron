@@ -1,8 +1,8 @@
 {
-  "name": "vcash-electron",
-  "productName": "vcash-electron",
-  "version": "0.9.1",
-  "description": "Electron UI for Vcash, a decentralized currency for the internet.",
+  "name": "vcash-ui",
+  "productName": "vcash-ui",
+  "version": "0.10.0",
+  "description": "A multi-platform UI for Vcash, a decentralized currency for the internet.",
   "main": "initialize.js",
   "scripts": {
     "ui": "electron .",
@@ -11,27 +11,28 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/whphhg/vcash-electron.git"
+    "url": "git+https://github.com/whphhg/vcash-ui.git"
   },
   "keywords": [
     "vcash",
     "electron",
+    "wallet",
     "ui"
   ],
   "author": "whphhg",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/whphhg/vcash-electron/issues"
+    "url": "https://github.com/whphhg/vcash-ui/issues"
   },
-  "homepage": "https://github.com/whphhg/vcash-electron#readme",
+  "homepage": "https://github.com/whphhg/vcash-ui#readme",
   "standard": {
     "parser": "babel-eslint"
   },
   "dependencies": {
-    "antd": "2.5.2",
+    "antd": "2.5.3",
     "fixed-data-table": "0.6.3",
     "mobx": "2.7.0",
-    "mobx-react": "4.0.3",
+    "mobx-react": "4.0.4",
     "moment": "2.17.1",
     "react": "15.4.1",
     "react-dom": "15.4.1",
@@ -47,10 +48,10 @@
     "babel-preset-react": "6.16.0",
     "babel-preset-stage-0": "6.16.0",
     "babel-runtime": "6.20.0",
-    "electron-compile": "4.0.3",
-    "electron-compilers": "5.0.0",
+    "electron-compile": "5.1.0",
+    "electron-compilers": "5.2.1",
     "electron-packager": "8.4.0",
-    "electron-prebuilt": "1.4.12",
+    "electron-prebuilt": "1.4.13",
     "mobx-react-devtools": "4.2.10",
     "regenerator-runtime": "0.10.1",
     "standard": "8.6.0"

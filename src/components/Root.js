@@ -5,12 +5,13 @@ import DevTools from 'mobx-react-devtools'
 import Footer from './Footer'
 import Header from './Header'
 import RpcManager from './RpcManager'
-// import Transaction from './Transaction'
+import Transaction from './Transaction'
 
 const Root = (props) => (
   <div>
     {process.env.NODE_ENV === 'dev' && <DevTools />}
     <RpcManager />
+    <Transaction />
     <Header />
     <main>{props.children}</main>
     <Footer />

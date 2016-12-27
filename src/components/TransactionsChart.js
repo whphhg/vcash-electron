@@ -3,7 +3,7 @@ import { inject, observer } from 'mobx-react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 
 /** Required components. */
-import ChartTooltip from './ChartTooltip'
+import RechartsTooltip from './RechartsTooltip'
 
 /** Make the component reactive and inject MobX stores. */
 @inject('transactions') @observer
@@ -53,7 +53,7 @@ class TransactionsChart extends React.Component {
         />
         <Tooltip
           content={
-            <ChartTooltip labelText='Statistics for' />
+            <RechartsTooltip labelText='Statistics for' />
           }
         />
         <XAxis dataKey='date' />

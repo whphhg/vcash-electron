@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, shell } from 'electron'
 
 /**
  * Keep a global reference of the window object, else the window will
@@ -33,6 +33,14 @@ app.on('ready', () => {
 
   /** Open Chromium DevTools if in dev mode. */
   process.env.NODE_ENV === 'dev' && mainWindow.webContents.openDevTools()
+
+  /** Open external links using OS default browser. */
+  mainWindow.webContents.on('new-window', (event, url) => {
+    if (url !== mainWindow.webContents.getURL()) {
+      event.preventDefault()
+      shell.openExternal(url)
+    }
+  })
 
   /** Main window closed. */
   mainWindow.on('closed', () => {

@@ -1,35 +1,36 @@
-## Vcash Electron UI
-This is a UI for [Vcash](https://vcash.info/), a decentralized currency for the internet. The UI communicates with the Vcash daemon using RPC and is available for Linux, OS X and Windows.
+## Vcash UI
+A multi-platform UI for [Vcash](https://vcash.info/), a decentralized currency for the internet.
 
 :hatching_chick: **Warning**: This is beta software that is being actively developed.
 
+Latest packaged releases for Linux, OS X and Windows can be found [here](https://github.com/whphhg/vcash-ui/releases).
+
 ![Screenshots](http://i.imgur.com/zfjel56.gif)
 
-
-### Installing and updating
+### Installing from source
 The following dependencies are required to be installed:
-* latest version of [Vcash](https://vcash.info/wallets.php) (either GUI or daemon)
+* latest version of [Vcash](https://vcash.info/wallets.php)
 * latest version of [Node.js](https://nodejs.org/en/download/current/) ([Ubuntu users](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions))
-* git (if cloning)
+* git
 
-To install:
+Clone this repository using ``git clone``, move to the cloned directory using ``cd vcash-ui`` and install Node.js dependencies using ``npm install``.
 
-    $ git clone https://github.com/whphhg/vcash-electron.git OR download zip
-    $ cd vcash-electron
+    $ git clone https://github.com/whphhg/vcash-ui.git
+    $ cd vcash-ui
     $ npm install
 
-To run (make sure to launch Vcash before):
+After it is done installing dependencies, you can run the ui using ``npm run ui``.
 
     $ npm run ui
 
-To run with DevTools enabled:
+Alternatively, if you want to use development tools, run the ui using ``npm run dev``, or ``npm run dev-win`` if you are on Windows.
 
     $ npm run dev (Linux and OS X)
     $ npm run dev-win (Windows)
 
-To update:
+You can use ``git pull`` in the ``vcash-ui`` directory to pull any changes made to the code.
 
-    $ git pull OR download zip
+    $ git pull
 
 
 [![Standard - JavaScript Style Guide](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
