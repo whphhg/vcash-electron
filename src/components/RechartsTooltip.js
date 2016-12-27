@@ -2,7 +2,7 @@ import React from 'react'
 import { Col, Row } from 'antd'
 
 /** Custom Recharts tooltip. */
-const ChartTooltip = (props) => {
+const RechartsTooltip = (props) => {
   if (props.active === true) {
     return (
       <div className='chartTooltip'>
@@ -28,4 +28,4 @@ const ChartTooltip = (props) => {
   }
 }
 
-export default ChartTooltip
+export default RechartsTooltip

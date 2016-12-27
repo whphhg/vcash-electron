@@ -34,14 +34,14 @@ useStrict(true)
 /** Set notification's top margin. */
 notification.config({ top: 65 })
 
-/** Required components. */
-import Root from './components/Root'
-import Transactions from './components/Transactions'
-// import Send from './components/Send'
+/** Main container components. */
 import Addresses from './components/Addresses'
 import Maintenance from './components/Maintenance'
+import Root from './components/Root'
+// import Send from './components/Send'
+import Transactions from './components/Transactions'
 
-/** Required store instances. */
+/** Store instances. */
 import addresses from './stores/addresses'
 import addressNew from './stores/addressNew'
 import chainBlender from './stores/chainBlender'
@@ -53,7 +53,6 @@ import rates from './stores/rates'
 import rewardCalculator from './stores/rewardCalculator'
 import rpc from './stores/rpc'
 import send from './stores/send'
-import transaction from './stores/transaction'
 import transactions from './stores/transactions'
 import ui from './stores/ui'
 import wallet from './stores/wallet'
@@ -75,7 +74,6 @@ const stores = {
   rewardCalculator,
   rpc,
   send,
-  transaction,
   transactions,
   ui,
   wallet,
@@ -97,5 +95,5 @@ render(
       </Route>
     </Router>
   </Provider>,
-  document.getElementById('application-root')
+  document.getElementById('ui-root')
 )
