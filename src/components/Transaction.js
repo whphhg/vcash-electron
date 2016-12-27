@@ -1,152 +1,220 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
+import { Col, Modal, Row } from 'antd'
+import { Table, Column, Cell } from 'fixed-data-table'
+import { tableHeight } from '../utilities/common'
 import moment from 'moment'
 
-import Dialog from 'material-ui/Dialog'
-import FlatButton from 'material-ui/FlatButton'
-import IconConfirmed from 'material-ui/svg-icons/action/done-all'
-import IconUnconfirmed from 'material-ui/svg-icons/content/clear'
-import IconLabel from 'material-ui/svg-icons/action/label'
-import IconClock from 'material-ui/svg-icons/device/access-time'
-import IconBlockhash from 'material-ui/svg-icons/action/extension'
-import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table'
+/** Required components. */
+import TableCell from './TableCell'
 
-@inject('transaction')
-@observer
+/** Make the component reactive and inject MobX stores. */
+@inject('rates', 'transactions') @observer
 
 class Transaction extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
-    this.transaction = props.transaction
-    this.amountTransacted = 0
+    this.rates = props.rates
+    this.transactions = props.transactions
     this.toggleDialog = this.toggleDialog.bind(this)
-
-    if (this.transaction.data.hasOwnProperty('details')) {
-      this.transaction.data.details.forEach((detail) => {
-        this.amountTransacted += detail.amount
-      })
-    }
   }
 
-  toggleDialog() {
-    this.transaction.toggleDialog()
+  toggleDialog () {
+    this.transactions.setViewingTxid()
   }
 
-  render() {
+  render () {
+    if (this.transactions.viewingTxid === null) return null
     return (
-      <Dialog
-        title={
-          this.transaction.data.fee && 'Sent ' + this.amountTransacted.toFixed(6) + ' XVC with ' + Math.abs(this.transaction.data.fee) + ' XVC in fees'
-          || 'Received ' + this.amountTransacted.toFixed(6) + ' XVC'
-        }
-        actions={<FlatButton onTouchTap={this.toggleDialog} primary={true} label='Close' />}
-        modal={false}
-        open={this.transaction.dialog}
-        onRequestClose={this.toggleDialog}
-        contentStyle={{width:'80%', maxWidth:'none'}}
-        autoScrollBodyContent={true}
+      <Modal
+        title='Transaction details'
+        width={1000}
+        visible={this.transactions.viewingTxid !== ''}
+        onCancel={this.toggleDialog}
+        footer={null}
       >
-        <div className='row'>
-          <div className='col-md-12' style={{fontSize:'14px', marginTop:'20px'}}>
-            <IconLabel style={{height:'20px', float:'left'}} />
-            <p style={{float:'left', paddingLeft:'8px', margin:'0 0 1px'}}>Transaction ID <span className='font-weight-500'>{this.transaction.data.txid}</span></p>
-            <div style={{clear:'both'}}></div>
-
+        <Row>
+          <Col span={16}>
+            <Row>
+              <Col span={6}>
+                <Row>
+                  <Col span={5}><i className='material-icons md-18'>label</i></Col>
+                  <Col span={19}>Transaction ID</Col>
+                </Row>
+              </Col>
+              <Col span={18}>
+                <span className='text-dotted'>{this.transactions.viewingTx.txid}</span>
+              </Col>
+            </Row>
             {
-              this.transaction.data.blockhash &&
+              this.transactions.viewingTx.hasOwnProperty('blockhash') === true &&
               (
-                <div style={{marginBottom:'15px'}}>
-                  <IconBlockhash style={{height:'20px', float:'left'}} />
-                  <p style={{float:'left', paddingLeft:'8px', margin:'0 0 1px'}}>Blockhash <span className='font-weight-500'>{this.transaction.data.blockhash}</span></p>
-                  <div style={{clear:'both'}}></div>
-                </div>
+                <Row>
+                  <Col span={6}>
+                    <Row>
+                      <Col span={5}><i className='material-icons md-18'>extension</i></Col>
+                      <Col span={19}>Included in block</Col>
+                    </Row>
+                  </Col>
+                  <Col span={18}>
+                    <span className='text-dotted'>{this.transactions.viewingTx.blockhash}</span>
+                  </Col>
+                </Row>
               )
             }
-
-            <IconClock color='#1B5E20' style={{height:'20px', float:'left'}} />
-            <p style={{float:'left', paddingLeft:'8px', margin:'0 0 1px'}}>
-              Relayed on <span className='font-weight-500'>{moment(new Date(this.transaction.data.time * 1000)).format('YYYY-MM-DD [at] HH:mm:ss')}</span></p>
-            <div style={{clear:'both'}}></div>
-
+            <Row>
+              <Col span={6}>
+                <Row>
+                  <Col span={5}><i className='material-icons md-18'>access_time</i></Col>
+                  <Col span={19}>Relayed on</Col>
+                </Row>
+              </Col>
+              <Col span={18}>
+                {moment(new Date(this.transactions.viewingTx.time)).format('YYYY-MM-DD [at] HH:mm:ss')} ({moment().to(this.transactions.viewingTx.time)})
+              </Col>
+            </Row>
             {
-              this.transaction.data.blocktime &&
+              this.transactions.viewingTx.hasOwnProperty('blocktime') === true &&
               (
-                <div>
-                  <IconClock color='#1B5E20' style={{height:'20px', float:'left'}} />
-                  <p style={{float:'left', paddingLeft:'8px'}}>
-                    Confirmed on <span className='font-weight-500'>{moment(new Date(this.transaction.data.blocktime * 1000)).format('YYYY-MM-DD [at] HH:mm:ss')}</span></p>
-                  <div style={{clear:'both'}}></div>
-                </div>
+                <Row>
+                  <Col span={6}>
+                    <Row>
+                      <Col span={5}><i className='material-icons md-18'>access_time</i></Col>
+                      <Col span={19}>Block {this.transactions.viewingTx.blockhash.substring(0, 4) === '0000' ? 'mined' : 'minted'} on</Col>
+                    </Row>
+                  </Col>
+                  <Col span={18}>
+                    {moment(new Date(this.transactions.viewingTx.blocktime)).format('YYYY-MM-DD [at] HH:mm:ss')}
+                  </Col>
+                </Row>
               )
             }
-
-            <div style={{color:'' + this.transaction.data.confirmations > 0 ? '#1B5E20' : '#B71C1C' + ''}}>
-              <IconConfirmed color={this.transaction.data.confirmations > 0 ? '#1B5E20' : '#B71C1C'} style={{height:'20px', float:'left'}} />
-              <p style={{float:'left', paddingLeft:'8px'}}>
-                <span className='font-weight-500'>{this.transaction.data.confirmations}</span> confirmations
-              </p>
-              <div style={{clear:'both'}}></div>
-            </div>
-          </div>
-        </div>
-
-        <div className='row'>
-          <div className='transaction'>
-            <div className='col-md-6'>
-              <Table fixedHeader={true} showCheckboxes={false}>
-                <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-                  <TableRow>
-                    <TableHeaderColumn style={{fontSize:'13px', width:'70%'}}>Inputs</TableHeaderColumn>
-                    <TableHeaderColumn style={{fontSize:'13px', width:'30%'}}>Amount</TableHeaderColumn>
-                  </TableRow>
-                </TableHeader>
-                <TableBody showRowHover={true} stripedRows={true} displayRowCheckbox={false}>
-                  {
-                    this.transaction.data.hasOwnProperty('vin') && this.transaction.data.vin.map((row, index) => (
-                      <TableRow key={index} displayBorder={false}>
-                        <TableRowColumn className='font-mono' style={{width:'70%'}}>{row.details.address}</TableRowColumn>
-                        <TableRowColumn style={{width:'30%'}}>{row.details.amount.toFixed(6)} XVC</TableRowColumn>
-                      </TableRow>
-                    ))
+            <Row style={{margin: '15px 0 0 0'}}>
+              <Col span={6}>
+                <Row>
+                  <Col span={5}><i className='material-icons md-18'>visibility</i></Col>
+                  <Col span={19}>Status</Col>
+                </Row>
+              </Col>
+              <Col span={18}>
+                {this.transactions.viewingTx.status}
+              </Col>
+            </Row>
+            <Row>
+              <Col span={6}>
+                <Row>
+                  <Col span={5}><i className='material-icons md-18'>credit_card</i></Col>
+                  <Col span={19}>Amount</Col>
+                </Row>
+              </Col>
+              <Col span={18}>
+                <span className={this.transactions.viewingTx.amount > 0 ? 'green' : 'red'}>
+                  {this.transactions.viewingTx.amount.toFixed(6)} XVC ~ {(this.transactions.viewingTx.amount * this.rates.local * this.rates.average).toFixed(2)} {this.rates.localCurrency}
+                </span>
+              </Col>
+            </Row>
+            {
+              this.transactions.viewingTx.hasOwnProperty('fee') === true && (
+                <Row>
+                  <Col span={6}>
+                    <Row>
+                      <Col span={5}><i className='material-icons md-18'>card_giftcard</i></Col>
+                      <Col span={19}>Fee</Col>
+                    </Row>
+                  </Col>
+                  <Col span={18} className='red'>
+                    {this.transactions.viewingTx.fee.toFixed(6)} XVC
+                  </Col>
+                </Row>
+              )
+            }
+            <Row>
+              <Col span={6}>
+                <Row>
+                  <Col span={5}><i className='material-icons md-18'>done_all</i></Col>
+                  <Col span={19}>Confirmations</Col>
+                </Row>
+              </Col>
+              <Col span={18}>
+                <span
+                  className={
+                    this.transactions.viewingTx.confirmations === 0 ||
+                    this.transactions.viewingTx.hasOwnProperty('generated') === true &&
+                    this.transactions.viewingTx.confirmations < 220
+                      ? 'red'
+                      : 'green'
                   }
-                </TableBody>
-              </Table>
-            </div>
-
-            <div className='col-md-6'>
-              <Table fixedHeader={true} showCheckboxes={false}>
-                <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-                  <TableRow>
-                    <TableHeaderColumn style={{fontSize:'13px', width:'70%'}}>Outputs</TableHeaderColumn>
-                    <TableHeaderColumn style={{fontSize:'13px', width:'30%'}}>Amount</TableHeaderColumn>
-                  </TableRow>
-                </TableHeader>
-                <TableBody displayRowCheckbox={false}>
-                  {
-                    this.transaction.data.hasOwnProperty('vout') && this.transaction.data.vout.map((row, index) => {
-                      if (row.isRemainder) {
-                        return (
-                          <TableRow key={index} displayBorder={false} style={{background:'#FFF9C4'}}>
-                            <TableRowColumn className='font-mono' style={{width:'70%'}}>{row.scriptPubKey.addresses[0]}</TableRowColumn>
-                            <TableRowColumn style={{width:'30%'}}>{row.value.toFixed(6)} XVC</TableRowColumn>
-                          </TableRow>
-                        )
-                      } else {
-                        return (
-                          <TableRow key={index} displayBorder={false} style={{background:'#C8E6C9'}}>
-                            <TableRowColumn className='font-mono' style={{width:'70%'}}>{row.scriptPubKey.addresses[0]}</TableRowColumn>
-                            <TableRowColumn style={{width:'30%'}}>{row.value.toFixed(6)} XVC</TableRowColumn>
-                          </TableRow>
-                        )
-                      }
-                    })
-                  }
-                </TableBody>
-              </Table>
-            </div>
-          </div>
-        </div>
-      </Dialog>
+                >
+                  {this.transactions.viewingTx.confirmations}
+                </span>
+              </Col>
+            </Row>
+          </Col>
+          <Col span={8} className='text-right'>
+            <p>
+              <a
+                target='_blank'
+                href={'https://explorer.vchain.info/tx/' + this.transactions.viewingTx.txid}
+                disabled={this.transactions.viewingTx.hasOwnProperty('blockhash') === false}
+              >
+                View transaction on explorer
+              </a>
+            </p>
+            <p>
+              <a
+                target='_blank'
+                href={'https://explorer.vchain.info/block/' + this.transactions.viewingTx.blockhash}
+                disabled={this.transactions.viewingTx.hasOwnProperty('blockhash') === false}
+              >
+                View block on explorer
+              </a>
+            </p>
+          </Col>
+        </Row>
+        <Row style={{margin: '15px 0 0 0'}}>
+          <Col span={11}>
+            <Table
+              rowsCount={this.transactions.viewingTx.inputs.length}
+              rowHeight={25}
+              headerHeight={25}
+              width={443}
+              height={tableHeight(this.transactions.viewingTx.inputs.length, 224)}
+            >
+              <Column
+                header={<Cell>From</Cell>}
+                cell={<TableCell data={this.transactions.viewingTx.inputs} column='address' />}
+                width={300}
+              />
+              <Column
+                header={<Cell>Amount</Cell>}
+                cell={<TableCell data={this.transactions.viewingTx.inputs} column='value' />}
+                width={143}
+              />
+            </Table>
+          </Col>
+          <Col span={2} className='text-center'><i className='material-icons md-20'>forward</i></Col>
+          <Col span={11}>
+            <Table
+              rowsCount={this.transactions.viewingTx.outputs.length}
+              rowHeight={25}
+              headerHeight={25}
+              width={443}
+              height={tableHeight(this.transactions.viewingTx.outputs.length, 224)}
+            >
+              <Column
+                header={<Cell>To</Cell>}
+                cell={<TableCell data={this.transactions.viewingTx.outputs} column='address' />}
+                width={300}
+              />
+              <Column
+                header={<Cell>Amount</Cell>}
+                cell={<TableCell data={this.transactions.viewingTx.outputs} column='value' />}
+                width={143}
+              />
+            </Table>
+          </Col>
+        </Row>
+      </Modal>
     )
   }
 }
