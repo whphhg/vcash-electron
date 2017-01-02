@@ -1,4 +1,5 @@
 import React from 'react'
+import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Table, Column, Cell } from 'fixed-data-table'
 import { tableHeight } from '../utilities/common'
@@ -6,12 +7,16 @@ import { tableHeight } from '../utilities/common'
 /** Required components. */
 import TableCell from './TableCell'
 
+/** Load translation namespaces and delay rendering until they are loaded. */
+@translate(['wallet'], { wait: true })
+
 /** Make the component reactive and inject MobX stores. */
 @inject('rates', 'transactions') @observer
 
 class TransactionsTable extends React.Component {
   constructor (props) {
     super(props)
+    this.t = props.t
     this.transactions = props.transactions
     this.rates = props.rates
     this.onRowDoubleClick = this.onRowDoubleClick.bind(this)
@@ -32,29 +37,29 @@ class TransactionsTable extends React.Component {
         height={tableHeight(this.transactions.filtered.length, 417)}
       >
         <Column
-          header={<Cell>Date</Cell>}
+          header={<Cell>{this.t('wallet:date')}</Cell>}
           cell={<TableCell data={this.transactions.filtered} column='time' />}
-          width={145}
+          width={150}
         />
         <Column
-          header={<Cell>Status</Cell>}
-          cell={<TableCell data={this.transactions.filtered} column='status' />}
-          width={170}
+          header={<Cell>{this.t('wallet:category')}</Cell>}
+          cell={<TableCell data={this.transactions.filtered} column='category' />}
+          width={130}
         />
         <Column
-          header={<Cell>Address</Cell>}
+          header={<Cell>{this.t('wallet:address')}</Cell>}
           cell={<TableCell data={this.transactions.filtered} column='address' />}
           width={285}
         />
         <Column
-          header={<Cell>Account</Cell>}
+          header={<Cell>{this.t('wallet:account')}</Cell>}
           cell={<TableCell data={this.transactions.filtered} column='account' />}
-          width={230}
+          width={270}
         />
         <Column
-          header={<Cell>Amount</Cell>}
+          header={<Cell>{this.t('wallet:amount')}</Cell>}
           cell={<TableCell data={this.transactions.filtered} column='amount' />}
-          width={150}
+          width={145}
         />
         <Column
           header={<Cell>{this.rates.localCurrency}</Cell>}

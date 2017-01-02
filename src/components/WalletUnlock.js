@@ -1,6 +1,10 @@
 import React from 'react'
+import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Button, Col, Input, Popover, Row, Tooltip } from 'antd'
+
+/** Load translation namespaces and delay rendering until they are loaded. */
+@translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
 @inject('wallet', 'walletUnlock') @observer
@@ -8,6 +12,7 @@ import { Button, Col, Input, Popover, Row, Tooltip } from 'antd'
 class WalletUnlock extends React.Component {
   constructor (props) {
     super(props)
+    this.t = props.t
     this.wallet = props.wallet
     this.walletUnlock = props.walletUnlock
     this.walletpassphrase = this.walletpassphrase.bind(this)
@@ -34,27 +39,27 @@ class WalletUnlock extends React.Component {
           <Col span={24}>
             <Input
               type='password'
-              placeholder='Enter passphrase'
+              placeholder={this.t('wallet:passphraseLong')}
               value={this.walletUnlock.passphrase}
               onChange={this.setPassphrase}
             />
           </Col>
         </Row>
         <Row>
-          <Col span={18}>
+          <Col span={14}>
             {
               this.walletUnlock.errorStatus === 'incorrectPassphrase' && (
-                <p className='text-error'>The passphrase you have entered is incorrect.</p>
+                <p className='text-error'>{this.t('wallet:passphraseIncorrect')}</p>
               )
             }
           </Col>
-          <Col span={6} className='text-right'>
+          <Col span={10} className='text-right'>
             <Button
               style={{margin: '5px 0 0 0'}}
               onClick={this.walletpassphrase}
               disabled={this.walletUnlock.errorStatus !== false}
             >
-              Unlock
+              {this.t('wallet:unlock')}
             </Button>
           </Col>
         </Row>
@@ -68,14 +73,14 @@ class WalletUnlock extends React.Component {
         {
           this.wallet.isLocked === true && (
             <Popover
-              title='Unlock the wallet'
+              title={this.t('wallet:unlock')}
               trigger='click'
               placement='bottomRight'
               content={this.popoverContent()}
               visible={this.walletUnlock.popover === true}
             >
               <Tooltip
-                title='Wallet is locked'
+                title={this.t('wallet:locked')}
                 placement='bottomRight'
               >
                 <Button

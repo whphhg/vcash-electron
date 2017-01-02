@@ -1,4 +1,5 @@
 import React from 'react'
+import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Col, Row } from 'antd'
 
@@ -7,11 +8,15 @@ import NetworkEndpointsTable from './NetworkEndpointsTable'
 import NetworkPeersTable from './NetworkPeersTable'
 import RewardCalculator from './RewardCalculator'
 import SelectCurrency from './SelectCurrency'
+import SelectLanguage from './SelectLanguage'
 import WalletBackup from './WalletBackup'
 import WalletDump from './WalletDump'
 import WalletEncrypt from './WalletEncrypt'
 import WalletPassphraseChange from './WalletPassphraseChange'
 import WalletSeedDump from './WalletSeedDump'
+
+/** Load translation namespaces and delay rendering until they are loaded. */
+@translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
 @inject('wallet') @observer
@@ -19,6 +24,7 @@ import WalletSeedDump from './WalletSeedDump'
 class Maintenance extends React.Component {
   constructor (props) {
     super(props)
+    this.t = props.t
     this.wallet = props.wallet
   }
 
@@ -32,7 +38,9 @@ class Maintenance extends React.Component {
                 <RewardCalculator />
               </div>
               <div className='right'>
-                <p>Set local currency</p>
+                <p>{this.t('wallet:selectLanguage')}</p>
+                <SelectLanguage />
+                <p>{this.t('wallet:selectCurrency')}</p>
                 <SelectCurrency />
               </div>
             </div>

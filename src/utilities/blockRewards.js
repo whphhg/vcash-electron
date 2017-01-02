@@ -20,7 +20,7 @@ export const calculateIncentive = (block) => {
  * @function calculatePoW
  * @param {number} block - Block to calculate the PoW reward of.
  * @return {number} PoW reward.
- * @see {@link https://github.com/john-connor/vcash/blob/master/src/reward.cpp|GitHub}
+ * @see {@link https://github.com/openvcash/vcash/blob/master/coin/src/reward.cpp|GitHub}
  */
 export const calculatePoW = (block) => {
   let subsidy = 0
@@ -63,6 +63,7 @@ export const calculatePoW = (block) => {
  * Get incentive reward percent schedule.
  * @function incentivePercents
  * @return {array} Reward schedule.
+ * @see {@link https://github.com/openvcash/vcash/blob/master/coin/src/incentive.cpp|GitHub}
  */
 export const incentivePercents = () => {
   return [

@@ -1,6 +1,10 @@
 import React from 'react'
+import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Button, Col, Input, Popover, Row } from 'antd'
+
+/** Load translation namespaces and delay rendering until they are loaded. */
+@translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
 @inject('currencyConverter', 'rates') @observer
@@ -10,6 +14,7 @@ class CurrencyConverter extends React.Component {
     super(props)
     this.currencyConverter = props.currencyConverter
     this.rates = props.rates
+    this.t = props.t
     this.onChange = this.onChange.bind(this)
   }
 
@@ -20,7 +25,7 @@ class CurrencyConverter extends React.Component {
   popoverTitle () {
     return (
       <div className='popoverTitle'>
-        <p>Approximately convert between currencies</p>
+        <p>{this.t('wallet:currencyConverterLong')}</p>
         <div style={{float: 'right'}}>
           <img src='./assets/images/exchangePoloniex.png' />
           <p><span>{parseFloat(this.rates.poloniex.last).toFixed(8)}</span> BTC</p>
@@ -41,7 +46,7 @@ class CurrencyConverter extends React.Component {
           <Input
             type='text'
             name='vcash'
-            placeholder='Amount'
+            placeholder={this.t('wallet:amount')}
             onChange={this.onChange}
             value={this.currencyConverter.vcash}
           />
@@ -53,7 +58,7 @@ class CurrencyConverter extends React.Component {
           <Input
             type='text'
             name='bitcoin'
-            placeholder='Amount'
+            placeholder={this.t('wallet:amount')}
             onChange={this.onChange}
             value={this.currencyConverter.bitcoin}
           />
@@ -65,7 +70,7 @@ class CurrencyConverter extends React.Component {
           <Input
             type='text'
             name='local'
-            placeholder='Amount'
+            placeholder={this.t('wallet:amount')}
             onChange={this.onChange}
             value={this.currencyConverter.local}
           />
@@ -82,7 +87,7 @@ class CurrencyConverter extends React.Component {
         title={this.popoverTitle()}
         content={this.popoverContent()}
       >
-        <Button>Currency converter</Button>
+        <Button>{this.t('wallet:currencyConverter')}</Button>
       </Popover>
     )
   }

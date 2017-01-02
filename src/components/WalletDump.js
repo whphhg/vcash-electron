@@ -1,7 +1,11 @@
 import React from 'react'
+import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Button, Col, Input, Row } from 'antd'
 import { dataPath } from '../utilities/common'
+
+/** Load translation namespaces and delay rendering until they are loaded. */
+@translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
 @inject('wallet') @observer
@@ -9,6 +13,7 @@ import { dataPath } from '../utilities/common'
 class WalletDump extends React.Component {
   constructor (props) {
     super(props)
+    this.t = props.t
     this.wallet = props.wallet
     this.dumpwallet = this.dumpwallet.bind(this)
   }
@@ -22,11 +27,11 @@ class WalletDump extends React.Component {
       <div>
         <p style={{margin: '0 0 5px 0'}}>
           <i className='material-icons md-18'>assignment</i>
-          <span className='text-icon'>Dump public and private key combinations into a wallet<b>.CSV</b> file</span>
+          <span className='text-icon'>{this.t('wallet:dumpLong')}</span>
         </p>
         <Row>
           <Col span={3}>
-            <p style={{margin: '4px 0 0 0'}}>Save into</p>
+            <p style={{margin: '4px 0 0 0'}}>{this.t('wallet:saveInto')}</p>
           </Col>
           <Col span={21}>
             <Input
@@ -42,7 +47,7 @@ class WalletDump extends React.Component {
               onClick={this.dumpwallet}
               disabled={this.wallet.isLocked === true}
             >
-              Dump the wallet
+              {this.t('wallet:dump')}
             </Button>
           </Col>
         </Row>

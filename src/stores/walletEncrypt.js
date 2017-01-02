@@ -1,5 +1,6 @@
 import { action, computed, observable } from 'mobx'
 import { notification } from 'antd'
+import i18next from '../utilities/i18next'
 
 /** Required store instances. */
 import rpc from './rpc'
@@ -45,8 +46,8 @@ class WalletEncrypt {
       if (response !== null) {
         wallet.lockCheck()
         notification.success({
-          message: 'Wallet encrypted',
-          description: 'Please re-start the daemon.',
+          message: i18next.t('wallet:encrypted'),
+          description: i18next.t('wallet:encryptedLong'),
           duration: 0
         })
       }

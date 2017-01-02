@@ -1,5 +1,6 @@
 import { action, computed, observable, reaction } from 'mobx'
 import { notification } from 'antd'
+import i18next from '../utilities/i18next'
 
 /** Required store instances. */
 import rpc from './rpc'
@@ -124,8 +125,8 @@ class KeyImport {
 
         addresses.listreceivedbyaddress()
         notification.success({
-          message: 'Imported',
-          description: 'Private key succcessfuly imported.',
+          message: i18next.t('wallet:privateKeyImported'),
+          description: i18next.t('wallet:privateKeyImportedLong'),
           duration: 6
         })
 

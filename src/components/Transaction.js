@@ -1,4 +1,5 @@
 import React from 'react'
+import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Col, Modal, Row } from 'antd'
 import { Table, Column, Cell } from 'fixed-data-table'
@@ -8,6 +9,9 @@ import moment from 'moment'
 /** Required components. */
 import TableCell from './TableCell'
 
+/** Load translation namespaces and delay rendering until they are loaded. */
+@translate(['wallet'], { wait: true })
+
 /** Make the component reactive and inject MobX stores. */
 @inject('rates', 'transactions') @observer
 
@@ -15,6 +19,7 @@ class Transaction extends React.Component {
   constructor (props) {
     super(props)
     this.rates = props.rates
+    this.t = props.t
     this.transactions = props.transactions
     this.toggleDialog = this.toggleDialog.bind(this)
   }
@@ -27,7 +32,7 @@ class Transaction extends React.Component {
     if (this.transactions.viewingTxid === null) return null
     return (
       <Modal
-        title='Transaction details'
+        title={this.t('wallet:transactionDetails')}
         width={1000}
         visible={this.transactions.viewingTxid !== ''}
         onCancel={this.toggleDialog}
@@ -39,7 +44,7 @@ class Transaction extends React.Component {
               <Col span={6}>
                 <Row>
                   <Col span={5}><i className='material-icons md-18'>label</i></Col>
-                  <Col span={19}>Transaction ID</Col>
+                  <Col span={19}>{this.t('wallet:transactionId')}</Col>
                 </Row>
               </Col>
               <Col span={18}>
@@ -53,7 +58,7 @@ class Transaction extends React.Component {
                   <Col span={6}>
                     <Row>
                       <Col span={5}><i className='material-icons md-18'>extension</i></Col>
-                      <Col span={19}>Included in block</Col>
+                      <Col span={19}>{this.t('wallet:includedInBlock')}</Col>
                     </Row>
                   </Col>
                   <Col span={18}>
@@ -66,11 +71,11 @@ class Transaction extends React.Component {
               <Col span={6}>
                 <Row>
                   <Col span={5}><i className='material-icons md-18'>access_time</i></Col>
-                  <Col span={19}>Relayed on</Col>
+                  <Col span={19}>{this.t('wallet:relayedOn')}</Col>
                 </Row>
               </Col>
               <Col span={18}>
-                {moment(new Date(this.transactions.viewingTx.time)).format('YYYY-MM-DD [at] HH:mm:ss')} ({moment().to(this.transactions.viewingTx.time)})
+                {moment(new Date(this.transactions.viewingTx.time)).format('l - HH:mm:ss')} ({moment().to(this.transactions.viewingTx.time)})
               </Col>
             </Row>
             {
@@ -80,11 +85,11 @@ class Transaction extends React.Component {
                   <Col span={6}>
                     <Row>
                       <Col span={5}><i className='material-icons md-18'>access_time</i></Col>
-                      <Col span={19}>Block {this.transactions.viewingTx.blockhash.substring(0, 4) === '0000' ? 'mined' : 'minted'} on</Col>
+                      <Col span={19}>{this.t('wallet:blockFound')}</Col>
                     </Row>
                   </Col>
                   <Col span={18}>
-                    {moment(new Date(this.transactions.viewingTx.blocktime)).format('YYYY-MM-DD [at] HH:mm:ss')}
+                    {moment(new Date(this.transactions.viewingTx.blocktime)).format('l - HH:mm:ss')}
                   </Col>
                 </Row>
               )
@@ -92,23 +97,23 @@ class Transaction extends React.Component {
             <Row style={{margin: '15px 0 0 0'}}>
               <Col span={6}>
                 <Row>
-                  <Col span={5}><i className='material-icons md-18'>visibility</i></Col>
-                  <Col span={19}>Status</Col>
+                  <Col span={5}><i className='material-icons md-18'>folder</i></Col>
+                  <Col span={19}>{this.t('wallet:category')}</Col>
                 </Row>
               </Col>
               <Col span={18}>
-                {this.transactions.viewingTx.status}
+                {this.t('wallet:' + this.transactions.viewingTx.category)}
               </Col>
             </Row>
             <Row>
               <Col span={6}>
                 <Row>
-                  <Col span={5}><i className='material-icons md-18'>credit_card</i></Col>
-                  <Col span={19}>Amount</Col>
+                  <Col span={5}><i className='material-icons md-18'>monetization_on</i></Col>
+                  <Col span={19}>{this.t('wallet:amount')}</Col>
                 </Row>
               </Col>
               <Col span={18}>
-                <span className={this.transactions.viewingTx.amount > 0 ? 'green' : 'red'}>
+                <span className={this.transactions.viewingTx.color}>
                   {this.transactions.viewingTx.amount.toFixed(6)} XVC ~ {(this.transactions.viewingTx.amount * this.rates.local * this.rates.average).toFixed(2)} {this.rates.localCurrency}
                 </span>
               </Col>
@@ -119,7 +124,7 @@ class Transaction extends React.Component {
                   <Col span={6}>
                     <Row>
                       <Col span={5}><i className='material-icons md-18'>card_giftcard</i></Col>
-                      <Col span={19}>Fee</Col>
+                      <Col span={19}>{this.t('wallet:fee')}</Col>
                     </Row>
                   </Col>
                   <Col span={18} className='red'>
@@ -132,19 +137,11 @@ class Transaction extends React.Component {
               <Col span={6}>
                 <Row>
                   <Col span={5}><i className='material-icons md-18'>done_all</i></Col>
-                  <Col span={19}>Confirmations</Col>
+                  <Col span={19}>{this.t('wallet:confirmations')}</Col>
                 </Row>
               </Col>
               <Col span={18}>
-                <span
-                  className={
-                    this.transactions.viewingTx.confirmations === 0 ||
-                    this.transactions.viewingTx.hasOwnProperty('generated') === true &&
-                    this.transactions.viewingTx.confirmations < 220
-                      ? 'red'
-                      : 'green'
-                  }
-                >
+                <span className={this.transactions.viewingTx.color}>
                   {this.transactions.viewingTx.confirmations}
                 </span>
               </Col>
@@ -157,7 +154,7 @@ class Transaction extends React.Component {
                 href={'https://explorer.vchain.info/tx/' + this.transactions.viewingTx.txid}
                 disabled={this.transactions.viewingTx.hasOwnProperty('blockhash') === false}
               >
-                View transaction on explorer
+                {this.t('wallet:transactionOnExplorer')}
               </a>
             </p>
             <p>
@@ -166,7 +163,7 @@ class Transaction extends React.Component {
                 href={'https://explorer.vchain.info/block/' + this.transactions.viewingTx.blockhash}
                 disabled={this.transactions.viewingTx.hasOwnProperty('blockhash') === false}
               >
-                View block on explorer
+                {this.t('wallet:blockOnExplorer')}
               </a>
             </p>
           </Col>
@@ -181,12 +178,12 @@ class Transaction extends React.Component {
               height={tableHeight(this.transactions.viewingTx.inputs.length, 224)}
             >
               <Column
-                header={<Cell>From</Cell>}
+                header={<Cell>{this.t('wallet:from')}</Cell>}
                 cell={<TableCell data={this.transactions.viewingTx.inputs} column='address' />}
                 width={300}
               />
               <Column
-                header={<Cell>Amount</Cell>}
+                header={<Cell>{this.t('wallet:amount')}</Cell>}
                 cell={<TableCell data={this.transactions.viewingTx.inputs} column='value' />}
                 width={143}
               />
@@ -202,12 +199,12 @@ class Transaction extends React.Component {
               height={tableHeight(this.transactions.viewingTx.outputs.length, 224)}
             >
               <Column
-                header={<Cell>To</Cell>}
+                header={<Cell>{this.t('wallet:to')}</Cell>}
                 cell={<TableCell data={this.transactions.viewingTx.outputs} column='address' />}
                 width={300}
               />
               <Column
-                header={<Cell>Amount</Cell>}
+                header={<Cell>{this.t('wallet:amount')}</Cell>}
                 cell={<TableCell data={this.transactions.viewingTx.outputs} column='value' />}
                 width={143}
               />

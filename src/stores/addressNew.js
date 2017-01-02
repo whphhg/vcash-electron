@@ -1,5 +1,6 @@
 import { action, computed, observable, reaction } from 'mobx'
 import { notification } from 'antd'
+import i18next from '../utilities/i18next'
 
 /** Required store instances. */
 import rpc from './rpc'
@@ -91,7 +92,7 @@ class AddressNew {
         this.setAddress(response[0].result)
         addresses.listreceivedbyaddress()
         notification.success({
-          message: 'New address generated',
+          message: i18next.t('wallet:addressGenerated'),
           description: response[0].result,
           duration: 10
         })

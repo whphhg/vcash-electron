@@ -1,9 +1,13 @@
 import React from 'react'
+import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 
 /** Required components. */
 import RechartsTooltip from './RechartsTooltip'
+
+/** Load translation namespaces and delay rendering until they are loaded. */
+@translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
 @inject('transactions') @observer
@@ -11,6 +15,7 @@ import RechartsTooltip from './RechartsTooltip'
 class TransactionsChart extends React.Component {
   constructor (props) {
     super(props)
+    this.t = props.t
     this.transactions = props.transactions
   }
 
@@ -28,32 +33,32 @@ class TransactionsChart extends React.Component {
         />
         <Line
           type='monotone'
-          dataKey='Sent'
+          dataKey={this.t('wallet:sent')}
           stroke='#b60127'
         />
         <Line
           type='monotone'
-          dataKey='Received'
+          dataKey={this.t('wallet:received')}
           stroke='#33691E'
         />
         <Line
           type='monotone'
-          dataKey='Staking reward'
+          dataKey={this.t('wallet:stakingReward')}
           stroke='#2066cf'
         />
         <Line
           type='monotone'
-          dataKey='Mining reward'
+          dataKey={this.t('wallet:miningReward')}
           stroke='#cf9720'
         />
         <Line
           type='monotone'
-          dataKey='Incentive reward'
+          dataKey={this.t('wallet:incentiveReward')}
           stroke='#7620cf'
         />
         <Tooltip
           content={
-            <RechartsTooltip labelText='Statistics for' />
+            <RechartsTooltip labelText={this.t('wallet:statisticsFor')} />
           }
         />
         <XAxis dataKey='date' />

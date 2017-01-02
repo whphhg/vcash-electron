@@ -1,4 +1,5 @@
 import React from 'react'
+import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Col, Input, Radio, Row } from 'antd'
 
@@ -8,12 +9,16 @@ import CurrencyConverter from './CurrencyConverter'
 import TransactionsChart from './TransactionsChart'
 import TransactionsTable from './TransactionsTable'
 
+/** Load translation namespaces and delay rendering until they are loaded. */
+@translate(['wallet'], { wait: true })
+
 /** Make the component reactive and inject MobX stores. */
 @inject('transactions') @observer
 
 class Transactions extends React.Component {
   constructor (props) {
     super(props)
+    this.t = props.t
     this.transactions = props.transactions
     this.filtersUpdateTimer = null
     this.setFilters = this.setFilters.bind(this)
@@ -47,16 +52,16 @@ class Transactions extends React.Component {
                 defaultValue={this.transactions.showCategory}
                 onChange={this.setShowCategory}
               >
-                <Radio.Button value='all'>All</Radio.Button>
-                <Radio.Button value='0'>Received</Radio.Button>
-                <Radio.Button value='1'>Sent</Radio.Button>
-                <Radio.Button value='2'>Generated</Radio.Button>
+                <Radio.Button value='all'>{this.t('wallet:all')}</Radio.Button>
+                <Radio.Button value='0'>{this.t('wallet:received')}</Radio.Button>
+                <Radio.Button value='1'>{this.t('wallet:sent')}</Radio.Button>
+                <Radio.Button value='2'>{this.t('wallet:generated')}</Radio.Button>
               </Radio.Group>
             </Col>
             <Col span={6}>
               <Input
                 onChange={this.setFilters}
-                placeholder='Filter transactions'
+                placeholder={this.t('wallet:filterTransactions')}
                 addonAfter={<i className='material-icons md-16'>search</i>}
               />
             </Col>

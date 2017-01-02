@@ -1,6 +1,10 @@
 import React from 'react'
+import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Button, Tooltip } from 'antd'
+
+/** Load translation namespaces and delay rendering until they are loaded. */
+@translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
 @inject('wallet') @observer
@@ -8,6 +12,7 @@ import { Button, Tooltip } from 'antd'
 class WalletLock extends React.Component {
   constructor (props) {
     super(props)
+    this.t = props.t
     this.wallet = props.wallet
     this.walletlock = this.walletlock.bind(this)
   }
@@ -22,7 +27,7 @@ class WalletLock extends React.Component {
         {
           this.wallet.isLocked === false && this.wallet.isEncrypted === true && (
             <Tooltip
-              title='Wallet is unlocked'
+              title={this.t('wallet:unlocked')}
               placement='bottomRight'
             >
               <Button

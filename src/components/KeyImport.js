@@ -1,6 +1,10 @@
 import React from 'react'
+import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
+
+/** Load translation namespaces and delay rendering until they are loaded. */
+@translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
 @inject('addresses', 'keyImport', 'wallet') @observer
@@ -10,6 +14,7 @@ class KeyImport extends React.Component {
     super(props)
     this.addresses = props.addresses
     this.keyImport = props.keyImport
+    this.t = props.t
     this.wallet = props.wallet
     this.importprivkey = this.importprivkey.bind(this)
     this.setAccount = this.setAccount.bind(this)
@@ -40,7 +45,7 @@ class KeyImport extends React.Component {
           <Col span={24}>
             <Input
               style={{margin: '0 0 5px 0'}}
-              placeholder='Private key'
+              placeholder={this.t('wallet:privateKey')}
               value={this.keyImport.privateKey}
               onChange={this.setPrivateKey}
             />
@@ -49,7 +54,7 @@ class KeyImport extends React.Component {
         <Row>
           <Col span={24} style={{height: '28px'}}>
             <AutoComplete
-              placeholder='Account name (optional)'
+              placeholder={this.t('wallet:accountName')}
               style={{width: '100%'}}
               getPopupContainer={triggerNode => triggerNode.parentNode}
               value={this.keyImport.account}
@@ -62,13 +67,13 @@ class KeyImport extends React.Component {
           <Col span={16}>
             {
               this.keyImport.errorStatus === 'invalidCharacters' && (
-                <p className='text-error'>You can enter only alphanumerals, dash and space.</p>
+                <p className='text-error'>{this.t('wallet:accountInvalidCharacters')}</p>
               ) ||
               this.keyImport.errorStatus === 'invalidKey' && (
-                <p className='text-error'>The private key is invalid.</p>
+                <p className='text-error'>{this.t('wallet:privateKeyInvalid')}</p>
               ) ||
               this.keyImport.errorStatus === 'isMine' && (
-                <p className='text-error'>The private key belongs to your wallet.</p>
+                <p className='text-error'>{this.t('wallet:privateKeyIsMine')}</p>
               )
             }
           </Col>
@@ -79,7 +84,7 @@ class KeyImport extends React.Component {
               disabled={this.keyImport.errorStatus !== false}
               loading={this.keyImport.loading === true}
             >
-              Import the key
+              {this.t('wallet:privateKeyImport')}
             </Button>
           </Col>
         </Row>
@@ -92,15 +97,13 @@ class KeyImport extends React.Component {
       <Popover
         trigger='click'
         placement='bottomLeft'
-        title='Enter the private key you would like to import'
+        title={this.t('wallet:privateKeyImportLong')}
         visible={this.keyImport.popover === true}
         onVisibleChange={this.togglePopover}
         content={this.popoverContent()}
       >
-        <Button
-          disabled={this.wallet.isLocked === true}
-        >
-          Import private key
+        <Button disabled={this.wallet.isLocked === true}>
+          {this.t('wallet:privateKeyImport')}
         </Button>
       </Popover>
     )
