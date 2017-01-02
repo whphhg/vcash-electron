@@ -1,5 +1,6 @@
 import { action, autorun, observable } from 'mobx'
 import { notification } from 'antd'
+import i18next from '../utilities/i18next'
 
 /** Required store instances. */
 import rpc from './rpc'
@@ -80,11 +81,9 @@ class ChainBlender {
     rpc.call([{ method: 'chainblender', params: [this.status === true ? 'stop' : 'start'] }], (response) => {
       if (response !== null) {
         this.setStatus(!this.status)
-
-        const suffix = this.status === true ? 'started.' : 'stopped.'
         notification.success({
           message: 'ChainBlender',
-          description: 'ChainBlender has been ' + suffix,
+          description: i18next.t('wallet:chainBlender', {context: this.status === true ? 'start' : 'stop'}),
           duration: 6
         })
       }

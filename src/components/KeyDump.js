@@ -1,6 +1,10 @@
 import React from 'react'
+import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
+
+/** Load translation namespaces and delay rendering until they are loaded. */
+@translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
 @inject('addresses', 'keyDump', 'wallet') @observer
@@ -10,6 +14,7 @@ class KeyDump extends React.Component {
     super(props)
     this.addresses = props.addresses
     this.keyDump = props.keyDump
+    this.t = props.t
     this.wallet = props.wallet
     this.dumpprivkey = this.dumpprivkey.bind(this)
     this.setAddress = this.setAddress.bind(this)
@@ -34,7 +39,7 @@ class KeyDump extends React.Component {
         <Row>
           <Col span={24} style={{height: '28px'}}>
             <AutoComplete
-              placeholder='Address'
+              placeholder={this.t('wallet:address')}
               style={{width: '100%'}}
               getPopupContainer={triggerNode => triggerNode.parentNode}
               value={this.keyDump.address}
@@ -56,26 +61,26 @@ class KeyDump extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col span={16}>
+          <Col span={15}>
             {
               this.keyDump.errorStatus === 'invalidCharacters' && (
-                <p className='text-error'>The address contains invalid characters.</p>
+                <p className='text-error'>{this.t('wallet:addressInvalidCharacters')}</p>
               ) ||
               this.keyDump.errorStatus === 'unknownAddress' && (
-                <p className='text-error'>The address does not belong to your wallet.</p>
+                <p className='text-error'>{this.t('wallet:addressUnknown')}</p>
               ) ||
               this.keyDump.errorStatus === 'invalidAddress' && (
-                <p className='text-error'>The address is not valid.</p>
+                <p className='text-error'>{this.t('wallet:addressInvalid')}</p>
               )
             }
           </Col>
-          <Col span={8} className='text-right'>
+          <Col span={9} className='text-right'>
             <Button
               style={{margin: '5px 0 0 0'}}
               onClick={this.dumpprivkey}
               disabled={this.keyDump.errorStatus !== false}
             >
-              Dump the key
+              {this.t('wallet:privateKeyDump')}
             </Button>
           </Col>
         </Row>
@@ -86,7 +91,7 @@ class KeyDump extends React.Component {
   render () {
     return (
       <Popover
-        title='Enter the address you would like to dump'
+        title={this.t('wallet:privateKeyDumpLong')}
         trigger='click'
         placement='bottomLeft'
         content={this.popoverContent()}
@@ -96,7 +101,7 @@ class KeyDump extends React.Component {
         <Button
           disabled={this.wallet.isLocked === true}
         >
-          Dump private key
+          {this.t('wallet:privateKeyDump')}
         </Button>
       </Popover>
     )

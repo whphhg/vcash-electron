@@ -1,10 +1,14 @@
 import React from 'react'
+import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Table, Column, Cell } from 'fixed-data-table'
 import { tableHeight } from '../utilities/common'
 
 /** Required components. */
 import TableCell from './TableCell'
+
+/** Load translation namespaces and delay rendering until they are loaded. */
+@translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
 @inject('network') @observer
@@ -13,6 +17,7 @@ class NetworkEndpointsTable extends React.Component {
   constructor (props) {
     super(props)
     this.network = props.network
+    this.t = props.t
   }
 
   render () {
@@ -25,7 +30,7 @@ class NetworkEndpointsTable extends React.Component {
         height={tableHeight(this.network.byCountry.length, 227)}
       >
         <Column
-          header={<Cell>Known endpoints</Cell>}
+          header={<Cell>{this.t('wallet:endpoints')}</Cell>}
           cell={<TableCell data={this.network.byCountry} column='country' />}
           width={170}
         />

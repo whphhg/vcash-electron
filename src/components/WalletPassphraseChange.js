@@ -1,6 +1,10 @@
 import React from 'react'
+import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Button, Col, Input, Row } from 'antd'
+
+/** Load translation namespaces and delay rendering until they are loaded. */
+@translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
 @inject('walletPassphraseChange') @observer
@@ -8,6 +12,7 @@ import { Button, Col, Input, Row } from 'antd'
 class WalletPassphraseChange extends React.Component {
   constructor (props) {
     super(props)
+    this.t = props.t
     this.walletPassphraseChange = props.walletPassphraseChange
     this.walletpassphrasechange = this.walletpassphrasechange.bind(this)
     this.setPassphrase = this.setPassphrase.bind(this)
@@ -32,31 +37,31 @@ class WalletPassphraseChange extends React.Component {
       <div>
         <p style={{margin: '0 0 5px 0'}}>
           <i className='material-icons md-18'>vpn_key</i>
-          <span className='text-icon'>Change wallet passphrase</span>
+          <span className='text-icon'>{this.t('wallet:passphraseChangeLong')}</span>
         </p>
         <Row>
-          <Col span={3}>
-            <p style={{margin: '4px 0 0 0'}}>Current</p>
-            <p style={{margin: '14px 0 0 0'}}>New</p>
-            <p style={{margin: '14px 0 0 0'}}>Repeat</p>
+          <Col span={4}>
+            <p style={{margin: '4px 0 0 0'}}>{this.t('wallet:passphrase')}</p>
+            <p style={{margin: '14px 0 0 0'}}>{this.t('wallet:passphraseNew')}</p>
+            <p style={{margin: '14px 0 0 0'}}>{this.t('wallet:passphraseRepeat')}</p>
           </Col>
-          <Col span={21}>
+          <Col span={20}>
             <Input
               name='oldPassphrase'
-              placeholder='Current passphrase'
+              placeholder={this.t('wallet:passphraseLong')}
               value={this.walletPassphraseChange.oldPassphrase}
               onChange={this.setPassphrase}
             />
             <Input
               name='newPassphrase'
-              placeholder='New passphrase'
+              placeholder={this.t('wallet:passphraseNewLong')}
               style={{margin: '5px 0 0 0'}}
               value={this.walletPassphraseChange.newPassphrase}
               onChange={this.setPassphrase}
             />
             <Input
               name='repeat'
-              placeholder='Repeat passphrase'
+              placeholder={this.t('wallet:passphraseRepeatLong')}
               style={{margin: '5px 0 0 0'}}
               value={this.walletPassphraseChange.repeat}
               onChange={this.setPassphrase}
@@ -64,16 +69,16 @@ class WalletPassphraseChange extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col offset={3} span={14}>
+          <Col offset={4} span={13}>
             {
               this.walletPassphraseChange.errorStatus === 'notMatching' && (
-                <p className='text-error'>The passphrases you have entered do not match.</p>
+                <p className='text-error'>{this.t('wallet:passphrasesNotMatching')}</p>
               ) ||
               this.walletPassphraseChange.errorStatus === 'incorrectPassphrase' && (
-                <p className='text-error'>The current passphrase you have entered is incorrect.</p>
+                <p className='text-error'>{this.t('wallet:passphraseIncorrect')}</p>
               ) ||
               this.walletPassphraseChange.errorStatus === 'oldEqualsNew' && (
-                <p className='text-error'>The current passphrase you have entered is the same as the new one.</p>
+                <p className='text-error'>{this.t('wallet:passphrasesEqual')}</p>
               )
             }
           </Col>
@@ -83,7 +88,7 @@ class WalletPassphraseChange extends React.Component {
               onClick={this.walletpassphrasechange}
               disabled={this.walletPassphraseChange.errorStatus !== false}
             >
-              Change passphrase
+              {this.t('wallet:passphraseChange')}
             </Button>
           </Col>
         </Row>

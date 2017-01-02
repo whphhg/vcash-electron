@@ -1,5 +1,6 @@
 import { action, computed, observable, reaction } from 'mobx'
 import { notification } from 'antd'
+import i18next from '../utilities/i18next'
 
 /** Required store instances. */
 import rpc from './rpc'
@@ -82,8 +83,8 @@ class WalletPassphraseChange {
         }
 
         notification.success({
-          message: 'Passphrase changed',
-          description: 'Wallet passphrase was changed successfuly.',
+          message: i18next.t('wallet:passphraseChanged'),
+          description: i18next.t('wallet:passphraseChangedLong'),
           duration: 6
         })
       }

@@ -1,6 +1,10 @@
 import React from 'react'
+import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
+
+/** Load translation namespaces and delay rendering until they are loaded. */
+@translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
 @inject('addresses', 'addressNew') @observer
@@ -10,6 +14,7 @@ class AddressNew extends React.Component {
     super(props)
     this.addresses = props.addresses
     this.addressNew = props.addressNew
+    this.t = props.t
     this.getnewaddress = this.getnewaddress.bind(this)
     this.setAccount = this.setAccount.bind(this)
     this.togglePopover = this.togglePopover.bind(this)
@@ -33,7 +38,7 @@ class AddressNew extends React.Component {
         <Row>
           <Col span={24} style={{height: '28px'}}>
             <AutoComplete
-              placeholder='Account name (optional)'
+              placeholder={this.t('wallet:accountName')}
               style={{width: '100%'}}
               getPopupContainer={triggerNode => triggerNode.parentNode}
               value={this.addressNew.account}
@@ -56,10 +61,10 @@ class AddressNew extends React.Component {
           <Col span={14}>
             {
               this.addressNew.errorStatus === 'invalidCharacters' && (
-                <p className='text-error'>You can only enter alphanumerals, dash and space.</p>
+                <p className='text-error'>{this.t('wallet:accountInvalidCharacters')}</p>
               ) ||
               this.addressNew.errorStatus === 'keypoolRanOut' && (
-                <p className='text-error'>Keypool ran out.</p>
+                <p className='text-error'>{this.t('wallet:keypoolRanOut')}</p>
               )
             }
           </Col>
@@ -69,7 +74,7 @@ class AddressNew extends React.Component {
               onClick={this.getnewaddress}
               disabled={this.addressNew.errorStatus !== false}
             >
-              Generate new address
+              {this.t('wallet:addressGenerate')}
             </Button>
           </Col>
         </Row>
@@ -80,14 +85,14 @@ class AddressNew extends React.Component {
   render () {
     return (
       <Popover
-        title='Generate a new receiving address'
+        title={this.t('wallet:addressGenerateLong')}
         trigger='click'
         placement='bottomLeft'
         content={this.popoverContent()}
         visible={this.addressNew.popover === true}
         onVisibleChange={this.togglePopover}
       >
-        <Button>Get new address</Button>
+        <Button>{this.t('wallet:addressGenerate')}</Button>
       </Popover>
     )
   }

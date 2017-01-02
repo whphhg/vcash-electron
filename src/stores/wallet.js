@@ -1,5 +1,6 @@
 import { action, observable, reaction } from 'mobx'
 import { notification } from 'antd'
+import i18next from '../utilities/i18next'
 
 /** Required store instances. */
 import rpc from './rpc'
@@ -114,8 +115,8 @@ class Wallet {
       if (response !== null) {
         this.lockCheck()
         notification.success({
-          message: 'Locked',
-          description: 'The wallet has been locked.',
+          message: i18next.t('wallet:locked'),
+          description: i18next.t('wallet:lockedLong'),
           duration: 6
         })
       }
@@ -130,8 +131,8 @@ class Wallet {
     rpc.call([{ 'method': 'dumpwallet', 'params': [] }], (response) => {
       if (response !== null) {
         notification.success({
-          message: 'Wallet dumped',
-          description: 'Successfuly dumped wallet.csv in your Vcash data directory.',
+          message: i18next.t('wallet:dumped'),
+          description: i18next.t('wallet:dumpedLong'),
           duration: 6
         })
       }

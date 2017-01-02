@@ -1,5 +1,6 @@
 import { action, computed, observable, reaction } from 'mobx'
 import { notification } from 'antd'
+import i18next from '../utilities/i18next'
 
 /** Required store instances. */
 import rpc from './rpc'
@@ -92,8 +93,8 @@ class WalletUnlock {
         this.togglePopover()
         wallet.lockCheck()
         notification.success({
-          message: 'Unlocked',
-          description: 'The wallet has been unlocked.',
+          message: i18next.t('wallet:unlocked'),
+          description: i18next.t('wallet:unlockedLong'),
           duration: 6
         })
       }

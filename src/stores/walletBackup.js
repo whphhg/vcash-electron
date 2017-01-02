@@ -3,6 +3,7 @@ import { notification } from 'antd'
 import { remote } from 'electron'
 import { sep } from 'path'
 import { dataPath } from '../utilities/common'
+import i18next from '../utilities/i18next'
 
 /** Required store instances. */
 import rpc from './rpc'
@@ -75,8 +76,8 @@ class WalletBackup {
         }
 
         notification.success({
-          message: 'Backup successful',
-          description: 'Saved into ' + this.path,
+          message: i18next.t('wallet:backedUp'),
+          description: i18next.t('wallet:savedInto') + ' ' + this.path,
           duration: 6
         })
       }

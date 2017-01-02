@@ -1,5 +1,6 @@
 import { action, autorun, computed, observable } from 'mobx'
 import { calculateIncentive, calculatePoW } from '../utilities/blockRewards'
+import i18next from '../utilities/i18next'
 
 /** Required store instances. */
 import rpc from './rpc'
@@ -59,9 +60,9 @@ class RewardCalculator {
 
       data.push({
         block: i,
-        'Incentive share': Math.round(incentiveReward * 1e6) / 1e6,
-        'Miner share': Math.round((powReward - incentiveReward) * 1e6) / 1e6,
-        'PoW reward': Math.round(powReward * 1e6) / 1e6
+        [i18next.t('wallet:incentiveReward')]: Math.round(incentiveReward * 1e6) / 1e6,
+        [i18next.t('wallet:miningReward')]: Math.round((powReward - incentiveReward) * 1e6) / 1e6,
+        [i18next.t('wallet:powReward')]: Math.round(powReward * 1e6) / 1e6
       })
     }
 
