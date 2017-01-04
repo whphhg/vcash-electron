@@ -1,7 +1,7 @@
 {
   "name": "vcash-ui",
   "productName": "vcash-ui",
-  "version": "0.13.1",
+  "version": "0.14.0",
   "description": "Multi-platform UI for Vcash, a decentralized currency for the internet.",
   "main": "initialize.js",
   "scripts": {
