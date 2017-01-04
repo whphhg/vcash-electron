@@ -15,7 +15,9 @@ class WalletBackup {
    * @property {object} errors - RPC response errors.
    */
   @observable path = dataPath()
-  @observable errors = { backupFailed: false }
+  @observable errors = {
+    backupFailed: false
+  }
 
   /**
    * Get error status.
@@ -56,7 +58,12 @@ class WalletBackup {
    * @function getPath
    */
   getPath () {
-    const path = remote.dialog.showOpenDialog({ properties: ['openDirectory'] })
+    /** Open directory browser. */
+    const path = remote.dialog.showOpenDialog({
+      properties: ['openDirectory']
+    })
+
+    /** Set selected path. */
     if (typeof path !== 'undefined') this.setPath(path[0] + sep)
   }
 
@@ -65,16 +72,25 @@ class WalletBackup {
    * @function backupwallet
    */
   backupwallet () {
-    rpc.call([{ 'method': 'backupwallet', 'params': [this.path] }], (response) => {
+    rpc.call([
+      {
+        method: 'backupwallet',
+        params: [this.path]
+      }
+    ], (response) => {
       if (response !== null) {
         if (response[0].hasOwnProperty('error') === true) {
           switch (response[0].error.code) {
-            /** Backup failed: error_code_wallet_error = -4 */
+            /**
+             * Backup failed,
+             * error_code_wallet_error = -4
+             */
             case -4:
               return this.toggleError('backupFailed')
           }
         }
 
+        /** Display notification. */
         notification.success({
           message: i18next.t('wallet:backedUp'),
           description: i18next.t('wallet:savedInto') + ' ' + this.path,
@@ -88,6 +104,9 @@ class WalletBackup {
 /** Initialize a new globally used store. */
 const walletBackup = new WalletBackup()
 
-/** Export both, initialized store as default export, and store class as named export. */
+/**
+ * Export initialized store as default export,
+ * and store class as named export.
+ */
 export default walletBackup
 export { WalletBackup }

@@ -49,7 +49,10 @@ class CurrencyConverter {
    */
   @action setAmount (amount, convertFrom) {
     /** Check if value is in 0000000[.,]00000000 format. */
-    if (amount.match(/^\d{0,7}(?:\.\d{0,8})?$/) !== null || amount.match(/^\d{0,7}(?:,\d{0,8})?$/) !== null) {
+    if (
+      amount.match(/^\d{0,7}(?:\.\d{0,8})?$/) !== null ||
+      amount.match(/^\d{0,7}(?:,\d{0,8})?$/) !== null
+    ) {
       this.convertFrom = convertFrom
       this[convertFrom] = amount
     }
@@ -70,6 +73,9 @@ class CurrencyConverter {
 /** Initialize a new globally used store. */
 const currencyConverter = new CurrencyConverter()
 
-/** Export both, initialized store as default export, and store class as named export. */
+/**
+ * Export initialized store as default export,
+ * and store class as named export.
+ */
 export default currencyConverter
 export { CurrencyConverter }

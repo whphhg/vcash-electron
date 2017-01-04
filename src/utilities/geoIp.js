@@ -7,13 +7,15 @@
  */
 const geoIp = (ip, callback) => {
   window.fetch('https://geoip.nekudo.com/api/' + ip)
-    .then((response) => { if (response.ok) return response.json() })
+    .then((response) => {
+      if (response.ok) return response.json()
+    })
     .then((data) => {
       if (data.hasOwnProperty('type') === false) return callback(data)
       return callback('')
     })
     .catch((error) => {
-      process.env.NODE_ENV === 'dev' && console.error('https://geoip.nekudo.com/api/' + ip, error.message)
+      console.error('https://geoip.nekudo.com/api/' + ip, error.message)
       return callback(null)
     })
 }

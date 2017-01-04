@@ -41,8 +41,11 @@ class ChainBlender {
       }
     }
 
-    /** Correct status if the daemon is already blending prior to you connecting. */
-    if (response.blendstate === 'active' || response.blendstate === 'passive') {
+    /** Correct status if the daemon is already blending. */
+    if (
+      response.blendstate === 'active' ||
+      response.blendstate === 'passive'
+    ) {
       if (this.status === false) this.setStatus(true)
     }
   }
@@ -61,7 +64,12 @@ class ChainBlender {
    * @function getinfo
    */
   getinfo () {
-    rpc.call([{ method: 'chainblender', params: ['info'] }], (response) => {
+    rpc.call([
+      {
+        method: 'chainblender',
+        params: ['info']
+      }
+    ], (response) => {
       if (response !== null) {
         if (response[0].hasOwnProperty('result') === true) {
           this.setResponse(response[0].result)
@@ -78,12 +86,29 @@ class ChainBlender {
    * @function toggle
    */
   toggle () {
-    rpc.call([{ method: 'chainblender', params: [this.status === true ? 'stop' : 'start'] }], (response) => {
+    rpc.call([
+      {
+        method: 'chainblender',
+        params: [
+          this.status === true
+            ? 'stop'
+            : 'start'
+        ]
+      }
+    ], (response) => {
       if (response !== null) {
         this.setStatus(!this.status)
+
+        /** Display notification. */
         notification.success({
           message: 'ChainBlender',
-          description: i18next.t('wallet:chainBlender', {context: this.status === true ? 'start' : 'stop'}),
+          description: i18next.t('wallet:chainBlender',
+            {
+              context: this.status === true
+                ? 'start'
+                : 'stop'
+            }
+          ),
           duration: 6
         })
       }
@@ -94,6 +119,9 @@ class ChainBlender {
 /** Initialize a new globally used store. */
 const chainBlender = new ChainBlender()
 
-/** Export both, initialized store as default export, and store class as named export. */
+/**
+ * Export initialized store as default export,
+ * and store class as named export.
+ */
 export default chainBlender
 export { ChainBlender }

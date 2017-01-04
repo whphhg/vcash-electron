@@ -14,7 +14,10 @@ class KeyDump {
   @observable address = ''
   @observable privateKey = ''
   @observable popover = false
-  @observable errors = { invalidAddress: false, unknownAddress: false }
+  @observable errors = {
+    invalidAddress: false,
+    unknownAddress: false
+  }
 
   constructor () {
     /** Clear private key and previous RPC response errors on address change. */
@@ -38,7 +41,10 @@ class KeyDump {
    * @return {string|boolean} Current error or false if none.
    */
   @computed get errorStatus () {
-    if (this.address.match(/^[a-zA-Z0-9]{0,34}$/) === null) return 'invalidCharacters'
+    if (this.address.match(/^[a-zA-Z0-9]{0,34}$/) === null) {
+      return 'invalidCharacters'
+    }
+
     if (this.address.length < 34) return 'incompleteAddress'
     if (this.errors.invalidAddress === true) return 'invalidAddress'
     if (this.errors.unknownAddress === true) return 'unknownAddress'
@@ -92,20 +98,32 @@ class KeyDump {
    * @function dumpprivkey
    */
   dumpprivkey () {
-    rpc.call([{ method: 'dumpprivkey', params: [this.address] }], (response) => {
+    rpc.call([
+      {
+        method: 'dumpprivkey',
+        params: [this.address]
+      }
+    ], (response) => {
       if (response !== null) {
         if (response[0].hasOwnProperty('error') === true) {
           switch (response[0].error.code) {
-            /** Unknown address: error_code_wallet_error = -4 */
+            /**
+             * Unknown address,
+             * error_code_wallet_error = -4
+             */
             case -4:
               return this.toggleError('unknownAddress')
 
-            /** Invalid address: error_code_invalid_address_or_key = -5 */
+            /**
+             * Invalid address,
+             * error_code_invalid_address_or_key = -5
+             */
             case -5:
               return this.toggleError('invalidAddress')
           }
         }
 
+        /** Set the private key. */
         this.setPrivateKey(response[0].result)
       }
     })
@@ -115,6 +133,9 @@ class KeyDump {
 /** Initialize a new globally used store. */
 const keyDump = new KeyDump()
 
-/** Export both, initialized store as default export, and store class as named export. */
+/**
+ * Export initialized store as default export,
+ * and store class as named export.
+ */
 export default keyDump
 export { KeyDump }

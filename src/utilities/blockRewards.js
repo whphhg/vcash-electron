@@ -8,7 +8,9 @@ export const calculateIncentive = (block) => {
   const percents = incentivePercents()
   const percentsLen = percents.length - 1
 
-  if (block >= percents[percentsLen].block) return percents[percentsLen].percent
+  if (block >= percents[percentsLen].block) {
+    return percents[percentsLen].percent
+  }
 
   for (let i in percents) {
     if (block < percents[i].block) return percents[i].percent - 1
@@ -20,7 +22,6 @@ export const calculateIncentive = (block) => {
  * @function calculatePoW
  * @param {number} block - Block to calculate the PoW reward of.
  * @return {number} PoW reward.
- * @see {@link https://github.com/openvcash/vcash/blob/master/coin/src/reward.cpp|GitHub}
  */
 export const calculatePoW = (block) => {
   let subsidy = 0
@@ -63,7 +64,6 @@ export const calculatePoW = (block) => {
  * Get incentive reward percent schedule.
  * @function incentivePercents
  * @return {array} Reward schedule.
- * @see {@link https://github.com/openvcash/vcash/blob/master/coin/src/incentive.cpp|GitHub}
  */
 export const incentivePercents = () => {
   return [

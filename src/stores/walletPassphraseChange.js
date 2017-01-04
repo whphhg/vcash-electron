@@ -17,7 +17,9 @@ class WalletPassphraseChange {
   @observable oldPassphrase = ''
   @observable newPassphrase = ''
   @observable repeat = ''
-  @observable errors = { incorrectPassphrase: false }
+  @observable errors = {
+    incorrectPassphrase: false
+  }
 
   constructor () {
     /** Clear previous RPC errors on oldPassphrase change. */
@@ -32,9 +34,16 @@ class WalletPassphraseChange {
    * @return {string|boolean} Current error or false if none.
    */
   @computed get errorStatus () {
-    if (this.oldPassphrase.length < 1 || this.newPassphrase < 1 || this.repeat.length < 1) return 'emptyFields'
+    /** Get lengths only once. */
+    const len = {
+      old: this.oldPassphrase.length,
+      new: this.newPassphrase.length,
+      repeat: this.repeat.length
+    }
+
+    if (len.old < 1 || len.new < 1 || len.repeat < 1) return 'emptyFields'
     if (this.newPassphrase === this.oldPassphrase) return 'oldEqualsNew'
-    if (this.newPassphrase.length !== this.repeat.length) return 'differentLengths'
+    if (len.new !== len.repeat) return 'differentLengths'
     if (this.newPassphrase !== this.repeat) return 'notMatching'
     if (this.errors.incorrectPassphrase === true) return 'incorrectPassphrase'
     return false
@@ -71,17 +80,31 @@ class WalletPassphraseChange {
    * @function walletpassphrasechange
    */
   walletpassphrasechange () {
-    rpc.call([{ method: 'walletpassphrasechange', params: [this.oldPassphrase, this.newPassphrase] }], (response) => {
+    rpc.call([
+      {
+        method: 'walletpassphrasechange',
+        params: [
+          this.oldPassphrase,
+          this.newPassphrase
+        ]
+      }
+    ], (response) => {
       if (response !== null) {
         if (response[0].hasOwnProperty('error') === true) {
           switch (response[0].error.code) {
-            /** Incorrect passphrase: error_code_wallet_passphrase_incorrect = -14 */
+            /**
+             * Incorrect passphrase,
+             * error_code_wallet_passphrase_incorrect = -14
+             */
             case -14:
+              /** Update wallet status. */
               wallet.lockCheck()
+
               return this.toggleError('incorrectPassphrase')
           }
         }
 
+        /** Display notification. */
         notification.success({
           message: i18next.t('wallet:passphraseChanged'),
           description: i18next.t('wallet:passphraseChangedLong'),
@@ -95,6 +118,9 @@ class WalletPassphraseChange {
 /** Initialize a new globally used store. */
 const walletPassphraseChange = new WalletPassphraseChange()
 
-/** Export both, initialized store as default export, and store class as named export. */
+/**
+ * Export initialized store as default export,
+ * and store class as named export.
+ */
 export default walletPassphraseChange
 export { WalletPassphraseChange }

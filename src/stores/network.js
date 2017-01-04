@@ -45,7 +45,7 @@ class Network {
               setTimeout(() => {
                 geoIp(nodes[i].ip, (response) => {
                   if (response !== null) {
-                    process.env.NODE_ENV === 'dev' && console.info('HTTPS: Geo IP lookup for ' + nodes[i].ip)
+                    console.info('HTTPS: Geo IP lookup for ' + nodes[i].ip)
                     resolve(response)
                   } else {
                     reject(nodes[i].ip)
@@ -62,7 +62,7 @@ class Network {
       if (promises.length > 0) {
         Promise.all(promises)
           .then(response => { this.setGeoData(response) })
-          .catch(error => { process.env.NODE_ENV === 'dev' && console.error('RPC: IP geo lookups promises error.', error) })
+          .catch(error => { console.error('GeoIP: Promises error.', error) })
       }
     }, 2 * 1000)
   }
@@ -73,7 +73,10 @@ class Network {
    * @return {number} TCP connections.
    */
   @computed get tcp () {
-    if (this.networkInfo.hasOwnProperty('tcp') === true) return this.networkInfo.tcp.connections
+    if (this.networkInfo.hasOwnProperty('tcp') === true) {
+      return this.networkInfo.tcp.connections
+    }
+
     return 0
   }
 
@@ -83,7 +86,10 @@ class Network {
    * @return {number} UDP connections.
    */
   @computed get udp () {
-    if (this.networkInfo.hasOwnProperty('udp') === true) return this.networkInfo.udp.connections
+    if (this.networkInfo.hasOwnProperty('udp') === true) {
+      return this.networkInfo.udp.connections
+    }
+
     return 0
   }
 
@@ -106,7 +112,12 @@ class Network {
             os: item.subver.split(' ')[1].replace(')/', '')
           }
 
-          if (this.geoData.has(peer.ip) === true) peer = { ...peer, ...this.geoData.get(peer.ip) }
+          if (this.geoData.has(peer.ip) === true) {
+            peer = {
+              ...peer,
+              ...this.geoData.get(peer.ip)
+            }
+          }
           peers.push(peer)
         }
 
@@ -130,7 +141,13 @@ class Network {
           ip: item.split(':')[0]
         }
 
-        if (this.geoData.has(endpoint.ip) === true) endpoint = { ...endpoint, ...this.geoData.get(endpoint.ip) }
+        if (this.geoData.has(endpoint.ip) === true) {
+          endpoint = {
+            ...endpoint,
+            ...this.geoData.get(endpoint.ip)
+          }
+        }
+
         endpoints.push(endpoint)
         return endpoints
       }, [])
@@ -147,7 +164,9 @@ class Network {
   @computed get byCountry () {
     const countries = this.endpoints.reduce((countries, item) => {
       if (item.hasOwnProperty('country') === true) {
-        const prev = countries.has(item.country) === true ? countries.get(item.country) : 0
+        const prev = countries.has(item.country) === true
+          ? countries.get(item.country)
+          : 0
 
         countries.set(item.country, {
           country: item.country,
@@ -171,7 +190,10 @@ class Network {
    * @return {number} Known endpoints.
    */
   @computed get knownEndpoints () {
-    if (this.networkInfo.hasOwnProperty('endpoints') === true) return this.networkInfo.endpoints.length
+    if (this.networkInfo.hasOwnProperty('endpoints') === true) {
+      return this.networkInfo.endpoints.length
+    }
+
     return 0
   }
 
@@ -219,7 +241,16 @@ class Network {
    * @function getnetworkinfo
    */
   getnetworkinfo () {
-    rpc.call([{ method: 'getnetworkinfo', params: [] }, { method: 'getpeerinfo', params: [] }], (response) => {
+    rpc.call([
+      {
+        method: 'getnetworkinfo',
+        params: []
+      },
+      {
+        method: 'getpeerinfo',
+        params: []
+      }
+    ], (response) => {
       if (response !== null) {
         this.setResponse(response[0].result, response[1].result)
 
@@ -233,6 +264,9 @@ class Network {
 /** Initialize a new globally used store. */
 const network = new Network()
 
-/** Export both, initialized store as default export, and store class as named export. */
+/**
+ * Export initialized store as default export,
+ * and store class as named export.
+ */
 export default network
 export { Network }

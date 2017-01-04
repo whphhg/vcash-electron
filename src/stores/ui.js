@@ -58,6 +58,9 @@ class UI {
 /** Initialize a new globally used store. */
 const ui = new UI()
 
-/** Export both, initialized store as default export, and store class as named export. */
+/**
+ * Export initialized store as default export,
+ * and store class as named export.
+ */
 export default ui
 export { UI }

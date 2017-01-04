@@ -21,8 +21,14 @@ class WalletEncrypt {
    * @return {string|boolean} Current error or false if none.
    */
   @computed get errorStatus () {
-    if (this.passphrase.length < 1 || this.repeat.length < 1) return 'emptyFields'
-    if (this.passphrase.length !== this.repeat.length) return 'differentLengths'
+    /** Get lengths only once. */
+    const len = {
+      pass: this.passphrase.length,
+      repeat: this.repeat.length
+    }
+
+    if (len.pass < 1 || len.repeat < 1) return 'emptyFields'
+    if (len.pass !== len.repeat) return 'differentLengths'
     if (this.passphrase !== this.repeat) return 'notMatching'
     return false
   }
@@ -42,9 +48,17 @@ class WalletEncrypt {
    * @function encryptwallet
    */
   encryptwallet () {
-    rpc.call([{ method: 'encryptwallet', params: [this.passphrase] }], (response) => {
+    rpc.call([
+      {
+        method: 'encryptwallet',
+        params: [this.passphrase]
+      }
+    ], (response) => {
       if (response !== null) {
+        /** Update wallet status. */
         wallet.lockCheck()
+
+        /** Display notification. */
         notification.success({
           message: i18next.t('wallet:encrypted'),
           description: i18next.t('wallet:encryptedLong'),
@@ -58,6 +72,9 @@ class WalletEncrypt {
 /** Initialize a new globally used store. */
 const walletEncrypt = new WalletEncrypt()
 
-/** Export both, initialized store as default export, and store class as named export. */
+/**
+ * Export initialized store as default export,
+ * and store class as named export.
+ */
 export default walletEncrypt
 export { WalletEncrypt }

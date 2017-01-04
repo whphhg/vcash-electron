@@ -20,7 +20,7 @@ class RPC {
    * Execute RPC request(s).
    * @function call
    * @param {array} options - RPC request objects.
-   * @param {function} callback - Function to call with RPC response or null if error.
+   * @param {function} callback - Call with RPC response or null if error.
    */
   call (options, callback) {
     options.map((option) => {
@@ -30,19 +30,24 @@ class RPC {
 
     const init = {
       method: 'POST',
-      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(options)
     }
 
     window.fetch('http://127.0.0.1:9195', init)
-      .then((response) => { if (response.ok) return response.json() })
+      .then((response) => {
+        if (response.ok) return response.json()
+      })
       .then((data) => {
         if (this.status !== true) this.setStatus(true)
         return callback(data)
       })
       .catch((error) => {
         if (this.status !== false) this.setStatus(false)
-        process.env.NODE_ENV === 'dev' && console.error('RPC:', error.message)
+        console.error('RPC:', error.message)
         return callback(null)
       })
   }
@@ -51,6 +56,9 @@ class RPC {
 /** Initialize a new globally used store. */
 const rpc = new RPC()
 
-/** Export both, initialized store as default export, and store class as named export. */
+/**
+ * Export initialized store as default export,
+ * and store class as named export.
+ */
 export default rpc
 export { RPC }

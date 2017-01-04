@@ -18,11 +18,21 @@ class RewardCalculator {
   constructor () {
     /** Auto check if block exists and retrieve block time. */
     autorun(() => {
-      rpc.call([{ method: 'getblockhash', params: [this.blockInt] }], (response) => {
+      rpc.call([
+        {
+          method: 'getblockhash',
+          params: [this.blockInt]
+        }
+      ], (response) => {
         if (response !== null) {
           /** If block exists, get blocktime. */
           if (response[0].hasOwnProperty('result') === true) {
-            rpc.call([{ method: 'getblock', params: [response[0].result] }], (response) => {
+            rpc.call([
+              {
+                method: 'getblock',
+                params: [response[0].result]
+              }
+            ], (response) => {
               if (response !== null) {
                 return this.setBlocktime(response[0].result.time * 1000)
               }
@@ -42,7 +52,9 @@ class RewardCalculator {
    * @return {number} Block.
    */
   @computed get blockInt () {
-    return this.block === '' ? 0 : parseInt(this.block)
+    return this.block === ''
+      ? 0
+      : parseInt(this.block)
   }
 
   /**
@@ -57,11 +69,12 @@ class RewardCalculator {
       const incentivePercent = calculateIncentive(i)
       const powReward = calculatePoW(i)
       const incentiveReward = (powReward / 100) * incentivePercent
+      const miningReward = powReward - incentiveReward
 
       data.push({
         block: i,
         [i18next.t('wallet:incentiveReward')]: Math.round(incentiveReward * 1e6) / 1e6,
-        [i18next.t('wallet:miningReward')]: Math.round((powReward - incentiveReward) * 1e6) / 1e6,
+        [i18next.t('wallet:miningReward')]: Math.round(miningReward * 1e6) / 1e6,
         [i18next.t('wallet:powReward')]: Math.round(powReward * 1e6) / 1e6
       })
     }
@@ -113,7 +126,10 @@ class RewardCalculator {
    */
   @computed get time () {
     if (this.blocktime !== 0) return this.blocktime
-    return new Date().getTime() + (1000 * 140 * (this.blockInt - wallet.info.blocks))
+
+    /** Return an approximation. */
+    return new Date().getTime() +
+      (1000 * 140 * (this.blockInt - wallet.info.blocks))
   }
 
   /**
@@ -122,7 +138,9 @@ class RewardCalculator {
    * @param {number} block - Block number.
    */
   @action setBlock (block = '') {
-    if (block.toString().match(/^[0-9]{0,7}$/) !== null) this.block = block
+    if (block.toString().match(/^[0-9]{0,7}$/) !== null) {
+      this.block = block
+    }
   }
 
   /**
@@ -138,6 +156,9 @@ class RewardCalculator {
 /** Initialize a new globally used store. */
 const rewardCalculator = new RewardCalculator()
 
-/** Export both, initialized store as default export, and store class as named export. */
+/**
+ * Export initialized store as default export,
+ * and store class as named export.
+ */
 export default rewardCalculator
 export { RewardCalculator }
