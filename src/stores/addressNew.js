@@ -17,7 +17,9 @@ class AddressNew {
   @observable account = ''
   @observable address = ''
   @observable popover = false
-  @observable errors = { keypoolRanOut: false }
+  @observable errors = {
+    keypoolRanOut: false
+  }
 
   constructor () {
     /** Clear address when popover closes. */
@@ -34,7 +36,10 @@ class AddressNew {
    * @return {string|boolean} Current error or false if none.
    */
   @computed get errorStatus () {
-    if (this.account.match(/^[a-zA-Z0-9 -]{0,100}$/) === null) return 'invalidCharacters'
+    if (this.account.match(/^[a-zA-Z0-9 -]{0,100}$/) === null) {
+      return 'invalidCharacters'
+    }
+
     if (this.errors.keypoolRanOut === true) return 'keypoolRanOut'
     return false
   }
@@ -79,18 +84,31 @@ class AddressNew {
    * @function getnewaddress
    */
   getnewaddress () {
-    rpc.call([{ method: 'getnewaddress', params: [this.account] }], (response) => {
+    rpc.call([
+      {
+        method: 'getnewaddress',
+        params: [this.account]
+      }
+    ], (response) => {
       if (response !== null) {
         if (response[0].hasOwnProperty('error') === true) {
           switch (response[0].error.code) {
-            /** Keypool ran out: error_code_wallet_keypool_ran_out = -12 */
+            /**
+             * Keypool ran out,
+             * error_code_wallet_keypool_ran_out = -12
+             */
             case -12:
               return this.toggleError('keypoolRanOut')
           }
         }
 
+        /** Set generated address. */
         this.setAddress(response[0].result)
+
+        /** Update address list. */
         addresses.listreceivedbyaddress()
+
+        /** Display notification. */
         notification.success({
           message: i18next.t('wallet:addressGenerated'),
           description: response[0].result,
@@ -104,6 +122,9 @@ class AddressNew {
 /** Initialize a new globally used store. */
 const addressNew = new AddressNew()
 
-/** Export both, initialized store as default export, and store class as named export. */
+/**
+ * Export initialized store as default export,
+ * and store class as named export.
+ */
 export default addressNew
 export { AddressNew }

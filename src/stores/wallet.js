@@ -78,7 +78,12 @@ class Wallet {
    * @function getinfo
    */
   getinfo () {
-    rpc.call([{ method: 'getinfo', params: [] }], (response) => {
+    rpc.call([
+      {
+        method: 'getinfo',
+        params: []
+      }
+    ], (response) => {
       if (response !== null) {
         this.setResponse('info', response[0].result)
       }
@@ -93,7 +98,12 @@ class Wallet {
    * @function getincentiveinfo
    */
   getincentiveinfo () {
-    rpc.call([{ method: 'getincentiveinfo', params: [] }], (response) => {
+    rpc.call([
+      {
+        method: 'getincentiveinfo',
+        params: []
+      }
+    ], (response) => {
       if (response !== null) {
         this.setResponse('incentive', response[0].result)
 
@@ -111,9 +121,17 @@ class Wallet {
     /** If active, toggle ChainBlender off before locking the wallet. */
     if (chainBlender.status === true) chainBlender.toggle()
 
-    rpc.call([{ method: 'walletlock', params: [] }], (response) => {
+    rpc.call([
+      {
+        method: 'walletlock',
+        params: []
+      }
+    ], (response) => {
       if (response !== null) {
+        /** Update wallet status. */
         this.lockCheck()
+
+        /** Display notification. */
         notification.success({
           message: i18next.t('wallet:locked'),
           description: i18next.t('wallet:lockedLong'),
@@ -128,8 +146,14 @@ class Wallet {
    * @function dumpwallet
    */
   dumpwallet () {
-    rpc.call([{ 'method': 'dumpwallet', 'params': [] }], (response) => {
+    rpc.call([
+      {
+        method: 'dumpwallet',
+        params: []
+      }
+    ], (response) => {
       if (response !== null) {
+        /** Display notification. */
         notification.success({
           message: i18next.t('wallet:dumped'),
           description: i18next.t('wallet:dumpedLong'),
@@ -144,18 +168,32 @@ class Wallet {
    * @function lockCheck
    */
   lockCheck () {
-    rpc.call([{ method: 'walletpassphrase', params: [] }], (response) => {
+    rpc.call([
+      {
+        method: 'walletpassphrase',
+        params: []
+      }
+    ], (response) => {
       if (response !== null) {
         switch (response[0].error.code) {
-          /** Unencrypted: error_code_wallet_wrong_enc_state = -15 */
+          /**
+           * Unencrypted,
+           * error_code_wallet_wrong_enc_state = -15
+           */
           case -15:
             return this.setStatus(false, false)
 
-          /** Encrypted and unlocked: error_code_wallet_already_unlocked = -17 */
+          /**
+           * Encrypted and unlocked,
+           * error_code_wallet_already_unlocked = -17
+           */
           case -17:
             return this.setStatus(true, false)
 
-          /** Encrypted and locked: error_code_invalid_params = -32602 */
+          /**
+           * Encrypted and locked,
+           * error_code_invalid_params = -32602
+           */
           case -32602:
             return this.setStatus(true, true)
         }
@@ -167,6 +205,9 @@ class Wallet {
 /** Initialize a new globally used store. */
 const wallet = new Wallet()
 
-/** Export both, initialized store as default export, and store class as named export. */
+/**
+ * Export initialized store as default export,
+ * and store class as named export.
+ */
 export default wallet
 export { Wallet }

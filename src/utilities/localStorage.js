@@ -2,16 +2,16 @@
  * Get item from local storage.
  * @function getItem
  * @param {string} key - Retrieve the value of this key.
- * @return {string|number|array|object|undefined} Stored key value or undefined if it doesn't exist.
+ * @return {any} Stored key value or undefined if it doesn't exist.
  */
 export const getItem = (key) => {
   const item = window.localStorage.getItem(key)
 
   if (item === null) {
-    process.env.NODE_ENV === 'dev' && console.warn('LocalStorage: ' + key + ' not found.')
+    console.warn('LocalStorage: ' + key + ' not found.')
     return undefined
   } else {
-    process.env.NODE_ENV === 'dev' && console.info('LocalStorage: Loaded ' + key + '.')
+    console.info('LocalStorage: Loaded ' + key + '.')
     return JSON.parse(item)
   }
 }

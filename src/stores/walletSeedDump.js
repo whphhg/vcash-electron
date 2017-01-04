@@ -10,7 +10,9 @@ class WalletSeedDump {
    * @property {object} errors - RPC response errors.
    */
   @observable seed = ''
-  @observable errors = { notDeterministic: false }
+  @observable errors = {
+    notDeterministic: false
+  }
 
   /**
    * Get error status.
@@ -51,16 +53,25 @@ class WalletSeedDump {
    * @function dumpwalletseed
    */
   dumpwalletseed () {
-    rpc.call([{ 'method': 'dumpwalletseed', 'params': [] }], (response) => {
+    rpc.call([
+      {
+        method: 'dumpwalletseed',
+        params: []
+      }
+    ], (response) => {
       if (response !== null) {
         if (response[0].hasOwnProperty('error') === true) {
           switch (response[0].error.code) {
-            /** Not deterministic: error_code_wallet_error = -4 */
+            /**
+             * Not deterministic,
+             * error_code_wallet_error = -4
+             */
             case -4:
               return this.toggleError('notDeterministic')
           }
         }
 
+        /** Set the seed. */
         this.setSeed(response[0].result)
       }
     })
@@ -70,6 +81,9 @@ class WalletSeedDump {
 /** Initialize a new globally used store. */
 const walletSeedDump = new WalletSeedDump()
 
-/** Export both, initialized store as default export, and store class as named export. */
+/**
+ * Export initialized store as default export,
+ * and store class as named export.
+ */
 export default walletSeedDump
 export { WalletSeedDump }

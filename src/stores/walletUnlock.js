@@ -15,7 +15,9 @@ class WalletUnlock {
    */
   @observable passphrase = ''
   @observable popover = false
-  @observable errors = { incorrectPassphrase: false }
+  @observable errors = {
+    incorrectPassphrase: false
+  }
 
   constructor () {
     /** Clear previous RPC response errors on passphrase change. */
@@ -80,18 +82,31 @@ class WalletUnlock {
    * @function walletpassphrase
    */
   walletpassphrase () {
-    rpc.call([{ method: 'walletpassphrase', params: [this.passphrase] }], (response) => {
+    rpc.call([
+      {
+        method: 'walletpassphrase',
+        params: [this.passphrase]
+      }
+    ], (response) => {
       if (response !== null) {
         if (response[0].hasOwnProperty('error') === true) {
           switch (response[0].error.code) {
-            /** Incorrect passphrase: error_code_wallet_passphrase_incorrect = -14 */
+            /**
+             * Incorrect passphrase,
+             * error_code_wallet_passphrase_incorrect = -14
+             */
             case -14:
               return this.toggleError('incorrectPassphrase')
           }
         }
 
+        /** Close popover. */
         this.togglePopover()
+
+        /** Update wallet status. */
         wallet.lockCheck()
+
+        /** Display notification. */
         notification.success({
           message: i18next.t('wallet:unlocked'),
           description: i18next.t('wallet:unlockedLong'),
@@ -105,6 +120,9 @@ class WalletUnlock {
 /** Initialize a new globally used store. */
 const walletUnlock = new WalletUnlock()
 
-/** Export both, initialized store as default export, and store class as named export. */
+/**
+ * Export initialized store as default export,
+ * and store class as named export.
+ */
 export default walletUnlock
 export { WalletUnlock }

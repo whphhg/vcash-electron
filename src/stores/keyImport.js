@@ -19,7 +19,10 @@ class KeyImport {
   @observable account = ''
   @observable loading = false
   @observable popover = false
-  @observable errors = { invalidKey: false, isMine: false }
+  @observable errors = {
+    invalidKey: false,
+    isMine: false
+  }
 
   constructor () {
     /** Clear previous RPC response errors on private key change. */
@@ -41,7 +44,10 @@ class KeyImport {
    * @return {string|boolean} Current error or false if none.
    */
   @computed get errorStatus () {
-    if (this.account.match(/^[a-zA-Z0-9 -]{0,100}$/) === null) return 'invalidCharacters'
+    if (this.account.match(/^[a-zA-Z0-9 -]{0,100}$/) === null) {
+      return 'invalidCharacters'
+    }
+
     if (this.privateKey.length < 51) return 'incompleteKey'
     if (this.errors.invalidKey === true) return 'invalidKey'
     if (this.errors.isMine === true) return 'isMine'
@@ -79,7 +85,9 @@ class KeyImport {
    * @param {string} privateKey - Private key.
    */
   @action setPrivateKey (privateKey = '') {
-    if (privateKey.match(/^[a-zA-Z0-9]{0,52}$/) !== null) this.privateKey = privateKey
+    if (privateKey.match(/^[a-zA-Z0-9]{0,52}$/) !== null) {
+      this.privateKey = privateKey
+    }
   }
 
   /**
@@ -106,30 +114,48 @@ class KeyImport {
     /** Disable button and toggle on loading indicator. */
     this.toggleLoading()
 
-    rpc.call([{ method: 'importprivkey', params: [this.privateKey, this.account] }], (response) => {
+    rpc.call([
+      {
+        method: 'importprivkey',
+        params: [
+          this.privateKey,
+          this.account
+        ]
+      }
+    ], (response) => {
       if (response !== null) {
         /** Re-enable button and toggle off loading indicator. */
         this.toggleLoading()
 
         if (response[0].hasOwnProperty('error') === true) {
           switch (response[0].error.code) {
-            /** Is mine: error_code_wallet_error = -4 */
+            /**
+             * Is mine,
+             * error_code_wallet_error = -4
+             */
             case -4:
               return this.toggleError('isMine')
 
-            /** Invalid key: error_code_invalid_address_or_key = -5 */
+            /**
+             * Invalid key,
+             * error_code_invalid_address_or_key = -5
+             */
             case -5:
               return this.toggleError('invalidKey')
           }
         }
 
+        /** Update address list. */
         addresses.listreceivedbyaddress()
+
+        /** Display notification. */
         notification.success({
           message: i18next.t('wallet:privateKeyImported'),
           description: i18next.t('wallet:privateKeyImportedLong'),
           duration: 6
         })
 
+        /** Close popover if open. */
         if (this.popover === true) this.togglePopover()
       }
     })
@@ -139,6 +165,9 @@ class KeyImport {
 /** Initialize a new globally used store. */
 const keyImport = new KeyImport()
 
-/** Export both, initialized store as default export, and store class as named export. */
+/**
+ * Export initialized store as default export,
+ * and store class as named export.
+ */
 export default keyImport
 export { KeyImport }

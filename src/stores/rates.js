@@ -49,7 +49,10 @@ class Rates {
    * @return {number} Local bitcoin price.
    */
   @computed get local () {
-    if (this.bitcoinAverage.hasOwnProperty(this.localCurrency) === true) return this.bitcoinAverage[this.localCurrency].last
+    if (this.bitcoinAverage.hasOwnProperty(this.localCurrency) === true) {
+      return this.bitcoinAverage[this.localCurrency].last
+    }
+
     return 0
   }
 
@@ -108,7 +111,7 @@ class Rates {
     window.fetch('https://api.bitcoinaverage.com/ticker/global/all')
       .then((response) => { if (response.ok) return response.json() })
       .then((priceIndex) => { this.setBitcoinAverage(priceIndex) })
-      .catch((error) => { process.env.NODE_ENV === 'dev' && console.error('https://api.bitcoinaverage.com/ticker/global/all:', error.message) })
+      .catch((error) => { console.error('BitcoinAverage:', error.message) })
     setTimeout(() => { this.fetchBitcoinAverage() }, 120 * 1000)
   }
 
@@ -120,7 +123,7 @@ class Rates {
     window.fetch('https://poloniex.com/public?command=returnTicker')
       .then((response) => { if (response.ok) return response.json() })
       .then((ticker) => { this.setPoloniex(ticker) })
-      .catch((error) => { process.env.NODE_ENV === 'dev' && console.error('https://poloniex.com/public?command=returnTicker:', error.message) })
+      .catch((error) => { console.error('Poloniex:', error.message) })
     setTimeout(() => { this.fetchPoloniex() }, 30 * 1000)
   }
 
@@ -132,7 +135,7 @@ class Rates {
     window.fetch('https://bittrex.com/api/v1.1/public/getmarketsummary?market=btc-xvc')
       .then((response) => { if (response.ok) return response.json() })
       .then((ticker) => { this.setBittrex(ticker) })
-      .catch((error) => { process.env.NODE_ENV === 'dev' && console.error('https://bittrex.com/api/v1.1/public/getmarketsummary?market=btc-xvc:', error.message) })
+      .catch((error) => { console.error('Bittrex:', error.message) })
     setTimeout(() => { this.fetchBittrex() }, 60 * 1000)
   }
 }
@@ -140,6 +143,9 @@ class Rates {
 /** Initialize a new globally used store. */
 const rates = new Rates()
 
-/** Export both, initialized store as default export, and store class as named export. */
+/**
+ * Export initialized store as default export,
+ * and store class as named export.
+ */
 export default rates
 export { Rates }
