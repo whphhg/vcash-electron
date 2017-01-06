@@ -11,9 +11,10 @@ class Addresses {
    */
   @observable receivedByAddress = []
 
-  constructor() {
-    /** Start update loop when RPC becomes available. */
+  constructor () {
+    /** When RPC status changes. */
     reaction(() => rpc.status, (status) => {
+      /** Run when RPC becomes available. */
       if (status === true) this.listreceivedbyaddress()
     })
   }
@@ -23,7 +24,7 @@ class Addresses {
    * @function accounts
    * @return {array} Account list.
    */
-  @computed get accounts() {
+  @computed get accounts () {
     /** Reduce the array and add account names to the Set. */
     let accounts = this.receivedByAddress.reduce((accounts, obj) => {
       if (obj.account !== '') accounts.add(obj.account)
@@ -45,7 +46,7 @@ class Addresses {
    * @function list
    * @return {array} Address list.
    */
-  @computed get list() {
+  @computed get list () {
     /** Reduce the array and add addresses to the Set. */
     const addresses = this.receivedByAddress.reduce((addresses, obj) => {
       addresses.add(obj.address)
@@ -60,9 +61,13 @@ class Addresses {
    * @function all
    * @return {array} Addresses data with local amounts.
    */
-  @computed get all() {
+  @computed get all () {
     return this.receivedByAddress.reduce((addresses, obj) => {
-      addresses.push({ ...obj, localAmount: obj.amount * rates.local * rates.average })
+      addresses.push({
+        ...obj,
+        localAmount: obj.amount * rates.local * rates.average
+      })
+
       return addresses
     }, [])
   }
@@ -72,7 +77,7 @@ class Addresses {
    * @function setResponse
    * @param {array} response - RPC response array.
    */
-  @action setResponse(response) {
+  @action setResponse (response) {
     this.receivedByAddress = response
   }
 
@@ -80,9 +85,15 @@ class Addresses {
    * Get all addresses, including unused.
    * @function listreceivedbyaddress
    */
-  listreceivedbyaddress() {
-    rpc.call([{ method: 'listreceivedbyaddress', params: [0, true] }], (response) => {
+  listreceivedbyaddress () {
+    rpc.call([
+      {
+        method: 'listreceivedbyaddress',
+        params: [0, true]
+      }
+    ], (response) => {
       if (response !== null) {
+        /** Set the response. */
         this.setResponse(response[0].result)
       }
     })
@@ -92,6 +103,9 @@ class Addresses {
 /** Initialize a new globally used store. */
 const addresses = new Addresses()
 
-/** Export both, initialized store as default export, and store class as named export. */
+/**
+ * Export initialized store as default export,
+ * and store class as named export.
+ */
 export default addresses
 export { Addresses }

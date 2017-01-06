@@ -16,13 +16,20 @@ class Network {
   @observable peerInfo = []
   @observable geoData = asMap(getItem('geoData') || {})
 
+  /**
+   * @constructor
+   * @property {number|null} loopTimeout - setTimeout id of this.loop().
+   */
   constructor () {
-    reaction(() => rpc.status, (status) => {
-      /** Start update loop when RPC becomes available. */
-      if (status === true) this.getnetworkinfo()
+    this.loopTimeout = null
 
-      /** Clear previous data when RPC becomes unavailable. */
-      if (status === false) this.setResponse()
+    /** When RPC status changes. */
+    reaction(() => rpc.status, (status) => {
+      /** Clear previous this.loop() setTimeout. */
+      if (this.loopTimeout !== null) this.clearLoopTimeout()
+
+      /** Start update loop when RPC becomes available. */
+      if (status === true) this.loop()
     })
 
     /** Fetch missing IP geo data (with a 2s delay) on RPC update. */
@@ -226,21 +233,35 @@ class Network {
    * @param {array} networkInfo - getnetworkinfo result.
    * @param {array} peerInfo - getpeerinfo result.
    */
-  @action setResponse (networkInfo = null, peerInfo = null) {
-    if (networkInfo === null && peerInfo === null) {
-      this.networkInfo = {}
-      this.peerInfo = []
-    } else {
-      this.networkInfo = networkInfo
-      this.peerInfo = peerInfo
-    }
+  @action setResponse (networkInfo, peerInfo) {
+    this.networkInfo = networkInfo
+    this.peerInfo = peerInfo
+  }
+
+  /**
+   * Clear current loop timeout.
+   * @function clearLoop
+   */
+  @action clearLoopTimeout () {
+    clearTimeout(this.loopTimeout)
+    this.loopTimeout = null
+  }
+
+  /**
+   * Start new loop timeout and save its id.
+   * @function setLoopTimeout
+   */
+  @action setLoopTimeout () {
+    this.loopTimeout = setTimeout(() => {
+      this.loop()
+    }, 60 * 1000)
   }
 
   /**
    * Get network info.
-   * @function getnetworkinfo
+   * @function loop
    */
-  getnetworkinfo () {
+  loop () {
     rpc.call([
       {
         method: 'getnetworkinfo',
@@ -252,10 +273,11 @@ class Network {
       }
     ], (response) => {
       if (response !== null) {
-        this.setResponse(response[0].result, response[1].result)
+        /** Start new loop. */
+        this.setLoopTimeout()
 
-        /** Loop every 60 seconds when RPC is available, else stop. */
-        setTimeout(() => { this.getnetworkinfo() }, 60 * 1000)
+        /** Set the response. */
+        this.setResponse(response[0].result, response[1].result)
       }
     })
   }
