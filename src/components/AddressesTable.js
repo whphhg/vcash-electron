@@ -1,10 +1,14 @@
 import React from 'react'
+import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Table, Column, Cell } from 'fixed-data-table'
 import { tableHeight } from '../utilities/common'
 
 /** Required components. */
 import TableCell from './TableCell'
+
+/** Load translation namespaces and delay rendering until they are loaded. */
+@translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
 @inject('addresses', 'rates') @observer
@@ -14,6 +18,7 @@ class AddressesTable extends React.Component {
     super(props)
     this.addresses = props.addresses
     this.rates = props.rates
+    this.t = props.t
   }
 
   render () {
@@ -22,23 +27,18 @@ class AddressesTable extends React.Component {
         rowsCount={this.addresses.all.length}
         rowHeight={25}
         headerHeight={25}
-        width={1130}
-        height={tableHeight(this.addresses.all.length, 569)}
+        width={509}
+        height={tableHeight(this.addresses.all.length, 545)}
       >
         <Column
-          header={<Cell>Addresses</Cell>}
+          header={<Cell>{this.t('wallet:addresses')}</Cell>}
           cell={<TableCell data={this.addresses.all} column='address' />}
           width={285}
         />
         <Column
-          header={<Cell>Account</Cell>}
-          cell={<TableCell data={this.addresses.all} column='account' />}
-          width={445}
-        />
-        <Column
-          header={<Cell>Received</Cell>}
+          header={<Cell>{this.t('wallet:received')}</Cell>}
           cell={<TableCell data={this.addresses.all} column='amount' />}
-          width={200}
+          width={115}
         />
         <Column
           header={<Cell>{this.rates.localCurrency}</Cell>}
@@ -49,7 +49,7 @@ class AddressesTable extends React.Component {
               type='localAmount'
               extra={this.rates.localCurrency}
             />}
-          width={200}
+          width={109}
         />
       </Table>
     )

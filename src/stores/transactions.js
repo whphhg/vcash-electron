@@ -13,16 +13,18 @@ class Transactions {
    * @property {map} txids - Cleaned transaction responses.
    * @property {array} filters - Filters to limit transactions by.
    * @property {string} showCategory - Category to filter transactions by.
-   * @property {string} viewingTxid - Transaction being viewed.
+   * @property {string|null} viewing - Transaction being viewed.
+   * @property {string|null} viewingQueue - Tx waiting to be viewed (just sent).
    */
   @observable txids = asMap({})
   @observable filters = []
   @observable showCategory = 'all'
-  @observable viewingTxid = null
+  @observable viewing = null
+  @observable viewingQueue = null
 
   /**
    * @constructor
-   * @property {number} loopTimeout - setTimeout id of this.loop().
+   * @property {number|null} loopTimeout - setTimeout id of this.loop().
    * @property {array} categories - Grouped transaction categories.
    */
   constructor () {
@@ -40,6 +42,13 @@ class Transactions {
 
       /** Start update loop when RPC becomes available. */
       if (status === true) this.loop()
+    })
+
+    /** Check if there's a sent transaction waiting to be viewed. */
+    reaction(() => this.txids.size, (size) => {
+      if (this.viewingQueue !== null) {
+        this.setViewing(this.viewingQueue)
+      }
     })
   }
 
@@ -183,17 +192,35 @@ class Transactions {
    * @return {object|null} Transaction data or null.
    */
   @computed get viewingTx () {
-    if (this.txids.has(this.viewingTxid) === true) return this.txids.get(this.viewingTxid)
+    if (this.txids.has(this.viewing) === true) return this.txids.get(this.viewing)
     return null
   }
 
   /**
    * Set txid of the transaction being viewed.
-   * @function setViewingTxid
+   * @function setViewing
    * @param {string} txid - Transaction id.
    */
-  @action setViewingTxid (txid = null) {
-    this.viewingTxid = txid
+  @action setViewing (txid = null) {
+    /** Lookup a transaction that was just sent. */
+    if (
+      txid !== null &&
+      this.txids.has(txid) === false
+    ) {
+      /** Save the txid in viewing queue. */
+      this.viewingQueue = txid
+
+      /** Clear current loop. */
+      this.clearLoopTimeout()
+
+      /** Re-start the loop. */
+      this.loop()
+    } else {
+      this.viewing = txid
+
+      /** Clear viewing queue if not null. */
+      if (this.viewingQueue !== null) this.viewingQueue = null
+    }
   }
 
   /**
@@ -215,6 +242,9 @@ class Transactions {
     /** Go through transactions and make adjustments. */
     transactions.forEach((transaction) => {
       transaction = transaction.result
+
+      /** Exclude orphaned transactions. */
+      if (transaction.confirmations === -1) return
 
       /** Get saved status. */
       const isSaved = this.txids.has(transaction.txid)
@@ -421,7 +451,10 @@ class Transactions {
       }
 
       /** Open notification if transaction is pending. */
-      if (transaction.confirmations === 0) {
+      if (
+        transaction.confirmations === 0 &&
+        transaction.category !== 'sending'
+      ) {
         notification.info({
           message: i18next.t('wallet:' + save.category),
           description: save.amount.toFixed(6) + ' XVC ' + i18next.t('wallet:toBeConfirmed'),
@@ -495,9 +528,14 @@ class Transactions {
    * @param {string} txid - Txid of the transaction to lock.
    */
   transactionLock (txid) {
-    rpc.call([{ method: 'ztlock', params: [txid] }], (response) => {
+    rpc.call([
+      {
+        method: 'ztlock',
+        params: [txid]
+      }
+    ], (response) => {
       if (response !== null) {
-
+        /** */
       }
     })
   }
@@ -521,8 +559,10 @@ class Transactions {
         this.setLoopTimeout(response[0].result.lastblock)
 
         /** Add txid of the transaction being viewed. */
-        if (this.viewingTxid !== null) {
-          response[0].result.transactions.push({ txid: this.viewingTxid })
+        if (this.viewing !== null) {
+          response[0].result.transactions.push({
+            txid: this.viewing
+          })
         }
 
         /** Add generated txids with less than 220 confirmations. */
@@ -530,7 +570,9 @@ class Transactions {
           if (transaction.hasOwnProperty('generated') === true) {
             if (transaction.confirmations > 0) {
               if (transaction.confirmations <= 220) {
-                response[0].result.transactions.push({ txid: transaction.txid })
+                response[0].result.transactions.push({
+                  txid: transaction.txid
+                })
               }
             }
           }
@@ -609,6 +651,9 @@ class Transactions {
 /** Initialize a new globally used store. */
 const transactions = new Transactions()
 
-/** Export both, initialized store as default export, and store class as named export. */
+/**
+ * Export initialized store as default export,
+ * and store class as named export.
+ */
 export default transactions
 export { Transactions }

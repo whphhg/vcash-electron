@@ -47,7 +47,7 @@ const TableCell = ({ rowIndex, data, column, type, extra, ...props }) => {
         case 'value':
           return (
             <Cell {...props}>
-              {parseFloat(data[rowIndex][column]).toFixed(6)} XVC
+              {parseFloat(data[rowIndex][column]).toFixed(6)}
             </Cell>
           )
 

@@ -7,6 +7,9 @@ import AddressesTable from './AddressesTable'
 import AddressNew from './AddressNew'
 import KeyDump from './KeyDump'
 import KeyImport from './KeyImport'
+import SendControls from './SendControls'
+import SendOptions from './SendOptions'
+import SendRecipients from './SendRecipients'
 
 /** Make the component reactive and inject MobX stores. */
 @inject('wallet') @observer
@@ -22,30 +25,36 @@ class Addresses extends React.Component {
       <div>
         <Row>
           <Col span={24} className='shadow'>
-            <div className='toolbar'>
-              <div className='left'>
-                <AddressNew />
-                <KeyImport />
-                <KeyDump />
-              </div>
-              <div className='right'>
-                <i className='material-icons md-20'>library_books</i>
-                <p>Default wallet address&nbsp;
-                  <span className='text-dotted'>
-                    {
-                      this.wallet.incentive.walletaddress === ''
-                        ? 'will be revealed after first unlocking'
-                        : this.wallet.incentive.walletaddress
-                    }
-                  </span>
-                </p>
-              </div>
+            <Row>
+              <Col span={11}>
+                <div className='toolbar'>
+                  <AddressNew />
+                  <KeyImport />
+                  <KeyDump />
+                </div>
+              </Col>
+              <Col span={13}>
+                <div className='toolbar'>
+                  <SendControls />
+                </div>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={11}>
+            <div style={{margin: '10px'}}>
+              <AddressesTable />
+            </div>
+          </Col>
+          <Col span={13}>
+            <div style={{margin: '10px'}}>
+              <SendRecipients />
+              <hr id='send' />
+              <SendOptions />
             </div>
           </Col>
         </Row>
-        <div id='addresses'>
-          <AddressesTable />
-        </div>
       </div>
     )
   }

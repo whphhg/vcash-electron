@@ -1,7 +1,7 @@
 {
   "name": "vcash-ui",
   "productName": "vcash-ui",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "description": "Multi-platform UI for Vcash, a decentralized currency for the internet.",
   "main": "initialize.js",
   "scripts": {
@@ -39,7 +39,7 @@
     "react-dom": "15.4.1",
     "react-i18next": "1.11.0",
     "react-router": "3.0.0",
-    "recharts": "0.20.1"
+    "recharts": "0.20.2"
   },
   "devDependencies": {
     "babel-core": "6.21.0",
@@ -51,7 +51,7 @@
     "babel-preset-stage-0": "6.16.0",
     "babel-runtime": "6.20.0",
     "electron-compile": "5.1.2",
-    "electron-compilers": "5.2.2",
+    "electron-compilers": "5.2.3",
     "electron-packager": "8.4.0",
     "electron-prebuilt": "1.4.13",
     "mobx-react-devtools": "4.2.10",
