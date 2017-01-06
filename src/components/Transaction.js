@@ -21,138 +21,95 @@ class Transaction extends React.Component {
     this.rates = props.rates
     this.t = props.t
     this.transactions = props.transactions
-    this.toggleDialog = this.toggleDialog.bind(this)
+    this.toggleModal = this.toggleModal.bind(this)
   }
 
-  toggleDialog () {
-    this.transactions.setViewingTxid()
+  toggleModal () {
+    this.transactions.setViewing()
   }
 
   render () {
-    if (this.transactions.viewingTxid === null) return null
+    /** Destructure properties. */
+    const { viewing, viewingTx } = this.transactions
+    const { local, localCurrency, average } = this.rates
+
+    if (viewing === null) return null
     return (
       <Modal
         title={this.t('wallet:transactionDetails')}
         width={1000}
-        visible={this.transactions.viewingTxid !== ''}
-        onCancel={this.toggleDialog}
+        visible={viewing !== ''}
+        onCancel={this.toggleModal}
         footer={null}
       >
         <Row>
-          <Col span={16}>
+          <Col span={18}>
             <Row>
-              <Col span={6}>
-                <Row>
-                  <Col span={5}><i className='material-icons md-18'>label</i></Col>
-                  <Col span={19}>{this.t('wallet:transactionId')}</Col>
-                </Row>
+              <Col span={1}>
+                <i className='material-icons md-18'>label</i>
               </Col>
-              <Col span={18}>
-                <span className='text-dotted'>{this.transactions.viewingTx.txid}</span>
+              <Col span={4}>
+                {this.t('wallet:transactionId')}
               </Col>
-            </Row>
-            {
-              this.transactions.viewingTx.hasOwnProperty('blockhash') === true &&
-              (
-                <Row>
-                  <Col span={6}>
-                    <Row>
-                      <Col span={5}><i className='material-icons md-18'>extension</i></Col>
-                      <Col span={19}>{this.t('wallet:includedInBlock')}</Col>
-                    </Row>
-                  </Col>
-                  <Col span={18}>
-                    <span className='text-dotted'>{this.transactions.viewingTx.blockhash}</span>
-                  </Col>
-                </Row>
-              )
-            }
-            <Row>
-              <Col span={6}>
-                <Row>
-                  <Col span={5}><i className='material-icons md-18'>access_time</i></Col>
-                  <Col span={19}>{this.t('wallet:relayedOn')}</Col>
-                </Row>
-              </Col>
-              <Col span={18}>
-                {moment(new Date(this.transactions.viewingTx.time)).format('l - HH:mm:ss')} ({moment().to(this.transactions.viewingTx.time)})
-              </Col>
-            </Row>
-            {
-              this.transactions.viewingTx.hasOwnProperty('blocktime') === true &&
-              (
-                <Row>
-                  <Col span={6}>
-                    <Row>
-                      <Col span={5}><i className='material-icons md-18'>access_time</i></Col>
-                      <Col span={19}>{this.t('wallet:blockFound')}</Col>
-                    </Row>
-                  </Col>
-                  <Col span={18}>
-                    {moment(new Date(this.transactions.viewingTx.blocktime)).format('l - HH:mm:ss')}
-                  </Col>
-                </Row>
-              )
-            }
-            <Row style={{margin: '15px 0 0 0'}}>
-              <Col span={6}>
-                <Row>
-                  <Col span={5}><i className='material-icons md-18'>folder</i></Col>
-                  <Col span={19}>{this.t('wallet:category')}</Col>
-                </Row>
-              </Col>
-              <Col span={18}>
-                {this.t('wallet:' + this.transactions.viewingTx.category)}
-              </Col>
-            </Row>
-            <Row>
-              <Col span={6}>
-                <Row>
-                  <Col span={5}><i className='material-icons md-18'>monetization_on</i></Col>
-                  <Col span={19}>{this.t('wallet:amount')}</Col>
-                </Row>
-              </Col>
-              <Col span={18}>
-                <span className={this.transactions.viewingTx.color}>
-                  {this.transactions.viewingTx.amount.toFixed(6)} XVC ~ {(this.transactions.viewingTx.amount * this.rates.local * this.rates.average).toFixed(2)} {this.rates.localCurrency}
+              <Col span={19}>
+                <span className='text-dotted'>
+                  {viewingTx.txid}
                 </span>
               </Col>
             </Row>
             {
-              this.transactions.viewingTx.hasOwnProperty('fee') === true && (
+              viewingTx.hasOwnProperty('blockhash') === true &&
+              (
                 <Row>
-                  <Col span={6}>
-                    <Row>
-                      <Col span={5}><i className='material-icons md-18'>card_giftcard</i></Col>
-                      <Col span={19}>{this.t('wallet:fee')}</Col>
-                    </Row>
+                  <Col span={1}>
+                    <i className='material-icons md-18'>extension</i>
                   </Col>
-                  <Col span={18} className='red'>
-                    {this.transactions.viewingTx.fee.toFixed(6)} XVC
+                  <Col span={4}>
+                    {this.t('wallet:includedInBlock')}
+                  </Col>
+                  <Col span={19}>
+                    <span className='text-dotted'>
+                      {viewingTx.blockhash}
+                    </span>
                   </Col>
                 </Row>
               )
             }
             <Row>
-              <Col span={6}>
-                <Row>
-                  <Col span={5}><i className='material-icons md-18'>done_all</i></Col>
-                  <Col span={19}>{this.t('wallet:confirmations')}</Col>
-                </Row>
+              <Col span={1}>
+                <i className='material-icons md-18'>access_time</i>
               </Col>
-              <Col span={18}>
-                <span className={this.transactions.viewingTx.color}>
-                  {this.transactions.viewingTx.confirmations}
-                </span>
+              <Col span={4}>
+                {this.t('wallet:relayedOn')}
+              </Col>
+              <Col span={19}>
+                {moment(viewingTx.time).format('l - HH:mm:ss')}
+                {' (' + moment().to(viewingTx.time)})
               </Col>
             </Row>
+            {
+              viewingTx.hasOwnProperty('blocktime') === true &&
+              (
+                <Row>
+                  <Col span={1}>
+                    <i className='material-icons md-18'>access_time</i>
+                  </Col>
+                  <Col span={4}>
+                    {this.t('wallet:blockFound')}
+                  </Col>
+                  <Col span={19}>
+                    {moment(viewingTx.blocktime).format('l - HH:mm:ss')}
+                  </Col>
+                </Row>
+              )
+            }
           </Col>
-          <Col span={8} className='text-right'>
+          <Col span={6} className='text-right'>
             <p>
               <a
                 target='_blank'
-                href={'https://explorer.vchain.info/tx/' + this.transactions.viewingTx.txid}
-                disabled={this.transactions.viewingTx.hasOwnProperty('blockhash') === false}
+                href={'https://explorer.vchain.info/tx/' + viewingTx.txid}
+                disabled={viewingTx.hasOwnProperty('blockhash') === false}
               >
                 {this.t('wallet:transactionOnExplorer')}
               </a>
@@ -160,52 +117,148 @@ class Transaction extends React.Component {
             <p>
               <a
                 target='_blank'
-                href={'https://explorer.vchain.info/block/' + this.transactions.viewingTx.blockhash}
-                disabled={this.transactions.viewingTx.hasOwnProperty('blockhash') === false}
+                href={'https://explorer.vchain.info/block/' + viewingTx.blockhash}
+                disabled={viewingTx.hasOwnProperty('blockhash') === false}
               >
                 {this.t('wallet:blockOnExplorer')}
               </a>
             </p>
           </Col>
         </Row>
+        <Row style={{margin: '15px 0 0 0'}} align='bottom' type='flex'>
+          <Col span={9}>
+            <Row>
+              <Col span={2}>
+                <i className='material-icons md-18'>folder</i>
+              </Col>
+              <Col span={8}>
+                {this.t('wallet:category')}
+              </Col>
+              <Col span={14}>
+                {this.t('wallet:' + viewingTx.category)}
+              </Col>
+            </Row>
+            <Row>
+              <Col span={2}>
+                <i className='material-icons md-18'>monetization_on</i>
+              </Col>
+              <Col span={8}>
+                {this.t('wallet:amount')}
+              </Col>
+              <Col span={14} className={viewingTx.color}>
+                {viewingTx.amount.toFixed(6)} XVC (
+                {(viewingTx.amount * local * average).toFixed(2)}
+                {' ' + localCurrency})
+              </Col>
+            </Row>
+            {
+              viewingTx.hasOwnProperty('fee') === true && (
+                <Row>
+                  <Col span={2}>
+                    <i className='material-icons md-18'>card_giftcard</i>
+                  </Col>
+                  <Col span={8}>
+                    {this.t('wallet:fee')}
+                  </Col>
+                  <Col span={12} className='red'>
+                    {viewingTx.fee.toFixed(6)} XVC
+                  </Col>
+                </Row>
+              )
+            }
+            <Row>
+              <Col span={2}>
+                <i className='material-icons md-18'>done_all</i>
+              </Col>
+              <Col span={8}>
+                {this.t('wallet:confirmations')}
+              </Col>
+              <Col span={12} className={viewingTx.color}>
+                {viewingTx.confirmations}
+              </Col>
+            </Row>
+          </Col>
+          <Col span={11} offset={4}>
+            {
+              viewingTx.hasOwnProperty('to') === true && (
+                <Row>
+                  <Col span={6}>
+                    <Row>
+                      <Col span={6}>
+                        <i className='material-icons md-18'>perm_identity</i>
+                      </Col>
+                      <Col span={18}>
+                        {this.t('wallet:recipient')}
+                      </Col>
+                    </Row>
+                  </Col>
+                  <Col span={18} className='text-justify'>
+                    {viewingTx.to}
+                  </Col>
+                </Row>
+              )
+            }
+            {
+              viewingTx.hasOwnProperty('comment') === true && (
+                <Row>
+                  <Col span={6}>
+                    <Row>
+                      <Col span={6}>
+                        <i className='material-icons md-18'>create</i>
+                      </Col>
+                      <Col span={18}>
+                        {this.t('wallet:comment')}
+                      </Col>
+                    </Row>
+                  </Col>
+                  <Col span={18} className='text-justify'>
+                    {viewingTx.comment}
+                  </Col>
+                </Row>
+              )
+            }
+          </Col>
+        </Row>
         <Row style={{margin: '15px 0 0 0'}}>
           <Col span={11}>
             <Table
-              rowsCount={this.transactions.viewingTx.inputs.length}
+              rowsCount={viewingTx.inputs.length}
               rowHeight={25}
               headerHeight={25}
               width={443}
-              height={tableHeight(this.transactions.viewingTx.inputs.length, 224)}
+              height={tableHeight(viewingTx.inputs.length, 275)}
             >
               <Column
                 header={<Cell>{this.t('wallet:from')}</Cell>}
-                cell={<TableCell data={this.transactions.viewingTx.inputs} column='address' />}
+                cell={<TableCell data={viewingTx.inputs} column='address' />}
                 width={300}
               />
               <Column
                 header={<Cell>{this.t('wallet:amount')}</Cell>}
-                cell={<TableCell data={this.transactions.viewingTx.inputs} column='value' />}
+                cell={<TableCell data={viewingTx.inputs} column='value' />}
                 width={143}
               />
             </Table>
           </Col>
-          <Col span={2} className='text-center'><i className='material-icons md-20'>forward</i></Col>
+          <Col span={2} className='text-center'>
+            <i className='material-icons md-20'>forward</i>
+          </Col>
           <Col span={11}>
             <Table
-              rowsCount={this.transactions.viewingTx.outputs.length}
+              rowsCount={viewingTx.outputs.length}
               rowHeight={25}
               headerHeight={25}
               width={443}
-              height={tableHeight(this.transactions.viewingTx.outputs.length, 224)}
+              height={tableHeight(viewingTx.outputs.length, 275)}
             >
               <Column
                 header={<Cell>{this.t('wallet:to')}</Cell>}
-                cell={<TableCell data={this.transactions.viewingTx.outputs} column='address' />}
+                cell={<TableCell data={viewingTx.outputs} column='address' />}
                 width={300}
               />
               <Column
                 header={<Cell>{this.t('wallet:amount')}</Cell>}
-                cell={<TableCell data={this.transactions.viewingTx.outputs} column='value' />}
+                cell={<TableCell data={viewingTx.outputs} column='value' />}
                 width={143}
               />
             </Table>

@@ -41,3 +41,17 @@ export const tableHeight = (entries = 0, height = 0) => {
     ? entries * 25 + 27
     : height
 }
+
+/**
+ * Get a 4-character alphanumeric unique sequence.
+ * For N unique IDs, out of X possibilities,
+ * call at most 1 / (1 − N / X) times on average to ensure uniqueness.
+ * @function shortUid
+ * @return {string} Unique 4-character uid.
+ * @see {@link http://stackoverflow.com/a/6248722|StackOverflow}
+ */
+export const shortUid = () => {
+  return (
+    '0000' + (Math.random() * Math.pow(36, 4) << 0).toString(36)
+  ).slice(-4)
+}

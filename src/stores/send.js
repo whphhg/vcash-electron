@@ -1,319 +1,438 @@
-import { action, autorun, computed, observable } from 'mobx'
-import { v4 } from 'node-uuid'
-import rpc from '../utilities/rpc'
+import { action, asMap, autorun, computed, observable } from 'mobx'
+import { decimalSeparator, shortUid } from '../utilities/common'
+import { notification } from 'antd'
+import i18next from '../utilities/i18next'
 
 /** Required store instances. */
-import addressBook from './addressBook'
-import transaction from './transaction'
+import rpc from './rpc'
+import transactions from './transactions'
+import wallet from './wallet'
 
-/** Send store class. */
 class Send {
-  @observable fromAccount
-  @observable recipients
-  @observable drawer
-  @observable button
-  @observable buttonPressed
-  @observable errors
+  /**
+   * Observable properties.
+   * @property {string|null} fromAccount - Spend from this account.
+   * @property {array} recipients - Addresses and amounts to pay.
+   * @property {number} minConf - Minimum number of confirmations.
+   * @property {string} comment - Comment about transaction.
+   * @property {string} commentTo - Comment about recipient.
+   */
+  @observable fromAccount = null
+  @observable recipients = asMap({})
+  @observable minConf = 1
+  @observable comment = ''
+  @observable commentTo = ''
+
+  constructor () {
+    autorun(() => {
+      /** Always have one recipient available. */
+      if (this.recipients.size === 0) this.addRecipient()
+    })
+  }
 
   /**
-   * Prepare observable variables, add initial recipient and start verify autorun.
-   * @constructor
-   * @property {string} fromAccount - Account to be sent from.
-   * @property {array} recipients - Contains recipient objects.
-   * @property {boolean} drawer - Drawer open status.
-   * @property {boolean} button - Button enabled status.
-   * @property {boolean} buttonPressed - Button pressed status.
-   * @property {object} errors - Error status.
-   * @property {boolean} errors.amountBelowTxFee - One of the amounts is below tx fee.
-   * @property {boolean} errors.duplicateAddress - Attempted entering a duplicate address.
-   * @property {boolean} errors.invalidRecipient - One of addresses is not fully entered.
-   * @property {boolean} errors.insufficientBalance - Account balance too low.
-   * @property {boolean} errors.insufficientFunds - Account balance can't cover amount with fees.
-   * @property {boolean} errors.nonStandardTxType - Non-standard tx type.
+   * Get error status.
+   * @function errorStatus
+   * @return {string|boolean} Current error or false if none.
    */
-  constructor() {
-    this.fromAccount = 'Default'
-    this.recipients = []
-    this.drawer = false
-    this.button = false
-    this.buttonPressed = false
-    this.errors = {
-      amountBelowTxFee: false,
-      duplicateAddress: false,
-      invalidRecipient: false,
-      insufficientBalance: false,
-      insufficientFunds: false,
-      nonStandardTxType: false
+  @computed get errorStatus () {
+    if (this.minConf === '') return 'missingMinConf'
+
+    /** Get recipients. */
+    const recipients = this.recipients.values()
+
+    /** Loop over recipients and make sure they are valid. */
+    for (let i = 0; i < recipients.length; i++) {
+      /** Check if addresses are valid and entered. */
+      if (
+        recipients[i].addressValid === false ||
+        recipients[i].addressValid === null
+      ) {
+        return 'invalidRecipient'
+      }
+
+      /** Check if amounts are entered and above tx fee. */
+      if (
+        recipients[i].amount.length === 0 ||
+        parseFloat(recipients[i].amount) < 0.0005
+      ) {
+        return 'amountBelowTxFee'
+      }
     }
 
-    this.addRecipient()
-    this.verify()
+    return false
+  }
+
+  /**
+   * Get the total amount to send.
+   * @function total
+   * @return {number} Total amount to send.
+   */
+  @computed get total () {
+    return this.recipients.values().reduce((total, recipient) => {
+      return total + recipient.amount * 1000000
+    }, 0) / 1000000
+  }
+
+  /** Clear recipients and options.
+   * @function clear
+   */
+  @action clear () {
+    this.recipients.clear()
+    this.setAccount()
+    this.setMinConf()
+    this.setComment()
+    this.setCommentTo()
   }
 
   /**
    * Add new recipient.
    * @function addRecipient
    */
-  @action addRecipient() {
-    this.recipients.push({
-      id: v4(),
+  @action addRecipient () {
+    const uid = shortUid()
+
+    this.recipients.set(uid, {
+      uid,
+      addressValid: null,
       address: '',
-      amount: '',
-      validAddress: null
+      amount: ''
     })
   }
 
   /**
    * Remove recipient.
    * @function removeRecipient
-   * @param {string} id - Id of recipient to remove.
+   * @param {string} uid - Recipient uid.
    */
-  @action removeRecipient(id) {
-    this.recipients = this.recipients.filter((recipient) => {
-      return recipient.id !== id
-    })
+  @action removeRecipient (uid) {
+    this.recipients.delete(uid)
   }
 
   /**
-   * Set recipient data.
+   * Set recipient's address or amount.
    * @function setRecipient
-   * @param {string} id - Id of recipient to edit.
-   * @param {object} data - Data to update the recipient with.
+   * @param {string} uid - Recipient uid.
+   * @param {string} name - Input field name.
+   * @param {string} value - Entered value.
    */
-  @action setRecipient(id, data) {
-    this.recipients = this.recipients.map((recipient) => {
-      if (recipient.id === id) {
-        recipient = {
-          ...recipient,
-          ...data
-        }
+  @action setRecipient (uid, name, value) {
+    let saved = this.recipients.has(uid) === true
+      ? this.recipients.get(uid)
+      : false
+
+    /** Exit in a "highly" unprobable situation of no recipient. */
+    if (saved === false) return
+
+    /** Amount checks. */
+    if (name === 'amount') {
+      /** Reset amount when removing last number from the input field. */
+      if (value.length === 0) {
+        saved.amount = ''
+        return
       }
 
-      return recipient
-    })
+      /** Add leading zero if only decimal separator is entered. */
+      if (value === decimalSeparator()) {
+        saved.amount = '0' + decimalSeparator()
+        return
+      }
+
+      /** Check if amount is in 0000000[.,]000000 format. */
+      switch (decimalSeparator()) {
+        case '.':
+          if (value.match(/^\d{0,7}(?:\.\d{0,6})?$/) === null) return
+          break
+
+        case ',':
+          if (value.match(/^\d{0,7}(?:,\d{0,6})?$/) === null) return
+          break
+      }
+
+      /** Do not allow amounts below tx fee. */
+      if (
+        parseFloat(value) > 0 &&
+        parseFloat(value) < 0.0005
+      ) return
+
+      /** Check if the new total amount is over wallet balance. */
+      if (
+        this.total - parseFloat(saved.amount) + parseFloat(value) >
+        wallet.info.balance
+      ) return
+
+      /** Set ammount that passed above checks. */
+      saved.amount = value
+    }
+
+    /** Address checks. */
+    if (name === 'address') {
+      /** Allow only alphanumerals. */
+      if (value.match(/^[a-zA-Z0-9]{0,34}$/) === null) return
+
+      /** Check if the address is a duplicate. */
+      const duplicate = this.recipients.values().some((recipient) => {
+        if (recipient.address !== '') {
+          return recipient.address === value
+        }
+      })
+
+      /** Do not allow entering duplicate addresses. */
+      if (duplicate === true) return
+
+      /** Set address. */
+      saved.address = value
+
+      /** Validate address when it reaches 34 characters. */
+      if (value.length === 34) {
+        rpc.call([
+          {
+            method: 'validateaddress',
+            params: [value]
+          }
+        ], action('recipientValidate', (response) => {
+          if (response !== null) {
+            saved.addressValid = response[0].result.isvalid
+          }
+        }))
+      } else {
+        saved.addressValid = null
+      }
+    }
   }
 
   /**
-   * Set account to send from.
+   * Set the name of the account from which the coins should be spent.
    * @function setAccount
-   * @param {string} account - Account to send from.
+   * @param {string} account - Account name.
    */
-  @action setAccount(account) {
+  @action setAccount (account = null) {
     this.fromAccount = account
   }
 
   /**
-   * Set recipient address.
-   * @function setAddress
-   * @param {string} id - Id of recipient to set.
-   * @param {string} address - New address.
+   * Set the minimum number of confirmations a transaction must have
+   * for its outputs to be credited to the fromAccount’s balance.
+   * @function setMinConf
+   * @param {string} confirmations - Minimum confirmations.
    */
-  @action setAddress(id, address) {
-    if (address.match(/^[a-zA-Z0-9]{0,34}$/)) {
-      /** Check if address is already entered. */
-      if (address.length === 34) {
-        for (let i = 0; i < this.recipients.length; i++) {
-          if (this.recipients[i].id !== id) {
-            if (this.recipients[i].address === address) {
-              return this.setError('duplicateAddress')
-            }
-          }
-        }
+  @action setMinConf (confirmations = '1') {
+    if (confirmations.match(/^[0-9]{0,6}$/) !== null) {
+      /** Allow emptying input. */
+      if (confirmations !== '') {
+        confirmations = parseInt(confirmations)
+
+        if (confirmations > wallet.info.blocks) return
+        if (confirmations < 1) return
       }
 
-      /** Validate address when it reaches 34 characters. */
-      if (address.length === 34) {
-        rpc({ method: 'validateaddress', params: [address] }, (response) => {
-          if (response !== null) {
-            this.setRecipient(id, {
-              address,
-              validAddress: response.result.isvalid
-            })
-          }
-        })
+      this.minConf = confirmations
+    }
+  }
+
+  /**
+   * Set a locally-stored (not broadcast) comment assigned to this transaction.
+   * @function setComment
+   * @param {string} comment - Comment assigned to this transaction.
+   */
+  @action setComment (comment = '') {
+    this.comment = comment
+  }
+
+  /**
+   * Set a locally-stored (not broadcast) comment describing the recipient.
+   * @function setCommentTo
+   * @param {string} commentTo - Comment describing the recipient.
+   */
+  @action setCommentTo (commentTo = '') {
+    this.commentTo = commentTo
+  }
+
+  /**
+   * Confirm sending.
+   * @function confirm
+   */
+  confirm () {
+    /** Determine which sending method to use. */
+    if (this.recipients.size === 1) {
+      if (this.fromAccount === null) {
+        this.sendtoaddress()
       } else {
-        this.setRecipient(id, {
-          address,
-          validAddress: null
-        })
+        this.sendfrom()
       }
+    } else {
+      this.sendmany()
     }
   }
 
   /**
-   * Set recipient amount.
-   * @function setAmount
-   * @param {string} id - Id of recipient to set.
-   * @param {string} amount - New amount.
+   * Open failed notification.
+   * @function failed
+   * @param {string} type - Error type.
    */
-  @action setAmount(id, amount) {
-    /** Reset amount when removing last number from the input field. */
-    if (amount.length === 0) {
-      return this.setRecipient(id, { amount: '' })
-    }
-
-    /** Add leading zero if only delimiter is entered. */
-    switch (amount) {
-      case '.':
-        return this.setRecipient(id, { amount: '0.' })
-
-      case ',':
-        return this.setRecipient(id, { amount: '0,' })
-    }
-
-    /** Check if amount is in 0000000[.,]000000 format. */
-    if (amount.match(/^\d{0,7}(?:\.\d{0,6})?$/) || amount.match(/^\d{0,7}(?:,\d{0,6})?$/)) {
-      /** Check if amount is below tx fee. */
-      if (parseFloat(amount) > 0 && parseFloat(amount) < 0.0005) {
-        return
-      }
-
-      this.setRecipient(id, { amount })
-    }
-  }
-
-  /**
-   * Set error and button.
-   * @function setError
-   * @param {string} error - Error key to toggle on.
-   */
-  @action setError(error) {
-    let button = true
-
-    for (let i in this.errors) {
-      if (error === i) {
-        this.errors[i] = true
-        button = false
-      } else {
-        this.errors[i] = false
-      }
-    }
-
-    this.button = button
-  }
-
-  /**
-   * Toggle button pressed.
-   * @function toggleButton
-   */
-  @action toggleButton() {
-    this.buttonPressed = !this.buttonPressed
-  }
-
-  /**
-   * Toggle drawer.
-   * @function toggleDrawer
-   */
-  @action toggleDrawer() {
-    this.drawer = !this.drawer
-  }
-
-  /**
-   * Get the total amount being sent.
-   * @function total
-   * @return {number} Total amount being sent.
-   */
-  @computed get total() {
-    return this.recipients.reduce((total, recipient) => {
-      return total += recipient.amount * 1000000
-    }, 0) / 1000000
-  }
-
-  /**
-   * Verify recipients every time they get updated.
-   * @function verify
-   */
-  verify() {
-    autorun(() => {
-      let recipients = this.recipients.toJS()
-
-      for (let i in recipients) {
-        /** Check if address is valid and entered. */
-        if (recipients[i].validAddress === false || recipients[i].validAddress === null) {
-          return this.setError('invalidRecipient')
-        }
-
-        /** Check if amounts are entered and above tx fee. */
-        if (parseFloat(recipients[i].amount) < 0.0005 || recipients[i].amount.length === 0) {
-          return this.setError('amountBelowTxFee')
-        }
-
-      }
-
-      /** Check if account balance can cover total. */
-      if ((addressBook.byAccount[this.fromAccount].balance - this.total) < 0) {
-        return this.setError('insufficientBalance')
-      } else {
-        if (this.errors.insufficientBalance) {
-          return this.setError('')
-        }
-      }
-
-      return this.setError('')
+  failed (type) {
+    notification.error({
+      message: i18next.t('wallet:sendingFailed'),
+      description: i18next.t('wallet:' + type),
+      duration: 0
     })
   }
 
   /**
-   * Sending confirmed, use sendtoaddress / sendmany accordingly.
-   * @function confirm
+   * Send using sendtoaddress RPC.
+   * @function sendtoaddress
    */
-  confirm() {
-    if (this.fromAccount === '#All') {
-      rpc({ method: 'sendtoaddress', params: [this.recipients[0].address, this.recipients[0].amount] }, (response) => {
-        if (response !== null) {
-          this.toggleButton()
+  sendtoaddress () {
+    /** Get the recipient data. */
+    const recipient = this.recipients.values()
 
-          if (response.hasOwnProperty('result')) {
-            /** Set transaction id to current transaction and toggle dialog. */
-            transaction.setTxid(response.result)
-            transaction.toggleDialog()
-          }
-
-          if (response.hasOwnProperty('error')) {
-            /** error_code_wallet_insufficient_funds (-4), insufficient funds. */
-            switch (response.error.code) {
-              case -4:
-                return this.setError('insufficientFunds')
-            }
-          }
+    rpc.call([
+      {
+        method: 'sendtoaddress',
+        params: [
+          recipient[0].address,
+          recipient[0].amount,
+          this.comment,
+          this.commentTo
+        ]
+      }
+    ], (response) => {
+      if (response !== null) {
+        /** Sending succeded. */
+        if (response[0].hasOwnProperty('result') === true) {
+          /** Open transaction details. */
+          transactions.setViewing(response[0].result)
         }
-      })
-    } else {
-      const recipientsAsParams = this.recipients.reduce((recipients, recipient) => {
-        recipients[recipient.address] = recipient.amount
-        return recipients
-      }, {})
 
-      rpc({ method: 'sendmany', params: [this.fromAccount === 'Default' ? '' : this.fromAccount, recipientsAsParams] }, (response) => {
-        if (response !== null) {
-          this.toggleButton()
+        /** Sending failed. */
+        if (response[0].hasOwnProperty('error') === true) {
+          /** In case of an unknown error, print details to assist fixing. */
+          console.error('Failed sending using sendtoaddress', response[0])
 
-          if (response.hasOwnProperty('result')) {
-            /** Set transaction id to current transaction and toggle dialog. */
-            transaction.setTxid(response.result)
-            transaction.toggleDialog()
-          }
-
-          if (response.hasOwnProperty('error')) {
+          switch (response[0].error.code) {
             /**
-             * error_code (-4), nonstandard transaction type.
-             * error_code_wallet_insufficient_funds (-6), insufficient funds.
+             * Insufficient funds,
+             * error_code_wallet_insufficient_funds = -4
              */
-            switch (response.error.code) {
-              case -4:
-                return this.setError('nonStandardTxType')
-
-              case -6:
-                return this.setError('insufficientFunds')
-            }
+            case -4:
+              return this.failed('insufficientFunds')
           }
         }
-      })
-    }
+      }
+    })
+  }
+
+  /**
+   * Send using sendfrom RPC.
+   * @function sendfrom
+   */
+  sendfrom () {
+    /** Get the recipient data. */
+    const recipient = this.recipients.values()
+
+    rpc.call([
+      {
+        method: 'sendfrom',
+        params: [
+          this.fromAccount === '*'
+            ? ''
+            : this.fromAccount,
+          recipient[0].address,
+          recipient[0].amount,
+          this.minConf,
+          this.comment,
+          this.commentTo
+        ]
+      }
+    ], (response) => {
+      if (response !== null) {
+        /** Sending succeded. */
+        if (response[0].hasOwnProperty('result') === true) {
+          /** Open transaction details. */
+          transactions.setViewing(response[0].result)
+        }
+
+        /** Sending failed. */
+        if (response[0].hasOwnProperty('error') === true) {
+          /** In case of an unknown error, print details to assist fixing. */
+          console.error('Failed sending using sendfrom', response[0])
+
+          switch (response[0].error.code) {
+            /**
+             * Insufficient funds,
+             * error_code_wallet_insufficient_funds = -6
+             */
+            case -6:
+              return this.failed('insufficientFunds')
+          }
+        }
+      }
+    })
+  }
+
+  /**
+   * Send using sendmany RPC.
+   * @function sendmany
+   */
+  sendmany () {
+    /** Get recipients data. */
+    const recipients = this.recipients.values().reduce((recipients, recipient) => {
+      recipients[recipient.address] = recipient.amount
+      return recipients
+    }, {})
+
+    rpc.call([
+      {
+        method: 'sendmany',
+        params: [
+          this.fromAccount === '*'
+            ? ''
+            : this.fromAccount,
+          recipients,
+          this.minConf,
+          this.comment
+        ]
+      }
+    ], (response) => {
+      if (response !== null) {
+        /** Sending succeded. */
+        if (response[0].hasOwnProperty('result') === true) {
+          /** Open transaction details. */
+          transactions.setViewing(response[0].result)
+        }
+
+        /** Sending failed. */
+        if (response[0].hasOwnProperty('error') === true) {
+          /** In case of an unknown error, print details to assist fixing. */
+          console.error('Failed sending using sendmany', response[0])
+
+          switch (response[0].error.code) {
+            /**
+             * Nonstandard transaction type,
+             * error_code = -4
+             */
+            case -4:
+              return this.failed('transactionNotStandard')
+
+            /**
+             * Insufficient funds,
+             * error_code_wallet_insufficient_funds = -6
+             */
+            case -6:
+              return this.failed('insufficientFunds')
+          }
+        }
+      }
+    })
   }
 }
 
+/** Initialize a new globally used store. */
 const send = new Send()
 
+/**
+ * Export initialized store as default export,
+ * and store class as named export.
+ */
 export default send
 export { Send }

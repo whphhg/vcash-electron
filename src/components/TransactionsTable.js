@@ -23,7 +23,7 @@ class TransactionsTable extends React.Component {
   }
 
   onRowDoubleClick (event, index) {
-    this.transactions.setViewingTxid(this.transactions.filtered[index].txid)
+    this.transactions.setViewing(this.transactions.filtered[index].txid)
   }
 
   render () {
