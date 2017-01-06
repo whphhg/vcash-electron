@@ -9,56 +9,67 @@ import chainBlender from './chainBlender'
 class Wallet {
   /**
    * Observable properties.
-   * @property {object} info - getinfo RPC response.
-   * @property {object} incentive - getincentiveinfo RPC response.
    * @property {boolean} isEncrypted - Wallet encryption status.
    * @property {boolean} isLocked - Wallet lock status.
+   * @property {object} info - getinfo RPC response.
+   * @property {object} incentive - getincentiveinfo RPC response.
    */
+  @observable isEncrypted = false
+  @observable isLocked = false
   @observable info = {
+    version: ':',
+    protocolversion: 0,
+    walletversion: 0,
     balance: 0,
+    newmint: 0,
+    stake: 0,
     blocks: 0,
+    moneysupply: 0,
     connections: 0,
     ip: '0.0.0.0',
-    moneysupply: 0,
-    newmint: 0,
     port: 0,
-    protocolversion: 0,
-    stake: 0,
-    version: ':',
-    walletversion: 0
+    difficulty: 0,
+    keypoolsize: 0,
+    paytxfee: 0
   }
   @observable incentive = {
     walletaddress: '',
     collateralrequired: 0,
     collateralbalance: 0,
     networkstatus: 'firewalled',
-    votecandidate: false
+    votecandidate: false,
+    votescore: 0
   }
-  @observable isEncrypted = false
-  @observable isLocked = false
 
   constructor () {
     /** Start the only infinite RPC update loop. */
     this.getinfo()
 
-    /** Start update loop and check lock status when RPC becomes available. */
+    /** Check lock status when RPC becomes available. */
     reaction(() => rpc.status, (status) => {
-      if (status === true) {
-        this.getincentiveinfo()
-        this.lockCheck()
-      }
+      if (status === true) this.lockCheck()
     })
   }
 
   /**
    * Set RPC response.
    * @function setResponse
-   * @param {string} key - Store key to compare against and update.
-   * @param {object} response - RPC response object.
+   * @param {object} info - getinfo RPC response.
+   * @param {object} incentive - getincentiveinfo RPC response.
    */
-  @action setResponse (key, response) {
-    for (let i in this[key]) {
-      if (this[key][i] !== response[i]) this[key][i] = response[i]
+  @action setResponse (info, incentive) {
+    /** Update wallet info. */
+    for (let i in info) {
+      if (this.info[i] !== info[i]) {
+        this.info[i] = info[i]
+      }
+    }
+
+    /** Update incentive info. */
+    for (let i in incentive) {
+      if (this.incentive[i] !== incentive[i]) {
+        this.incentive[i] = incentive[i]
+      }
     }
   }
 
@@ -74,7 +85,7 @@ class Wallet {
   }
 
   /**
-   * Get wallet info.
+   * Get wallet and incentive info.
    * @function getinfo
    */
   getinfo () {
@@ -82,34 +93,19 @@ class Wallet {
       {
         method: 'getinfo',
         params: []
-      }
-    ], (response) => {
-      if (response !== null) {
-        this.setResponse('info', response[0].result)
-      }
-
-      /** Infinitely loop every 10 seconds. */
-      setTimeout(() => { this.getinfo() }, 10 * 1000)
-    })
-  }
-
-  /**
-   * Get incentive info.
-   * @function getincentiveinfo
-   */
-  getincentiveinfo () {
-    rpc.call([
+      },
       {
         method: 'getincentiveinfo',
         params: []
       }
     ], (response) => {
       if (response !== null) {
-        this.setResponse('incentive', response[0].result)
-
-        /** Loop every 20 seconds when RPC is available, else stop. */
-        setTimeout(() => { this.getincentiveinfo() }, 20 * 1000)
+        /** Set the response. */
+        this.setResponse(response[0].result, response[1].result)
       }
+
+      /** Infinitely loop every 10 seconds. */
+      setTimeout(() => { this.getinfo() }, 10 * 1000)
     })
   }
 

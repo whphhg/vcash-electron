@@ -9,9 +9,10 @@ import wallet from './wallet'
 class ChainBlender {
   /**
    * Observable properties.
-   * @property {object} info - chainblender info RPC response.
    * @property {boolean} status - ChainBlender status.
+   * @property {object} info - chainblender info RPC response.
    */
+  @observable status = false
   @observable info = {
     blendstate: 'none',
     balance: 0,
@@ -20,31 +21,42 @@ class ChainBlender {
     blendedbalance: 0,
     blendedpercentage: 0
   }
-  @observable status = false
 
+  /**
+   * @constructor
+   * @property {number|null} loopTimeout - setTimeout id of this.getinfo().
+   */
   constructor () {
-    /** Start updating when the wallet unlocks. */
+    this.loopTimeout = null
+
+    /** Start updating when the wallet gets unlocked. */
     autorun(() => {
-      if (wallet.isLocked === false) this.getinfo()
+      if (wallet.isLocked === false) {
+        /** Clear previous this.getinfo() setTimeout. */
+        if (this.loopTimeout !== null) this.clearLoopTimeout()
+
+        /** Start update loop. */
+        this.getinfo()
+      }
     })
   }
 
   /**
    * Set RPC response.
    * @function setResponse
-   * @param {object} response - RPC response object.
+   * @param {object} info - chainblender info RPC response.
    */
-  @action setResponse (response) {
-    for (let i in response) {
-      if (this.info.hasOwnProperty(i) === true) {
-        if (this.info[i] !== response[i]) this.info[i] = response[i]
+  @action setResponse (info) {
+    for (let i in info) {
+      if (this.info[i] !== info[i]) {
+        this.info[i] = info[i]
       }
     }
 
     /** Correct status if the daemon is already blending. */
     if (
-      response.blendstate === 'active' ||
-      response.blendstate === 'passive'
+      info.blendstate === 'active' ||
+      info.blendstate === 'passive'
     ) {
       if (this.status === false) this.setStatus(true)
     }
@@ -60,6 +72,25 @@ class ChainBlender {
   }
 
   /**
+   * Clear current loop timeout.
+   * @function clearLoop
+   */
+  @action clearLoopTimeout () {
+    clearTimeout(this.loopTimeout)
+    this.loopTimeout = null
+  }
+
+  /**
+   * Start new loop timeout and save its id.
+   * @function setLoopTimeout
+   */
+  @action setLoopTimeout () {
+    this.loopTimeout = setTimeout(() => {
+      this.getinfo()
+    }, 10 * 1000)
+  }
+
+  /**
    * Get ChainBlender info.
    * @function getinfo
    */
@@ -72,10 +103,11 @@ class ChainBlender {
     ], (response) => {
       if (response !== null) {
         if (response[0].hasOwnProperty('result') === true) {
-          this.setResponse(response[0].result)
+          /** Start new loop. */
+          this.setLoopTimeout()
 
-          /** Loop every 10 seconds if the wallet is unlocked, else stop. */
-          setTimeout(() => { this.getinfo() }, 10 * 1000)
+          /** Set the response. */
+          this.setResponse(response[0].result)
         }
       }
     })
@@ -97,6 +129,7 @@ class ChainBlender {
       }
     ], (response) => {
       if (response !== null) {
+        /** Set the status. */
         this.setStatus(!this.status)
 
         /** Display notification. */

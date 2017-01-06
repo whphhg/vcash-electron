@@ -22,7 +22,7 @@ class WalletUnlock {
   constructor () {
     /** Clear previous RPC response errors on passphrase change. */
     reaction(() => this.passphrase, (passphrase) => {
-      this.toggleError()
+      if (this.errors.incorrectPassphrase === true) this.toggleError()
     })
 
     /** Clear passphrase field when popover closes. */
