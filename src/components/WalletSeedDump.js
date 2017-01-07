@@ -27,36 +27,51 @@ class WalletSeedDump extends React.Component {
   }
 
   render () {
+    /** Destructure properties. */
+    const {
+      errorStatus,
+      seed
+    } = this.walletSeedDump
+
     return (
       <div>
         <p style={{margin: '0 0 5px 0'}}>
           <i className='material-icons md-18'>fingerprint</i>
-          <span className='text-icon'>{this.t('wallet:seedDumpLong')}</span>
+          <span className='text-icon'>
+            {this.t('wallet:seedDumpLong')}
+          </span>
         </p>
         <Row>
           <Col span={3}>
-            <p style={{margin: '4px 0 0 0'}}>{this.t('wallet:seed')}</p>
+            <p style={{margin: '4px 0 0 0'}}>
+              {this.t('wallet:seed')}
+            </p>
           </Col>
           <Col span={21}>
             <Input
-              value={this.walletSeedDump.seed}
-              disabled={this.walletSeedDump.seed === ''}
+              value={seed}
+              disabled={seed === ''}
+              readOnly
             />
           </Col>
         </Row>
         <Row>
           <Col offset={3} span={8}>
-            {
-              this.walletSeedDump.errorStatus === 'notDeterministic' && (
-                <p className='text-error'>{this.t('wallet:notDeterministic')}</p>
-              )
-            }
+            <p className='text-error'>
+              {
+                errorStatus === 'notDeterministic' &&
+                this.t('wallet:notDeterministic')
+              }
+            </p>
           </Col>
           <Col span={13} className='text-right'>
             <Button
               style={{margin: '5px 0 0 0'}}
               onClick={this.dumpwalletseed}
-              disabled={this.walletSeedDump.errorStatus !== false || this.wallet.isLocked === true}
+              disabled={
+                errorStatus !== false ||
+                this.wallet.isLocked === true
+              }
             >
               {this.t('wallet:seedDump')}
             </Button>

@@ -18,8 +18,8 @@ class CurrencyConverter extends React.Component {
     this.onChange = this.onChange.bind(this)
   }
 
-  onChange (event) {
-    this.currencyConverter.setAmount(event.target.value, event.target.name)
+  onChange (e) {
+    this.currencyConverter.setAmount(e.target.value, e.target.name)
   }
 
   popoverTitle () {
@@ -28,51 +28,72 @@ class CurrencyConverter extends React.Component {
         <p>{this.t('wallet:currencyConverterLong')}</p>
         <div style={{float: 'right'}}>
           <img src='./assets/images/exchangePoloniex.png' />
-          <p><span>{parseFloat(this.rates.poloniex.last).toFixed(8)}</span> BTC</p>
+          <p>
+            <span>{parseFloat(this.rates.poloniex.last).toFixed(8)}</span> BTC
+          </p>
           <img src='./assets/images/exchangeBittrex.png' />
-          <p><span>{parseFloat(this.rates.bittrex.Last).toFixed(8)}</span> BTC</p>
+          <p>
+            <span>{parseFloat(this.rates.bittrex.Last).toFixed(8)}</span> BTC
+          </p>
         </div>
       </div>
     )
   }
 
   popoverContent () {
+    /** Destructure properties. */
+    const {
+      vcash,
+      bitcoin,
+      local
+    } = this.currencyConverter
+
+    const {
+      localCurrency
+    } = this.rates
+
     return (
       <Row>
         <Col span={7}>
           <p style={{margin: '0 0 5px 0'}}>
-            <span className='text-dotted'>XVC</span>
+            <span className='text-dotted'>
+              XVC
+            </span>
           </p>
           <Input
             type='text'
             name='vcash'
             placeholder={this.t('wallet:amount')}
             onChange={this.onChange}
-            value={this.currencyConverter.vcash}
+            value={vcash}
           />
         </Col>
         <Col offset={1} span={8}>
           <p style={{margin: '0 0 5px 0'}}>
-            <span className='text-dotted'>BTC</span>
+            <span className='text-dotted'>
+              BTC
+            </span>
           </p>
           <Input
             type='text'
             name='bitcoin'
             placeholder={this.t('wallet:amount')}
             onChange={this.onChange}
-            value={this.currencyConverter.bitcoin}
+            value={bitcoin}
           />
         </Col>
         <Col offset={1} span={7}>
           <p style={{margin: '0 0 5px 0'}}>
-            <span className='text-dotted'>{this.rates.localCurrency}</span>
+            <span className='text-dotted'>
+              {localCurrency}
+            </span>
           </p>
           <Input
             type='text'
             name='local'
             placeholder={this.t('wallet:amount')}
             onChange={this.onChange}
-            value={this.currencyConverter.local}
+            value={local}
           />
         </Col>
       </Row>

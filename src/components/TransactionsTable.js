@@ -22,50 +22,55 @@ class TransactionsTable extends React.Component {
     this.onRowDoubleClick = this.onRowDoubleClick.bind(this)
   }
 
-  onRowDoubleClick (event, index) {
+  onRowDoubleClick (e, index) {
     this.transactions.setViewing(this.transactions.filtered[index].txid)
   }
 
   render () {
+    /** Destructure properties. */
+    const {
+      filtered
+    } = this.transactions
+
     return (
       <Table
-        rowsCount={this.transactions.filtered.length}
+        rowsCount={filtered.length}
         rowHeight={25}
         headerHeight={25}
         width={1130}
         onRowDoubleClick={this.onRowDoubleClick}
-        height={tableHeight(this.transactions.filtered.length, 417)}
+        height={tableHeight(filtered.length, 417)}
       >
         <Column
           header={<Cell>{this.t('wallet:date')}</Cell>}
-          cell={<TableCell data={this.transactions.filtered} column='time' />}
+          cell={<TableCell data={filtered} column='time' />}
           width={150}
         />
         <Column
           header={<Cell>{this.t('wallet:category')}</Cell>}
-          cell={<TableCell data={this.transactions.filtered} column='category' />}
+          cell={<TableCell data={filtered} column='category' />}
           width={130}
         />
         <Column
           header={<Cell>{this.t('wallet:address')}</Cell>}
-          cell={<TableCell data={this.transactions.filtered} column='address' />}
+          cell={<TableCell data={filtered} column='address' />}
           width={285}
         />
         <Column
           header={<Cell>{this.t('wallet:account')}</Cell>}
-          cell={<TableCell data={this.transactions.filtered} column='account' />}
+          cell={<TableCell data={filtered} column='account' />}
           width={270}
         />
         <Column
           header={<Cell>{this.t('wallet:amount')}</Cell>}
-          cell={<TableCell data={this.transactions.filtered} column='amount' />}
+          cell={<TableCell data={filtered} column='amount' />}
           width={145}
         />
         <Column
           header={<Cell>{this.rates.localCurrency}</Cell>}
           cell={
             <TableCell
-              data={this.transactions.filtered}
+              data={filtered}
               column='amountLocal'
               type='localAmount'
               extra={this.rates.localCurrency}

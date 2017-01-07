@@ -7,7 +7,10 @@ const TableCell = ({ rowIndex, data, column, type, extra, ...props }) => {
   switch (type) {
     case 'localAmount':
       return (
-        <Cell {...props} className={'fdt-last-column ' + data[rowIndex]['color']}>
+        <Cell
+          {...props}
+          className={'fdt-last-column ' + data[rowIndex]['color']}
+        >
           {parseFloat(data[rowIndex][column]).toFixed(2)} {extra}
         </Cell>
       )
@@ -34,12 +37,20 @@ const TableCell = ({ rowIndex, data, column, type, extra, ...props }) => {
 
         case 'address':
           return (
-            <Cell {...props} className='text-mono'>{data[rowIndex][column]}</Cell>
+            <Cell
+              {...props}
+              className='text-mono'
+            >
+              {data[rowIndex][column]}
+            </Cell>
           )
 
         case 'amount':
           return (
-            <Cell {...props} className={'text-right ' + data[rowIndex]['color']}>
+            <Cell
+              {...props}
+              className={'text-right ' + data[rowIndex]['color']}
+            >
               {parseFloat(data[rowIndex][column]).toFixed(6)} XVC
             </Cell>
           )
@@ -53,22 +64,30 @@ const TableCell = ({ rowIndex, data, column, type, extra, ...props }) => {
 
         case 'time':
           return (
-            <Cell {...props}>{moment(new Date(data[rowIndex][column])).format('l - HH:mm:ss')}</Cell>
+            <Cell {...props}>
+              {moment(data[rowIndex][column]).format('l - HH:mm:ss')}
+            </Cell>
           )
 
         case 'conntime':
           return (
-            <Cell {...props}>{moment(data[rowIndex][column]).fromNow()}</Cell>
+            <Cell {...props}>
+              {moment(data[rowIndex][column]).fromNow()}
+            </Cell>
           )
 
         case 'banscore':
           return (
-            <Cell {...props}>{data[rowIndex][column]}/100</Cell>
+            <Cell {...props}>
+              {data[rowIndex][column]}/100
+            </Cell>
           )
 
         default:
           return (
-            <Cell {...props}>{data[rowIndex][column]}</Cell>
+            <Cell {...props}>
+              {data[rowIndex][column]}
+            </Cell>
           )
       }
   }

@@ -22,23 +22,33 @@ class SelectLanguage extends React.Component {
   }
 
   render () {
+    /** Destructure properties. */
+    const {
+      language,
+      languages
+    } = this.ui
+
+    const {
+      Option
+    } = Select
+
     return (
       <Select
         showSearch
         style={{width: '120px', margin: '0 10px 0 0'}}
-        defaultValue={this.ui.language}
+        defaultValue={language}
         optionFilterProp='children'
         notFoundContent={this.t('wallet:notFound')}
         onChange={this.setLanguage}
       >
         {
-          this.ui.languages.map((entry) => (
-            <Select.Option
+          languages.map((entry) => (
+            <Option
               key={entry.lng}
               value={entry.lng}
             >
               {entry.name}
-            </Select.Option>
+            </Option>
           ))
         }
       </Select>

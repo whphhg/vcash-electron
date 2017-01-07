@@ -27,11 +27,15 @@ class WalletDump extends React.Component {
       <div>
         <p style={{margin: '0 0 5px 0'}}>
           <i className='material-icons md-18'>assignment</i>
-          <span className='text-icon'>{this.t('wallet:dumpLong')}</span>
+          <span className='text-icon'>
+            {this.t('wallet:dumpLong')}
+          </span>
         </p>
         <Row>
           <Col span={3}>
-            <p style={{margin: '4px 0 0 0'}}>{this.t('wallet:saveInto')}</p>
+            <p style={{margin: '4px 0 0 0'}}>
+              {this.t('wallet:saveInto')}
+            </p>
           </Col>
           <Col span={21}>
             <Input

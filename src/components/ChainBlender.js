@@ -23,13 +23,21 @@ class ChainBlender extends React.Component {
   }
 
   popoverTitle () {
+    /** Destructure properties. */
+    const {
+      blendedbalance,
+      blendedpercentage
+    } = this.chainBlender.info
+
     return (
       <Row style={{width: '265px'}}>
         <Col span={17}>
           <p>
             <span>{this.t('wallet:blended')} </span>
-            <span className='text-dotted'>{this.chainBlender.info.blendedbalance.toFixed(6)}</span>
-            <span> XVC ({this.chainBlender.info.blendedpercentage.toFixed(2)}%)</span>
+            <span className='text-dotted'>
+              {blendedbalance.toFixed(6)}
+            </span>
+            <span> XVC ({blendedpercentage.toFixed(2)}%)</span>
           </p>
         </Col>
         <Col span={7} className='text-right'>
@@ -37,8 +45,22 @@ class ChainBlender extends React.Component {
             checked={this.chainBlender.status === true}
             disabled={this.wallet.isLocked === true}
             onChange={this.toggle}
-            checkedChildren={<i className='material-icons md-18' style={{margin: '1px 0 0 0'}}>done</i>}
-            unCheckedChildren={<i className='material-icons md-18' style={{margin: '1px 0 0 0'}}>clear</i>}
+            checkedChildren={
+              <i
+                className='material-icons md-18'
+                style={{margin: '1px 0 0 0'}}
+              >
+                done
+              </i>
+            }
+            unCheckedChildren={
+              <i
+                className='material-icons md-18'
+                style={{margin: '1px 0 0 0'}}
+              >
+                clear
+              </i>
+            }
           />
         </Col>
       </Row>
@@ -46,6 +68,12 @@ class ChainBlender extends React.Component {
   }
 
   popoverContent () {
+    /** Destructure properties. */
+    const {
+      denominatedbalance,
+      nondenominatedbalance
+    } = this.chainBlender.info
+
     return (
       this.wallet.isLocked === false && (
         <Row>
@@ -54,8 +82,14 @@ class ChainBlender extends React.Component {
             <p>{this.t('wallet:nonDenominated')}</p>
           </Col>
           <Col span={12} className='text-right'>
-            <p><span className='text-dotted'>{this.chainBlender.info.denominatedbalance.toFixed(6)}</span> XVC</p>
-            <p><span className='text-dotted'>{this.chainBlender.info.nondenominatedbalance.toFixed(6)}</span> XVC</p>
+            <p>
+              <span className='text-dotted'>
+                {denominatedbalance.toFixed(6)}</span> XVC
+              </p>
+            <p>
+              <span className='text-dotted'>
+                {nondenominatedbalance.toFixed(6)}</span> XVC
+              </p>
           </Col>
         </Row>
       ) || (

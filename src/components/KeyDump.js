@@ -34,6 +34,13 @@ class KeyDump extends React.Component {
   }
 
   popoverContent () {
+    /** Destructure properties. */
+    const {
+      address,
+      errorStatus,
+      privateKey
+    } = this.keyDump
+
     return (
       <div style={{width: '400px'}}>
         <Row>
@@ -42,7 +49,7 @@ class KeyDump extends React.Component {
               placeholder={this.t('wallet:address')}
               style={{width: '100%'}}
               getPopupContainer={triggerNode => triggerNode.parentNode}
-              value={this.keyDump.address}
+              value={address}
               dataSource={this.addresses.list}
               onChange={this.setAddress}
             />
@@ -51,10 +58,10 @@ class KeyDump extends React.Component {
         <Row>
           <Col span={24}>
             {
-              this.keyDump.privateKey !== '' && (
+              privateKey !== '' && (
                 <Input
                   style={{margin: '5px 0 0 0'}}
-                  value={this.keyDump.privateKey}
+                  value={privateKey}
                 />
               )
             }
@@ -62,23 +69,24 @@ class KeyDump extends React.Component {
         </Row>
         <Row>
           <Col span={15}>
-            {
-              this.keyDump.errorStatus === 'invalidCharacters' && (
-                <p className='text-error'>{this.t('wallet:addressInvalidCharacters')}</p>
-              ) ||
-              this.keyDump.errorStatus === 'unknownAddress' && (
-                <p className='text-error'>{this.t('wallet:addressUnknown')}</p>
-              ) ||
-              this.keyDump.errorStatus === 'invalidAddress' && (
-                <p className='text-error'>{this.t('wallet:addressInvalid')}</p>
-              )
-            }
+            <p className='text-error'>
+              {
+                errorStatus === 'invalidCharacters' &&
+                this.t('wallet:addressInvalidCharacters') ||
+
+                errorStatus === 'unknownAddress' &&
+                this.t('wallet:addressUnknown') ||
+
+                errorStatus === 'invalidAddress' &&
+                this.t('wallet:addressInvalid')
+              }
+            </p>
           </Col>
           <Col span={9} className='text-right'>
             <Button
               style={{margin: '5px 0 0 0'}}
               onClick={this.dumpprivkey}
-              disabled={this.keyDump.errorStatus !== false}
+              disabled={errorStatus !== false}
             >
               {this.t('wallet:privateKeyDump')}
             </Button>

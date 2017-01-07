@@ -48,7 +48,9 @@ class RewardCalculatorChart extends React.Component {
         />
         <Tooltip
           content={
-            <RechartsTooltip labelText={this.t('wallet:rewardSplit')} />
+            <RechartsTooltip
+              labelText={this.t('wallet:rewardSplit')}
+            />
           }
         />
         <XAxis dataKey='block' />

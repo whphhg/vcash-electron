@@ -58,13 +58,8 @@ class Maintenance extends React.Component {
           </Col>
           <Col span={12}>
             <div style={{margin: '10px 10px 0 10px'}}>
-              {
-                this.wallet.isEncrypted === false && (
-                  <WalletEncrypt />
-                ) || (
-                  <WalletPassphraseChange />
-                )
-              }
+              <WalletEncrypt />
+              <WalletPassphraseChange />
               { /** TODO: Implement wallet check and repair. */ }
             </div>
           </Col>

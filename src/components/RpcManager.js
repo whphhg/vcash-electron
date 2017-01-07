@@ -23,7 +23,10 @@ class RpcManager extends React.Component {
         title={this.t('wallet:rpcLost')}
         footer=''
         closable={false}
-        visible={this.rpc.status !== null && !this.rpc.status}
+        visible={
+          this.rpc.status !== null &&
+          this.rpc.status === false
+        }
       >
         {this.t('wallet:rpcLostLong')}
       </Modal>
