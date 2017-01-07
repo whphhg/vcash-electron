@@ -30,8 +30,16 @@ class Transaction extends React.Component {
 
   render () {
     /** Destructure properties. */
-    const { viewing, viewingTx } = this.transactions
-    const { local, localCurrency, average } = this.rates
+    const {
+      local,
+      localCurrency,
+      average
+    } = this.rates
+
+    const {
+      viewing,
+      viewingTx
+    } = this.transactions
 
     if (viewing === null) return null
     return (

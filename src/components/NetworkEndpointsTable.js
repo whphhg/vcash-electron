@@ -21,22 +21,28 @@ class NetworkEndpointsTable extends React.Component {
   }
 
   render () {
+    /** Destructure properties. */
+    const {
+      byCountry,
+      knownEndpoints
+    } = this.network
+
     return (
       <Table
-        rowsCount={this.network.byCountry.length}
+        rowsCount={byCountry.length}
         rowHeight={25}
         headerHeight={25}
         width={230}
-        height={tableHeight(this.network.byCountry.length, 227)}
+        height={tableHeight(byCountry.length, 227)}
       >
         <Column
           header={<Cell>{this.t('wallet:endpoints')}</Cell>}
-          cell={<TableCell data={this.network.byCountry} column='country' />}
+          cell={<TableCell data={byCountry} column='country' />}
           width={170}
         />
         <Column
-          header={<Cell>{this.network.knownEndpoints}</Cell>}
-          cell={<TableCell data={this.network.byCountry} column='count' />}
+          header={<Cell>{knownEndpoints}</Cell>}
+          cell={<TableCell data={byCountry} column='count' />}
           width={60}
         />
       </Table>

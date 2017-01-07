@@ -22,25 +22,20 @@ class WalletLock extends React.Component {
   }
 
   render () {
+    if (this.wallet.isLocked === true) return null
     return (
-      <div>
-        {
-          this.wallet.isLocked === false && this.wallet.isEncrypted === true && (
-            <Tooltip
-              title={this.t('wallet:unlocked')}
-              placement='bottomRight'
-            >
-              <Button
-                size='small'
-                type='primary'
-                onClick={this.walletlock}
-              >
-                <i className='material-icons md-20'>lock_open</i>
-              </Button>
-            </Tooltip>
-          )
-        }
-      </div>
+      <Tooltip
+        title={this.t('wallet:unlocked')}
+        placement='bottomRight'
+      >
+        <Button
+          size='small'
+          type='primary'
+          onClick={this.walletlock}
+        >
+          <i className='material-icons md-20'>lock_open</i>
+        </Button>
+      </Tooltip>
     )
   }
 }

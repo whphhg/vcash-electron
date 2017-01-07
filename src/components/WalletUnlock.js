@@ -24,8 +24,8 @@ class WalletUnlock extends React.Component {
     this.walletUnlock.walletpassphrase()
   }
 
-  setPassphrase (event) {
-    this.walletUnlock.setPassphrase(event.target.value)
+  setPassphrase (e) {
+    this.walletUnlock.setPassphrase(e.target.value)
   }
 
   togglePopover () {
@@ -33,6 +33,12 @@ class WalletUnlock extends React.Component {
   }
 
   popoverContent () {
+    /** Destructure properties. */
+    const {
+      errorStatus,
+      passphrase
+    } = this.walletUnlock
+
     return (
       <div style={{width: '400px'}}>
         <Row>
@@ -40,24 +46,25 @@ class WalletUnlock extends React.Component {
             <Input
               type='password'
               placeholder={this.t('wallet:passphraseLong')}
-              value={this.walletUnlock.passphrase}
+              value={passphrase}
               onChange={this.setPassphrase}
             />
           </Col>
         </Row>
         <Row>
           <Col span={14}>
-            {
-              this.walletUnlock.errorStatus === 'incorrectPassphrase' && (
-                <p className='text-error'>{this.t('wallet:passphraseIncorrect')}</p>
-              )
-            }
+            <p className='text-error'>
+              {
+                errorStatus === 'incorrectPassphrase' &&
+                this.t('wallet:passphraseIncorrect')
+              }
+            </p>
           </Col>
           <Col span={10} className='text-right'>
             <Button
               style={{margin: '5px 0 0 0'}}
               onClick={this.walletpassphrase}
-              disabled={this.walletUnlock.errorStatus !== false}
+              disabled={errorStatus !== false}
             >
               {this.t('wallet:unlock')}
             </Button>
@@ -68,33 +75,28 @@ class WalletUnlock extends React.Component {
   }
 
   render () {
+    if (this.wallet.isLocked === false) return null
     return (
-      <div>
-        {
-          this.wallet.isLocked === true && (
-            <Popover
-              title={this.t('wallet:unlock')}
-              trigger='click'
-              placement='bottomRight'
-              content={this.popoverContent()}
-              visible={this.walletUnlock.popover === true}
-            >
-              <Tooltip
-                title={this.t('wallet:locked')}
-                placement='bottomRight'
-              >
-                <Button
-                  type='primary'
-                  size='small'
-                  onClick={this.togglePopover}
-                >
-                  <i className='material-icons md-20'>lock</i>
-                </Button>
-              </Tooltip>
-            </Popover>
-          )
-        }
-      </div>
+      <Popover
+        title={this.t('wallet:unlock')}
+        trigger='click'
+        placement='bottomRight'
+        content={this.popoverContent()}
+        visible={this.walletUnlock.popover === true}
+      >
+        <Tooltip
+          title={this.t('wallet:locked')}
+          placement='bottomRight'
+        >
+          <Button
+            type='primary'
+            size='small'
+            onClick={this.togglePopover}
+          >
+            <i className='material-icons md-20'>lock</i>
+          </Button>
+        </Tooltip>
+      </Popover>
     )
   }
 }

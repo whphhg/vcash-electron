@@ -25,51 +25,64 @@ class SendOptions extends React.Component {
     this.send.setAccount(account)
   }
 
-  setMinConf (event) {
-    this.send.setMinConf(event.target.value)
+  setMinConf (e) {
+    this.send.setMinConf(e.target.value)
   }
 
-  setComment (event) {
-    this.send.setComment(event.target.value)
+  setComment (e) {
+    this.send.setComment(e.target.value)
   }
 
-  setCommentTo (event) {
-    this.send.setCommentTo(event.target.value)
+  setCommentTo (e) {
+    this.send.setCommentTo(e.target.value)
   }
 
   render () {
+    /** Destructure properties. */
+    const {
+      fromAccount,
+      recipients,
+      comment,
+      commentTo,
+      minConf
+    } = this.send
+
+    const {
+      Option
+    } = Select
+
     return (
       <div>
         <Row>
           <Col span={6}>
-            <p style={{margin: '4px 0 0 0'}}>{this.t('wallet:spendFrom')}</p>
+            <p style={{margin: '4px 0 0 0'}}>
+              {this.t('wallet:spendFrom')}
+            </p>
           </Col>
           <Col span={10}>
             <Select
               style={{width: '247px'}}
-              value={this.send.fromAccount}
+              value={fromAccount}
               optionFilterProp='children'
               onChange={this.setAccount}
             >
-              <Select.Option
+              <Option
                 value={null}
-                disabled={this.send.recipients.size > 1}
+                disabled={recipients.size > 1}
               >
                 {this.t('wallet:any')}
-              </Select.Option>
-              <Select.Option
-                value='*'
-              >
+              </Option>
+              <Option value='*'>
                 {this.t('wallet:default')}
-              </Select.Option>
+              </Option>
               {
                 this.addresses.accounts.map((account) => (
-                  <Select.Option
+                  <Option
                     key={account}
                     value={account}
                   >
                     {account}
-                  </Select.Option>
+                  </Option>
                 ))
               }
             </Select>
@@ -85,28 +98,32 @@ class SendOptions extends React.Component {
         </Row>
         <Row>
           <Col span={6}>
-            <p style={{margin: '9px 0 0 0'}}>{this.t('wallet:transactionComment')}</p>
+            <p style={{margin: '9px 0 0 0'}}>
+              {this.t('wallet:transactionComment')}
+            </p>
           </Col>
           <Col span={18}>
             <Input
               placeholder={this.t('wallet:transactionCommentLong')}
               style={{margin: '5px 0 0 0'}}
-              value={this.send.comment}
+              value={comment}
               onChange={this.setComment}
             />
           </Col>
         </Row>
         {
-          this.send.recipients.size === 1 && (
+          recipients.size === 1 && (
             <Row>
               <Col span={6}>
-                <p style={{margin: '9px 0 0 0'}}>{this.t('wallet:recipientComment')}</p>
+                <p style={{margin: '9px 0 0 0'}}>
+                  {this.t('wallet:recipientComment')}
+                </p>
               </Col>
               <Col span={18}>
                 <Input
                   placeholder={this.t('wallet:recipientCommentLong')}
                   style={{margin: '5px 0 0 0'}}
-                  value={this.send.commentTo}
+                  value={commentTo}
                   onChange={this.setCommentTo}
                 />
               </Col>
@@ -114,15 +131,17 @@ class SendOptions extends React.Component {
           )
         }
         {
-          this.send.fromAccount !== null && (
+          fromAccount !== null && (
             <Row>
               <Col span={6}>
-                <p style={{margin: '9px 0 0 0'}}>{this.t('wallet:minimumConfirmations')}</p>
+                <p style={{margin: '9px 0 0 0'}}>
+                  {this.t('wallet:minimumConfirmations')}
+                </p>
               </Col>
               <Col span={3}>
                 <Input
                   style={{margin: '5px 0 0 0'}}
-                  value={this.send.minConf}
+                  value={minConf}
                   onChange={this.setMinConf}
                 />
               </Col>

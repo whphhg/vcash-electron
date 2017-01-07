@@ -34,6 +34,19 @@ class Send extends React.Component {
   }
 
   render () {
+    /** Destructure properties. */
+    const {
+      local,
+      localCurrency,
+      average
+    } = this.rates
+
+    const {
+      errorStatus,
+      fromAccount,
+      total
+    } = this.send
+
     return (
       <Row>
         <Col span={11}>
@@ -48,7 +61,7 @@ class Send extends React.Component {
               disabled={
                 this.wallet.isLocked === true ||
                 this.wallet.balance < 0.0005 ||
-                this.send.errorStatus !== false
+                errorStatus !== false
               }
             >
               {this.t('wallet:send')}
@@ -56,7 +69,7 @@ class Send extends React.Component {
           </Popconfirm>
           <Button
             onClick={this.addRecipient}
-            disabled={this.send.fromAccount === null}
+            disabled={fromAccount === null}
           >
             <i className='material-icons md-16'>person_add</i>
           </Button>
@@ -74,7 +87,7 @@ class Send extends React.Component {
           <div style={{margin: '0 5px 0 0'}}>
             <Input
               disabled
-              value={(this.send.total).toFixed(6)}
+              value={(total).toFixed(6)}
               addonBefore={this.t('wallet:total')}
               addonAfter='XVC'
             />
@@ -83,8 +96,8 @@ class Send extends React.Component {
         <Col span={5}>
           <Input
             disabled
-            value={(this.send.total * this.rates.local * this.rates.average).toFixed(2)}
-            addonAfter={this.rates.localCurrency}
+            value={(total * local * average).toFixed(2)}
+            addonAfter={localCurrency}
           />
         </Col>
       </Row>

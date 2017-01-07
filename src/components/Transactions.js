@@ -25,20 +25,33 @@ class Transactions extends React.Component {
     this.setShowCategory = this.setShowCategory.bind(this)
   }
 
-  setFilters (event) {
+  setFilters (e) {
+    /** Clear previous timeout. */
     clearTimeout(this.filtersUpdateTimer)
-    const filter = event.target.value
 
+    /** Save entered values. */
+    const filter = e.target.value
+
+    /**
+     * Start a new update timer and update if there
+     * are no changes made in the last half second.
+     */
     this.filtersUpdateTimer = setTimeout(() => {
       this.transactions.setFilters(filter)
     }, 0.5 * 1000)
   }
 
-  setShowCategory (event) {
-    this.transactions.setShowCategory(event.target.value)
+  setShowCategory (e) {
+    this.transactions.setShowCategory(e.target.value)
   }
 
   render () {
+    /** Destructure properties. */
+    const {
+      Button,
+      Group
+    } = Radio
+
     return (
       <div>
         <Row className='shadow'>
@@ -48,15 +61,23 @@ class Transactions extends React.Component {
               <CurrencyConverter />
             </Col>
             <Col span={12} className='text-center'>
-              <Radio.Group
+              <Group
                 defaultValue={this.transactions.showCategory}
                 onChange={this.setShowCategory}
               >
-                <Radio.Button value='all'>{this.t('wallet:all')}</Radio.Button>
-                <Radio.Button value='0'>{this.t('wallet:received')}</Radio.Button>
-                <Radio.Button value='1'>{this.t('wallet:sent')}</Radio.Button>
-                <Radio.Button value='2'>{this.t('wallet:generated')}</Radio.Button>
-              </Radio.Group>
+                <Button value='all'>
+                  {this.t('wallet:all')}
+                </Button>
+                <Button value='0'>
+                  {this.t('wallet:received')}
+                </Button>
+                <Button value='1'>
+                  {this.t('wallet:sent')}
+                </Button>
+                <Button value='2'>
+                  {this.t('wallet:generated')}
+                </Button>
+              </Group>
             </Col>
             <Col span={6}>
               <Input

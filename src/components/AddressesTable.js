@@ -22,29 +22,34 @@ class AddressesTable extends React.Component {
   }
 
   render () {
+    /** Destructure properties. */
+    const {
+      all
+    } = this.addresses
+
     return (
       <Table
-        rowsCount={this.addresses.all.length}
+        rowsCount={all.length}
         rowHeight={25}
         headerHeight={25}
         width={509}
-        height={tableHeight(this.addresses.all.length, 545)}
+        height={tableHeight(all.length, 545)}
       >
         <Column
           header={<Cell>{this.t('wallet:addresses')}</Cell>}
-          cell={<TableCell data={this.addresses.all} column='address' />}
+          cell={<TableCell data={all} column='address' />}
           width={285}
         />
         <Column
           header={<Cell>{this.t('wallet:received')}</Cell>}
-          cell={<TableCell data={this.addresses.all} column='amount' />}
+          cell={<TableCell data={all} column='amount' />}
           width={115}
         />
         <Column
           header={<Cell>{this.rates.localCurrency}</Cell>}
           cell={
             <TableCell
-              data={this.addresses.all}
+              data={all}
               column='localAmount'
               type='localAmount'
               extra={this.rates.localCurrency}

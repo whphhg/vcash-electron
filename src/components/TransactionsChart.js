@@ -58,7 +58,9 @@ class TransactionsChart extends React.Component {
         />
         <Tooltip
           content={
-            <RechartsTooltip labelText={this.t('wallet:statisticsFor')} />
+            <RechartsTooltip
+              labelText={this.t('wallet:statisticsFor')}
+            />
           }
         />
         <XAxis dataKey='date' />

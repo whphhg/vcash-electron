@@ -18,7 +18,10 @@ class SendRecipients extends React.Component {
       <div id='sendRecipients'>
         {
           this.send.recipients.entries().map((recipient) => (
-            <SendRecipient data={recipient[1]} key={recipient[1].uid} />
+            <SendRecipient
+              data={recipient[1]}
+              key={recipient[1].uid}
+            />
           ))
         }
       </div>

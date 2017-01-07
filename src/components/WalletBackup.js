@@ -27,30 +27,41 @@ class WalletBackup extends React.Component {
   }
 
   render () {
+    /** Destructure properties. */
+    const {
+      errorStatus,
+      path
+    } = this.walletBackup
+
     return (
       <div>
         <p style={{margin: '0 0 5px 0'}}>
           <i className='material-icons md-18'>save</i>
-          <span className='text-icon'>{this.t('wallet:backupLong')}</span>
+          <span className='text-icon'>
+            {this.t('wallet:backupLong')}
+          </span>
         </p>
         <Row>
           <Col span={3}>
-            <p style={{margin: '4px 0 0 0'}}>{this.t('wallet:saveInto')}</p>
+            <p style={{margin: '4px 0 0 0'}}>
+              {this.t('wallet:saveInto')}
+            </p>
           </Col>
           <Col span={21}>
             <Input
               disabled
-              value={this.walletBackup.path}
+              value={path}
             />
           </Col>
         </Row>
         <Row>
           <Col offset={3} span={12}>
-            {
-              this.walletBackup.errorStatus === 'backupFailed' && (
-                <p className='text-error'>{this.t('wallet:backupFailed')}</p>
-              )
-            }
+            <p className='text-error'>
+              {
+                errorStatus === 'backupFailed' &&
+                this.t('wallet:backupFailed')
+              }
+            </p>
           </Col>
           <Col span={9} className='text-right'>
             <Button

@@ -21,47 +21,52 @@ class NetworkPeersTable extends React.Component {
   }
 
   render () {
+    /** Destructure properties. */
+    const {
+      peers
+    } = this.network
+
     return (
       <Table
-        rowsCount={this.network.peers.length}
+        rowsCount={peers.length}
         rowHeight={25}
         headerHeight={25}
         width={892}
-        height={tableHeight(this.network.peers.length, 227)}
+        height={tableHeight(peers.length, 227)}
       >
         <Column
           header={<Cell>{this.t('wallet:peers')}</Cell>}
-          cell={<TableCell data={this.network.peers} column='addr' />}
+          cell={<TableCell data={peers} column='addr' />}
           width={170}
         />
         <Column
           header={<Cell>{this.t('wallet:country')}</Cell>}
-          cell={<TableCell data={this.network.peers} column='country' />}
+          cell={<TableCell data={peers} column='country' />}
           width={170}
         />
         <Column
           header={<Cell>{this.t('wallet:version')}</Cell>}
-          cell={<TableCell data={this.network.peers} column='version' />}
+          cell={<TableCell data={peers} column='version' />}
           width={112}
         />
         <Column
           header={<Cell>{this.t('wallet:os')}</Cell>}
-          cell={<TableCell data={this.network.peers} column='os' />}
+          cell={<TableCell data={peers} column='os' />}
           width={100}
         />
         <Column
           header={<Cell>{this.t('wallet:connected')}</Cell>}
-          cell={<TableCell data={this.network.peers} column='conntime' />}
+          cell={<TableCell data={peers} column='conntime' />}
           width={150}
         />
         <Column
           header={<Cell>{this.t('wallet:startingHeight')}</Cell>}
-          cell={<TableCell data={this.network.peers} column='startingheight' />}
+          cell={<TableCell data={peers} column='startingheight' />}
           width={110}
         />
         <Column
           header={<Cell>{this.t('wallet:banScore')}</Cell>}
-          cell={<TableCell data={this.network.peers} column='banscore' />}
+          cell={<TableCell data={peers} column='banscore' />}
           width={80}
         />
       </Table>

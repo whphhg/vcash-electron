@@ -22,23 +22,33 @@ class SelectCurrency extends React.Component {
   }
 
   render () {
+    /** Destructure properties. */
+    const {
+      localCurrency,
+      localCurrencies
+    } = this.rates
+
+    const {
+      Option
+    } = Select
+
     return (
       <Select
         showSearch
         style={{width: '80px'}}
-        defaultValue={this.rates.localCurrency}
+        defaultValue={localCurrency}
         optionFilterProp='children'
         notFoundContent={this.t('wallet:notFound')}
         onChange={this.setLocalCurrency}
       >
         {
-          this.rates.localCurrencies.map((currency) => (
-            <Select.Option
+          localCurrencies.map((currency) => (
+            <Option
               key={currency}
               value={currency}
             >
               {currency}
-            </Select.Option>
+            </Option>
           ))
         }
       </Select>

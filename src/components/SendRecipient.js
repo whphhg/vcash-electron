@@ -24,12 +24,25 @@ class SendRecipient extends React.Component {
     this.send.removeRecipient(uid)
   }
 
-  setRecipient (event) {
-    this.send.setRecipient(event.target.id, event.target.name, event.target.value)
+  setRecipient (e) {
+    this.send.setRecipient(e.target.id, e.target.name, e.target.value)
   }
 
   render () {
-    const { uid, address, addressValid, amount } = this.data
+    /** Destructure properties. */
+    const {
+      local,
+      localCurrency,
+      average
+    } = this.rates
+
+    const {
+      uid,
+      address,
+      addressValid,
+      amount
+    } = this.data
+
     return (
       <div style={{margin: '0 0 5px 0'}}>
         <Row key={uid}>
@@ -77,8 +90,8 @@ class SendRecipient extends React.Component {
           <Col span={5}>
             <Input
               disabled
-              value={(amount * this.rates.average * this.rates.local).toFixed(2)}
-              addonAfter={this.rates.localCurrency}
+              value={(amount * average * local).toFixed(2)}
+              addonAfter={localCurrency}
             />
           </Col>
         </Row>

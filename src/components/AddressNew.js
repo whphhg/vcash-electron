@@ -33,6 +33,13 @@ class AddressNew extends React.Component {
   }
 
   popoverContent () {
+    /** Destructure properties. */
+    const {
+      account,
+      address,
+      errorStatus
+    } = this.addressNew
+
     return (
       <div style={{width: '400px'}}>
         <Row>
@@ -41,7 +48,7 @@ class AddressNew extends React.Component {
               placeholder={this.t('wallet:accountName')}
               style={{width: '100%'}}
               getPopupContainer={triggerNode => triggerNode.parentNode}
-              value={this.addressNew.account}
+              value={account}
               dataSource={this.addresses.accounts}
               onChange={this.setAccount}
             />
@@ -49,30 +56,32 @@ class AddressNew extends React.Component {
         </Row>
         <div>
           {
-            this.addressNew.address !== '' && (
+            address !== '' && (
               <Input
                 style={{margin: '5px 0 0 0'}}
-                value={this.addressNew.address}
+                value={address}
+                readOnly
               />
             )
           }
         </div>
         <Row>
           <Col span={14}>
-            {
-              this.addressNew.errorStatus === 'invalidCharacters' && (
-                <p className='text-error'>{this.t('wallet:accountInvalidCharacters')}</p>
-              ) ||
-              this.addressNew.errorStatus === 'keypoolRanOut' && (
-                <p className='text-error'>{this.t('wallet:keypoolRanOut')}</p>
-              )
-            }
+            <p className='text-error'>
+              {
+                errorStatus === 'invalidCharacters' &&
+                this.t('wallet:accountInvalidCharacters') ||
+
+                errorStatus === 'keypoolRanOut' &&
+                this.t('wallet:keypoolRanOut')
+              }
+            </p>
           </Col>
           <Col span={10} className='text-right'>
             <Button
               style={{margin: '5px 0 0 0'}}
               onClick={this.getnewaddress}
-              disabled={this.addressNew.errorStatus !== false}
+              disabled={errorStatus !== false}
             >
               {this.t('wallet:addressGenerate')}
             </Button>

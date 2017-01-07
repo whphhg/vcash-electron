@@ -29,26 +29,69 @@ class Header extends React.Component {
   }
 
   render () {
+    /** Destructure properties. */
+    const {
+      local,
+      localCurrency,
+      average
+    } = this.rates
+
+    const {
+      balance,
+      newmint,
+      stake
+    } = this.wallet.info
+
+    const {
+      votecandidate,
+      collateralbalance
+    } = this.wallet.incentive
+
+    const {
+      Item
+    } = Menu
+
     return (
       <header className='shadow'>
         <img src='./assets/images/logoGrey.png' />
-        <p>{this.t('wallet:balance')} <br /><span>{(this.wallet.info.balance).toFixed(6)}</span> XVC</p>
-        <p className='balance'>~<span>{(this.wallet.info.balance * this.rates.average).toFixed(8)}</span> BTC</p>
-        <p className='balance'>~<span>{(this.wallet.info.balance * this.rates.average * this.rates.local).toFixed(2)}</span> {this.rates.localCurrency}</p>
+        <p>
+          {this.t('wallet:balance')}
+          <br />
+          <span>{(balance).toFixed(6)}</span> XVC
+        </p>
+        <p className='balance'>
+          ~<span>{(balance * average).toFixed(8)}</span> BTC
+        </p>
+        <p className='balance'>
+          ~<span>{(balance * average * local).toFixed(2)} </span>
+          {localCurrency}
+        </p>
         <div className='incoming'>
           {
             this.transactions.pendingAmount > 0 && (
-              <p>{this.t('wallet:pending')} <br /> <span>{this.transactions.pendingAmount.toFixed(6)}</span> XVC</p>
+              <p>
+                {this.t('wallet:pending')}
+                <br />
+                <span>{this.transactions.pendingAmount.toFixed(6)}</span> XVC
+              </p>
             )
           }
           {
-            this.wallet.info.newmint > 0 && (
-              <p>{this.t('wallet:immature')} <br /> <span>{this.wallet.info.newmint.toFixed(6)}</span> XVC</p>
+            newmint > 0 && (
+              <p>
+                {this.t('wallet:immature')}
+                <br />
+                <span>{newmint.toFixed(6)}</span> XVC
+              </p>
             )
           }
           {
-            this.wallet.info.stake > 0 && (
-              <p>{this.t('wallet:staking')} <br /> <span>{this.wallet.info.stake.toFixed(6)}</span> XVC</p>
+            stake > 0 && (
+              <p>
+                {this.t('wallet:staking')}
+                <br />
+                <span>{stake.toFixed(6)}</span> XVC
+              </p>
             )
           }
         </div>
@@ -62,35 +105,47 @@ class Header extends React.Component {
             selectedKeys={[this.ui.activeRoute]}
             mode='horizontal'
           >
-            <Menu.Item key='/'>
+            <Item key='/'>
               <i className='material-icons md-20'>account_balance_wallet</i>
-            </Menu.Item>
-            <Menu.Item key='addresses'>
+            </Item>
+            <Item key='addresses'>
               <i className='material-icons md-20'>send</i>
-            </Menu.Item>
-            <Menu.Item key='maintenance'>
+            </Item>
+            <Item key='maintenance'>
               <i className='material-icons md-20'>settings</i>
-            </Menu.Item>
+            </Item>
           </Menu>
         </nav>
         <div className='indicators'>
           {
-            this.wallet.incentive.votecandidate === true && (
+            votecandidate === true && (
               <Tooltip
                 placement='bottom'
                 title={
                   <p>
-                    <span>{this.t('wallet:validCollateral')} </span>
-                    <span className='text-dotted'>{(this.wallet.incentive.collateralbalance).toFixed(6)}</span>
-                    <span> XVC.</span>
+                    {this.t('wallet:validCollateral')}
+                    <span className='text-dotted'>
+                      {' ' + (collateralbalance).toFixed(6) + ' '}
+                    </span>
+                    XVC.
                   </p>
                 }
               >
-                <i className='material-icons md-20' style={{color: '#43464B'}}>verified_user</i>
+                <i
+                  className='material-icons md-20'
+                  style={{color: '#43464B'}}
+                >
+                  verified_user
+                </i>
               </Tooltip>
             )
           }
-          {/** TODO: Staking indicator if config pos:1 & unlocked (gavel, loyalty, flag, flash on, rowing). */}
+          {
+            /**
+             * TODO: Staking indicator if config pos:1 & unlocked
+             * (gavel, loyalty, flag, flash on, rowing).
+             */
+          }
         </div>
       </header>
     )
