@@ -15,8 +15,8 @@ import RechartsTooltip from './RechartsTooltip'
 class RewardCalculatorChart extends React.Component {
   constructor (props) {
     super(props)
-    this.rewardCalculator = props.rewardCalculator
     this.t = props.t
+    this.rewardCalculator = props.rewardCalculator
   }
 
   render () {
