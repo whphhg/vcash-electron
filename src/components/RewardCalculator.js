@@ -16,8 +16,8 @@ import RewardCalculatorChart from './RewardCalculatorChart'
 class RewardCalculator extends React.Component {
   constructor (props) {
     super(props)
-    this.rewardCalculator = props.rewardCalculator
     this.t = props.t
+    this.rewardCalculator = props.rewardCalculator
     this.wallet = props.wallet
     this.setBlock = this.setBlock.bind(this)
 
@@ -25,17 +25,12 @@ class RewardCalculator extends React.Component {
     this.rewardCalculator.setBlock(this.wallet.info.blocks)
   }
 
-  setBlock (event) {
-    this.rewardCalculator.setBlock(event.target.value)
+  setBlock (e) {
+    this.rewardCalculator.setBlock(e.target.value)
   }
 
   popoverTitle () {
-    /** Destructure properties. */
-    const {
-      block,
-      estimation,
-      time
-    } = this.rewardCalculator
+    const { block, estimation, time } = this.rewardCalculator
 
     return (
       <Row>
@@ -70,12 +65,7 @@ class RewardCalculator extends React.Component {
   }
 
   popoverContent () {
-    /** Destructure properties. */
-    const {
-      powReward,
-      incentiveReward,
-      incentivePercent
-    } = this.rewardCalculator
+    const { powReward, incentiveReward, incentivePercent } = this.rewardCalculator
 
     return (
       <div style={{width: '500px', margin: '10px 0 0 0'}}>
