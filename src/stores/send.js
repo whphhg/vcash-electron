@@ -1,4 +1,4 @@
-import { action, asMap, autorun, computed, observable } from 'mobx'
+import { action, autorun, computed, observable } from 'mobx'
 import { decimalSeparator, shortUid } from '../utilities/common'
 import { notification } from 'antd'
 import i18next from '../utilities/i18next'
@@ -18,7 +18,7 @@ class Send {
    * @property {string} commentTo - Comment about recipient.
    */
   @observable fromAccount = null
-  @observable recipients = asMap({})
+  @observable recipients = observable.map({})
   @observable minConf = 1
   @observable comment = ''
   @observable commentTo = ''

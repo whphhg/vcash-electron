@@ -1,4 +1,4 @@
-import { action, asMap, computed, observable, reaction } from 'mobx'
+import { action, computed, observable, reaction } from 'mobx'
 import { notification } from 'antd'
 import i18next from '../utilities/i18next'
 import moment from 'moment'
@@ -16,7 +16,7 @@ class Transactions {
    * @property {string|null} viewing - Transaction being viewed.
    * @property {string|null} viewingQueue - Tx waiting to be viewed (just sent).
    */
-  @observable txids = asMap({})
+  @observable txids = observable.map({})
   @observable filters = []
   @observable showCategory = 'all'
   @observable viewing = null
@@ -82,7 +82,7 @@ class Transactions {
             amountLocal && String(amountLocal.toFixed(2)).indexOf(filter) > -1 ||
             transaction.blockhash && transaction.blockhash.indexOf(filter) > -1 ||
             transaction.txid && transaction.txid.indexOf(filter) > -1 ||
-            transaction.time && moment(new Date(transaction.time)).format('l - HH:mm:ss').indexOf(filter) > -1
+            transaction.time && moment(transaction.time).format('l - HH:mm:ss').indexOf(filter) > -1
            ) {
             found += 1
           }

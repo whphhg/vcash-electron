@@ -16,16 +16,13 @@ import TableCell from './TableCell'
 class AddressesTable extends React.Component {
   constructor (props) {
     super(props)
+    this.t = props.t
     this.addresses = props.addresses
     this.rates = props.rates
-    this.t = props.t
   }
 
   render () {
-    /** Destructure properties. */
-    const {
-      all
-    } = this.addresses
+    const { all } = this.addresses
 
     return (
       <Table

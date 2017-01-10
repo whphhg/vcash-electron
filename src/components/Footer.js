@@ -11,8 +11,8 @@ import { inject, observer } from 'mobx-react'
 class Footer extends React.Component {
   constructor (props) {
     super(props)
-    this.network = props.network
     this.t = props.t
+    this.network = props.network
     this.wallet = props.wallet
   }
 

@@ -12,10 +12,10 @@ import { Col, Input, Popconfirm, Row } from 'antd'
 class SendRecipient extends React.Component {
   constructor (props) {
     super(props)
+    this.t = props.t
     this.data = props.data
     this.rates = props.rates
     this.send = props.send
-    this.t = props.t
     this.removeRecipient = this.removeRecipient.bind(this)
     this.setRecipient = this.setRecipient.bind(this)
   }
@@ -29,19 +29,8 @@ class SendRecipient extends React.Component {
   }
 
   render () {
-    /** Destructure properties. */
-    const {
-      local,
-      localCurrency,
-      average
-    } = this.rates
-
-    const {
-      uid,
-      address,
-      addressValid,
-      amount
-    } = this.data
+    const { local, localCurrency, average } = this.rates
+    const { uid, address, addressValid, amount } = this.data
 
     return (
       <div style={{margin: '0 0 5px 0'}}>

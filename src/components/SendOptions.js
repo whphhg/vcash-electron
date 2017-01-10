@@ -12,9 +12,9 @@ import { Col, Input, Row, Select } from 'antd'
 class SendOptions extends React.Component {
   constructor (props) {
     super(props)
+    this.t = props.t
     this.addresses = props.addresses
     this.send = props.send
-    this.t = props.t
     this.setAccount = this.setAccount.bind(this)
     this.setMinConf = this.setMinConf.bind(this)
     this.setComment = this.setComment.bind(this)
@@ -38,18 +38,8 @@ class SendOptions extends React.Component {
   }
 
   render () {
-    /** Destructure properties. */
-    const {
-      fromAccount,
-      recipients,
-      comment,
-      commentTo,
-      minConf
-    } = this.send
-
-    const {
-      Option
-    } = Select
+    const { fromAccount, recipients, comment, commentTo, minConf } = this.send
+    const { Option } = Select
 
     return (
       <div>

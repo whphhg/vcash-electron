@@ -1,5 +1,6 @@
 import React from 'react'
 import { translate } from 'react-i18next'
+import { action, computed, observable, reaction } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
 
@@ -7,39 +8,68 @@ import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('addresses', 'addressNew') @observer
+@inject('addresses') @observer
 
 class AddressNew extends React.Component {
+  @observable account = ''
+  @observable address = ''
+  @observable popover = false
+  @observable error = false
+
   constructor (props) {
     super(props)
-    this.addresses = props.addresses
-    this.addressNew = props.addressNew
     this.t = props.t
-    this.getnewaddress = this.getnewaddress.bind(this)
+    this.addresses = props.addresses
+    this.getNew = this.getNew.bind(this)
     this.setAccount = this.setAccount.bind(this)
     this.togglePopover = this.togglePopover.bind(this)
+
+    /** Clear address when the popover closes. */
+    reaction(() => this.popover, (popover) => {
+      if (popover === false) {
+        if (this.address !== '') this.setAddress()
+      }
+    })
   }
 
-  getnewaddress () {
-    this.addressNew.getnewaddress()
+  @computed get errorStatus () {
+    if (this.account.match(/^[a-zA-Z0-9 -]{0,100}$/) === null) {
+      return 'invalidCharacters'
+    }
+
+    if (this.error !== false) return this.error
+    return false
   }
 
-  setAccount (account, label) {
-    this.addressNew.setAccount(account)
+  @action setError (error = false) {
+    this.error = error
   }
 
-  togglePopover () {
-    this.addressNew.togglePopover()
+  @action setAccount (account) {
+    this.account = account
+  }
+
+  @action setAddress (address = '') {
+    this.address = address
+  }
+
+  @action togglePopover () {
+    this.popover = !this.popover
+  }
+
+  getNew () {
+    this.addresses.getNew(this.account, (result, error) => {
+      if (result !== undefined) {
+        this.setAddress(result)
+      }
+
+      if (error !== this.error) {
+        this.setError(error)
+      }
+    })
   }
 
   popoverContent () {
-    /** Destructure properties. */
-    const {
-      account,
-      address,
-      errorStatus
-    } = this.addressNew
-
     return (
       <div style={{width: '400px'}}>
         <Row>
@@ -48,7 +78,7 @@ class AddressNew extends React.Component {
               placeholder={this.t('wallet:accountName')}
               style={{width: '100%'}}
               getPopupContainer={triggerNode => triggerNode.parentNode}
-              value={account}
+              value={this.account}
               dataSource={this.addresses.accounts}
               onChange={this.setAccount}
             />
@@ -56,10 +86,10 @@ class AddressNew extends React.Component {
         </Row>
         <div>
           {
-            address !== '' && (
+            this.address !== '' && (
               <Input
                 style={{margin: '5px 0 0 0'}}
-                value={address}
+                value={this.address}
                 readOnly
               />
             )
@@ -69,10 +99,10 @@ class AddressNew extends React.Component {
           <Col span={14}>
             <p className='text-error'>
               {
-                errorStatus === 'invalidCharacters' &&
+                this.errorStatus === 'invalidCharacters' &&
                 this.t('wallet:accountInvalidCharacters') ||
 
-                errorStatus === 'keypoolRanOut' &&
+                this.errorStatus === 'keypoolRanOut' &&
                 this.t('wallet:keypoolRanOut')
               }
             </p>
@@ -80,8 +110,8 @@ class AddressNew extends React.Component {
           <Col span={10} className='text-right'>
             <Button
               style={{margin: '5px 0 0 0'}}
-              onClick={this.getnewaddress}
-              disabled={errorStatus !== false}
+              onClick={this.getNew}
+              disabled={this.errorStatus !== false}
             >
               {this.t('wallet:addressGenerate')}
             </Button>
@@ -98,7 +128,7 @@ class AddressNew extends React.Component {
         trigger='click'
         placement='bottomLeft'
         content={this.popoverContent()}
-        visible={this.addressNew.popover === true}
+        visible={this.popover === true}
         onVisibleChange={this.togglePopover}
       >
         <Button>{this.t('wallet:addressGenerate')}</Button>

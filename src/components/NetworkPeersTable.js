@@ -16,15 +16,12 @@ import TableCell from './TableCell'
 class NetworkPeersTable extends React.Component {
   constructor (props) {
     super(props)
-    this.network = props.network
     this.t = props.t
+    this.network = props.network
   }
 
   render () {
-    /** Destructure properties. */
-    const {
-      peers
-    } = this.network
+    const { peers } = this.network
 
     return (
       <Table

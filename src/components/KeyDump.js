@@ -1,5 +1,6 @@
 import React from 'react'
 import { translate } from 'react-i18next'
+import { action, computed, observable, reaction } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
 
@@ -7,40 +8,80 @@ import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('addresses', 'keyDump', 'wallet') @observer
+@inject('addresses', 'wallet') @observer
 
 class KeyDump extends React.Component {
+  @observable address = ''
+  @observable privateKey = ''
+  @observable popover = false
+  @observable error = false
+
   constructor (props) {
     super(props)
-    this.addresses = props.addresses
-    this.keyDump = props.keyDump
     this.t = props.t
+    this.addresses = props.addresses
     this.wallet = props.wallet
-    this.dumpprivkey = this.dumpprivkey.bind(this)
+    this.dumpKey = this.dumpKey.bind(this)
     this.setAddress = this.setAddress.bind(this)
     this.togglePopover = this.togglePopover.bind(this)
+
+    /** Clear private key and previous RPC response errors on address change. */
+    reaction(() => this.address, (address) => {
+      if (this.privateKey !== '') {
+        this.setPrivateKey()
+      }
+
+      this.setError()
+    })
+
+    /** Clear address and private key when popover closes. */
+    reaction(() => this.popover, (popover) => {
+      if (popover === false) {
+        if (this.address !== '') this.setAddress()
+        if (this.privateKey !== '') this.setPrivateKey()
+      }
+    })
   }
 
-  dumpprivkey () {
-    this.keyDump.dumpprivkey()
+  @computed get errorStatus () {
+    if (this.address.match(/^[a-zA-Z0-9]{0,34}$/) === null) {
+      return 'invalidCharacters'
+    }
+
+    if (this.address.length < 34) return 'incompleteAddress'
+    if (this.error !== false) return this.error
+    return false
   }
 
-  setAddress (address) {
-    this.keyDump.setAddress(address)
+  @action setError (error = false) {
+    this.error = error
   }
 
-  togglePopover () {
-    this.keyDump.togglePopover()
+  @action setAddress (address = '') {
+    this.address = address
+  }
+
+  @action setPrivateKey (privateKey = '') {
+    this.privateKey = privateKey
+  }
+
+  @action togglePopover () {
+    this.popover = !this.popover
+  }
+
+  dumpKey () {
+    this.addresses.dumpKey(this.address, (result, error) => {
+      if (result !== undefined) {
+        this.setPrivateKey(result)
+      }
+
+      if (error !== this.error) {
+        this.setError(error)
+      }
+    })
   }
 
   popoverContent () {
-    /** Destructure properties. */
-    const {
-      address,
-      errorStatus,
-      privateKey
-    } = this.keyDump
-
     return (
       <div style={{width: '400px'}}>
         <Row>
@@ -49,7 +90,7 @@ class KeyDump extends React.Component {
               placeholder={this.t('wallet:address')}
               style={{width: '100%'}}
               getPopupContainer={triggerNode => triggerNode.parentNode}
-              value={address}
+              value={this.address}
               dataSource={this.addresses.list}
               onChange={this.setAddress}
             />
@@ -58,10 +99,11 @@ class KeyDump extends React.Component {
         <Row>
           <Col span={24}>
             {
-              privateKey !== '' && (
+              this.privateKey !== '' && (
                 <Input
                   style={{margin: '5px 0 0 0'}}
-                  value={privateKey}
+                  value={this.privateKey}
+                  readOnly
                 />
               )
             }
@@ -71,13 +113,13 @@ class KeyDump extends React.Component {
           <Col span={15}>
             <p className='text-error'>
               {
-                errorStatus === 'invalidCharacters' &&
+                this.errorStatus === 'invalidCharacters' &&
                 this.t('wallet:addressInvalidCharacters') ||
 
-                errorStatus === 'unknownAddress' &&
+                this.errorStatus === 'unknownAddress' &&
                 this.t('wallet:addressUnknown') ||
 
-                errorStatus === 'invalidAddress' &&
+                this.errorStatus === 'invalidAddress' &&
                 this.t('wallet:addressInvalid')
               }
             </p>
@@ -85,8 +127,8 @@ class KeyDump extends React.Component {
           <Col span={9} className='text-right'>
             <Button
               style={{margin: '5px 0 0 0'}}
-              onClick={this.dumpprivkey}
-              disabled={errorStatus !== false}
+              onClick={this.dumpKey}
+              disabled={this.errorStatus !== false}
             >
               {this.t('wallet:privateKeyDump')}
             </Button>
@@ -103,7 +145,7 @@ class KeyDump extends React.Component {
         trigger='click'
         placement='bottomLeft'
         content={this.popoverContent()}
-        visible={this.keyDump.popover === true}
+        visible={this.popover === true}
         onVisibleChange={this.togglePopover}
       >
         <Button

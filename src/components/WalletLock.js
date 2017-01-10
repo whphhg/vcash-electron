@@ -14,15 +14,17 @@ class WalletLock extends React.Component {
     super(props)
     this.t = props.t
     this.wallet = props.wallet
-    this.walletlock = this.walletlock.bind(this)
+    this.lock = this.lock.bind(this)
   }
 
-  walletlock () {
-    this.wallet.walletlock()
+  lock () {
+    this.wallet.lock()
   }
 
   render () {
-    if (this.wallet.isLocked === true) return null
+    const { isEncrypted, isLocked } = this.wallet
+
+    if (isEncrypted === false || isLocked === true) return null
     return (
       <Tooltip
         title={this.t('wallet:unlocked')}
@@ -31,7 +33,7 @@ class WalletLock extends React.Component {
         <Button
           size='small'
           type='primary'
-          onClick={this.walletlock}
+          onClick={this.lock}
         >
           <i className='material-icons md-20'>lock_open</i>
         </Button>

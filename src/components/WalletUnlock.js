@@ -1,5 +1,6 @@
 import React from 'react'
 import { translate } from 'react-i18next'
+import { action, computed, observable, reaction } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button, Col, Input, Popover, Row, Tooltip } from 'antd'
 
@@ -7,38 +8,71 @@ import { Button, Col, Input, Popover, Row, Tooltip } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('wallet', 'walletUnlock') @observer
+@inject('wallet') @observer
 
 class WalletUnlock extends React.Component {
+  @observable passphrase = ''
+  @observable popover = false
+  @observable error = false
+
   constructor (props) {
     super(props)
     this.t = props.t
     this.wallet = props.wallet
-    this.walletUnlock = props.walletUnlock
-    this.walletpassphrase = this.walletpassphrase.bind(this)
+    this.unlock = this.unlock.bind(this)
     this.setPassphrase = this.setPassphrase.bind(this)
     this.togglePopover = this.togglePopover.bind(this)
+
+    /** Clear previous error on passphrase change. */
+    reaction(() => this.passphrase, (passphrase) => {
+      if (this.error !== false) {
+        this.setError()
+      }
+    })
+
+    /** Clear passphrase on popover closure. */
+    reaction(() => this.popover, (popover) => {
+      if (popover === false) {
+        if (this.passphrase !== '') {
+          this.setPassphrase()
+        }
+      }
+    })
   }
 
-  walletpassphrase () {
-    this.walletUnlock.walletpassphrase()
+  @computed get errorStatus () {
+    if (this.passphrase.length < 1) return 'emptyField'
+    if (this.error !== false) return this.error
+    return false
   }
 
-  setPassphrase (e) {
-    this.walletUnlock.setPassphrase(e.target.value)
+  @action setError (error = false) {
+    this.error = error
   }
 
-  togglePopover () {
-    this.walletUnlock.togglePopover()
+  @action setPassphrase (e) {
+    this.passphrase = e === undefined
+      ? ''
+      : e.target.value
+  }
+
+  @action togglePopover () {
+    this.popover = !this.popover
+  }
+
+  unlock () {
+    this.wallet.unlock(this.passphrase, (result, error) => {
+      if (result !== undefined) {
+        this.togglePopover()
+      }
+
+      if (error !== this.error) {
+        this.setError(error)
+      }
+    })
   }
 
   popoverContent () {
-    /** Destructure properties. */
-    const {
-      errorStatus,
-      passphrase
-    } = this.walletUnlock
-
     return (
       <div style={{width: '400px'}}>
         <Row>
@@ -46,7 +80,7 @@ class WalletUnlock extends React.Component {
             <Input
               type='password'
               placeholder={this.t('wallet:passphraseLong')}
-              value={passphrase}
+              value={this.passphrase}
               onChange={this.setPassphrase}
             />
           </Col>
@@ -55,7 +89,7 @@ class WalletUnlock extends React.Component {
           <Col span={14}>
             <p className='text-error'>
               {
-                errorStatus === 'incorrectPassphrase' &&
+                this.errorStatus === 'incorrectPassphrase' &&
                 this.t('wallet:passphraseIncorrect')
               }
             </p>
@@ -63,8 +97,8 @@ class WalletUnlock extends React.Component {
           <Col span={10} className='text-right'>
             <Button
               style={{margin: '5px 0 0 0'}}
-              onClick={this.walletpassphrase}
-              disabled={errorStatus !== false}
+              onClick={this.unlock}
+              disabled={this.errorStatus !== false}
             >
               {this.t('wallet:unlock')}
             </Button>
@@ -82,7 +116,7 @@ class WalletUnlock extends React.Component {
         trigger='click'
         placement='bottomRight'
         content={this.popoverContent()}
-        visible={this.walletUnlock.popover === true}
+        visible={this.popover === true}
       >
         <Tooltip
           title={this.t('wallet:locked')}

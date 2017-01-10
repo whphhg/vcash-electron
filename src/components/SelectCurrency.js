@@ -12,8 +12,8 @@ import { Select } from 'antd'
 class SelectCurrency extends React.Component {
   constructor (props) {
     super(props)
-    this.rates = props.rates
     this.t = props.t
+    this.rates = props.rates
     this.setLocalCurrency = this.setLocalCurrency.bind(this)
   }
 
@@ -22,27 +22,19 @@ class SelectCurrency extends React.Component {
   }
 
   render () {
-    /** Destructure properties. */
-    const {
-      localCurrency,
-      localCurrencies
-    } = this.rates
-
-    const {
-      Option
-    } = Select
+    const { Option } = Select
 
     return (
       <Select
         showSearch
         style={{width: '80px'}}
-        defaultValue={localCurrency}
+        defaultValue={this.rates.localCurrency}
         optionFilterProp='children'
         notFoundContent={this.t('wallet:notFound')}
         onChange={this.setLocalCurrency}
       >
         {
-          localCurrencies.map((currency) => (
+          this.rates.localCurrencies.map((currency) => (
             <Option
               key={currency}
               value={currency}
