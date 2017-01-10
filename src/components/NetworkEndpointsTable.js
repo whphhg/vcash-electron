@@ -16,16 +16,12 @@ import TableCell from './TableCell'
 class NetworkEndpointsTable extends React.Component {
   constructor (props) {
     super(props)
-    this.network = props.network
     this.t = props.t
+    this.network = props.network
   }
 
   render () {
-    /** Destructure properties. */
-    const {
-      byCountry,
-      knownEndpoints
-    } = this.network
+    const { byCountry, knownEndpoints } = this.network
 
     return (
       <Table

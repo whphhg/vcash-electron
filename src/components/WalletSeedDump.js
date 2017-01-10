@@ -1,5 +1,6 @@
 import React from 'react'
 import { translate } from 'react-i18next'
+import { action, computed, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button, Col, Input, Row } from 'antd'
 
@@ -7,32 +8,52 @@ import { Button, Col, Input, Row } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('wallet', 'walletSeedDump') @observer
+@inject('wallet') @observer
 
 class WalletSeedDump extends React.Component {
+  @observable seed = ''
+  @observable error = false
+
   constructor (props) {
     super(props)
     this.t = props.t
     this.wallet = props.wallet
-    this.walletSeedDump = props.walletSeedDump
-    this.dumpwalletseed = this.dumpwalletseed.bind(this)
-  }
-
-  dumpwalletseed () {
-    this.walletSeedDump.dumpwalletseed()
+    this.dumpSeed = this.dumpSeed.bind(this)
+    this.setSeed = this.setSeed.bind(this)
   }
 
   componentWillUnmount () {
-    this.walletSeedDump.setSeed()
+    if (this.seed !== '') {
+      this.setSeed()
+    }
+  }
+
+  @computed get errorStatus () {
+    if (this.error !== false) return this.error
+    return false
+  }
+
+  @action setError (error = false) {
+    this.error = error
+  }
+
+  @action setSeed (seed = '') {
+    this.seed = seed
+  }
+
+  dumpSeed () {
+    this.wallet.dumpSeed((result, error) => {
+      if (result !== undefined) {
+        this.setSeed(result)
+      }
+
+      if (error !== this.error) {
+        this.setError(error)
+      }
+    })
   }
 
   render () {
-    /** Destructure properties. */
-    const {
-      errorStatus,
-      seed
-    } = this.walletSeedDump
-
     return (
       <div>
         <p style={{margin: '0 0 5px 0'}}>
@@ -49,8 +70,8 @@ class WalletSeedDump extends React.Component {
           </Col>
           <Col span={21}>
             <Input
-              value={seed}
-              disabled={seed === ''}
+              value={this.seed}
+              disabled={this.seed === ''}
               readOnly
             />
           </Col>
@@ -59,7 +80,7 @@ class WalletSeedDump extends React.Component {
           <Col offset={3} span={8}>
             <p className='text-error'>
               {
-                errorStatus === 'notDeterministic' &&
+                this.errorStatus === 'notDeterministic' &&
                 this.t('wallet:notDeterministic')
               }
             </p>
@@ -67,9 +88,9 @@ class WalletSeedDump extends React.Component {
           <Col span={13} className='text-right'>
             <Button
               style={{margin: '5px 0 0 0'}}
-              onClick={this.dumpwalletseed}
+              onClick={this.dumpSeed}
               disabled={
-                errorStatus !== false ||
+                this.errorStatus !== false ||
                 this.wallet.isLocked === true
               }
             >

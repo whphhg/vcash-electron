@@ -18,8 +18,8 @@ import TableCell from './TableCell'
 class Transaction extends React.Component {
   constructor (props) {
     super(props)
-    this.rates = props.rates
     this.t = props.t
+    this.rates = props.rates
     this.transactions = props.transactions
     this.toggleModal = this.toggleModal.bind(this)
   }
@@ -29,17 +29,8 @@ class Transaction extends React.Component {
   }
 
   render () {
-    /** Destructure properties. */
-    const {
-      local,
-      localCurrency,
-      average
-    } = this.rates
-
-    const {
-      viewing,
-      viewingTx
-    } = this.transactions
+    const { local, localCurrency, average } = this.rates
+    const { viewing, viewingTx } = this.transactions
 
     if (viewing === null) return null
     return (

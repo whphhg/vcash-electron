@@ -15,11 +15,11 @@ class WalletDump extends React.Component {
     super(props)
     this.t = props.t
     this.wallet = props.wallet
-    this.dumpwallet = this.dumpwallet.bind(this)
+    this.dump = this.dump.bind(this)
   }
 
-  dumpwallet () {
-    this.wallet.dumpwallet()
+  dump () {
+    this.wallet.dump()
   }
 
   render () {
@@ -48,7 +48,7 @@ class WalletDump extends React.Component {
           <Col className='text-right'>
             <Button
               style={{margin: '5px 0 0 0'}}
-              onClick={this.dumpwallet}
+              onClick={this.dump}
               disabled={this.wallet.isLocked === true}
             >
               {this.t('wallet:dump')}

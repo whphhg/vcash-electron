@@ -26,7 +26,6 @@ class Transactions extends React.Component {
   }
 
   setFilters (e) {
-    /** Clear previous timeout. */
     clearTimeout(this.filtersUpdateTimer)
 
     /** Save entered values. */
@@ -46,11 +45,7 @@ class Transactions extends React.Component {
   }
 
   render () {
-    /** Destructure properties. */
-    const {
-      Button,
-      Group
-    } = Radio
+    const { Button, Group } = Radio
 
     return (
       <div>

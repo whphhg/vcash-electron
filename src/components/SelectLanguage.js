@@ -17,35 +17,27 @@ class SelectLanguage extends React.Component {
     this.setLanguage = this.setLanguage.bind(this)
   }
 
-  setLanguage (value) {
-    this.ui.setLanguage(value)
+  setLanguage (language) {
+    this.ui.setLanguage(language)
   }
 
   render () {
-    /** Destructure properties. */
-    const {
-      language,
-      languages
-    } = this.ui
-
-    const {
-      Option
-    } = Select
+    const { Option } = Select
 
     return (
       <Select
         showSearch
         style={{width: '120px', margin: '0 10px 0 0'}}
-        defaultValue={language}
+        defaultValue={this.ui.language}
         optionFilterProp='children'
         notFoundContent={this.t('wallet:notFound')}
         onChange={this.setLanguage}
       >
         {
-          languages.map((entry) => (
+          this.ui.languages.map((entry) => (
             <Option
-              key={entry.lng}
-              value={entry.lng}
+              key={entry.language}
+              value={entry.language}
             >
               {entry.name}
             </Option>

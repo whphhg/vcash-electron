@@ -27,10 +27,7 @@ class TransactionsTable extends React.Component {
   }
 
   render () {
-    /** Destructure properties. */
-    const {
-      filtered
-    } = this.transactions
+    const { filtered } = this.transactions
 
     return (
       <Table

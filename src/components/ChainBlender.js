@@ -7,27 +7,22 @@ import { Button, Col, Popover, Row, Switch } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('chainBlender', 'wallet') @observer
+@inject('wallet') @observer
 
 class ChainBlender extends React.Component {
   constructor (props) {
     super(props)
-    this.chainBlender = props.chainBlender
     this.t = props.t
     this.wallet = props.wallet
     this.toggle = this.toggle.bind(this)
   }
 
   toggle () {
-    this.chainBlender.toggle()
+    this.wallet.toggleBlender()
   }
 
   popoverTitle () {
-    /** Destructure properties. */
-    const {
-      blendedbalance,
-      blendedpercentage
-    } = this.chainBlender.info
+    const { chainBlender, isBlending, isLocked } = this.wallet
 
     return (
       <Row style={{width: '265px'}}>
@@ -35,15 +30,15 @@ class ChainBlender extends React.Component {
           <p>
             <span>{this.t('wallet:blended')} </span>
             <span className='text-dotted'>
-              {blendedbalance.toFixed(6)}
+              {chainBlender.blendedbalance.toFixed(6)}
             </span>
-            <span> XVC ({blendedpercentage.toFixed(2)}%)</span>
+            <span> XVC ({chainBlender.blendedpercentage.toFixed(2)}%)</span>
           </p>
         </Col>
         <Col span={7} className='text-right'>
           <Switch
-            checked={this.chainBlender.status === true}
-            disabled={this.wallet.isLocked === true}
+            checked={isBlending === true}
+            disabled={isLocked === true}
             onChange={this.toggle}
             checkedChildren={
               <i
@@ -68,11 +63,7 @@ class ChainBlender extends React.Component {
   }
 
   popoverContent () {
-    /** Destructure properties. */
-    const {
-      denominatedbalance,
-      nondenominatedbalance
-    } = this.chainBlender.info
+    const { chainBlender } = this.wallet
 
     return (
       this.wallet.isLocked === false && (
@@ -84,11 +75,11 @@ class ChainBlender extends React.Component {
           <Col span={12} className='text-right'>
             <p>
               <span className='text-dotted'>
-                {denominatedbalance.toFixed(6)}</span> XVC
+                {chainBlender.denominatedbalance.toFixed(6)}</span> XVC
               </p>
             <p>
               <span className='text-dotted'>
-                {nondenominatedbalance.toFixed(6)}</span> XVC
+                {chainBlender.nondenominatedbalance.toFixed(6)}</span> XVC
               </p>
           </Col>
         </Row>

@@ -5,7 +5,7 @@ import { Router, Route, IndexRoute, hashHistory } from 'react-router'
 import { useStrict } from 'mobx'
 import { Provider } from 'mobx-react'
 import i18next from './utilities/i18next'
-import './utilities/rightClickMenu.js'
+import './utilities/rightClickMenu'
 
 /** Main container components. */
 import Addresses from './components/Addresses'
@@ -15,11 +15,6 @@ import Transactions from './components/Transactions'
 
 /** Store instances. */
 import addresses from './stores/addresses'
-import addressNew from './stores/addressNew'
-import chainBlender from './stores/chainBlender'
-import currencyConverter from './stores/currencyConverter'
-import keyDump from './stores/keyDump'
-import keyImport from './stores/keyImport'
 import network from './stores/network'
 import rates from './stores/rates'
 import rewardCalculator from './stores/rewardCalculator'
@@ -28,23 +23,12 @@ import send from './stores/send'
 import transactions from './stores/transactions'
 import ui from './stores/ui'
 import wallet from './stores/wallet'
-import walletBackup from './stores/walletBackup'
-import walletEncrypt from './stores/walletEncrypt'
-import walletPassphraseChange from './stores/walletPassphraseChange'
-import walletSeedDump from './stores/walletSeedDump'
-import walletUnlock from './stores/walletUnlock'
 
 /** Use MobX strict mode, allowing only actions to alter the state. */
 useStrict(true)
 
-/** Stores object. */
 const stores = {
   addresses,
-  addressNew,
-  chainBlender,
-  currencyConverter,
-  keyDump,
-  keyImport,
   network,
   rates,
   rewardCalculator,
@@ -52,12 +36,7 @@ const stores = {
   send,
   transactions,
   ui,
-  wallet,
-  walletBackup,
-  walletEncrypt,
-  walletPassphraseChange,
-  walletSeedDump,
-  walletUnlock
+  wallet
 }
 
 render(

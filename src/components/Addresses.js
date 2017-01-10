@@ -9,14 +9,15 @@ import KeyDump from './KeyDump'
 import KeyImport from './KeyImport'
 import SendControls from './SendControls'
 import SendOptions from './SendOptions'
-import SendRecipients from './SendRecipients'
+import SendRecipient from './SendRecipient'
 
 /** Make the component reactive and inject MobX stores. */
-@inject('wallet') @observer
+@inject('send', 'wallet') @observer
 
 class Addresses extends React.Component {
   constructor (props) {
     super(props)
+    this.send = props.send
     this.wallet = props.wallet
   }
 
@@ -49,7 +50,16 @@ class Addresses extends React.Component {
           </Col>
           <Col span={13}>
             <div style={{margin: '10px'}}>
-              <SendRecipients />
+              <div id='sendRecipients'>
+                {
+                  this.send.recipients.entries().map((recipient) => (
+                    <SendRecipient
+                      data={recipient[1]}
+                      key={recipient[1].uid}
+                    />
+                  ))
+                }
+              </div>
               <hr id='send' />
               <SendOptions />
             </div>

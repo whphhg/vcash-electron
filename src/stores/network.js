@@ -1,4 +1,4 @@
-import { action, asMap, autorunAsync, computed, observable, reaction } from 'mobx'
+import { action, autorunAsync, computed, observable, reaction } from 'mobx'
 import { getItem, setItem } from '../utilities/localStorage'
 import geoIp from '../utilities/geoIp'
 
@@ -14,7 +14,7 @@ class Network {
    */
   @observable networkInfo = {}
   @observable peerInfo = []
-  @observable geoData = asMap(getItem('geoData') || {})
+  @observable geoData = observable.map(getItem('geoData') || {})
 
   /**
    * @constructor
