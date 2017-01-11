@@ -26,9 +26,4 @@ Alternatively, if you want to use development tools, run the ui using ``npm run 
     $ npm run dev (Linux and OS X)
     $ npm run dev-win (Windows)
 
-You can use ``git pull`` in the ``vcash-ui`` directory to pull any changes made to the code.
-
-    $ git pull
-
-
 [![Standard - JavaScript Style Guide](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
