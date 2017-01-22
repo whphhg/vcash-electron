@@ -2,6 +2,9 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:300,400,500&subset=latin-ext);
 @import url(https://fonts.googleapis.com/css?family=Roboto+Mono:300,400,500&subset=latin-ext);
 
+/** Material icons */
+@import url(https://fonts.googleapis.com/icon?family=Material+Icons);
+
 /** Elements */
 ::-moz-selection { background: #B71C1C; }
 ::selection { background: #B71C1C; }

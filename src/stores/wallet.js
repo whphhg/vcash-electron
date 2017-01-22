@@ -134,9 +134,10 @@ class Wallet {
       }
     ], (response) => {
       if (response !== null) {
-        this.setLoopTimeout()
         this.setResponses(response)
       }
+
+      this.setLoopTimeout()
     })
   }
 
