@@ -300,6 +300,9 @@ class Send {
       if (response !== null) {
         /** Sending succeded. */
         if (response[0].hasOwnProperty('result') === true) {
+          /** Clear sending form. */
+          this.clear()
+
           /** Open transaction details. */
           transactions.setViewing(response[0].result)
         }
@@ -348,6 +351,9 @@ class Send {
       if (response !== null) {
         /** Sending succeded. */
         if (response[0].hasOwnProperty('result') === true) {
+          /** Clear sending form. */
+          this.clear()
+
           /** Open transaction details. */
           transactions.setViewing(response[0].result)
         }
@@ -397,6 +403,9 @@ class Send {
       if (response !== null) {
         /** Sending succeded. */
         if (response[0].hasOwnProperty('result') === true) {
+          /** Clear sending form. */
+          this.clear()
+
           /** Open transaction details. */
           transactions.setViewing(response[0].result)
         }
