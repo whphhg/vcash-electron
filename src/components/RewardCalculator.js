@@ -11,13 +11,14 @@ import RewardCalculatorChart from './RewardCalculatorChart'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('rewardCalculator', 'wallet') @observer
+@inject('rewardCalculator', 'ui', 'wallet') @observer
 
 class RewardCalculator extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
     this.rewardCalculator = props.rewardCalculator
+    this.ui = props.ui
     this.wallet = props.wallet
     this.setBlock = this.setBlock.bind(this)
 
@@ -74,7 +75,12 @@ class RewardCalculator extends React.Component {
             <p>{this.t('wallet:powReward')}</p>
             <p>
               <span className='text-dotted'>
-                {powReward.toFixed(6)}
+                {
+                  new Intl.NumberFormat(this.ui.language, {
+                    minimumFractionDigits: 6,
+                    maximumFractionDigits: 6
+                  }).format(powReward)
+                }
               </span> XVC
             </p>
           </Col>
@@ -82,7 +88,12 @@ class RewardCalculator extends React.Component {
             <p>{this.t('wallet:miningReward')}</p>
             <p>
               <span className='text-dotted'>
-                {(powReward - incentiveReward).toFixed(6)}
+                {
+                  new Intl.NumberFormat(this.ui.language, {
+                    minimumFractionDigits: 6,
+                    maximumFractionDigits: 6
+                  }).format(powReward - incentiveReward)
+                }
               </span>
               <span> XVC ({100 - incentivePercent}%)</span>
             </p>
@@ -91,7 +102,12 @@ class RewardCalculator extends React.Component {
             <p>{this.t('wallet:incentiveReward')}</p>
             <p>
               <span className='text-dotted'>
-                {incentiveReward.toFixed(6)}
+                {
+                  new Intl.NumberFormat(this.ui.language, {
+                    minimumFractionDigits: 6,
+                    maximumFractionDigits: 6
+                  }).format(incentiveReward)
+                }
               </span>
               <span> XVC ({incentivePercent}%)</span>
             </p>

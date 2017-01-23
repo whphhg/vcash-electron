@@ -6,6 +6,7 @@ import moment from 'moment'
 /** Required store instances. */
 import rpc from './rpc'
 import rates from './rates'
+import ui from './ui'
 
 class Transactions {
   /**
@@ -86,7 +87,16 @@ class Transactions {
         let found = 0
 
         /** Calculate local amount. */
-        const amountLocal = parseFloat(tx.amount * rates.average * rates.local)
+        const amountLocal = new Intl.NumberFormat(ui.language, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(tx.amount * rates.average * rates.local)
+
+        /** Convert amount to local notation. */
+        const amount = new Intl.NumberFormat(ui.language, {
+          minimumFractionDigits: 6,
+          maximumFractionDigits: 6
+        }).format(tx.amount)
 
         /** Increment found by 1 each time a filter matches. */
         this.filters.forEach((filter) => {
@@ -94,8 +104,8 @@ class Transactions {
             tx.account.indexOf(filter) > -1 ||
             tx.address.indexOf(filter) > -1 ||
             i18next.t('wallet:' + tx.category).indexOf(filter) > -1 ||
-            String(tx.amount.toFixed(6)).indexOf(filter) > -1 ||
-            String(amountLocal.toFixed(2)).indexOf(filter) > -1 ||
+            amount.indexOf(filter) > -1 ||
+            amountLocal.indexOf(filter) > -1 ||
             tx.blockhash && tx.blockhash.indexOf(filter) > -1 ||
             tx.txid.indexOf(filter) > -1 ||
             moment(tx.time).format('l - HH:mm:ss').indexOf(filter) > -1
@@ -522,9 +532,16 @@ class Transactions {
 
     /** Open notifications for pending transactions. */
     notifications.pending.forEach((total, category) => {
+      /** Convert the amount to local notation. */
+      total = new Intl.NumberFormat(ui.language, {
+        minimumFractionDigits: 6,
+        maximumFractionDigits: 6
+      }).format(total)
+
+      /** Open the notification. */
       notification.info({
         message: i18next.t('wallet:' + category),
-        description: total.toFixed(6) + ' XVC ' + i18next.t('wallet:toBeConfirmed'),
+        description: total + ' XVC ' + i18next.t('wallet:toBeConfirmed'),
         duration: 6
       })
     })
@@ -534,9 +551,16 @@ class Transactions {
      * from 0 -> 1 and 219 -> 220 for generated.
      */
     notifications.spendable.forEach((total, category) => {
+      /** Convert the amount to local notation. */
+      total = new Intl.NumberFormat(ui.language, {
+        minimumFractionDigits: 6,
+        maximumFractionDigits: 6
+      }).format(total)
+
+      /** Open the notification. */
       notification.success({
         message: i18next.t('wallet:' + category),
-        description: total.toFixed(6) + ' XVC ' + i18next.t('wallet:hasBeenConfirmed'),
+        description: total + ' XVC ' + i18next.t('wallet:hasBeenConfirmed'),
         duration: 6
       })
     })

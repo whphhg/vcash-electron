@@ -7,12 +7,13 @@ import { Button, Col, Popover, Row, Switch } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('wallet') @observer
+@inject('ui', 'wallet') @observer
 
 class ChainBlender extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
+    this.ui = props.ui
     this.wallet = props.wallet
     this.toggle = this.toggle.bind(this)
   }
@@ -30,9 +31,21 @@ class ChainBlender extends React.Component {
           <p>
             <span>{this.t('wallet:blended')} </span>
             <span className='text-dotted'>
-              {chainBlender.blendedbalance.toFixed(6)}
+              {
+                new Intl.NumberFormat(this.ui.language, {
+                  minimumFractionDigits: 6,
+                  maximumFractionDigits: 6
+                }).format(chainBlender.blendedbalance)
+              }
             </span>
-            <span> XVC ({chainBlender.blendedpercentage.toFixed(2)}%)</span>
+            <span> XVC (
+              {
+                new Intl.NumberFormat(this.ui.language, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                }).format(chainBlender.blendedpercentage)
+              }%)
+            </span>
           </p>
         </Col>
         <Col span={7} className='text-right'>
@@ -75,12 +88,24 @@ class ChainBlender extends React.Component {
           <Col span={12} className='text-right'>
             <p>
               <span className='text-dotted'>
-                {chainBlender.denominatedbalance.toFixed(6)}</span> XVC
-              </p>
+                {
+                  new Intl.NumberFormat(this.ui.language, {
+                    minimumFractionDigits: 6,
+                    maximumFractionDigits: 6
+                  }).format(chainBlender.denominatedbalance)
+                }
+              </span> XVC
+            </p>
             <p>
               <span className='text-dotted'>
-                {chainBlender.nondenominatedbalance.toFixed(6)}</span> XVC
-              </p>
+                {
+                  new Intl.NumberFormat(this.ui.language, {
+                    minimumFractionDigits: 6,
+                    maximumFractionDigits: 6
+                  }).format(chainBlender.nondenominatedbalance)
+                }
+              </span> XVC
+            </p>
           </Col>
         </Row>
       ) || (

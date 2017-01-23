@@ -9,7 +9,7 @@ import { decimalSeparator } from '../utilities/common'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('rates') @observer
+@inject('rates', 'ui') @observer
 
 class CurrencyConverter extends React.Component {
   @observable from = 'vcash'
@@ -19,6 +19,7 @@ class CurrencyConverter extends React.Component {
     super(props)
     this.t = props.t
     this.rates = props.rates
+    this.ui = props.ui
     this.onChange = this.onChange.bind(this)
   }
 
@@ -76,9 +77,27 @@ class CurrencyConverter extends React.Component {
         <p>{this.t('wallet:currencyConverterLong')}</p>
         <div style={{float: 'right'}}>
           <img src='./assets/images/exchangePoloniex.png' />
-          <p><span>{parseFloat(poloniex.last).toFixed(8)}</span> BTC</p>
+          <p>
+            <span>
+              {
+                new Intl.NumberFormat(this.ui.language, {
+                  minimumFractionDigits: 8,
+                  maximumFractionDigits: 8
+                }).format(poloniex.last)
+              }
+            </span> BTC
+          </p>
           <img src='./assets/images/exchangeBittrex.png' />
-          <p><span>{parseFloat(bittrex.Last).toFixed(8)}</span> BTC</p>
+          <p>
+            <span>
+              {
+                new Intl.NumberFormat(this.ui.language, {
+                  minimumFractionDigits: 8,
+                  maximumFractionDigits: 8
+                }).format(bittrex.Last)
+              }
+            </span> BTC
+          </p>
         </div>
       </div>
     )

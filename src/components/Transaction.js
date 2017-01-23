@@ -13,7 +13,7 @@ import TableCell from './TableCell'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('rates', 'transactions') @observer
+@inject('rates', 'transactions', 'ui') @observer
 
 class Transaction extends React.Component {
   constructor (props) {
@@ -21,6 +21,7 @@ class Transaction extends React.Component {
     this.t = props.t
     this.rates = props.rates
     this.transactions = props.transactions
+    this.ui = props.ui
     this.toggleModal = this.toggleModal.bind(this)
   }
 
@@ -147,9 +148,18 @@ class Transaction extends React.Component {
                 {this.t('wallet:amount')}
               </Col>
               <Col span={14} className={viewingTx.color}>
-                {viewingTx.amount.toFixed(6)} XVC (
-                {(viewingTx.amount * local * average).toFixed(2)}
-                {' ' + localCurrency})
+                {
+                  new Intl.NumberFormat(this.ui.language, {
+                    minimumFractionDigits: 6,
+                    maximumFractionDigits: 6
+                  }).format(viewingTx.amount)
+                } XVC (
+                {
+                  new Intl.NumberFormat(this.ui.language, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  }).format(viewingTx.amount * local * average)
+                } {localCurrency})
               </Col>
             </Row>
             {
@@ -162,7 +172,12 @@ class Transaction extends React.Component {
                     {this.t('wallet:fee')}
                   </Col>
                   <Col span={12} className='red'>
-                    {viewingTx.fee.toFixed(6)} XVC
+                    {
+                      new Intl.NumberFormat(this.ui.language, {
+                        minimumFractionDigits: 6,
+                        maximumFractionDigits: 6
+                      }).format(viewingTx.fee)
+                    } XVC
                   </Col>
                 </Row>
               )

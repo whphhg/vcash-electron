@@ -7,7 +7,7 @@ import { Col, Input, Row, Select } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('addresses', 'send') @observer
+@inject('addresses', 'send', 'ui') @observer
 
 class SendOptions extends React.Component {
   constructor (props) {
@@ -15,6 +15,7 @@ class SendOptions extends React.Component {
     this.t = props.t
     this.addresses = props.addresses
     this.send = props.send
+    this.ui = props.ui
     this.setAccount = this.setAccount.bind(this)
     this.setMinConf = this.setMinConf.bind(this)
     this.setComment = this.setComment.bind(this)
@@ -80,7 +81,12 @@ class SendOptions extends React.Component {
           <Col span={8}>
             <Input
               disabled
-              defaultValue={(0).toFixed(6)}
+              defaultValue={
+                new Intl.NumberFormat(this.ui.language, {
+                  minimumFractionDigits: 6,
+                  maximumFractionDigits: 6
+                }).format(0)
+              }
               addonBefore={this.t('wallet:balance')}
               addonAfter='XVC'
             />

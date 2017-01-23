@@ -40,14 +40,34 @@ class Header extends React.Component {
         <p>
           {this.t('wallet:balance')}
           <br />
-          <span>{(balance).toFixed(6)}</span> XVC
+          <span>
+            {
+              new Intl.NumberFormat(this.ui.language, {
+                minimumFractionDigits: 6,
+                maximumFractionDigits: 6
+              }).format(balance)
+            }
+          </span> XVC
         </p>
         <p className='balance'>
-          ~<span>{(balance * average).toFixed(8)}</span> BTC
+          ~<span>
+            {
+              new Intl.NumberFormat(this.ui.language, {
+                minimumFractionDigits: 8,
+                maximumFractionDigits: 8
+              }).format(balance * average)
+            }
+          </span> BTC
         </p>
         <p className='balance'>
-          ~<span>{(balance * average * local).toFixed(2)} </span>
-          {localCurrency}
+          ~<span>
+            {
+              new Intl.NumberFormat(this.ui.language, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              }).format(balance * average * local)
+            }
+          </span> {localCurrency}
         </p>
         <div className='incoming'>
           {
@@ -55,7 +75,14 @@ class Header extends React.Component {
               <p>
                 {this.t('wallet:pending')}
                 <br />
-                <span>{this.transactions.pendingAmount.toFixed(6)}</span> XVC
+                <span>
+                  {
+                    new Intl.NumberFormat(this.ui.language, {
+                      minimumFractionDigits: 6,
+                      maximumFractionDigits: 6
+                    }).format(this.transactions.pendingAmount)
+                  }
+                </span> XVC
               </p>
             )
           }
@@ -64,7 +91,14 @@ class Header extends React.Component {
               <p>
                 {this.t('wallet:immature')}
                 <br />
-                <span>{newmint.toFixed(6)}</span> XVC
+                <span>
+                  {
+                    new Intl.NumberFormat(this.ui.language, {
+                      minimumFractionDigits: 6,
+                      maximumFractionDigits: 6
+                    }).format(newmint)
+                  }
+                </span> XVC
               </p>
             )
           }
@@ -73,7 +107,14 @@ class Header extends React.Component {
               <p>
                 {this.t('wallet:staking')}
                 <br />
-                <span>{stake.toFixed(6)}</span> XVC
+                <span>
+                  {
+                    new Intl.NumberFormat(this.ui.language, {
+                      minimumFractionDigits: 6,
+                      maximumFractionDigits: 6
+                    }).format(stake)
+                  }
+                </span> XVC
               </p>
             )
           }
@@ -106,11 +147,15 @@ class Header extends React.Component {
                 placement='bottom'
                 title={
                   <p>
-                    {this.t('wallet:validCollateral')}
+                    {this.t('wallet:validCollateral') + ' '}
                     <span className='text-dotted'>
-                      {' ' + (collateralbalance).toFixed(6) + ' '}
-                    </span>
-                    XVC.
+                      {
+                        new Intl.NumberFormat(this.ui.language, {
+                          minimumFractionDigits: 6,
+                          maximumFractionDigits: 6
+                        }).format(collateralbalance)
+                      }
+                    </span> XVC.
                   </p>
                 }
               >

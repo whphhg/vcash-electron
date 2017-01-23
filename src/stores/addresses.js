@@ -5,6 +5,7 @@ import i18next from '../utilities/i18next'
 /** Required store instances. */
 import rpc from './rpc'
 import rates from './rates'
+import ui from './ui'
 
 class Addresses {
   /**
@@ -67,7 +68,10 @@ class Addresses {
     return this.receivedByAddress.reduce((addresses, obj) => {
       addresses.push({
         ...obj,
-        localAmount: obj.amount * rates.local * rates.average
+        localAmount: new Intl.NumberFormat(ui.language, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(obj.amount * rates.local * rates.average)
       })
 
       return addresses
