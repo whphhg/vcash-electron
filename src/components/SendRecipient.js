@@ -42,7 +42,7 @@ class SendRecipient extends React.Component {
                 value={address}
                 name='address'
                 id={uid}
-                placeholder={this.t('wallet:recipientsAddress')}
+                placeholder={this.t('wallet:address')}
                 onChange={this.setRecipient}
                 className={'text-mono ' +
                   (addressValid !== null

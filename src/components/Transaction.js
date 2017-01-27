@@ -22,7 +22,12 @@ class Transaction extends React.Component {
     this.rates = props.rates
     this.transactions = props.transactions
     this.ui = props.ui
+    this.ztlock = this.ztlock.bind(this)
     this.toggleModal = this.toggleModal.bind(this)
+  }
+
+  ztlock () {
+    this.transactions.ztlock(this.transactions.viewing)
   }
 
   toggleModal () {
@@ -89,6 +94,7 @@ class Transaction extends React.Component {
             </Row>
             {
               viewingTx.hasOwnProperty('blocktime') === true &&
+              viewingTx.blocktime > 0 &&
               (
                 <Row>
                   <Col span={1}>
@@ -125,6 +131,26 @@ class Transaction extends React.Component {
                 {this.t('wallet:blockOnExplorer')}
               </a>
             </p>
+            {
+              viewingTx.hasOwnProperty('ztlock') === true &&
+              viewingTx.confirmations === 0 &&
+              viewingTx.hasOwnProperty('generated') === false &&
+              viewingTx.hasOwnProperty('blended') === false &&
+              (
+                <p>
+                  <a
+                    onClick={this.ztlock}
+                    disabled={viewingTx.ztlock === true}
+                  >
+                    {
+                      viewingTx.ztlock === true
+                        ? this.t('wallet:transactionLocked')
+                        : this.t('wallet:transactionLock')
+                    }
+                  </a>
+                </p>
+              )
+            }
           </Col>
         </Row>
         <Row style={{margin: '15px 0 0 0'}} align='bottom' type='flex'>

@@ -196,22 +196,38 @@ class Transactions {
    * @return {number} Amount pending.
    */
   @computed get pendingAmount () {
-    let pending = 0
-
-    this.txids.forEach((tx, txid) => {
-      if (tx.confirmations === 0) {
-        if (
-          tx.category === 'receiving' ||
-          tx.category === 'sending' ||
-          tx.category === 'sendingToSelf' ||
-          tx.category === 'blending'
-        ) {
-          pending += Math.abs(tx.amount)
-        }
+    return this.txids.values().reduce((amount, tx) => {
+      if (
+        tx.confirmations === 0 &&
+        tx.category === 'receiving' ||
+        tx.category === 'sending' ||
+        tx.category === 'sendingToSelf' ||
+        tx.category === 'blending'
+      ) {
+        return amount + Math.abs(tx.amount)
       }
-    })
 
-    return pending
+      return amount
+    }, 0)
+  }
+
+  /**
+   * Get pending generated txs.
+   * @function pendingGenerated
+   * @return {Map} Pending generated txs.
+   */
+  @computed get pendingGenerated () {
+    return this.txids.values().reduce((txs, tx) => {
+      if (
+        tx.hasOwnProperty('generated') === true &&
+        tx.confirmations > 0 &&
+        tx.confirmations <= 220
+      ) {
+        txs.set(tx.txid, tx)
+      }
+
+      return txs
+    }, new Map())
   }
 
   /**
@@ -260,10 +276,9 @@ class Transactions {
    * Set transactions.
    * @function setTransactions
    * @param {array} transactions - Transactions lookups.
-   * @param {array|object} mempool - Empty array or object with txs in mempool.
    * @param {array} inputs - Transactions inputs.
    */
-  @action setTransactions (transactions, mempool, inputs = null) {
+  @action setTransactions (transactions, inputs = null) {
     /** Convert inputs array to a map for faster lookups. */
     if (inputs !== null) {
       inputs = inputs.reduce((inputs, transaction) => {
@@ -282,9 +297,6 @@ class Transactions {
     transactions.forEach((tx) => {
       tx = tx.result
 
-      /** Exclude orphaned transactions. */
-      if (tx.confirmations === -1) return
-
       /** Get saved status. */
       const isSaved = this.txids.has(tx.txid)
 
@@ -293,11 +305,9 @@ class Transactions {
         ? tx
         : this.txids.get(tx.txid)
 
-      /** Set ztlock. */
-      if (Array.isArray(mempool) === false) {
-        if (mempool.hasOwnProperty(tx.txid) === true) {
-          save.ztlock = mempool[tx.txid].ztlock
-        }
+      /** Update ztlock. */
+      if (tx.hasOwnProperty('ztlock') === true) {
+        save.ztlock = tx.ztlock
       }
 
       /** Skip updating if confirmations haven't changed. */
@@ -493,7 +503,10 @@ class Transactions {
       }
 
       /** Add pending amounts to notifications. */
-      if (tx.confirmations === 0) {
+      if (
+        tx.confirmations === 0 &&
+        tx.category !== 'sending'
+      ) {
         /** Get total amount or return 0. */
         let total = notifications.pending.has(save.category) === true
           ? notifications.pending.get(save.category)
@@ -607,7 +620,7 @@ class Transactions {
     /** Set loop timeout using provided blockhash. */
     this.loopTimeout = setTimeout(() => {
       this.loop(block)
-    }, 15 * 1000)
+    }, 10 * 1000)
   }
 
   /**
@@ -623,109 +636,105 @@ class Transactions {
       }
     ], (response) => {
       if (response !== null) {
-        /** */
+        /** Clear current loop. */
+        this.clearLoopTimeout()
+
+        /** Re-start the loop from the last known block. */
+        this.loop(this.sinceBlock)
       }
     })
   }
 
   /**
-   * Get transactions and their inputs since provided block.
+   * Get transactions since provided block.
    * @param {string} Previous response blockhash.
    * @function loop
    */
   loop (block = '') {
-    /** 00. Get confirmed transactions since provided block and mempool. */
     rpc.call([
-      { method: 'listsinceblock', params: [block] },
-      { method: 'getrawmempool', params: [true] }
+      {
+        method: 'listsinceblock',
+        params: [block]
+      },
+      {
+        method: 'getrawmempool',
+        params: [true]
+      }
     ], (response) => {
       if (response !== null) {
-        let uniqueTxids = new Set()
-        let mempool = {}
+        let lsb = response[0].result
+        let mempool = response[1].result
 
         /** Start new loop. */
-        this.setLoopTimeout(response[0].result.lastblock)
+        this.setLoopTimeout(lsb.lastblock)
 
         /** Add txid of the transaction being viewed. */
         if (this.viewing !== null) {
-          response[0].result.transactions.push({
-            txid: this.viewing
+          lsb.transactions.push({
+            txid: this.viewing,
+            confirmations: this.viewingTx.confirmations
           })
         }
 
-        /** Add generated txids with less than 220 confirmations. */
-        this.txids.forEach((transaction, txid) => {
-          if (transaction.hasOwnProperty('generated') === true) {
-            if (transaction.confirmations > 0) {
-              if (transaction.confirmations <= 220) {
-                response[0].result.transactions.push({
-                  txid: transaction.txid
-                })
-              }
-            }
-          }
-        })
+        /** Add pending generated txs (<= 220 conf). */
+        if (this.pendingGenerated.size > 0) {
+          this.pendingGenerated.forEach((tx, txid) => {
+            lsb.transactions.push({
+              txid: tx.txid,
+              confirmations: tx.confirmations
+            })
+          })
+        }
 
-        /** Get unique txid gettransaction RPC requests. */
-        const options = response[0].result.transactions.reduce((options, transaction) => {
-          /** Check if this txid has been added before. */
-          if (uniqueTxids.has(transaction.txid) === false) {
-            /** Add new unique txid. */
-            uniqueTxids.add(transaction.txid)
-
-            /** Make sure there are transactions in mempool. */
-            if (Array.isArray(response[1].result) === false) {
-              /** Check if this transaction exists in mempool. */
-              if (response[1].result.hasOwnProperty(transaction.txid) === true) {
-                mempool[transaction.txid] = response[1].result[transaction.txid]
-              }
-            }
-
-            /** Push new RPC option. */
+        /** Create RPC request options array. */
+        const options = lsb.transactions.reduce((options, tx) => {
+          /** Exclude orphaned transactions. */
+          if (tx.confirmations !== -1) {
             options.push({
               method: 'gettransaction',
-              params: [transaction.txid]
+              params: [tx.txid]
             })
           }
 
           return options
         }, [])
 
-        /** 01. Lookup transactions. */
         if (options.length > 0) {
-          rpc.call(options, (transactions) => {
-            let uniqueInputs = new Set()
+          /** Get transactions. */
+          rpc.call(options, (txs) => {
+            /* Create RPC request options array. */
+            const options = txs.reduce((options, tx) => {
+              tx = tx.result
 
-            const options = transactions.reduce((options, transaction) => {
-              transaction = transaction.result
+              /** Make sure there are transactions in mempool. */
+              if (Array.isArray(mempool) === false) {
+                /** Check if this transaction exists in mempool. */
+                if (mempool.hasOwnProperty(tx.txid) === true) {
+                  /** Add ztlock status. */
+                  tx.ztlock = mempool[tx.txid].ztlock
+                }
+              }
 
-              if (this.txids.has(transaction.txid) === false) {
-                /** Get unique input gettransaction RPC requests. */
-                transaction.vin.forEach((input) => {
-                  /** Check if this input has been added before. */
-                  if (uniqueInputs.has(input.txid) === false) {
-                    /** Add new unique input. */
-                    uniqueInputs.add(input.txid)
-
-                    /** Push new RPC option. */
-                    options.push({
-                      method: 'gettransaction',
-                      params: [input.txid]
-                    })
-                  }
+              /** Lookup inputs of unsaved txs only. */
+              if (this.txids.has(tx.txid) === false) {
+                tx.vin.forEach((input) => {
+                  options.push({
+                    method: 'gettransaction',
+                    params: [input.txid]
+                  })
                 })
               }
 
               return options
             }, [])
 
-            /** 02. Lookup inputs. */
             if (options.length === 0) {
-              this.setTransactions(transactions, mempool)
+              this.setTransactions(txs)
             } else {
+              /** Lookup inputs. */
               rpc.call(options, (inputs) => {
                 if (inputs !== null) {
-                  this.setTransactions(transactions, mempool, inputs)
+                  this.setTransactions(txs, inputs)
                 }
               })
             }
