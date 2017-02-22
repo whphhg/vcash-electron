@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, observable, reaction } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Button, Col, Input, Popover, Row, Tooltip } from 'antd'
+import { Button, Col, Input, Modal, Row, Tooltip } from 'antd'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -12,7 +12,7 @@ import { Button, Col, Input, Popover, Row, Tooltip } from 'antd'
 
 class WalletUnlock extends React.Component {
   @observable passphrase = ''
-  @observable popover = false
+  @observable modal = false
   @observable error = false
 
   constructor (props) {
@@ -21,7 +21,7 @@ class WalletUnlock extends React.Component {
     this.wallet = props.wallet
     this.unlock = this.unlock.bind(this)
     this.setPassphrase = this.setPassphrase.bind(this)
-    this.togglePopover = this.togglePopover.bind(this)
+    this.toggleModal = this.toggleModal.bind(this)
 
     /** Clear previous error on passphrase change. */
     reaction(() => this.passphrase, (passphrase) => {
@@ -30,9 +30,9 @@ class WalletUnlock extends React.Component {
       }
     })
 
-    /** Clear passphrase on popover closure. */
-    reaction(() => this.popover, (popover) => {
-      if (popover === false) {
+    /** Clear passphrase when modal closes. */
+    reaction(() => this.modal, (modal) => {
+      if (modal === false) {
         if (this.passphrase !== '') {
           this.setPassphrase()
         }
@@ -56,14 +56,14 @@ class WalletUnlock extends React.Component {
       : e.target.value
   }
 
-  @action togglePopover () {
-    this.popover = !this.popover
+  @action toggleModal () {
+    this.modal = !this.modal
   }
 
   unlock () {
     this.wallet.unlock(this.passphrase, (result, error) => {
       if (result !== undefined) {
-        this.togglePopover()
+        this.toggleModal()
       }
 
       if (error !== this.error) {
@@ -72,52 +72,46 @@ class WalletUnlock extends React.Component {
     })
   }
 
-  popoverContent () {
-    return (
-      <div style={{width: '400px'}}>
-        <Row>
-          <Col span={24}>
-            <Input
-              type='password'
-              placeholder={this.t('wallet:passphraseLong')}
-              value={this.passphrase}
-              onChange={this.setPassphrase}
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col span={14}>
-            <p className='text-error'>
-              {
-                this.errorStatus === 'incorrectPassphrase' &&
-                this.t('wallet:passphraseIncorrect')
-              }
-            </p>
-          </Col>
-          <Col span={10} className='text-right'>
-            <Button
-              style={{margin: '5px 0 0 0'}}
-              onClick={this.unlock}
-              disabled={this.errorStatus !== false}
-            >
-              {this.t('wallet:unlock')}
-            </Button>
-          </Col>
-        </Row>
-      </div>
-    )
-  }
-
   render () {
     if (this.wallet.isLocked === false) return null
     return (
-      <Popover
-        title={this.t('wallet:unlock')}
-        trigger='click'
-        placement='bottomRight'
-        content={this.popoverContent()}
-        visible={this.popover === true}
-      >
+      <div>
+        <Modal
+          title={this.t('wallet:unlock')}
+          footer={null}
+          visible={this.modal === true}
+          onCancel={this.toggleModal}
+        >
+          <Row>
+            <Col span={24}>
+              <Input
+                type='password'
+                placeholder={this.t('wallet:passphraseLong')}
+                value={this.passphrase}
+                onChange={this.setPassphrase}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col span={14}>
+              <p className='text-error'>
+                {
+                  this.errorStatus === 'incorrectPassphrase' &&
+                  this.t('wallet:passphraseIncorrect')
+                }
+              </p>
+            </Col>
+            <Col span={10} className='text-right'>
+              <Button
+                style={{margin: '5px 0 0 0'}}
+                onClick={this.unlock}
+                disabled={this.errorStatus !== false}
+              >
+                {this.t('wallet:unlock')}
+              </Button>
+            </Col>
+          </Row>
+        </Modal>
         <Tooltip
           title={this.t('wallet:locked')}
           placement='bottomRight'
@@ -125,12 +119,12 @@ class WalletUnlock extends React.Component {
           <Button
             type='primary'
             size='small'
-            onClick={this.togglePopover}
+            onClick={this.toggleModal}
           >
             <i className='material-icons md-20'>lock</i>
           </Button>
         </Tooltip>
-      </Popover>
+      </div>
     )
   }
 }
