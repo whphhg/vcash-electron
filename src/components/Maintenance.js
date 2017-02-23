@@ -1,12 +1,10 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Col, Row } from 'antd'
+import { Col, Row, Table } from 'antd'
+import moment from 'moment'
 
 /** Required components. */
-import NetworkEndpointsTable from './NetworkEndpointsTable'
-import NetworkPeersTable from './NetworkPeersTable'
-import RewardCalculator from './RewardCalculator'
 import SelectCurrency from './SelectCurrency'
 import SelectLanguage from './SelectLanguage'
 import WalletBackup from './WalletBackup'
@@ -19,12 +17,13 @@ import WalletSeedDump from './WalletSeedDump'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('wallet') @observer
+@inject('network', 'wallet') @observer
 
-class Maintenance extends React.Component {
+export default class Maintenance extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
+    this.network = props.network
     this.wallet = props.wallet
   }
 
@@ -34,15 +33,16 @@ class Maintenance extends React.Component {
         <Row>
           <Col span={24} className='shadow'>
             <div className='toolbar'>
+              <i className='material-icons md-20 left'>language</i>
               <div className='left'>
-                <RewardCalculator />
-              </div>
-              <div className='right'>
                 <p>{this.t('wallet:selectLanguage')}</p>
                 <SelectLanguage />
+              </div>
+              <div className='right'>
                 <p>{this.t('wallet:selectCurrency')}</p>
                 <SelectCurrency />
               </div>
+              <i className='material-icons md-20 right'>monetization_on</i>
             </div>
           </Col>
         </Row>
@@ -64,19 +64,55 @@ class Maintenance extends React.Component {
             </div>
           </Col>
         </Row>
-        <Row id='maintenance-tables'>
-          <Col span={19}>
-            <NetworkPeersTable />
-          </Col>
-          <Col span={5}>
-            <div style={{margin: '0 0 0 6px'}}>
-              <NetworkEndpointsTable />
-            </div>
+        <Row style={{margin: '0 10px 10px 10px'}}>
+          <Col span={17}>
+            <Table
+              bordered
+              size='small'
+              scroll={
+                this.network.peers.length > 7
+                  ? {y: 188}
+                  : {}
+              }
+              pagination={false}
+              dataSource={this.network.peers}
+              columns={[
+                {
+                  title: this.t('wallet:peers'),
+                  dataIndex: 'addr',
+                  width: 180
+                },
+                {
+                  title: this.t('wallet:version'),
+                  dataIndex: 'version',
+                  width: 100
+                },
+                {
+                  title: this.t('wallet:os'),
+                  dataIndex: 'os',
+                  width: 120
+                },
+                {
+                  title: this.t('wallet:connected'),
+                  dataIndex: 'conntime',
+                  width: 130,
+                  render: text => moment(text * 1000).fromNow()
+                },
+                {
+                  title: this.t('wallet:startingHeight'),
+                  dataIndex: 'startingheight',
+                  width: 130
+                },
+                {
+                  title: this.t('wallet:banScore'),
+                  dataIndex: 'banscore',
+                  render: text => text + '/100'
+                }
+              ]}
+            />
           </Col>
         </Row>
       </div>
     )
   }
 }
-
-export default Maintenance
