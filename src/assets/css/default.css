@@ -24,17 +24,18 @@ header .controls { float: right; margin: 0 10px 0 0; }
 header nav { float: right; margin: 5px 14px 0 0; }
 header nav i { vertical-align: text-bottom; }
 header button { margin: 13px 0 0 0; }
-main .toolbar { margin: 10px; min-height: 28px; line-height: 28px; }
+main .toolbar { margin: 7px 10px; min-height: 21px; }
 main .toolbar button:nth-of-type(n+2) { margin: 0 0 0 5px; }
 main .toolbar p { display: inline; padding: 0 10px 0 6px; }
 main .toolbar p:last-child { padding: 0 3px 0 6px; }
-main .toolbar i { vertical-align: middle; }
+main .toolbar i { margin: 1px 0 0 0; }
 main .toolbar .left { float: left; }
 main .toolbar .right { float: right; }
 main #addresses { min-height: 569px; margin: 10px; }
-main #transactions { min-height: 427px; margin: 10px; }
-main #maintenance { min-height: 342px; margin: 0 0 10px 0; }
-main #maintenance-tables { min-height: 227px; margin: 0 10px 10px 10px; }
+main #transactions { min-height: 414px; margin: 10px; }
+main #maintenance { min-height: 332px; margin: 0 0 10px 0; }
+main #network { min-height: 470px; margin: 0 0 10px 0; }
+main #network-info { margin: 0 10px 10px 10px; }
 main hr#send { margin: 5px 0 5px 0; }
 main #sendRecipients { max-height: 462px; overflow-y: scroll; }
 main #sendRecipients::-webkit-scrollbar { display: none; }
@@ -48,10 +49,6 @@ footer p.right { float: right; margin: 0 10px 0 0; }
 .popoverTitle p { float: left; font-size: 12px; color: #757575; line-height: 33px; }
 .popoverTitle p span { font-weight: 500; }
 
-/** Scrollbar */
-::-webkit-scrollbar { -webkit-appearance: none; width: 7px; }
-::-webkit-scrollbar-thumb { border-radius: 4px; background-color: rgba(0,0,0,.5); -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5); }
-
 /** Shadows */
 .shadow { box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12); }
 .shadow-2 { box-shadow: 0 1px 0px 0 rgba(0, 0, 0, 0.14), 0 2px 0px 0px rgba(0, 0, 0, 0.2), 0 4px 1px 0 rgba(0, 0, 0, 0.12); }
@@ -62,7 +59,7 @@ footer p.right { float: right; margin: 0 10px 0 0; }
 .material-icons.md-20 { font-size: 20px; }
 
 /** Recharts tooltip */
-.chartTooltip { width: 250px; margin: 0; padding: 10px; border: 1px solid #f5f5f5; background-color: rgba(255, 255, 255, 0.95); }
+.chartTooltip { width: 260px; margin: 0; padding: 10px; border: 1px solid #f5f5f5; background-color: rgba(255, 255, 255, 0.95); }
 .chartTooltip .label { margin: 0; font-weight: 500; border-bottom: 1px solid #ccc; }
 .chartTooltip p { margin: 0; padding: 0; }
 
@@ -162,7 +159,7 @@ footer p.right { float: right; margin: 0 10px 0 0; }
 .ant-menu-horizontal { border: none; }
 .ant-menu-horizontal > .ant-menu-item:hover, .ant-menu-horizontal > .ant-menu-item-selected { border-bottom: 2px solid #FFFFFF;color: #FFFFFF; }
 .ant-btn { vertical-align: top; }
-.ant-btn:hover, .ant-btn:focus { color: #B71C1C; background-color: #FFFFFF; border-color: #B71C1C; }
+.ant-btn:hover, .ant-btn:focus { color: #B71C1C; border-color: #B71C1C; }
 header .ant-btn-primary { color: #FFFFFF; background-color: #43464B; border-color: #43464B; min-height: 30px; }
 header .ant-btn-primary i { vertical-align: middle; }
 header .ant-btn-primary:hover, header .ant-btn-primary:focus { color: #B71C1C; background-color: #43464B; border-color: #43464B; font-weight: bold; }
@@ -172,3 +169,36 @@ header .ant-btn-primary:hover, header .ant-btn-primary:focus { color: #B71C1C; b
 .ant-radio-button-wrapper-checked:first-child { border-color: #B71C1C; }
 .ant-radio-button-wrapper-checked { background: #FFFFFF; border-color: #B71C1C; color: #B71C1C; box-shadow: -1px 0 0 0 #B71C1C; }
 .ant-radio-button-wrapper-checked:hover { border-color: #B71C1C; box-shadow: -1px 0 0 0 #B71C1C; color: #B71C1C;}
+.ant-table-thead > tr.ant-table-row-hover,
+.ant-table-tbody > tr.ant-table-row-hover,
+.ant-table-thead > tr:hover,
+.ant-table-tbody > tr:hover {
+  background: #fdecec;
+}
+.ant-select-dropdown-menu-item:hover,
+.ant-select-dropdown-menu-item-active {
+  background-color: #fdecec;
+}
+.ant-table-small .ant-table-thead > tr > th {
+  background: #f7f7f7;
+}
+.ant-table-fixed-header .ant-table-scroll .ant-table-header {
+  overflow: auto;
+  margin: 0 !important;
+  background: #f7f7f7;
+}
+.ant-table-small .ant-table-tbody > tr > td {
+  padding: 4px 8px;
+}
+.ant-table-small .ant-table-title,
+.ant-table-small .ant-table-footer,
+.ant-table-small .ant-table-thead > tr > th {
+  padding: 6px 8px;
+}
+.ant-table-thead > tr > th.ant-table-selection-column,
+.ant-table-tbody > tr > td.ant-table-selection-column,
+.ant-table-expand-icon-th,
+.ant-table-row-expand-icon-cell {
+  text-align: center;
+  width: 34px;
+}

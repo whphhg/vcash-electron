@@ -1,13 +1,8 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Col, Modal, Row } from 'antd'
-import { Table, Column, Cell } from 'fixed-data-table'
-import { tableHeight } from '../utilities/common'
+import { Col, Modal, Row, Table } from 'antd'
 import moment from 'moment'
-
-/** Required components. */
-import TableCell from './TableCell'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -15,7 +10,7 @@ import TableCell from './TableCell'
 /** Make the component reactive and inject MobX stores. */
 @inject('rates', 'transactions', 'ui') @observer
 
-class Transaction extends React.Component {
+export default class Transaction extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
@@ -264,51 +259,83 @@ class Transaction extends React.Component {
         <Row style={{margin: '15px 0 0 0'}}>
           <Col span={11}>
             <Table
-              rowsCount={viewingTx.inputs.length}
-              rowHeight={25}
-              headerHeight={25}
-              width={443}
-              height={tableHeight(viewingTx.inputs.length, 275)}
-            >
-              <Column
-                header={<Cell>{this.t('wallet:from')}</Cell>}
-                cell={<TableCell data={viewingTx.inputs} column='address' />}
-                width={300}
-              />
-              <Column
-                header={<Cell>{this.t('wallet:amount')}</Cell>}
-                cell={<TableCell data={viewingTx.inputs} column='value' />}
-                width={143}
-              />
-            </Table>
+              bordered
+              size='small'
+              scroll={
+                viewingTx.inputs.length > 7
+                  ? {y: 195}
+                  : {}
+              }
+              pagination={false}
+              dataSource={viewingTx.inputs}
+              columns={[
+                {
+                  title: this.t('wallet:from'),
+                  dataIndex: 'address',
+                  width: 290,
+                  render: text => (
+                    <p className='text-mono'>{text}</p>
+                  )
+                },
+                {
+                  title: this.t('wallet:amount'),
+                  dataIndex: 'value',
+                  render: text => (
+                    <p className='text-right'>
+                      {
+                        new Intl.NumberFormat(this.ui.language, {
+                          minimumFractionDigits: 6,
+                          maximumFractionDigits: 6
+                        }).format(text)
+                      } XVC
+                    </p>
+                  )
+                }
+              ]}
+            />
           </Col>
           <Col span={2} className='text-center'>
             <i className='material-icons md-20'>forward</i>
           </Col>
           <Col span={11}>
             <Table
-              rowsCount={viewingTx.outputs.length}
-              rowHeight={25}
-              headerHeight={25}
-              width={443}
-              height={tableHeight(viewingTx.outputs.length, 275)}
-            >
-              <Column
-                header={<Cell>{this.t('wallet:to')}</Cell>}
-                cell={<TableCell data={viewingTx.outputs} column='address' />}
-                width={300}
-              />
-              <Column
-                header={<Cell>{this.t('wallet:amount')}</Cell>}
-                cell={<TableCell data={viewingTx.outputs} column='value' />}
-                width={143}
-              />
-            </Table>
+              bordered
+              size='small'
+              scroll={
+                viewingTx.outputs.length > 7
+                  ? {y: 195}
+                  : {}
+              }
+              pagination={false}
+              dataSource={viewingTx.outputs}
+              columns={[
+                {
+                  title: this.t('wallet:to'),
+                  dataIndex: 'address',
+                  width: 290,
+                  render: text => (
+                    <p className='text-mono'>{text}</p>
+                  )
+                },
+                {
+                  title: this.t('wallet:amount'),
+                  dataIndex: 'value',
+                  render: text => (
+                    <p className='text-right'>
+                      {
+                        new Intl.NumberFormat(this.ui.language, {
+                          minimumFractionDigits: 6,
+                          maximumFractionDigits: 6
+                        }).format(text)
+                      } XVC
+                    </p>
+                  )
+                }
+              ]}
+            />
           </Col>
         </Row>
       </Modal>
     )
   }
 }
-
-export default Transaction
