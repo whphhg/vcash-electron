@@ -21,7 +21,7 @@ app.on('window-all-closed', () => {
 app.on('ready', () => {
   mainWindow = new BrowserWindow({
     width: 1152,
-    height: 720,
+    height: 690,
     icon: __dirname + '/src/assets/images/logoRed.png'
   })
 
