@@ -1,28 +1,32 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Col, Input, Radio, Row } from 'antd'
+import { Col, Input, Row, Table } from 'antd'
+import moment from 'moment'
 
 /** Required components. */
 import ChainBlender from './ChainBlender'
-import CurrencyConverter from './CurrencyConverter'
 import TransactionsChart from './TransactionsChart'
-import TransactionsTable from './TransactionsTable'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('transactions') @observer
+@inject('rates', 'transactions') @observer
 
-class Transactions extends React.Component {
+export default class Transactions extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
+    this.rates = props.rates
     this.transactions = props.transactions
     this.filtersUpdateTimer = null
     this.setFilters = this.setFilters.bind(this)
-    this.setShowCategory = this.setShowCategory.bind(this)
+    this.rowClick = this.rowClick.bind(this)
+  }
+
+  rowClick (record, index) {
+    this.transactions.setViewing(record.txid)
   }
 
   setFilters (e) {
@@ -40,58 +44,104 @@ class Transactions extends React.Component {
     }, 0.5 * 1000)
   }
 
-  setShowCategory (e) {
-    this.transactions.setShowCategory(e.target.value)
-  }
-
   render () {
-    const { Button, Group } = Radio
-
     return (
       <div>
         <Row className='shadow'>
           <div className='toolbar'>
-            <Col span={6}>
-              <ChainBlender />
-              <CurrencyConverter />
-            </Col>
-            <Col span={12} className='text-center'>
-              <Group
-                defaultValue={this.transactions.showCategory}
-                onChange={this.setShowCategory}
-              >
-                <Button value='all'>
-                  {this.t('wallet:all')}
-                </Button>
-                <Button value='0'>
-                  {this.t('wallet:received')}
-                </Button>
-                <Button value='1'>
-                  {this.t('wallet:sent')}
-                </Button>
-                <Button value='2'>
-                  {this.t('wallet:generated')}
-                </Button>
-              </Group>
-            </Col>
-            <Col span={6}>
-              <Input
-                onChange={this.setFilters}
-                placeholder={this.t('wallet:filterTransactions')}
-                addonAfter={<i className='material-icons md-16'>search</i>}
-              />
-            </Col>
+            <ChainBlender />
+            <Input
+              size='small'
+              className='right'
+              onChange={this.setFilters}
+              placeholder={this.t('wallet:filterTransactions')}
+              style={{width: '230px'}}
+            />
           </div>
         </Row>
-        <Row>
-          <Col span={24}>
-            <div className='shadow-2'>
-              <div id='transactions'>
-                <TransactionsTable />
-              </div>
-            </div>
-          </Col>
-        </Row>
+        <div className='shadow-2'>
+          <div id='transactions'>
+            <Table
+              bordered
+              size='small'
+              pagination={{defaultPageSize: 15}}
+              dataSource={this.transactions.filtered}
+              onRowClick={this.rowClick}
+              locale={{
+                filterConfirm: this.t('wallet:ok'),
+                filterReset: this.t('wallet:reset'),
+                emptyText: this.t('wallet:notFound')
+              }}
+              columns={[
+                {
+                  title: this.t('wallet:date'),
+                  dataIndex: 'time',
+                  width: 130,
+                  render: text => moment(text).format('l - HH:mm:ss')
+                },
+                {
+                  title: this.t('wallet:category'),
+                  dataIndex: 'category',
+                  width: 130,
+                  render: text => this.t('wallet:' + text),
+                  filters: [
+                    {
+                      text: this.t('wallet:received'),
+                      value: ['receiving', 'received']
+                    },
+                    {
+                      text: this.t('wallet:sent'),
+                      value: ['sending', 'sent']
+                    },
+                    {
+                      text: this.t('wallet:sentToSelf'),
+                      value: ['sendingToSelf', 'sentToSelf']
+                    },
+                    {
+                      text: this.t('wallet:blended'),
+                      value: ['blending', 'blended']
+                    },
+                    {
+                      text: this.t('wallet:rewards'),
+                      value: [
+                        'stakingReward',
+                        'miningReward',
+                        'incentiveReward'
+                      ]
+                    }
+                  ],
+                  onFilter: (value, record) =>
+                    value.includes(record.category) === true
+                },
+                {
+                  title: this.t('wallet:description'),
+                  dataIndex: 'comment',
+                  width: 400
+                },
+                {
+                  title: this.t('wallet:amount'),
+                  dataIndex: 'amount',
+                  width: 150,
+                  render: (text, record) => (
+                    <p className={'text-right ' + record.color}>
+                      {text} XVC
+                    </p>
+                  )
+                },
+                {
+                  title: this.rates.localCurrency,
+                  dataIndex: 'amountLocal',
+                  width: 150,
+                  render: (text, record) => (
+                    <p className={'text-right ' + record.color}>
+                      {text} {this.rates.localCurrency}
+                    </p>
+                  )
+                }
+              ]}
+            />
+          </div>
+        </div>
         <Row>
           <Col span={24}>
             <TransactionsChart />
@@ -101,5 +151,3 @@ class Transactions extends React.Component {
     )
   }
 }
-
-export default Transactions
