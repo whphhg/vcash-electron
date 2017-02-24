@@ -26,13 +26,15 @@ header nav i { vertical-align: text-bottom; }
 header button { margin: 13px 0 0 0; }
 main .toolbar { margin: 7px 10px; min-height: 21px; }
 main .toolbar button:nth-of-type(n+2) { margin: 0 0 0 5px; }
-main .toolbar p { display: inline; padding: 0 10px 0 6px; }
+main .toolbar p { display: inline; padding: 0 10px 0 6px; vertical-align: middle; height: 22px; }
+main .toolbar p span { font-weight: 600; }
 main .toolbar p:last-child { padding: 0 3px 0 6px; }
 main .toolbar i { margin: 1px 0 0 0; }
 main .toolbar .left { float: left; }
 main .toolbar .right { float: right; }
 main #addresses { min-height: 569px; margin: 10px; }
-main #transactions { min-height: 414px; margin: 10px; }
+main #transactions { min-height: 410px; margin: 10px; text-align: center; }
+main #transactions ul { display: inline-block; }
 main #maintenance { min-height: 332px; margin: 0 0 10px 0; }
 main #network { min-height: 470px; margin: 0 0 10px 0; }
 main #network-info { margin: 0 10px 10px 10px; }
@@ -71,7 +73,6 @@ footer p.right { float: right; margin: 0 10px 0 0; }
 .text-justify { text-align: justify; }
 .text-icon { margin: 0 0 0 7px; vertical-align: 4px; }
 .text-error { font-size: 10px; margin: 3px 0 3px 1px; color: red; }
-.fdt-last-column { text-align: right; padding-right: 13px; }
 .green { color: #4fb71c; }
 .orange { color: #ff7200; }
 .red { color: #B71C1C; }
@@ -172,33 +173,27 @@ header .ant-btn-primary:hover, header .ant-btn-primary:focus { color: #B71C1C; b
 .ant-table-thead > tr.ant-table-row-hover,
 .ant-table-tbody > tr.ant-table-row-hover,
 .ant-table-thead > tr:hover,
-.ant-table-tbody > tr:hover {
-  background: #fdecec;
-}
+.ant-table-tbody > tr:hover { background: #fdecec; }
 .ant-select-dropdown-menu-item:hover,
-.ant-select-dropdown-menu-item-active {
-  background-color: #fdecec;
-}
-.ant-table-small .ant-table-thead > tr > th {
-  background: #f7f7f7;
-}
-.ant-table-fixed-header .ant-table-scroll .ant-table-header {
-  overflow: auto;
-  margin: 0 !important;
-  background: #f7f7f7;
-}
-.ant-table-small .ant-table-tbody > tr > td {
-  padding: 4px 8px;
-}
+.ant-select-dropdown-menu-item-active { background-color: #fdecec; }
+.ant-table-small .ant-table-thead > tr > th { background: #f7f7f7; }
+.ant-table-fixed-header .ant-table-scroll .ant-table-header { overflow: auto; margin: 0 !important; background: #f7f7f7; }
+.ant-table-small .ant-table-tbody > tr > td { padding: 2px 8px; }
 .ant-table-small .ant-table-title,
 .ant-table-small .ant-table-footer,
-.ant-table-small .ant-table-thead > tr > th {
-  padding: 6px 8px;
-}
+.ant-table-small .ant-table-thead > tr > th { padding: 4px 8px; }
+.ant-table-pagination { margin: 8px 0; float: none; }
+.ant-pagination-prev:hover,
+.ant-pagination-next:hover { border-color: #B71C1C; }
+.ant-pagination-prev:hover a,
+.ant-pagination-next:hover a { color: #B71C1C; }
+.ant-pagination-simple .ant-pagination-simple-pager input:hover { border-color: #B71C1C; }
+.ant-pagination-item:hover { -webkit-transition: all 0.3s ease; transition: all 0.3s ease; border-color: #B71C1C; }
+.ant-pagination-item:hover a { color: #B71C1C; }
+.ant-pagination-item-active { background-color: #B71C1C; border-color: #B71C1C; }
+.ant-pagination-jump-prev:hover:after,
+.ant-pagination-jump-next:hover:after { color: #B71C1C; }
 .ant-table-thead > tr > th.ant-table-selection-column,
 .ant-table-tbody > tr > td.ant-table-selection-column,
 .ant-table-expand-icon-th,
-.ant-table-row-expand-icon-cell {
-  text-align: center;
-  width: 34px;
-}
+.ant-table-row-expand-icon-cell { text-align: center; width: 34px; }
