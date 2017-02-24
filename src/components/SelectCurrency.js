@@ -9,7 +9,7 @@ import { Select } from 'antd'
 /** Make the component reactive and inject MobX stores. */
 @inject('rates') @observer
 
-class SelectCurrency extends React.Component {
+export default class SelectCurrency extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
@@ -32,6 +32,7 @@ class SelectCurrency extends React.Component {
         optionFilterProp='children'
         notFoundContent={this.t('wallet:notFound')}
         onChange={this.setLocalCurrency}
+        size='small'
       >
         {
           this.rates.localCurrencies.map((currency) => (
@@ -47,5 +48,3 @@ class SelectCurrency extends React.Component {
     )
   }
 }
-
-export default SelectCurrency

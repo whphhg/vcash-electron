@@ -9,7 +9,7 @@ import { Select } from 'antd'
 /** Make the component reactive and inject MobX stores. */
 @inject('ui') @observer
 
-class SelectLanguage extends React.Component {
+export default class SelectLanguage extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
@@ -32,6 +32,7 @@ class SelectLanguage extends React.Component {
         optionFilterProp='children'
         notFoundContent={this.t('wallet:notFound')}
         onChange={this.setLanguage}
+        size='small'
       >
         {
           this.ui.languages.map((entry) => (
@@ -47,5 +48,3 @@ class SelectLanguage extends React.Component {
     )
   }
 }
-
-export default SelectLanguage

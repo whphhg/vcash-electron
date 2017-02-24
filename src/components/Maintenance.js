@@ -70,8 +70,8 @@ export default class Maintenance extends React.Component {
               bordered
               size='small'
               scroll={
-                this.network.peers.length > 7
-                  ? {y: 188}
+                this.network.peers.length > 8
+                  ? {y: 200}
                   : {}
               }
               pagination={false}
