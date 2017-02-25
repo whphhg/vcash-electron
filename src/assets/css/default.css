@@ -198,7 +198,7 @@ header .ant-btn-primary:hover, header .ant-btn-primary:focus { color: #B71C1C; b
 .ant-table-expand-icon-th,
 .ant-table-row-expand-icon-cell { text-align: center; width: 34px; }
 .ant-table-filter-dropdown-link { color: #B71C1C; }
-.ant-table-filter-dropdown-link:hover { color: #B71C1C; }
+.ant-table-filter-dropdown-link:hover { color: #43464B; }
 .ant-table-filter-dropdown-link:active { color: #B71C1C; }
 .ant-dropdown-menu-item:hover,
 .ant-dropdown-menu-submenu-title:hover { background-color: #fdecec; }

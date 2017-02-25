@@ -12,53 +12,29 @@ class Transactions {
   /**
    * Observable properties.
    * @property {map} txids - Transactions RPC responses.
-   * @property {array} filters - Filters to limit transactions by.
-   * @property {string} showCategory - Category to filter transactions by.
+   * @property {array} search - Search txs using these keywords.
    * @property {string|null} viewing - Transaction being viewed.
    * @property {string|null} viewingQueue - Tx waiting to be viewed (just sent).
    */
   @observable txids = observable.map({})
-  @observable filters = []
-  @observable showCategory = 'all'
+  @observable search = observable.array([])
   @observable viewing = null
   @observable viewingQueue = null
 
   /**
    * @constructor
-   * @property {string} sinceBlock - List txs since this block.
    * @property {number|null} loopTimeout - setTimeout id of this.loop().
-   * @property {array} categories - Grouped transaction categories.
+   * @property {string} sinceBlock - List txs since this block.
    */
   constructor () {
-    this.sinceBlock = ''
     this.loopTimeout = null
-    this.categories = [
-      [
-        'receiving',
-        'received'
-      ],
-      [
-        'sending',
-        'sent',
-        'sendingToSelf',
-        'sentToSelf'
-      ],
-      [
-        'blended',
-        'blending',
-        'stakingReward',
-        'miningReward',
-        'incentiveReward'
-      ]
-    ]
+    this.sinceBlock = ''
 
-    /** When RPC status changes. */
+    /** Start update loop when RPC becomes available. */
     reaction(() => rpc.status, (status) => {
-      /** Clear previous this.loop() setTimeout. */
-      if (this.loopTimeout !== null) this.clearLoopTimeout()
-
-      /** Start update loop when RPC becomes available. */
-      if (status === true) this.loop()
+      if (status === true) {
+        this.restartLoop()
+      }
     })
 
     /** Check if there's a sent transaction waiting to be viewed. */
@@ -70,71 +46,58 @@ class Transactions {
   }
 
   /**
-   * Get filtered transactions.
-   * @function filtered
-   * @return {array} Transactions with filters applied.
+   * Get transactions data for table use.
+   * @function tableData
+   * @return {array} Table data.
    */
-  @computed get filtered () {
-    const filterCount = this.filters.length
-    let filtered = []
+  @computed get tableData () {
+    let txs = []
 
     this.txids.forEach((tx, txid) => {
-      /** Limit to only selected category or all categories. */
-      if (
-        this.showCategory === 'all' ||
-        this.categories[this.showCategory].includes(tx.category) === true
-      ) {
-        let found = 0
+      let keywordMatches = 0
 
-        /** Calculate local amount. */
-        const amountLocal = new Intl.NumberFormat(ui.language, {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        }).format(tx.amount * rates.average * rates.local)
+      const amount = new Intl.NumberFormat(ui.language, {
+        minimumFractionDigits: 6,
+        maximumFractionDigits: 6
+      }).format(tx.amount)
 
-        /** Convert amount to local notation. */
-        const amount = new Intl.NumberFormat(ui.language, {
-          minimumFractionDigits: 6,
-          maximumFractionDigits: 6
-        }).format(tx.amount)
+      const amountLocal = new Intl.NumberFormat(ui.language, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(tx.amount * rates.average * rates.local)
 
-        /** Increment found by 1 each time a filter matches. */
-        this.filters.forEach((filter) => {
-          if (
-            tx.account.indexOf(filter) > -1 ||
-            tx.address.indexOf(filter) > -1 ||
-            i18next.t('wallet:' + tx.category).indexOf(filter) > -1 ||
-            amount.indexOf(filter) > -1 ||
-            amountLocal.indexOf(filter) > -1 ||
-            tx.blockhash && tx.blockhash.indexOf(filter) > -1 ||
-            tx.txid.indexOf(filter) > -1 ||
-            moment(tx.time).format('l - HH:mm:ss').indexOf(filter) > -1
-           ) {
-            found += 1
-          }
-        })
-
-        /**
-         * Push tx when the length of filters array
-         * and filter occurances found in a tx match.
-         */
-        if (found === filterCount) {
-          filtered.push({
-            color: tx.color,
-            account: tx.account,
-            address: tx.address,
-            category: i18next.t('wallet:' + tx.category),
-            amount: tx.amount,
-            amountLocal,
-            time: tx.time,
-            txid: tx.txid
-          })
+      /** Increment keywordMatches by 1 each time a keyword matches. */
+      this.search.forEach((keyword) => {
+        if (
+          amount.indexOf(keyword) > -1 ||
+          amountLocal.indexOf(keyword) > -1 ||
+          i18next.t('wallet:' + tx.category).indexOf(keyword) > -1 ||
+          tx.blockhash && tx.blockhash.indexOf(keyword) > -1 ||
+          tx.comment && tx.comment.indexOf(keyword) > -1 ||
+          tx.txid.indexOf(keyword) > -1 ||
+          moment(tx.time).format('l - HH:mm:ss').indexOf(keyword) > -1
+         ) {
+          keywordMatches += 1
         }
+      })
+
+      /** Push txs with match count equal to the number of keywords. */
+      if (keywordMatches === this.search.length) {
+        txs.push({
+          key: tx.txid,
+          amount,
+          amountLocal,
+          category: tx.category,
+          color: tx.color,
+          comment: tx.comment || '',
+          time: tx.time,
+          txid: tx.txid
+        })
       }
     })
 
     /** Sort by date. */
-    return filtered.sort((a, b) => {
+    return txs.sort((a, b) => {
       if (a.time > b.time) return -1
       if (a.time < b.time) return 1
       return 0
@@ -142,7 +105,7 @@ class Transactions {
   }
 
   /**
-   * Get transactions data in a format that Recharts can read.
+   * Get transactions data for chart use.
    * @function chartData
    * @return {array} Chart data.
    */
@@ -191,12 +154,64 @@ class Transactions {
   }
 
   /**
+   * Get generated transactions.
+   * @function generated
+   * @return {array} Generated transactions.
+   */
+  @computed get generated () {
+    let generated = []
+
+    this.txids.forEach((tx, txid) => {
+      if (tx.hasOwnProperty('generated') === true) {
+        generated.push(tx)
+      }
+    })
+
+    /** Sort by date. */
+    return generated.sort((a, b) => {
+      if (a.time > b.time) return -1
+      if (a.time < b.time) return 1
+      return 0
+    })
+  }
+
+  /**
+   * Get pending generated transactions.
+   * @function generatedPending
+   * @return {map} Generated pending transactions.
+   */
+  @computed get generatedPending () {
+    return this.generated.reduce((pending, tx) => {
+      if (
+        tx.confirmations > 0 &&
+        tx.confirmations <= 220
+      ) {
+        pending.set(tx.txid, tx)
+      }
+
+      return pending
+    }, new Map())
+  }
+
+  /** */
+  @computed get rewardSpread () {
+    /** */
+  }
+
+  /** */
+  @computed get rewardsPerDay () {
+    /** */
+  }
+
+  /**
    * Get pending amount.
    * @function pendingAmount
    * @return {number} Amount pending.
    */
   @computed get pendingAmount () {
-    return this.txids.values().reduce((amount, tx) => {
+    let pending = 0
+
+    this.txids.forEach((tx, txid) => {
       if (
         tx.confirmations === 0 &&
         tx.category === 'receiving' ||
@@ -204,30 +219,9 @@ class Transactions {
         tx.category === 'sendingToSelf' ||
         tx.category === 'blending'
       ) {
-        return amount + Math.abs(tx.amount)
+        pending = pending + Math.abs(tx.amount)
       }
-
-      return amount
-    }, 0)
-  }
-
-  /**
-   * Get pending generated txs.
-   * @function pendingGenerated
-   * @return {Map} Pending generated txs.
-   */
-  @computed get pendingGenerated () {
-    return this.txids.values().reduce((txs, tx) => {
-      if (
-        tx.hasOwnProperty('generated') === true &&
-        tx.confirmations > 0 &&
-        tx.confirmations <= 220
-      ) {
-        txs.set(tx.txid, tx)
-      }
-
-      return txs
-    }, new Map())
+    })
   }
 
   /**
@@ -257,11 +251,8 @@ class Transactions {
       /** Save the txid in viewing queue. */
       this.viewingQueue = txid
 
-      /** Clear current loop. */
-      this.clearLoopTimeout()
-
       /** Re-start the loop from the last known block. */
-      this.loop(this.sinceBlock)
+      this.restartLoop(true)
     } else {
       this.viewing = txid
 
@@ -282,7 +273,10 @@ class Transactions {
     /** Convert inputs array to a map for faster lookups. */
     if (inputs !== null) {
       inputs = inputs.reduce((inputs, transaction) => {
-        inputs.set(transaction.result.txid, transaction.result)
+        if (transaction.hasOwnProperty('result') === true) {
+          inputs.set(transaction.result.txid, transaction.result)
+        }
+
         return inputs
       }, new Map())
     }
@@ -321,17 +315,19 @@ class Transactions {
           tx.inputs = []
 
           for (let i = 0; i < tx.vin.length; i++) {
-            const input = inputs.get(tx.vin[i].txid)
+            if (inputs.has(tx.vin[i].txid) === true) {
+              const input = inputs.get(tx.vin[i].txid)
 
-            /** Set value and address of the input transaction to each vin. */
-            tx.vin[i].value = input.vout[tx.vin[i].vout].value
-            tx.vin[i].address = input.vout[tx.vin[i].vout].scriptPubKey.addresses[0]
+              /** Set value and address of the input transaction to each vin. */
+              tx.vin[i].value = input.vout[tx.vin[i].vout].value
+              tx.vin[i].address = input.vout[tx.vin[i].vout].scriptPubKey.addresses[0]
 
-            /** Address and amount tuples for use in tables. */
-            tx.inputs.push({
-              address: input.vout[tx.vin[i].vout].scriptPubKey.addresses[0],
-              value: input.vout[tx.vin[i].vout].value
-            })
+              /** Address and amount tuples for use in tables. */
+              tx.inputs.push({
+                address: input.vout[tx.vin[i].vout].scriptPubKey.addresses[0],
+                value: input.vout[tx.vin[i].vout].value
+              })
+            }
           }
         }
       }
@@ -391,12 +387,6 @@ class Transactions {
       if (tx.hasOwnProperty('details') === true) {
         /** Process PoW, PoS and Incentive reward transactions. */
         if (tx.hasOwnProperty('generated') === true) {
-          /** Set address and account. */
-          if (isSaved === false) {
-            save.address = tx.details[0].address
-            save.account = tx.details[0].account
-          }
-
           /** Proof-of-Stake reward. */
           if (tx.vout[0].scriptPubKey.type === 'nonstandard') {
             save.category = 'stakingReward'
@@ -430,17 +420,6 @@ class Transactions {
 
         /** Process Sent to self and Received transactions. */
         if (tx.hasOwnProperty('generated') === false) {
-          /** Set address and account. */
-          if (isSaved === false) {
-            if (tx.details.length === 0) {
-              save.address = i18next.t('wallet:multipleOutputs')
-              save.account = '*'
-            } else {
-              save.address = tx.details[0].address
-              save.account = tx.details[0].account
-            }
-          }
-
           /** Received. */
           if (tx.amount !== 0) {
             if (tx.confirmations > 0) {
@@ -471,12 +450,6 @@ class Transactions {
       /** Type: sent. */
       if (tx.hasOwnProperty('fee') === true) {
         if (tx.amount < 0) {
-          /** Set address and account. */
-          if (isSaved === false) {
-            save.address = '/'
-            save.account = ''
-          }
-
           if (tx.confirmations > 0) {
             save.category = 'sent'
           } else {
@@ -487,13 +460,7 @@ class Transactions {
 
       /** Type: blended. */
       if (tx.hasOwnProperty('blended') === true) {
-        /** Set address and account. */
-        if (isSaved === false) {
-          save.address = '/'
-          save.account = tx.txid
-
-          /** TODO: Loop outputs and find the address that is yours. */
-        }
+        /** TODO: Loop outputs and find the address that is yours. */
 
         if (tx.confirmations > 0) {
           save.category = 'blended'
@@ -580,28 +547,17 @@ class Transactions {
   }
 
   /**
-   * Set transactions filters.
-   * @function setFilters
-   * @param {string} filters - Filters entered in the input box.
+   * Set searching keywords.
+   * @function setSearch
+   * @param {string} keywords - Keywords to search transactions by.
    */
-  @action setFilters (filters) {
-    this.filters = filters.split(' ').filter((filter) => {
-      return filter !== ''
-    })
-  }
-
-  /**
-   * Set show transactions category.
-   * @function setShowCategory
-   * @param {string} showSince - Show only transactions of this category.
-   */
-  @action setShowCategory (showCategory) {
-    this.showCategory = showCategory
+  @action setSearch (keywords) {
+    this.search = keywords.match(/[^ ]+/g) || []
   }
 
   /**
    * Clear current loop timeout.
-   * @function clearLoop
+   * @function clearLoopTimeout
    */
   @action clearLoopTimeout () {
     clearTimeout(this.loopTimeout)
@@ -609,18 +565,32 @@ class Transactions {
   }
 
   /**
-   * Start new loop timeout and save its id.
+   * Start new loop and save its timeout id.
    * @function setLoopTimeout
    * @param {string} block - List since this blockhash.
    */
   @action setLoopTimeout (block) {
-    /** Set block. */
     this.sinceBlock = block
 
     /** Set loop timeout using provided blockhash. */
     this.loopTimeout = setTimeout(() => {
       this.loop(block)
     }, 10 * 1000)
+  }
+
+  /**
+   * Restart the update loop.
+   * @function restartLoop
+   * @param {boolean} fromGenesis - Start from beginning?
+   */
+  restartLoop (fromGenesis = false) {
+    this.clearLoopTimeout()
+
+    if (fromGenesis === true) {
+      this.loop(this.sinceBlock)
+    } else {
+      this.loop()
+    }
   }
 
   /**
@@ -677,8 +647,8 @@ class Transactions {
         }
 
         /** Add pending generated txs (<= 220 conf). */
-        if (this.pendingGenerated.size > 0) {
-          this.pendingGenerated.forEach((tx, txid) => {
+        if (this.generatedPending.size > 0) {
+          this.generatedPending.forEach((tx, txid) => {
             lsb.transactions.push({
               txid: tx.txid,
               confirmations: tx.confirmations
@@ -718,10 +688,12 @@ class Transactions {
               /** Lookup inputs of unsaved txs only. */
               if (this.txids.has(tx.txid) === false) {
                 tx.vin.forEach((input) => {
-                  options.push({
-                    method: 'gettransaction',
-                    params: [input.txid]
-                  })
+                  if (input.hasOwnProperty('coinbase') === false) {
+                    options.push({
+                      method: 'gettransaction',
+                      params: [input.txid]
+                    })
+                  }
                 })
               }
 

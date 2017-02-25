@@ -263,11 +263,14 @@ export default class Transaction extends React.Component {
               size='small'
               scroll={
                 viewingTx.inputs.length > 7
-                  ? {y: 195}
+                  ? {y: 190}
                   : {}
               }
               pagination={false}
               dataSource={viewingTx.inputs}
+              locale={{
+                emptyText: this.t('wallet:coinbase')
+              }}
               columns={[
                 {
                   title: this.t('wallet:from'),
@@ -303,7 +306,7 @@ export default class Transaction extends React.Component {
               size='small'
               scroll={
                 viewingTx.outputs.length > 7
-                  ? {y: 195}
+                  ? {y: 190}
                   : {}
               }
               pagination={false}

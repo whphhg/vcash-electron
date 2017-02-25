@@ -20,8 +20,8 @@ export default class Transactions extends React.Component {
     this.t = props.t
     this.rates = props.rates
     this.transactions = props.transactions
-    this.filtersUpdateTimer = null
-    this.setFilters = this.setFilters.bind(this)
+    this.searchUpdateTimer = null
+    this.setSearch = this.setSearch.bind(this)
     this.rowClick = this.rowClick.bind(this)
   }
 
@@ -29,18 +29,18 @@ export default class Transactions extends React.Component {
     this.transactions.setViewing(record.txid)
   }
 
-  setFilters (e) {
-    clearTimeout(this.filtersUpdateTimer)
+  setSearch (e) {
+    clearTimeout(this.searchUpdateTimer)
 
     /** Save entered values. */
-    const filter = e.target.value
+    const keywords = e.target.value
 
     /**
      * Start a new update timer and update if there
      * are no changes made in the last half second.
      */
-    this.filtersUpdateTimer = setTimeout(() => {
-      this.transactions.setFilters(filter)
+    this.searchUpdateTimer = setTimeout(() => {
+      this.transactions.setSearch(keywords)
     }, 0.5 * 1000)
   }
 
@@ -53,8 +53,8 @@ export default class Transactions extends React.Component {
             <Input
               size='small'
               className='right'
-              onChange={this.setFilters}
-              placeholder={this.t('wallet:filterTransactions')}
+              onChange={this.setSearch}
+              placeholder={this.t('wallet:searchTransactions')}
               style={{width: '230px'}}
             />
           </div>
@@ -65,7 +65,7 @@ export default class Transactions extends React.Component {
               bordered
               size='small'
               pagination={{defaultPageSize: 15}}
-              dataSource={this.transactions.filtered}
+              dataSource={this.transactions.tableData}
               onRowClick={this.rowClick}
               locale={{
                 filterConfirm: this.t('wallet:ok'),
