@@ -1,7 +1,7 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Col, Input, Row, Table } from 'antd'
+import { Input, Row, Table } from 'antd'
 import moment from 'moment'
 
 /** Required components. */
@@ -142,11 +142,7 @@ export default class Transactions extends React.Component {
             />
           </div>
         </div>
-        <Row>
-          <Col span={24}>
-            <TransactionsChart />
-          </Col>
-        </Row>
+        <TransactionsChart />
       </div>
     )
   }

@@ -4,8 +4,24 @@ import { Col, Row } from 'antd'
 /** Required stores. */
 import ui from '../stores/ui'
 
+/** Custom X axis tick. */
+const CustomTickX = (props) => {
+  return (
+    <g transform={`translate(${props.x},${props.y})`}>
+      <text
+        x={1}
+        y={15}
+        fill='#666666'
+        textAnchor='end'
+      >
+        {props.payload.value}
+      </text>
+    </g>
+  )
+}
+
 /** Custom Recharts tooltip. */
-const RechartsTooltip = (props) => {
+const CustomTooltip = (props) => {
   if (props.active === false) return null
   return (
     <div className='chartTooltip'>
@@ -41,4 +57,4 @@ const RechartsTooltip = (props) => {
   )
 }
 
-export default RechartsTooltip
+export { CustomTickX, CustomTooltip }
