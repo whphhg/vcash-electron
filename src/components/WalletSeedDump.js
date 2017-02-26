@@ -10,7 +10,7 @@ import { Button, Col, Input, Row } from 'antd'
 /** Make the component reactive and inject MobX stores. */
 @inject('wallet') @observer
 
-class WalletSeedDump extends React.Component {
+export default class WalletSeedDump extends React.Component {
   @observable seed = ''
   @observable error = false
 
@@ -102,5 +102,3 @@ class WalletSeedDump extends React.Component {
     )
   }
 }
-
-export default WalletSeedDump

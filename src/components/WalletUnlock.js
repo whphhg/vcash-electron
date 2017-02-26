@@ -10,7 +10,7 @@ import { Button, Col, Input, Modal, Row, Tooltip } from 'antd'
 /** Make the component reactive and inject MobX stores. */
 @inject('wallet') @observer
 
-class WalletUnlock extends React.Component {
+export default class WalletUnlock extends React.Component {
   @observable passphrase = ''
   @observable modal = false
   @observable error = false
@@ -128,5 +128,3 @@ class WalletUnlock extends React.Component {
     )
   }
 }
-
-export default WalletUnlock

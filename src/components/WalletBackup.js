@@ -13,7 +13,7 @@ import { dataPath } from '../utilities/common'
 /** Make the component reactive. */
 @inject('wallet') @observer
 
-class WalletBackup extends React.Component {
+export default class WalletBackup extends React.Component {
   @observable path = dataPath()
   @observable error = false
 
@@ -104,5 +104,3 @@ class WalletBackup extends React.Component {
     )
   }
 }
-
-export default WalletBackup

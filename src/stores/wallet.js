@@ -1,5 +1,5 @@
 import { action, observable, reaction } from 'mobx'
-import { notification } from 'antd'
+import { notification, message } from 'antd'
 import i18next from '../utilities/i18next'
 
 /** Required store instances. */
@@ -19,15 +19,6 @@ class Wallet {
     blendedpercentage: 0
   }
 
-  @observable incentive = {
-    walletaddress: '',
-    collateralrequired: 0,
-    collateralbalance: 0,
-    networkstatus: 'firewalled',
-    votecandidate: false,
-    votescore: 0
-  }
-
   @observable info = {
     version: ':',
     protocolversion: 0,
@@ -45,31 +36,33 @@ class Wallet {
     paytxfee: 0
   }
 
+  /**
+   * @constructor
+   * @property {number|null} loopTimeout - setTimeout id of getinfo().
+   */
   constructor () {
     this.loopTimeout = null
-
-    /** Get fresh ChainBlender info when the wallet unlocks. */
-    reaction(() => this.isLocked, (isLocked) => {
-      if (isLocked === false) {
-        /** Clear previous this.getinfo() setTimeout. */
-        if (this.loopTimeout !== null) this.clearLoopTimeout()
-
-        /** Re-start update loop. */
-        this.getinfo()
-      }
-    })
 
     /** Start update loop. */
     this.getinfo()
 
+    /** Get fresh ChainBlender info when the wallet unlocks. */
+    reaction(() => this.isLocked, (isLocked) => {
+      if (isLocked === false) {
+        this.restartLoop()
+      }
+    })
+
     /** Check lock status when RPC becomes available. */
     reaction(() => rpc.status, (status) => {
-      if (status === true) this.lockCheck()
+      if (status === true) {
+        this.lockCheck()
+      }
     })
   }
 
   @action setResponses (responses) {
-    const which = ['info', 'incentive', 'chainBlender']
+    const which = ['info', 'chainBlender']
 
     responses.forEach((response, index) => {
       if (response.hasOwnProperty('result') === true) {
@@ -80,7 +73,7 @@ class Wallet {
         }
 
         /** Correct blending status if the daemon is already blending. */
-        if (index === 2) {
+        if (index === 1) {
           if (
             response.result.blendstate === 'active' ||
             response.result.blendstate === 'passive'
@@ -103,11 +96,19 @@ class Wallet {
     this.isEncrypted = isEncrypted
   }
 
+  /**
+   * Clear current loop timeout.
+   * @function clearLoopTimeout
+   */
   @action clearLoopTimeout () {
     clearTimeout(this.loopTimeout)
     this.loopTimeout = null
   }
 
+  /**
+   * Start new loop and save its timeout id.
+   * @function setLoopTimeout
+   */
   @action setLoopTimeout () {
     this.loopTimeout = setTimeout(() => {
       this.getinfo()
@@ -115,17 +116,22 @@ class Wallet {
   }
 
   /**
-   * Get wallet, incentive and ChainBlender info.
+   * Restart the update loop.
+   * @function restartLoop
+   */
+  restartLoop () {
+    this.clearLoopTimeout()
+    this.getinfo()
+  }
+
+  /**
+   * Get wallet and ChainBlender info.
    * @function getinfo
    */
   getinfo () {
     rpc.call([
       {
         method: 'getinfo',
-        params: []
-      },
-      {
-        method: 'getincentiveinfo',
         params: []
       },
       {
@@ -168,12 +174,8 @@ class Wallet {
         }
 
         if (response[0].hasOwnProperty('result') === true) {
-          /** Display notification. */
-          notification.success({
-            message: i18next.t('wallet:backedUp'),
-            description: i18next.t('wallet:savedInto') + ' ' + path,
-            duration: 6
-          })
+          /** Display a message. */
+          message.success(i18next.t('wallet:backedUp'), 6)
         }
 
         return callback(response[0].result, error())
@@ -193,12 +195,8 @@ class Wallet {
       }
     ], (response) => {
       if (response !== null) {
-        /** Display notification. */
-        notification.success({
-          message: i18next.t('wallet:dumped'),
-          description: i18next.t('wallet:dumpedLong'),
-          duration: 6
-        })
+        /** Display a message. */
+        message.success(i18next.t('wallet:dumped'), 6)
       }
     })
   }
@@ -275,12 +273,8 @@ class Wallet {
       if (response !== null) {
         this.lockCheck()
 
-        /** Display notification. */
-        notification.success({
-          message: i18next.t('wallet:locked'),
-          description: i18next.t('wallet:lockedLong'),
-          duration: 6
-        })
+        /** Display a message. */
+        message.success(i18next.t('wallet:locked'), 6)
       }
     })
   }
@@ -353,12 +347,8 @@ class Wallet {
         }
 
         if (response[0].hasOwnProperty('result') === true) {
-          /** Display notification. */
-          notification.success({
-            message: i18next.t('wallet:passphraseChanged'),
-            description: i18next.t('wallet:passphraseChangedLong'),
-            duration: 6
-          })
+          /** Display a message. */
+          message.success(i18next.t('wallet:passphraseChanged'), 6)
         }
 
         return callback(response[0].result, error())
@@ -381,16 +371,14 @@ class Wallet {
         /** Set the status. */
         this.setBlendingStatus(!this.isBlending)
 
-        /** Display notification. */
-        notification.success({
-          message: 'ChainBlender',
-          description: i18next.t('wallet:chainBlender',
+        /** Display a message. */
+        message.success(
+          i18next.t('wallet:chainBlender',
             {
               context: this.isBlending === true ? 'start' : 'stop'
             }
-          ),
-          duration: 6
-        })
+          ), 6
+        )
       }
     })
   }
@@ -424,12 +412,8 @@ class Wallet {
         if (response[0].hasOwnProperty('result') === true) {
           this.lockCheck()
 
-          /** Display notification. */
-          notification.success({
-            message: i18next.t('wallet:unlocked'),
-            description: i18next.t('wallet:unlockedLong'),
-            duration: 6
-          })
+          /** Display a message. */
+          message.success(i18next.t('wallet:unlocked'), 6)
         }
 
         return callback(response[0].result, error())

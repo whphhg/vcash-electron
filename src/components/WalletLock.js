@@ -9,7 +9,7 @@ import { Button, Tooltip } from 'antd'
 /** Make the component reactive and inject MobX stores. */
 @inject('wallet') @observer
 
-class WalletLock extends React.Component {
+export default class WalletLock extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
@@ -41,5 +41,3 @@ class WalletLock extends React.Component {
     )
   }
 }
-
-export default WalletLock

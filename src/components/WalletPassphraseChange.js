@@ -10,7 +10,7 @@ import { Button, Col, Input, Row } from 'antd'
 /** Make the component reactive and inject MobX stores. */
 @inject('wallet') @observer
 
-class WalletPassphraseChange extends React.Component {
+export default class WalletPassphraseChange extends React.Component {
   @observable current = ''
   @observable next = ''
   @observable repeat = ''
@@ -137,5 +137,3 @@ class WalletPassphraseChange extends React.Component {
     )
   }
 }
-
-export default WalletPassphraseChange

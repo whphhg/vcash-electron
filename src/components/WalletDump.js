@@ -10,7 +10,7 @@ import { dataPath } from '../utilities/common'
 /** Make the component reactive and inject MobX stores. */
 @inject('wallet') @observer
 
-class WalletDump extends React.Component {
+export default class WalletDump extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
@@ -59,5 +59,3 @@ class WalletDump extends React.Component {
     )
   }
 }
-
-export default WalletDump
