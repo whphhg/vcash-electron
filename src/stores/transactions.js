@@ -222,6 +222,8 @@ class Transactions {
         pending = pending + Math.abs(tx.amount)
       }
     })
+
+    return pending
   }
 
   /**
