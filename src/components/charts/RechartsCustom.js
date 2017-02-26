@@ -2,7 +2,7 @@ import React from 'react'
 import { Col, Row } from 'antd'
 
 /** Required stores. */
-import ui from '../stores/ui'
+import ui from '../../stores/ui'
 
 /** Custom X axis tick. */
 const CustomTickX = (props) => {

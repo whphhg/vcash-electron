@@ -22,7 +22,7 @@ import { CustomTickX, CustomTooltip } from './RechartsCustom'
 /** Make the component reactive and inject MobX stores. */
 @inject('transactions') @observer
 
-export default class TransactionsChart extends React.Component {
+export default class TransactionsStatistics extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
@@ -31,9 +31,8 @@ export default class TransactionsChart extends React.Component {
 
   render () {
     return (
-      <ResponsiveContainer height={155}>
+      <ResponsiveContainer width='100%' height={155}>
         <AreaChart
-          width='100%'
           data={this.transactions.chartData}
           margin={{top: 5, right: 37, bottom: 0, left: 37}}
         >

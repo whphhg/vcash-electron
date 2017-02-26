@@ -6,7 +6,7 @@ import moment from 'moment'
 
 /** Required components. */
 import ChainBlender from './ChainBlender'
-import TransactionsChart from './TransactionsChart'
+import { TransactionsStatistics } from './charts'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -142,7 +142,7 @@ export default class Transactions extends React.Component {
             />
           </div>
         </div>
-        <TransactionsChart />
+        <TransactionsStatistics />
       </div>
     )
   }
