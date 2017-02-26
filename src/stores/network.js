@@ -1,77 +1,65 @@
-import { action, autorunAsync, computed, observable, reaction } from 'mobx'
-import { getItem, setItem } from '../utilities/localStorage'
-import geoIp from '../utilities/geoIp'
+import { action, computed, observable, reaction } from 'mobx'
+import { message } from 'antd'
+import { shortUid } from '../utilities/common'
+import i18next from '../utilities/i18next'
 
 /** Required store instances. */
 import rpc from './rpc'
+import wallet from './wallet'
 
 class Network {
-  /**
-   * Observable properties.
-   * @property {object} networkInfo - getnetworkinfo RPC response.
-   * @property {array} peerInfo - getpeerinfo RPC response.
-   * @property {map} geoData - IP lookup data.
-   */
+  @observable difficulty = {
+    'proof-of-work': 0,
+    'proof-of-stake': 0,
+    'search-interval': 0
+  }
+
+  @observable incentiveInfo = {
+    walletaddress: '',
+    collateralrequired: 0,
+    collateralbalance: 0,
+    networkstatus: 'firewalled',
+    votecandidate: false,
+    votescore: 0
+  }
+
+  @observable miningInfo = {
+    blocks: 0,
+    currentblocksize: 0,
+    currentblocktx: 0,
+    difficulty: 0,
+    errors: '',
+    generate: false,
+    genproclimit: 0,
+    hashespersec: 0,
+    networkhashps: 0,
+    pooledtx: 0,
+    testnet: false
+  }
+
   @observable networkInfo = {}
   @observable peerInfo = []
-  @observable geoData = observable.map(getItem('geoData') || {})
 
   /**
    * @constructor
-   * @property {number|null} loopTimeout - setTimeout id of this.loop().
+   * @property {number|null} loopTimeout - setTimeout id of getinfo().
    */
   constructor () {
     this.loopTimeout = null
 
-    /** When RPC status changes. */
+    /** Start update loop when RPC becomes available. */
     reaction(() => rpc.status, (status) => {
-      /** Clear previous this.loop() setTimeout. */
-      if (this.loopTimeout !== null) this.clearLoopTimeout()
-
-      /** Start update loop when RPC becomes available. */
-      if (status === true) this.loop()
+      if (status === true) {
+        this.restartLoop()
+      }
     })
 
-    /** Fetch missing IP geo data (with a 2s delay) on RPC update. */
-    autorunAsync(() => {
-      const nodes = [...this.peers, ...this.endpoints]
-      let lookupCount = 0
-      let promises = []
-
-      /** Fetch in batches of 10 or less. */
-      for (let i = 0; i < nodes.length; i++) {
-        if (lookupCount >= 10) break
-
-        /** Very loosely check if IPv4. */
-        if (nodes[i].ip.match('\\.') !== null) {
-          /** Check if geo data already exists. */
-          if (this.geoData.has(nodes[i].ip) === false) {
-            /** Push new promise to the promises array. */
-            promises.push(new Promise((resolve, reject) => {
-              /** Execute the promise with a 0.5s delay. */
-              setTimeout(() => {
-                geoIp(nodes[i].ip, (response) => {
-                  if (response !== null) {
-                    console.info('HTTPS: Geo IP lookup for ' + nodes[i].ip)
-                    resolve(response)
-                  } else {
-                    reject(nodes[i].ip)
-                  }
-                })
-              }, lookupCount * 500)
-            }))
-
-            lookupCount += 1
-          }
-        }
+    /** Get fresh incentive info when the wallet unlocks. */
+    reaction(() => wallet.isLocked, (isLocked) => {
+      if (isLocked === false) {
+        this.restartLoop()
       }
-
-      if (promises.length > 0) {
-        Promise.all(promises)
-          .then(response => { this.setGeoData(response) })
-          .catch(error => { console.error('GeoIP: Promises error.', error) })
-      }
-    }, 2 * 1000)
+    }, { delay: 4000 })
   }
 
   /**
@@ -101,7 +89,33 @@ class Network {
   }
 
   /**
-   * Get array of peers with available geo data.
+   * Get the number of collateralized nodes.
+   * @function collateralized
+   * @return {number} Collateralized nodes.
+   */
+  @computed get collateralized () {
+    if (this.networkInfo.hasOwnProperty('collateralized') === true) {
+      return this.networkInfo.collateralized
+    }
+
+    return 0
+  }
+
+  /**
+   * Get the number of endpoints.
+   * @function endpoints
+   * @return {number} Endpoints.
+   */
+  @computed get endpoints () {
+    if (this.networkInfo.hasOwnProperty('endpoints') === true) {
+      return this.networkInfo.endpoints.length
+    }
+
+    return 0
+  }
+
+  /**
+   * Get array of peers.
    * @function peers
    * @return {array} Peers.
    */
@@ -109,23 +123,14 @@ class Network {
     if (this.peerInfo.length > 0) {
       return this.peerInfo.reduce((peers, item) => {
         if (item.lastsend !== 0 && item.startingheight !== -1) {
-          let peer = {
+          peers.push({
             ...item,
+            key: shortUid(),
+            version: item.subver.match(/\/(.*)\(/).pop().split(':')[1],
+            os: item.subver.split(' ')[1].replace(')/', ''),
             ip: item.addr.split(':')[0],
-            lastsend: item.lastsend * 1000,
-            lastrecv: item.lastrecv * 1000,
-            conntime: item.conntime * 1000,
-            version: item.subver.match(/\/(.*)\(/).pop().replace(':', ' '),
-            os: item.subver.split(' ')[1].replace(')/', '')
-          }
-
-          if (this.geoData.has(peer.ip) === true) {
-            peer = {
-              ...peer,
-              ...this.geoData.get(peer.ip)
-            }
-          }
-          peers.push(peer)
+            port: item.addr.split(':')[1]
+          })
         }
 
         return peers
@@ -135,112 +140,26 @@ class Network {
     return []
   }
 
-  /**
-   * Get array of endpoints with available geo data.
-   * @function endpoints
-   * @return {array} Endpoints.
-   */
-  @computed get endpoints () {
-    if (this.networkInfo.hasOwnProperty('endpoints') === true) {
-      return this.networkInfo.endpoints.reduce((endpoints, item) => {
-        let endpoint = {
-          addr: item,
-          ip: item.split(':')[0]
-        }
+  @action setResponses (responses) {
+    this.networkInfo = responses[0].result
+    this.peerInfo = responses[1].result
 
-        if (this.geoData.has(endpoint.ip) === true) {
-          endpoint = {
-            ...endpoint,
-            ...this.geoData.get(endpoint.ip)
+    const which = ['incentiveInfo', 'miningInfo', 'difficulty']
+
+    responses.forEach((response, index) => {
+      if (index > 1) {
+        for (let i in response.result) {
+          if (this[which[index - 2]][i] !== response.result[i]) {
+            this[which[index - 2]][i] = response.result[i]
           }
         }
-
-        endpoints.push(endpoint)
-        return endpoints
-      }, [])
-    }
-
-    return []
-  }
-
-  /**
-   * Get counts of known endpoints grouped by country.
-   * @function byCountry
-   * @return {array} Known endpoints counts grouped by country.
-   */
-  @computed get byCountry () {
-    const countries = this.endpoints.reduce((countries, item) => {
-      if (item.hasOwnProperty('country') === true) {
-        const prev = countries.has(item.country) === true
-          ? countries.get(item.country)
-          : 0
-
-        countries.set(item.country, {
-          country: item.country,
-          count: prev === 0 ? 1 : prev.count + 1
-        })
-      }
-
-      return countries
-    }, new Map())
-
-    return [...countries.values()].sort((a, b) => {
-      if (a.count > b.count) return -1
-      if (a.count < b.count) return 1
-      return 0
-    })
-  }
-
-  /**
-   * Get number of known endpoints.
-   * @function knownEndpoints
-   * @return {number} Known endpoints.
-   */
-  @computed get knownEndpoints () {
-    if (this.networkInfo.hasOwnProperty('endpoints') === true) {
-      return this.networkInfo.endpoints.length
-    }
-
-    return 0
-  }
-
-  /**
-   * Set geo IP lookups response.
-   * @function setGeoData
-   * @param {array} response - Geo IP lookups promises response.
-   */
-  @action setGeoData (response) {
-    response.forEach((lookup) => {
-      if (lookup.hasOwnProperty('country') === true) {
-        if (lookup.country.name !== '') {
-          this.geoData.set(lookup.ip, {
-            country: lookup.country.name,
-            lon: lookup.location.longitude,
-            lat: lookup.location.latitude
-          })
-        }
       }
     })
-
-    /** Save updated geo data to local storage. */
-    const geoData = this.geoData.toJS()
-    setItem('geoData', geoData)
-  }
-
-  /**
-   * Set RPC response.
-   * @function setResponse
-   * @param {array} networkInfo - getnetworkinfo result.
-   * @param {array} peerInfo - getpeerinfo result.
-   */
-  @action setResponse (networkInfo, peerInfo) {
-    this.networkInfo = networkInfo
-    this.peerInfo = peerInfo
   }
 
   /**
    * Clear current loop timeout.
-   * @function clearLoop
+   * @function clearLoopTimeout
    */
   @action clearLoopTimeout () {
     clearTimeout(this.loopTimeout)
@@ -248,20 +167,29 @@ class Network {
   }
 
   /**
-   * Start new loop timeout and save its id.
+   * Start new loop and save its timeout id.
    * @function setLoopTimeout
    */
   @action setLoopTimeout () {
     this.loopTimeout = setTimeout(() => {
-      this.loop()
+      this.getinfo()
     }, 60 * 1000)
   }
 
   /**
-   * Get network info.
-   * @function loop
+   * Restart the update loop.
+   * @function restartLoop
    */
-  loop () {
+  restartLoop () {
+    this.clearLoopTimeout()
+    this.getinfo()
+  }
+
+  /**
+   * Get network and incentive info.
+   * @function getinfo
+   */
+  getinfo () {
     rpc.call([
       {
         method: 'getnetworkinfo',
@@ -270,14 +198,43 @@ class Network {
       {
         method: 'getpeerinfo',
         params: []
+      },
+      {
+        method: 'getincentiveinfo',
+        params: []
+      },
+      {
+        method: 'getmininginfo',
+        params: []
+      },
+      {
+        method: 'getdifficulty',
+        params: []
       }
     ], (response) => {
       if (response !== null) {
-        /** Start new loop. */
         this.setLoopTimeout()
+        this.setResponses(response)
+      }
+    })
+  }
 
-        /** Set the response. */
-        this.setResponse(response[0].result, response[1].result)
+  /**
+   * Allow staking of incentive collateral.
+   * @function incentiveStake
+   */
+  incentiveStake () {
+    rpc.call([
+      {
+        method: 'incentive',
+        params: ['stake']
+      }
+    ], (response) => {
+      if (response !== null) {
+        if (response[0].hasOwnProperty('result') === true) {
+          /** Display a message. */
+          message.success(i18next.t('wallet:incentiveStake'), 6)
+        }
       }
     })
   }
