@@ -64,54 +64,78 @@ export default class Maintenance extends React.Component {
             </div>
           </Col>
         </Row>
-        <Row style={{margin: '0 10px 10px 10px'}}>
-          <Col span={17}>
-            <Table
-              bordered
-              size='small'
-              scroll={
-                this.network.peers.length > 8
-                  ? {y: 200}
-                  : {}
+        <div style={{margin: '0 10px 10px 10px'}}>
+          <Table
+            bordered
+            size='small'
+            scroll={
+              this.network.peers.length > 8
+                ? {y: 183}
+                : {}
+            }
+            pagination={false}
+            dataSource={this.network.peers}
+            columns={[
+              {
+                title: this.t('wallet:peers'),
+                dataIndex: 'ip',
+                width: 120
+              },
+              {
+                title: this.t('wallet:port'),
+                dataIndex: 'port',
+                width: 80
+              },
+              {
+                title: this.t('wallet:version'),
+                dataIndex: 'version',
+                width: 80
+              },
+              {
+                title: this.t('wallet:os'),
+                dataIndex: 'os',
+                width: 120
+              },
+              {
+                title: this.t('wallet:inbound'),
+                dataIndex: 'inbound',
+                width: 100,
+                render: (text, record) =>
+                  record.inbound === true
+                    ? this.t('wallet:yes')
+                    : this.t('wallet:no')
+              },
+              {
+                title: this.t('wallet:connected'),
+                dataIndex: 'conntime',
+                width: 140,
+                render: text => moment(text * 1000).fromNow()
+              },
+              {
+                title: this.t('wallet:lastSend'),
+                dataIndex: 'lastsend',
+                width: 140,
+                render: text => moment(text * 1000).fromNow()
+              },
+              {
+                title: this.t('wallet:lastReceived'),
+                dataIndex: 'lastrecv',
+                width: 140,
+                render: text => moment(text * 1000).fromNow()
+              },
+              {
+                title: this.t('wallet:startingHeight'),
+                dataIndex: 'startingheight',
+                width: 110
+              },
+              {
+                title: this.t('wallet:banScore'),
+                dataIndex: 'banscore',
+                render: text => text + '/100'
               }
-              pagination={false}
-              dataSource={this.network.peers}
-              columns={[
-                {
-                  title: this.t('wallet:peers'),
-                  dataIndex: 'addr',
-                  width: 180
-                },
-                {
-                  title: this.t('wallet:version'),
-                  dataIndex: 'version',
-                  width: 100
-                },
-                {
-                  title: this.t('wallet:os'),
-                  dataIndex: 'os',
-                  width: 120
-                },
-                {
-                  title: this.t('wallet:connected'),
-                  dataIndex: 'conntime',
-                  width: 130,
-                  render: text => moment(text * 1000).fromNow()
-                },
-                {
-                  title: this.t('wallet:startingHeight'),
-                  dataIndex: 'startingheight',
-                  width: 130
-                },
-                {
-                  title: this.t('wallet:banScore'),
-                  dataIndex: 'banscore',
-                  render: text => text + '/100'
-                }
-              ]}
-            />
-          </Col>
-        </Row>
+            ]}
+          />
+        </div>
       </div>
     )
   }

@@ -35,7 +35,7 @@ main .toolbar .right { float: right; }
 main #addresses { min-height: 569px; margin: 10px; }
 main #transactions { min-height: 410px; margin: 10px; text-align: center; }
 main #transactions ul { display: inline-block; }
-main #maintenance { min-height: 332px; margin: 0 0 10px 0; }
+main #maintenance { min-height: 354px; margin: 0 0 10px 0; }
 main #network { min-height: 470px; margin: 0 0 10px 0; }
 main #network-info { margin: 0 10px 10px 10px; }
 main hr#send { margin: 5px 0 5px 0; }
