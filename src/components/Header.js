@@ -1,7 +1,7 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Menu, Tooltip } from 'antd'
+import { Menu } from 'antd'
 
 /** Required components. */
 import WalletLock from './WalletLock'
@@ -11,13 +11,12 @@ import WalletUnlock from './WalletUnlock'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('network', 'rates', 'transactions', 'ui', 'wallet') @observer
+@inject('rates', 'transactions', 'ui', 'wallet') @observer
 
 export default class Header extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.network = props.network
     this.rates = props.rates
     this.transactions = props.transactions
     this.ui = props.ui
@@ -32,7 +31,6 @@ export default class Header extends React.Component {
   render () {
     const { local, localCurrency, average } = this.rates
     const { balance, newmint, stake } = this.wallet.info
-    const { votecandidate, collateralbalance } = this.network.incentiveInfo
     const { Item } = Menu
 
     return (
@@ -136,46 +134,14 @@ export default class Header extends React.Component {
             <Item key='addresses'>
               <i className='material-icons md-20'>send</i>
             </Item>
+            <Item key='network'>
+              <i className='material-icons md-20'>public</i>
+            </Item>
             <Item key='maintenance'>
               <i className='material-icons md-20'>settings</i>
             </Item>
           </Menu>
         </nav>
-        <div className='indicators'>
-          {
-            votecandidate === true && (
-              <Tooltip
-                placement='bottom'
-                title={
-                  <p>
-                    {this.t('wallet:validCollateral') + ' '}
-                    <span className='text-dotted'>
-                      {
-                        new Intl.NumberFormat(this.ui.language, {
-                          minimumFractionDigits: 6,
-                          maximumFractionDigits: 6
-                        }).format(collateralbalance)
-                      }
-                    </span> XVC.
-                  </p>
-                }
-              >
-                <i
-                  className='material-icons md-20'
-                  style={{color: '#43464B'}}
-                >
-                  verified_user
-                </i>
-              </Tooltip>
-            )
-          }
-          {
-            /**
-             * TODO: Staking indicator if config pos:1 & unlocked
-             * (gavel, loyalty, flag, flash on, rowing).
-             */
-          }
-        </div>
       </header>
     )
   }

@@ -8,7 +8,7 @@ import { inject, observer } from 'mobx-react'
 /** Make the component reactive and inject MobX stores. */
 @inject('network', 'wallet') @observer
 
-class Footer extends React.Component {
+export default class Footer extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
@@ -46,5 +46,3 @@ class Footer extends React.Component {
     )
   }
 }
-
-export default Footer

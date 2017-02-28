@@ -9,7 +9,7 @@ import { Modal } from 'antd'
 /** Make the component reactive and inject MobX stores. */
 @inject('rpc') @observer
 
-class RpcManager extends React.Component {
+export default class RpcManager extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
@@ -33,5 +33,3 @@ class RpcManager extends React.Component {
     )
   }
 }
-
-export default RpcManager
