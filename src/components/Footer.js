@@ -6,13 +6,14 @@ import { inject, observer } from 'mobx-react'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('network', 'wallet') @observer
+@inject('network', 'ui', 'wallet') @observer
 
 export default class Footer extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
     this.network = props.network
+    this.ui = props.ui
     this.wallet = props.wallet
   }
 
@@ -22,7 +23,10 @@ export default class Footer extends React.Component {
         <i className='material-icons md-16'>extension</i>
         <p>
           {this.t('wallet:onBlock')}
-          <span> {this.wallet.info.blocks}</span>
+          <span> {
+            new Intl.NumberFormat(this.ui.language)
+              .format(this.wallet.info.blocks)
+          }</span>
         </p>
         <i className='material-icons md-16'>settings_input_antenna</i>
         <p>
