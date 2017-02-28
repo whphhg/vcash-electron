@@ -10,6 +10,7 @@ import './utilities/rightClickMenu'
 /** Main container components. */
 import Addresses from './components/Addresses'
 import Maintenance from './components/Maintenance'
+import Network from './components/Network'
 import Root from './components/Root'
 import Transactions from './components/Transactions'
 
@@ -44,6 +45,7 @@ render(
         <Route path='/' component={Root}>
           <IndexRoute component={Transactions} />
           <Route path='addresses' component={Addresses} />
+          <Route path='network' component={Network} />
           <Route path='maintenance' component={Maintenance} />
         </Route>
       </Router>
