@@ -19,7 +19,6 @@ header p { float: left; margin: 9px 0 0 20px; padding: 0px; }
 header p span { font-weight: 600; }
 header p.balance { margin: 28px 0 0 20px; }
 header .incoming { float: left; margin: 0 0 0 10px; }
-header .indicators { float: right; margin: 30px 15px 0 20px; }
 header .controls { float: right; margin: 0 10px 0 0; }
 header nav { float: right; margin: 5px 14px 0 0; }
 header nav i { vertical-align: text-bottom; }
@@ -36,7 +35,7 @@ main #addresses { min-height: 569px; margin: 10px; }
 main #transactions { min-height: 410px; margin: 10px; text-align: center; }
 main #transactions ul { display: inline-block; }
 main #maintenance { min-height: 354px; margin: 0 0 10px 0; }
-main #network { min-height: 470px; margin: 0 0 10px 0; }
+main #network { min-height: 478px; margin: 0 0 10px 0; }
 main #network-info { margin: 0 10px 10px 10px; }
 main hr#send { margin: 5px 0 5px 0; }
 main #sendRecipients { max-height: 462px; overflow-y: scroll; }
@@ -203,3 +202,7 @@ header .ant-btn-primary:hover, header .ant-btn-primary:focus { color: #B71C1C; b
 .ant-dropdown-menu-item:hover,
 .ant-dropdown-menu-submenu-title:hover { background-color: #fdecec; }
 .ant-table-thead > tr > th .ant-table-filter-selected.anticon-filter { color: #B71C1C; }
+.ant-dropdown-menu-item-selected,
+.ant-dropdown-menu-submenu-title-selected,
+.ant-dropdown-menu-item-selected > a,
+.ant-dropdown-menu-submenu-title-selected > a { color: #B71C1C; background-color: #fdecec; }

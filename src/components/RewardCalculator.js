@@ -1,139 +1,136 @@
 import React from 'react'
 import { translate } from 'react-i18next'
+import { action, computed, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Button, Col, Input, Popover, Row } from 'antd'
-import moment from 'moment'
-
-/** Required components. */
-import RewardCalculatorChart from './RewardCalculatorChart'
+import { Col, Input, Row } from 'antd'
+import { calculateIncentive, calculatePoW } from '../utilities/blockRewards'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('rewardCalculator', 'ui', 'wallet') @observer
+@inject('ui', 'wallet') @observer
 
-class RewardCalculator extends React.Component {
+export default class RewardCalculator extends React.Component {
+  @observable enteredBlock = ''
+
   constructor (props) {
     super(props)
     this.t = props.t
-    this.rewardCalculator = props.rewardCalculator
     this.ui = props.ui
     this.wallet = props.wallet
     this.setBlock = this.setBlock.bind(this)
-
-    /** Calculate current block when loading the component. */
-    this.rewardCalculator.setBlock(this.wallet.info.blocks)
   }
 
-  setBlock (e) {
-    this.rewardCalculator.setBlock(e.target.value)
+  @computed get block () {
+    return this.enteredBlock.length === 0
+      ? this.wallet.info.blocks
+      : Math.round(this.enteredBlock)
   }
 
-  popoverTitle () {
-    const { block, estimation, time } = this.rewardCalculator
+  @computed get powReward () {
+    return calculatePoW(this.block)
+  }
 
+  @computed get incentivePercent () {
+    return calculateIncentive(this.block)
+  }
+
+  @computed get miningReward () {
+    return this.powReward - this.incentiveReward
+  }
+
+  @computed get incentiveReward () {
+    return (this.powReward / 100) * this.incentivePercent
+  }
+
+  @action setBlock (e) {
+    const block = e === undefined
+      ? ''
+      : e.target.value
+
+    if (block.toString().match(/^[0-9]{0,7}$/) !== null) {
+      this.enteredBlock = block
+    }
+  }
+
+  render () {
     return (
-      <Row>
-        <Col span={2}>
-          <span>
-            {this.t('wallet:block')}
-          </span>
-        </Col>
-        <Col span={3}>
-          <Input
-            placeholder={this.t('wallet:height')}
-            value={block}
-            onChange={this.setBlock}
-            maxLength={7}
-          />
-        </Col>
-        <Col span={19}>
-          <p className='text-right'>
-            {
-              estimation === true
-                ? this.t('wallet:blockEstimation') + ' '
-                : this.t('wallet:blockFound') + ' '
-            }
-            <span className='text-dotted'>
-              {moment(time).format('l - HH:mm:ss')}
-            </span>
-            {' (' + moment().to(time)})
-          </p>
-        </Col>
-      </Row>
-    )
-  }
-
-  popoverContent () {
-    const { powReward, incentiveReward, incentivePercent } = this.rewardCalculator
-
-    return (
-      <div style={{width: '500px', margin: '10px 0 0 0'}}>
+      <div>
         <Row>
-          <Col span={6} offset={3}>
-            <p>{this.t('wallet:powReward')}</p>
-            <p>
-              <span className='text-dotted'>
-                {
-                  new Intl.NumberFormat(this.ui.language, {
-                    minimumFractionDigits: 6,
-                    maximumFractionDigits: 6
-                  }).format(powReward)
-                }
-              </span> XVC
-            </p>
+          <Col span={2}>
+            <i className='material-icons md-18'>extension</i>
           </Col>
-          <Col span={7}>
-            <p>{this.t('wallet:miningReward')}</p>
-            <p>
-              <span className='text-dotted'>
-                {
-                  new Intl.NumberFormat(this.ui.language, {
-                    minimumFractionDigits: 6,
-                    maximumFractionDigits: 6
-                  }).format(powReward - incentiveReward)
-                }
-              </span>
-              <span> XVC ({100 - incentivePercent}%)</span>
-            </p>
+          <Col span={11}>
+            {this.t('wallet:block')}
           </Col>
-          <Col span={7}>
-            <p>{this.t('wallet:incentiveReward')}</p>
-            <p>
-              <span className='text-dotted'>
-                {
-                  new Intl.NumberFormat(this.ui.language, {
-                    minimumFractionDigits: 6,
-                    maximumFractionDigits: 6
-                  }).format(incentiveReward)
-                }
-              </span>
-              <span> XVC ({incentivePercent}%)</span>
-            </p>
+          <Col span={5}>
+            <Input
+              placeholder={this.block}
+              value={this.enteredBlock}
+              onChange={this.setBlock}
+              maxLength={7}
+              size='small'
+            />
           </Col>
         </Row>
         <Row>
-          <Col span={24}>
-            <RewardCalculatorChart />
+          <Col span={2}>
+            <i className='material-icons md-18'>data_usage</i>
+          </Col>
+          <Col span={11}>
+            {this.t('wallet:powReward')}
+          </Col>
+          <Col span={11}>
+            <span className='text-dotted'>
+              {
+                new Intl.NumberFormat(this.ui.language, {
+                  minimumFractionDigits: 6,
+                  maximumFractionDigits: 6
+                }).format(this.powReward)
+              }
+            </span> XVC
+          </Col>
+        </Row>
+        <Row>
+          <Col span={2}>
+            <i className='material-icons md-18'>rowing</i>
+          </Col>
+          <Col span={11}>
+            {this.t('wallet:miningReward')}
+          </Col>
+          <Col span={11}>
+            <span className='text-dotted'>
+              {
+                new Intl.NumberFormat(this.ui.language, {
+                  minimumFractionDigits: 6,
+                  maximumFractionDigits: 6
+                }).format(this.miningReward)
+              }
+            </span>
+            <span> XVC ({100 - this.incentivePercent}%)</span>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={2}>
+            <i className='material-icons md-18'>verified_user</i>
+          </Col>
+          <Col span={11}>
+            {this.t('wallet:incentiveReward')}
+          </Col>
+          <Col span={11}>
+            <span className='text-dotted'>
+              {
+                new Intl.NumberFormat(this.ui.language, {
+                  minimumFractionDigits: 6,
+                  maximumFractionDigits: 6
+                }).format(this.incentiveReward)
+              }
+            </span>
+            <span> XVC ({this.incentivePercent}%)</span>
           </Col>
         </Row>
       </div>
     )
   }
-
-  render () {
-    return (
-      <Popover
-        trigger='click'
-        placement='bottomLeft'
-        title={this.popoverTitle()}
-        content={this.popoverContent()}
-      >
-        <Button>{this.t('wallet:rewardCalculator')}</Button>
-      </Popover>
-    )
-  }
 }
-
-export default RewardCalculator

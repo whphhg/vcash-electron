@@ -17,7 +17,6 @@ import Transactions from './components/Transactions'
 import addresses from './stores/addresses'
 import network from './stores/network'
 import rates from './stores/rates'
-import rewardCalculator from './stores/rewardCalculator'
 import rpc from './stores/rpc'
 import send from './stores/send'
 import transactions from './stores/transactions'
@@ -31,7 +30,6 @@ const stores = {
   addresses,
   network,
   rates,
-  rewardCalculator,
   rpc,
   send,
   transactions,
