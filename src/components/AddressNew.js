@@ -10,7 +10,7 @@ import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
 /** Make the component reactive and inject MobX stores. */
 @inject('addresses') @observer
 
-class AddressNew extends React.Component {
+export default class AddressNew extends React.Component {
   @observable account = ''
   @observable address = ''
   @observable popover = false
@@ -99,11 +99,13 @@ class AddressNew extends React.Component {
           <Col span={14}>
             <p className='text-error'>
               {
-                this.errorStatus === 'invalidCharacters' &&
-                this.t('wallet:accountInvalidCharacters') ||
-
-                this.errorStatus === 'keypoolRanOut' &&
-                this.t('wallet:keypoolRanOut')
+                (
+                  this.errorStatus === 'invalidCharacters' &&
+                  this.t('wallet:accountInvalidCharacters')
+                ) || (
+                  this.errorStatus === 'keypoolRanOut' &&
+                  this.t('wallet:keypoolRanOut')
+                )
               }
             </p>
           </Col>
@@ -131,10 +133,8 @@ class AddressNew extends React.Component {
         visible={this.popover === true}
         onVisibleChange={this.togglePopover}
       >
-        <Button>{this.t('wallet:addressGenerate')}</Button>
+        <Button size='small'>{this.t('wallet:addressGenerate')}</Button>
       </Popover>
     )
   }
 }
-
-export default AddressNew

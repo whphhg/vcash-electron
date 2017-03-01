@@ -112,14 +112,16 @@ export default class WalletPassphraseChange extends React.Component {
           <Col offset={4} span={13}>
             <p className='text-error'>
               {
-                this.errorStatus === 'notMatching' &&
-                this.t('wallet:passphrasesNotMatching') ||
-
-                this.errorStatus === 'incorrectPassphrase' &&
-                this.t('wallet:passphraseIncorrect') ||
-
-                this.errorStatus === 'oldEqualsNew' &&
-                this.t('wallet:passphrasesEqual')
+                (
+                  this.errorStatus === 'notMatching' &&
+                  this.t('wallet:passphrasesNotMatching')
+                ) || (
+                  this.errorStatus === 'incorrectPassphrase' &&
+                  this.t('wallet:passphraseIncorrect')
+                ) || (
+                  this.errorStatus === 'oldEqualsNew' &&
+                  this.t('wallet:passphrasesEqual')
+                )
               }
             </p>
           </Col>

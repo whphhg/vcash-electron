@@ -10,7 +10,7 @@ import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
 /** Make the component reactive and inject MobX stores. */
 @inject('addresses', 'wallet') @observer
 
-class KeyImport extends React.Component {
+export default class KeyImport extends React.Component {
   @observable privateKey = ''
   @observable account = ''
   @observable loading = false
@@ -129,14 +129,16 @@ class KeyImport extends React.Component {
           <Col span={14}>
             <p className='text-error'>
               {
-                this.errorStatus === 'invalidCharacters' &&
-                this.t('wallet:accountInvalidCharacters') ||
-
-                this.errorStatus === 'invalidKey' &&
-                this.t('wallet:privateKeyInvalid') ||
-
-                this.errorStatus === 'isMine' &&
-                this.t('wallet:privateKeyIsMine')
+                (
+                  this.errorStatus === 'invalidCharacters' &&
+                  this.t('wallet:accountInvalidCharacters')
+                ) || (
+                  this.errorStatus === 'invalidKey' &&
+                  this.t('wallet:privateKeyInvalid')
+                ) || (
+                  this.errorStatus === 'isMine' &&
+                  this.t('wallet:privateKeyIsMine')
+                )
               }
             </p>
           </Col>
@@ -167,6 +169,7 @@ class KeyImport extends React.Component {
       >
         <Button
           disabled={this.wallet.isLocked === true}
+          size='small'
         >
           {this.t('wallet:privateKeyImport')}
         </Button>
@@ -174,5 +177,3 @@ class KeyImport extends React.Component {
     )
   }
 }
-
-export default KeyImport

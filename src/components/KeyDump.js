@@ -10,7 +10,7 @@ import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
 /** Make the component reactive and inject MobX stores. */
 @inject('addresses', 'wallet') @observer
 
-class KeyDump extends React.Component {
+export default class KeyDump extends React.Component {
   @observable address = ''
   @observable privateKey = ''
   @observable popover = false
@@ -113,14 +113,16 @@ class KeyDump extends React.Component {
           <Col span={15}>
             <p className='text-error'>
               {
-                this.errorStatus === 'invalidCharacters' &&
-                this.t('wallet:addressInvalidCharacters') ||
-
-                this.errorStatus === 'unknownAddress' &&
-                this.t('wallet:addressUnknown') ||
-
-                this.errorStatus === 'invalidAddress' &&
-                this.t('wallet:addressInvalid')
+                (
+                  this.errorStatus === 'invalidCharacters' &&
+                  this.t('wallet:addressInvalidCharacters')
+                ) || (
+                  this.errorStatus === 'unknownAddress' &&
+                  this.t('wallet:addressUnknown')
+                ) || (
+                  this.errorStatus === 'invalidAddress' &&
+                  this.t('wallet:addressInvalid')
+                )
               }
             </p>
           </Col>
@@ -150,6 +152,7 @@ class KeyDump extends React.Component {
       >
         <Button
           disabled={this.wallet.isLocked === true}
+          size='small'
         >
           {this.t('wallet:privateKeyDump')}
         </Button>
@@ -157,5 +160,3 @@ class KeyDump extends React.Component {
     )
   }
 }
-
-export default KeyDump

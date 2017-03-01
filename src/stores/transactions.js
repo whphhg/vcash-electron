@@ -72,8 +72,8 @@ class Transactions {
           amount.indexOf(keyword) > -1 ||
           amountLocal.indexOf(keyword) > -1 ||
           i18next.t('wallet:' + tx.category).indexOf(keyword) > -1 ||
-          tx.blockhash && tx.blockhash.indexOf(keyword) > -1 ||
-          tx.comment && tx.comment.indexOf(keyword) > -1 ||
+          (tx.blockhash && tx.blockhash.indexOf(keyword) > -1) ||
+          (tx.comment && tx.comment.indexOf(keyword) > -1) ||
           tx.txid.indexOf(keyword) > -1 ||
           moment(tx.time).format('l - HH:mm:ss').indexOf(keyword) > -1
          ) {
@@ -213,11 +213,12 @@ class Transactions {
 
     this.txids.forEach((tx, txid) => {
       if (
-        tx.confirmations === 0 &&
-        tx.category === 'receiving' ||
-        tx.category === 'sending' ||
-        tx.category === 'sendingToSelf' ||
-        tx.category === 'blending'
+        tx.confirmations === 0 && (
+          tx.category === 'receiving' ||
+          tx.category === 'sending' ||
+          tx.category === 'sendingToSelf' ||
+          tx.category === 'blending'
+        )
       ) {
         pending = pending + Math.abs(tx.amount)
       }
@@ -311,11 +312,11 @@ class Transactions {
         if (save.confirmations === tx.confirmations) return
       }
 
-      /** Set inputs only on new transactions. */
-      if (inputs !== null) {
-        if (isSaved === false) {
-          tx.inputs = []
+      if (isSaved === false) {
+        tx.inputs = []
 
+        /** Set inputs on new transactions. */
+        if (inputs !== null) {
           for (let i = 0; i < tx.vin.length; i++) {
             if (inputs.has(tx.vin[i].txid) === true) {
               const input = inputs.get(tx.vin[i].txid)
@@ -332,11 +333,8 @@ class Transactions {
             }
           }
         }
-      }
 
-      /** Set outputs only on new transactions. */
-      if (isSaved === false) {
-        /** Address and amount tuples for use in tables. */
+        /** Set outputs on new transactions. */
         tx.outputs = tx.vout.reduce((outputs, output) => {
           if (output.scriptPubKey.type !== 'nonstandard') {
             outputs.push({
@@ -488,9 +486,10 @@ class Transactions {
       /** Add spendable amounts to notifications. */
       if (isSaved === true) {
         if (
-          tx.confirmations === 1 ||
-          tx.confirmations === 220 &&
-          tx.hasOwnProperty('generated') === true
+          tx.confirmations === 1 || (
+            tx.confirmations === 220 &&
+            tx.hasOwnProperty('generated') === true
+          )
         ) {
           /** Get total amount or return 0. */
           let total = notifications.spendable.has(save.category) === true

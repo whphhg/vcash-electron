@@ -70,7 +70,7 @@ class Send {
    */
   @computed get total () {
     return this.recipients.values().reduce((total, recipient) => {
-      return total + recipient.amount * 1000000
+      return total + (recipient.amount * 1000000)
     }, 0) / 1000000
   }
 
