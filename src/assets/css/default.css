@@ -206,3 +206,4 @@ header .ant-btn-primary:hover, header .ant-btn-primary:focus { color: #B71C1C; b
 .ant-dropdown-menu-submenu-title-selected,
 .ant-dropdown-menu-item-selected > a,
 .ant-dropdown-menu-submenu-title-selected > a { color: #B71C1C; background-color: #fdecec; }
+.ant-table-bordered.ant-table-empty .ant-table-placeholder { border: 0px !important; }

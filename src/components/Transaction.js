@@ -83,7 +83,7 @@ export default class Transaction extends React.Component {
                 {this.t('wallet:relayedOn')}
               </Col>
               <Col span={19}>
-                {moment(viewingTx.time).format('l - HH:mm:ss')}
+                {moment(viewingTx.time).format('L - HH:mm:ss')}
                 {' (' + moment().to(viewingTx.time)})
               </Col>
             </Row>
@@ -99,7 +99,7 @@ export default class Transaction extends React.Component {
                     {this.t('wallet:blockFound')}
                   </Col>
                   <Col span={19}>
-                    {moment(viewingTx.blocktime).format('l - HH:mm:ss')}
+                    {moment(viewingTx.blocktime).format('L - HH:mm:ss')}
                   </Col>
                 </Row>
               )

@@ -75,7 +75,7 @@ class Transactions {
           (tx.blockhash && tx.blockhash.indexOf(keyword) > -1) ||
           (tx.comment && tx.comment.indexOf(keyword) > -1) ||
           tx.txid.indexOf(keyword) > -1 ||
-          moment(tx.time).format('l - HH:mm:ss').indexOf(keyword) > -1
+          moment(tx.time).format('L - HH:mm:ss').indexOf(keyword) > -1
          ) {
           keywordMatches += 1
         }
@@ -193,9 +193,50 @@ class Transactions {
     }, new Map())
   }
 
-  /** */
+  /**
+   * Get reward spread for the last 31 days.
+   * @function rewardSpread
+   * @return {object} Rewards.
+   */
   @computed get rewardSpread () {
-    /** */
+    /** Treshold for including transactions, today - 31 days. */
+    const threshold = new Date().getTime() - (31 * 24 * 60 * 60 * 1000)
+
+    let rewardSpread = {
+      stakingReward: [],
+      miningReward: [],
+      incentiveReward: []
+    }
+
+    for (let i = 0; i < this.generated.length; i++) {
+      const tx = this.generated[i]
+
+      /** Check if tx time is in the last 31 days window. */
+      if (tx.time > threshold) {
+        const time = new Date(tx.time)
+
+        rewardSpread[tx.category].push({
+          y: Math.round(
+            (time.getHours() * 60 * 60) +
+            (time.getMinutes() * 60) +
+            time.getSeconds()
+          ) * 1000,
+          x: Math.round(moment(tx.time).format('x')),
+          date: tx.time,
+          amount: tx.amount,
+          category: tx.category,
+          color: tx.color
+        })
+      } else {
+        /**
+         * this.generated array is ordered by date,
+         * so we exit once tx time goes below the threshold.
+         */
+        break
+      }
+    }
+
+    return rewardSpread
   }
 
   /** */

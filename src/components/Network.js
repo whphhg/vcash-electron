@@ -5,6 +5,9 @@ import { Button, Col, Row } from 'antd'
 
 /** Required components. */
 import RewardCalculator from './RewardCalculator'
+import {
+  RewardSpread
+} from './charts'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -58,7 +61,7 @@ export default class Incentive extends React.Component {
                   </span> XVC
                 </p>
               </div>
-              <i className='material-icons md-20 left'>verified_user</i>
+              <i className='material-icons md-20 left'>gavel</i>
               <div className='left'>
                 <p>{this.t('wallet:voteCandidate')}&nbsp;
                   <span>
@@ -81,7 +84,7 @@ export default class Incentive extends React.Component {
                   </span>
                 </p>
               </div>
-              <i className='material-icons md-20 right'>library_books</i>
+              <i className='material-icons md-20 right'>account_circle</i>
             </div>
           </Col>
         </Row>
@@ -96,6 +99,7 @@ export default class Incentive extends React.Component {
                   {this.t('wallet:rewardSpread')}
                 </Col>
               </Row>
+              <RewardSpread />
               <Row>
                 <Col span={1}>
                   <i className='material-icons md-18'>view_week</i>
@@ -144,7 +148,7 @@ export default class Incentive extends React.Component {
               <Col span={12}>
                 <Row>
                   <Col span={2}>
-                    <i className='material-icons md-18'>computer</i>
+                    <i className='material-icons md-18'>hearing</i>
                   </Col>
                   <Col span={11}>
                     {this.t('wallet:listeningOn')}
@@ -157,24 +161,24 @@ export default class Incentive extends React.Component {
                 </Row>
                 <Row>
                   <Col span={2}>
-                    <i className='material-icons md-18'>hearing</i>
+                    <i className='material-icons md-18'>settings_ethernet</i>
                   </Col>
                   <Col span={11}>
-                    {this.t('wallet:portStatus')}
+                    {this.t('wallet:portOpen')}
                   </Col>
                   <Col span={11}>
                     <span className='text-dotted'>
                       {
                         this.network.incentiveInfo.networkstatus === 'ok'
-                          ? this.t('wallet:open')
-                          : this.t('wallet:closed')
+                          ? this.t('wallet:yes')
+                          : this.t('wallet:no')
                       }
                     </span>
                   </Col>
                 </Row>
                 <Row>
                   <Col span={2}>
-                    <i className='material-icons md-18'>verified_user</i>
+                    <i className='material-icons md-18'>event_seat</i>
                   </Col>
                   <Col span={11}>
                     {this.t('wallet:collateralizedNodes')}

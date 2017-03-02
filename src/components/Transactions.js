@@ -77,7 +77,7 @@ export default class Transactions extends React.Component {
                   title: this.t('wallet:date'),
                   dataIndex: 'time',
                   width: 130,
-                  render: text => moment(text).format('l - HH:mm:ss')
+                  render: text => moment(text).format('L - HH:mm:ss')
                 },
                 {
                   title: this.t('wallet:category'),
