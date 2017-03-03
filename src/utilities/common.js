@@ -30,19 +30,6 @@ export const dataPath = () => {
 }
 
 /**
- * Calculate fixed-data-table height.
- * @function tableHeight
- * @param {number} entries - Number of entries in array.
- * @param {number} height - Height of the table.
- * @return {number} Table height.
- */
-export const tableHeight = (entries = 0, height = 0) => {
-  return entries * 25 + 27 < height
-    ? entries * 25 + 27
-    : height
-}
-
-/**
  * Get a 4-character alphanumeric unique sequence.
  * For N unique IDs, out of X possibilities,
  * call at most 1 / (1 − N / X) times on average to ensure uniqueness.

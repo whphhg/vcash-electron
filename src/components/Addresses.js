@@ -1,22 +1,29 @@
 import React from 'react'
+import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Col, Row } from 'antd'
+import { Col, Row, Table } from 'antd'
 
 /** Required components. */
-import AddressesTable from './AddressesTable'
 import AddressNew from './AddressNew'
+import CurrencyConverter from './CurrencyConverter'
 import KeyDump from './KeyDump'
 import KeyImport from './KeyImport'
 import SendControls from './SendControls'
 import SendOptions from './SendOptions'
 import SendRecipient from './SendRecipient'
 
-/** Make the component reactive and inject MobX stores. */
-@inject('send', 'wallet') @observer
+/** Load translation namespaces and delay rendering until they are loaded. */
+@translate(['wallet'], { wait: true })
 
-class Addresses extends React.Component {
+/** Make the component reactive and inject MobX stores. */
+@inject('addresses', 'rates', 'send', 'wallet') @observer
+
+export default class Addresses extends React.Component {
   constructor (props) {
     super(props)
+    this.t = props.t
+    this.addresses = props.addresses
+    this.rates = props.rates
     this.send = props.send
     this.wallet = props.wallet
   }
@@ -45,7 +52,32 @@ class Addresses extends React.Component {
         <Row>
           <Col span={11}>
             <div style={{margin: '10px'}}>
-              <AddressesTable />
+              <Table
+                bordered
+                size='small'
+                scroll={
+                  this.addresses.all.length > 15
+                    ? {y: 503}
+                    : {}
+                }
+                pagination={false}
+                dataSource={this.addresses.all}
+                columns={[
+                  {
+                    title: this.t('wallet:addresses'),
+                    dataIndex: 'address',
+                    width: 290,
+                    render: text => <p className='text-mono'>{text}</p>
+                  },
+                  {
+                    title: this.t('wallet:balance'),
+                    dataIndex: 'amount',
+                    render: text => (
+                      <p className='text-right'>{text} XVC</p>
+                    )
+                  }
+                ]}
+              />
             </div>
           </Col>
           <Col span={13}>
@@ -62,6 +94,8 @@ class Addresses extends React.Component {
               </div>
               <hr id='send' />
               <SendOptions />
+              <hr id='send' />
+              <CurrencyConverter />
             </div>
           </Col>
         </Row>
@@ -69,5 +103,3 @@ class Addresses extends React.Component {
     )
   }
 }
-
-export default Addresses
