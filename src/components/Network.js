@@ -6,7 +6,8 @@ import { Button, Col, Row } from 'antd'
 /** Required components. */
 import RewardCalculator from './RewardCalculator'
 import {
-  RewardSpread
+  RewardSpread,
+  RewardsPerDay
 } from './charts'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
@@ -108,6 +109,7 @@ export default class Incentive extends React.Component {
                   {this.t('wallet:rewardsPerDay')}
                 </Col>
               </Row>
+              <RewardsPerDay />
             </div>
           </Col>
           <Col span={12}>

@@ -110,7 +110,7 @@ class Transactions {
    * @return {array} Chart data.
    */
   @computed get chartData () {
-    /** Today - 31 days. */
+    /** Treshold for including transactions, today - 31 days. */
     const threshold = new Date().getTime() - (31 * 24 * 60 * 60 * 1000)
 
     const today = moment(new Date())
@@ -125,7 +125,7 @@ class Transactions {
       /** Add to the beginning of arrays. */
       dataByDate.unshift(date)
       data.unshift({
-        date,
+        date: Math.round(today.format('x')),
         [i18next.t('wallet:sent')]: 0,
         [i18next.t('wallet:received')]: 0,
         [i18next.t('wallet:stakingReward')]: 0,
@@ -221,7 +221,6 @@ class Transactions {
             (time.getMinutes() * 60) +
             time.getSeconds()
           ) * 1000,
-          x: Math.round(moment(tx.time).format('x')),
           date: tx.time,
           amount: tx.amount,
           category: tx.category,
@@ -239,9 +238,54 @@ class Transactions {
     return rewardSpread
   }
 
-  /** */
+  /**
+   * Get rewards per day for the last 31 days.
+   * @function rewardsPerDay
+   * @return {array} Rewards.
+   */
   @computed get rewardsPerDay () {
-    /** */
+    /** Treshold for including transactions, today - 31 days. */
+    const threshold = new Date().getTime() - (31 * 24 * 60 * 60 * 1000)
+
+    /** Map with dates as keys. */
+    let rewardsPerDay = new Map()
+
+    /** Populate the rewardsPerDay map with dates. */
+    for (let i = 1; i <= 31; i++) {
+      const date = moment(threshold).add(i, 'day').format('YYYYMMDD')
+
+      rewardsPerDay.set(date, {
+        date,
+        date1: Math.round(moment(threshold).add(i, 'day').format('x')),
+        stakingReward: 0,
+        miningReward: 0,
+        incentiveReward: 0
+      })
+    }
+
+    /** Add category counts to the rewardsPerDay map. */
+    for (let i = 0; i < this.generated.length; i++) {
+      const tx = this.generated[i]
+
+      /** Check if tx time is in the last 31 days window. */
+      if (tx.time > threshold) {
+        const date = moment(tx.time).format('YYYYMMDD')
+
+        if (rewardsPerDay.has(date) === true) {
+          let saved = rewardsPerDay.get(date)
+          saved[tx.category] = saved[tx.category] + 1
+        }
+      } else {
+        /**
+         * this.generated array is ordered by date,
+         * so we exit once tx time goes below the threshold.
+         */
+        break
+      }
+    }
+
+    /** Convert rewardsPerDay map to array. */
+    return [...rewardsPerDay.values()]
   }
 
   /**

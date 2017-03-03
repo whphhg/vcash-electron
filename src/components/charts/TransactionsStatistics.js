@@ -12,9 +12,10 @@ import {
   linearGradient,
   stop
 } from 'recharts'
+import moment from 'moment'
 
 /** Required components. */
-import { CustomTickX, CustomTooltip } from './RechartsCustom'
+import { CustomTick, CustomTooltip } from './RechartsCustom'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -30,6 +31,8 @@ export default class TransactionsStatistics extends React.Component {
   }
 
   render () {
+    const beginning = new Date().getTime() - (31 * 24 * 60 * 60 * 1000)
+
     return (
       <ResponsiveContainer width='100%' height={155}>
         <AreaChart
@@ -95,13 +98,24 @@ export default class TransactionsStatistics extends React.Component {
           />
           <XAxis
             dataKey='date'
-            tick={<CustomTickX />}
+            domain={[
+              Math.round(beginning),
+              Math.round(moment().format('x'))
+            ]}
+            interval={4}
+            tick={
+              <CustomTick
+                textX={18}
+                textY={15}
+                textType='date'
+              />
+            }
           />
           <CartesianGrid strokeDasharray='3 3' />
           <Tooltip
             content={
               <CustomTooltip
-                labelText={this.t('wallet:statisticsFor')}
+                amounts
               />
             }
           />
