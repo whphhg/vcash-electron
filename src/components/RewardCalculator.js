@@ -57,11 +57,16 @@ export default class RewardCalculator extends React.Component {
   render () {
     return (
       <div>
-        <Row>
+        <Row
+          style={{
+            margin: '0 0 27px 0',
+            width: '300px'
+          }}
+        >
           <Col span={2}>
             <i className='material-icons md-18'>extension</i>
           </Col>
-          <Col span={11}>
+          <Col span={5}>
             {this.t('wallet:block')}
           </Col>
           <Col span={5}>
@@ -75,59 +80,58 @@ export default class RewardCalculator extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col span={2}>
-            <i className='material-icons md-18'>data_usage</i>
+          <Col span={6}>
+            <Row>
+              <Col span={24}>
+                {this.t('wallet:powReward')}
+              </Col>
+              <Col span={24}>
+                <span className='text-dotted'>
+                  {
+                    new Intl.NumberFormat(this.ui.language, {
+                      minimumFractionDigits: 6,
+                      maximumFractionDigits: 6
+                    }).format(this.powReward)
+                  }
+                </span> XVC
+              </Col>
+            </Row>
           </Col>
-          <Col span={11}>
-            {this.t('wallet:powReward')}
+          <Col span={8}>
+            <Row>
+              <Col span={24}>
+                {this.t('wallet:miningReward')}
+              </Col>
+              <Col span={24}>
+                <span className='text-dotted'>
+                  {
+                    new Intl.NumberFormat(this.ui.language, {
+                      minimumFractionDigits: 6,
+                      maximumFractionDigits: 6
+                    }).format(this.miningReward)
+                  }
+                </span>
+                <span> XVC ({100 - this.incentivePercent}%)</span>
+              </Col>
+            </Row>
           </Col>
-          <Col span={11}>
-            <span className='text-dotted'>
-              {
-                new Intl.NumberFormat(this.ui.language, {
-                  minimumFractionDigits: 6,
-                  maximumFractionDigits: 6
-                }).format(this.powReward)
-              }
-            </span> XVC
-          </Col>
-        </Row>
-        <Row>
-          <Col span={2}>
-            <i className='material-icons md-18'>rowing</i>
-          </Col>
-          <Col span={11}>
-            {this.t('wallet:miningReward')}
-          </Col>
-          <Col span={11}>
-            <span className='text-dotted'>
-              {
-                new Intl.NumberFormat(this.ui.language, {
-                  minimumFractionDigits: 6,
-                  maximumFractionDigits: 6
-                }).format(this.miningReward)
-              }
-            </span>
-            <span> XVC ({100 - this.incentivePercent}%)</span>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={2}>
-            <i className='material-icons md-18'>verified_user</i>
-          </Col>
-          <Col span={11}>
-            {this.t('wallet:incentiveReward')}
-          </Col>
-          <Col span={11}>
-            <span className='text-dotted'>
-              {
-                new Intl.NumberFormat(this.ui.language, {
-                  minimumFractionDigits: 6,
-                  maximumFractionDigits: 6
-                }).format(this.incentiveReward)
-              }
-            </span>
-            <span> XVC ({this.incentivePercent}%)</span>
+          <Col span={8}>
+            <Row>
+              <Col span={24}>
+                {this.t('wallet:incentiveReward')}
+              </Col>
+              <Col span={24}>
+                <span className='text-dotted'>
+                  {
+                    new Intl.NumberFormat(this.ui.language, {
+                      minimumFractionDigits: 6,
+                      maximumFractionDigits: 6
+                    }).format(this.incentiveReward)
+                  }
+                </span>
+                <span> XVC ({this.incentivePercent}%)</span>
+              </Col>
+            </Row>
           </Col>
         </Row>
       </div>
