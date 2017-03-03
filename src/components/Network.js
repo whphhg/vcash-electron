@@ -142,10 +142,10 @@ export default class Incentive extends React.Component {
           </Col>
         </Row>
         <Row id='network-info'>
-          <Col span={7}>
+          <Col span={10}>
             <RewardCalculator />
           </Col>
-          <Col span={15} offset={2}>
+          <Col span={14}>
             <Row>
               <Col span={12}>
                 <Row>
