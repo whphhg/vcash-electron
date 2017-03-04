@@ -1,3 +1,5 @@
+export Difficulties from './Difficulties'
+export HashRate from './HashRate'
 export RewardsPerDay from './RewardsPerDay'
 export RewardSpread from './RewardSpread'
 export TransactionsStatistics from './TransactionsStatistics'

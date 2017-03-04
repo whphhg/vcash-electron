@@ -63,35 +63,35 @@ export default class TransactionsStatistics extends React.Component {
           </defs>
           <Area
             type='monotone'
-            dataKey={this.t('wallet:sent')}
+            dataKey='sent'
             stroke='#B60127'
             fillOpacity={1}
             fill='url(#colorSent)'
           />
           <Area
             type='monotone'
-            dataKey={this.t('wallet:received')}
+            dataKey='received'
             stroke='#33691E'
             fillOpacity={1}
             fill='url(#colorReceived)'
           />
           <Area
             type='monotone'
-            dataKey={this.t('wallet:stakingReward')}
+            dataKey='stakingReward'
             stroke='#FE9950'
             fillOpacity={1}
             fill='url(#colorStaking)'
           />
           <Area
             type='monotone'
-            dataKey={this.t('wallet:miningReward')}
+            dataKey='miningReward'
             stroke='#EC5E44'
             fillOpacity={1}
             fill='url(#colorMining)'
           />
           <Area
             type='monotone'
-            dataKey={this.t('wallet:incentiveReward')}
+            dataKey='incentiveReward'
             stroke='#803888'
             fillOpacity={1}
             fill='url(#colorIncentive)'
@@ -105,7 +105,7 @@ export default class TransactionsStatistics extends React.Component {
             interval={4}
             tick={
               <CustomTick
-                textX={18}
+                textX={0}
                 textY={15}
                 textType='date'
               />

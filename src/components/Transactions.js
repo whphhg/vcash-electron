@@ -76,8 +76,8 @@ export default class Transactions extends React.Component {
                 {
                   title: this.t('wallet:date'),
                   dataIndex: 'time',
-                  width: 130,
-                  render: text => moment(text).format('L - HH:mm:ss')
+                  width: 140,
+                  render: text => moment(text).format('L - LTS')
                 },
                 {
                   title: this.t('wallet:category'),
@@ -116,7 +116,7 @@ export default class Transactions extends React.Component {
                 {
                   title: this.t('wallet:description'),
                   dataIndex: 'comment',
-                  width: 400
+                  width: 380
                 },
                 {
                   title: this.t('wallet:amount'),

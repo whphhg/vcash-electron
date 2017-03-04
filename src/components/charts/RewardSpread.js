@@ -29,7 +29,7 @@ export default class RewardSpread extends React.Component {
   }
 
   render () {
-    const beginning = new Date().getTime() - (31 * 24 * 60 * 60 * 1000)
+    const beginning = new Date().getTime() - (30 * 24 * 60 * 60 * 1000)
 
     return (
       <ResponsiveContainer width='100%' height={210}>
@@ -55,12 +55,12 @@ export default class RewardSpread extends React.Component {
             dataKey='date'
             domain={[
               Math.round(beginning),
-              Math.round(moment().add(1, 'day').format('x'))
+              Math.round(moment().format('x'))
             ]}
             interval={0}
             tick={
               <CustomTick
-                textX={18}
+                textX={0}
                 textY={15}
                 textType='date'
               />
@@ -72,7 +72,7 @@ export default class RewardSpread extends React.Component {
               Math.round(moment(beginning).add(16, 'days').format('x')),
               Math.round(moment(beginning).add(21, 'days').format('x')),
               Math.round(moment(beginning).add(26, 'days').format('x')),
-              Math.round(moment().add(1, 'day').format('x'))
+              Math.round(moment().format('x'))
             ]}
           />
           <YAxis

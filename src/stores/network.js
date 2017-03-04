@@ -37,8 +37,9 @@ class Network {
     testnet: false
   }
 
-  @observable networkInfo = {}
-  @observable peerInfo = []
+  @observable networkInfo = observable.object({})
+  @observable peerInfo = observable.array([])
+  @observable statsByMinute = observable.array([])
 
   /**
    * @constructor
@@ -140,6 +141,17 @@ class Network {
     return []
   }
 
+  /**
+   * Get saved network stats since UI launch.
+   * @function stats
+   * @return {array} Stats.
+   */
+  @computed get stats () {
+    return this.statsByMinute.length > 1
+      ? [...this.statsByMinute]
+      : [...this.statsByMinute, ...this.statsByMinute]
+  }
+
   @action setResponses (responses) {
     this.networkInfo = responses[0].result
     this.peerInfo = responses[1].result
@@ -154,6 +166,14 @@ class Network {
           }
         }
       }
+    })
+
+    /** Save timestamped difficulties and hashrate. */
+    this.statsByMinute.push({
+      date: new Date().getTime(),
+      posDifficulty: responses[4].result['proof-of-stake'],
+      powDifficulty: responses[4].result['proof-of-work'],
+      hashRate: responses[3].result.networkhashps
     })
   }
 

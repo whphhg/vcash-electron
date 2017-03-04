@@ -1,6 +1,9 @@
 import { homedir } from 'os'
 import { sep } from 'path'
 
+/** Required store instances. */
+import ui from '../stores/ui'
+
 /**
  * Get decimal separator.
  * @function decimalSeparator
@@ -41,4 +44,41 @@ export const shortUid = () => {
   return (
     '0000' + (Math.random() * Math.pow(36, 4) << 0).toString(36)
   ).slice(-4)
+}
+
+/**
+ * Get a human readable string.
+ * @function humanReadable
+ * @param {number} num - Number of bits.
+ * @param {string} dec - Decimal (true) or binary (false).
+ * @param {string} suffix - Unit suffix.
+ * @return {string} Human readable string.
+ * @see {@link http://stackoverflow.com/a/14919494|StackOverflow}
+ */
+export const humanReadable = (num = 0, dec = true, suffix = 'B') => {
+  const threshold = dec === true
+    ? 1000
+    : 1024
+
+  const units = dec === true
+    ? ['k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
+    : ['Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi', 'Yi']
+
+  if (Math.abs(num) < threshold) {
+    return num + ' ' + suffix
+  }
+
+  let unit = -1
+
+  do {
+    num /= threshold
+    unit++
+  } while (
+    Math.abs(num) >= threshold &&
+    unit < units.length - 1
+  )
+
+  return new Intl.NumberFormat(ui.language, {
+    maximumFractionDigits: 2
+  }).format(num) + ' ' + units[unit] + suffix
 }

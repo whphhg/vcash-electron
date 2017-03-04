@@ -2,10 +2,13 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Button, Col, Row } from 'antd'
+import { humanReadable } from '../utilities/common'
 
 /** Required components. */
 import RewardCalculator from './RewardCalculator'
 import {
+  Difficulties,
+  HashRate,
   RewardSpread,
   RewardsPerDay
 } from './charts'
@@ -119,25 +122,19 @@ export default class Incentive extends React.Component {
                   <i className='material-icons md-18'>trending_up</i>
                 </Col>
                 <Col span={10}>
-                  {this.t('wallet:powDifficulty')}
+                  {this.t('wallet:difficulties')}
                 </Col>
               </Row>
-              <Row>
-                <Col span={1}>
-                  <i className='material-icons md-18'>trending_up</i>
-                </Col>
-                <Col span={10}>
-                  {this.t('wallet:posDifficulty')}
-                </Col>
-              </Row>
+              <Difficulties />
               <Row>
                 <Col span={1}>
                   <i className='material-icons md-18'>network_check</i>
                 </Col>
                 <Col span={10}>
-                  {this.t('wallet:networkHashRate')}
+                  {this.t('wallet:hashRate')}
                 </Col>
               </Row>
+              <HashRate />
             </div>
           </Col>
         </Row>
@@ -211,10 +208,10 @@ export default class Incentive extends React.Component {
               </Col>
               <Col span={12}>
                 <Row>
-                  <Col span={2} offset={2}>
+                  <Col span={2} offset={1}>
                     <i className='material-icons md-18'>account_balance</i>
                   </Col>
-                  <Col span={10}>
+                  <Col span={11}>
                     {this.t('wallet:moneySupply')}
                   </Col>
                   <Col span={10}>
@@ -228,23 +225,28 @@ export default class Incentive extends React.Component {
                   </Col>
                 </Row>
                 <Row>
-                  <Col span={2} offset={2}>
+                  <Col span={2} offset={1}>
                     <i className='material-icons md-18'>grid_on</i>
                   </Col>
-                  <Col span={10}>
+                  <Col span={11}>
                     {this.t('wallet:currentBlockSize')}
                   </Col>
                   <Col span={10}>
                     <span className='text-dotted'>
-                      {this.network.miningInfo.currentblocksize}
-                    </span> bytes
+                      {
+                        humanReadable(
+                          this.network.miningInfo.currentblocksize,
+                          false
+                        )
+                      }
+                    </span>
                   </Col>
                 </Row>
                 <Row>
-                  <Col span={2} offset={2}>
+                  <Col span={2} offset={1}>
                     <i className='material-icons md-18'>playlist_add_check</i>
                   </Col>
-                  <Col span={10}>
+                  <Col span={11}>
                     {this.t('wallet:currentBlockTxs')}
                   </Col>
                   <Col span={10}>
@@ -254,10 +256,10 @@ export default class Incentive extends React.Component {
                   </Col>
                 </Row>
                 <Row>
-                  <Col span={2} offset={2}>
+                  <Col span={2} offset={1}>
                     <i className='material-icons md-18'>playlist_add</i>
                   </Col>
-                  <Col span={10}>
+                  <Col span={11}>
                     {this.t('wallet:pooledTxs')}
                   </Col>
                   <Col span={10}>

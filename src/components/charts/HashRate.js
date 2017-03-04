@@ -2,15 +2,17 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import {
-  Bar,
-  BarChart,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer
+  ResponsiveContainer,
+  defs,
+  linearGradient,
+  stop
 } from 'recharts'
-import moment from 'moment'
 
 /** Required components. */
 import { CustomTick, CustomTooltip } from './RechartsCustom'
@@ -19,69 +21,66 @@ import { CustomTick, CustomTooltip } from './RechartsCustom'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('transactions') @observer
+@inject('network') @observer
 
-export default class RewardsPerDay extends React.Component {
+export default class Difficulties extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.transactions = props.transactions
+    this.network = props.network
   }
 
   render () {
-    const beginning = new Date().getTime() - (30 * 24 * 60 * 60 * 1000)
-
     return (
       <ResponsiveContainer width='100%' height={210}>
-        <BarChart
-          data={this.transactions.rewardsPerDay}
-          margin={{top: 15, right: 20, bottom: 5, left: 20}}
+        <AreaChart
+          data={this.network.stats}
+          syncId='0'
+          margin={{top: 15, right: 60, bottom: 5, left: 40}}
         >
-          <Bar
-            dataKey='stakingReward'
-            stackId='a'
-            fill='#FE9950'
-          />
-          <Bar
-            dataKey='miningReward'
-            stackId='a'
-            fill='#EC5E44'
-          />
-          <Bar
-            dataKey='incentiveReward'
-            stackId='a'
-            fill='#803888'
+          <defs>
+            <linearGradient id='colorPoW' x1='0' y1='0' x2='0' y2='1'>
+              <stop offset='35%' stopColor='#B71C1C' stopOpacity={0.9} />
+              <stop offset='100%' stopColor='#B71C1C' stopOpacity={0.3} />
+            </linearGradient>
+          </defs>
+          <Area
+            yAxisId='left'
+            type='monotone'
+            dataKey='hashRate'
+            stroke='#B71C1C'
+            fillOpacity={1}
+            fill='url(#colorPoW)'
           />
           <XAxis
             dataKey='date'
-            domain={[
-              Math.round(beginning),
-              Math.round(moment().format('x'))
-            ]}
+            domain={['dataMin', 'dataMax']}
             tick={
               <CustomTick
                 textX={0}
                 textY={15}
-                textType='date'
+                textType='time'
               />
             }
-            interval={4}
           />
           <YAxis
+            yAxisId='left'
+            orientation='left'
             tick={
               <CustomTick
                 textX={-5}
                 textY={4}
+                textType='hashRate'
               />
             }
           />
           <CartesianGrid strokeDasharray='3 3' />
           <Tooltip
             content={
-              <CustomTooltip />
+              <CustomTooltip labelTime hashRate />
             }
           />
-        </BarChart>
+        </AreaChart>
       </ResponsiveContainer>
     )
   }

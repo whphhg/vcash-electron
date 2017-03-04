@@ -75,7 +75,7 @@ class Transactions {
           (tx.blockhash && tx.blockhash.indexOf(keyword) > -1) ||
           (tx.comment && tx.comment.indexOf(keyword) > -1) ||
           tx.txid.indexOf(keyword) > -1 ||
-          moment(tx.time).format('L - HH:mm:ss').indexOf(keyword) > -1
+          moment(tx.time).format('L - LTS').indexOf(keyword) > -1
          ) {
           keywordMatches += 1
         }
@@ -126,11 +126,11 @@ class Transactions {
       dataByDate.unshift(date)
       data.unshift({
         date: Math.round(today.format('x')),
-        [i18next.t('wallet:sent')]: 0,
-        [i18next.t('wallet:received')]: 0,
-        [i18next.t('wallet:stakingReward')]: 0,
-        [i18next.t('wallet:miningReward')]: 0,
-        [i18next.t('wallet:incentiveReward')]: 0
+        sent: 0,
+        received: 0,
+        stakingReward: 0,
+        miningReward: 0,
+        incentiveReward: 0
       })
     }
 
@@ -141,10 +141,8 @@ class Transactions {
         const index = dataByDate.indexOf(txDate)
 
         if (index > -1) {
-          const category = i18next.t('wallet:' + tx.category)
-
-          if (data[index].hasOwnProperty(category) === true) {
-            data[index][category] += Math.round(Math.abs(tx.amount) * 1e6) / 1e6
+          if (data[index].hasOwnProperty(tx.category) === true) {
+            data[index][tx.category] += Math.round(Math.abs(tx.amount) * 1e6) / 1e6
           }
         }
       }
@@ -255,8 +253,7 @@ class Transactions {
       const date = moment(threshold).add(i, 'day').format('YYYYMMDD')
 
       rewardsPerDay.set(date, {
-        date,
-        date1: Math.round(moment(threshold).add(i, 'day').format('x')),
+        date: Math.round(moment(threshold).add(i, 'day').format('x')),
         stakingReward: 0,
         miningReward: 0,
         incentiveReward: 0

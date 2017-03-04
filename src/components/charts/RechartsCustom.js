@@ -1,5 +1,6 @@
 import React from 'react'
 import { Col, Row } from 'antd'
+import { humanReadable } from '../../utilities/common'
 import i18next from '../../utilities/i18next'
 import moment from 'moment'
 
@@ -23,9 +24,17 @@ const CustomTick = (props) => {
       break
 
     case 'time':
-      value = moment(props.payload.value)
-        .subtract(1, 'hour')
-        .format('LT')
+      value = moment(props.payload.value).format('LT')
+      break
+
+    case 'hashRate':
+      value = humanReadable(props.payload.value, true, 'H/s')
+      break
+
+    case 'number':
+      value = new Intl.NumberFormat(ui.language, {
+        maximumFractionDigits: 2
+      }).format(props.payload.value)
       break
 
     default:
@@ -36,10 +45,10 @@ const CustomTick = (props) => {
   return (
     <g transform={`translate(${props.x},${props.y})`}>
       <text
-        x={props.textX}
-        y={props.textY}
+        x={props.textX || 0}
+        y={props.textY || 0}
         fill='#666666'
-        textAnchor='end'
+        textAnchor={props.textAnchor || 'end'}
       >
         {value}
       </text>
@@ -77,19 +86,22 @@ const CustomTooltip = (props) => {
                   }).format(amount)
                 } XVC
               </p>
-              <p>{moment(date).format('L HH:mm:ss')}</p>
+              <p>{moment(date).format('L - LTS')}</p>
             </Col>
           </Row>
         </div>
       )
 
     default:
-      const amounts = props.amounts || false
-
       return (
         <div className='chartTooltip'>
           <p className='label'>
-            {i18next.t('wallet:statisticsFor')} {moment(props.label).format('L')}
+            {i18next.t('wallet:statisticsFor') + ' '}
+            {
+              props.labelTime === true
+                ? moment(props.label).format('LT')
+                : moment(props.label).format('L')
+            }
           </p>
           <Row>
             {
@@ -104,15 +116,24 @@ const CustomTooltip = (props) => {
                     <Col span={12} className='text-right'>
                       <p style={{color: entry.color}}>
                         {
-                          props.amounts === true && (
-                            new Intl.NumberFormat(ui.language, {
-                              minimumFractionDigits: 6,
-                              maximumFractionDigits: 6
-                            }).format(entry.value) + ' XVC'
+                          (
+                            props.hashRate === true && (
+                              humanReadable(entry.value, true, 'H/s')
+                            )
+                          ) || (
+                            props.amounts === true && (
+                              new Intl.NumberFormat(ui.language, {
+                                minimumFractionDigits: 6,
+                                maximumFractionDigits: 6
+                              }).format(entry.value) + ' XVC'
+                            )
+                          ) || (
+                            props.amounts !== true && (
+                              new Intl.NumberFormat(ui.language, {
+                                maximumFractionDigits: 2
+                              }).format(entry.value)
+                            )
                           )
-                        }
-                        {
-                          amounts === false && entry.value
                         }
                       </p>
                     </Col>
