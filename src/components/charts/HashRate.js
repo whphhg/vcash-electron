@@ -36,7 +36,7 @@ export default class Difficulties extends React.Component {
         <AreaChart
           data={this.network.stats}
           syncId='0'
-          margin={{top: 15, right: 60, bottom: 5, left: 40}}
+          margin={{top: 15, right: 60, bottom: 5, left: 30}}
         >
           <defs>
             <linearGradient id='colorPoW' x1='0' y1='0' x2='0' y2='1'>

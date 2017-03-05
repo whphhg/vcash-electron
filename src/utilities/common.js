@@ -49,7 +49,7 @@ export const shortUid = () => {
 /**
  * Get a human readable string.
  * @function humanReadable
- * @param {number} num - Number of bits.
+ * @param {number} num - Number of bytes.
  * @param {string} dec - Decimal (true) or binary (false).
  * @param {string} suffix - Unit suffix.
  * @return {string} Human readable string.

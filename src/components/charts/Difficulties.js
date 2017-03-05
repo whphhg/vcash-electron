@@ -33,19 +33,21 @@ export default class Difficulties extends React.Component {
         <LineChart
           data={this.network.stats}
           syncId='0'
-          margin={{top: 15, right: 0, bottom: 5, left: 40}}
+          margin={{top: 15, right: 0, bottom: 5, left: 30}}
         >
           <Line
             yAxisId='left'
             type='monotone'
             dataKey='powDifficulty'
             stroke='#EC5E44'
+            dot={false}
           />
           <Line
             yAxisId='right'
             type='monotone'
             dataKey='posDifficulty'
             stroke='#FE9950'
+            dot={false}
           />
           <XAxis
             dataKey='date'
