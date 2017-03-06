@@ -61,7 +61,7 @@ export default class Maintenance extends React.Component {
             <div style={{margin: '10px 10px 0 10px'}}>
               <WalletEncrypt />
               <WalletPassphraseChange />
-              { /** TODO: Implement wallet check and repair. */ }
+              {/** TODO: Implement wallet check and repair. */}
             </div>
           </Col>
         </Row>

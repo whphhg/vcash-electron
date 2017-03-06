@@ -180,7 +180,7 @@ header .ant-btn-primary:hover, header .ant-btn-primary:focus { color: #B71C1C; b
 .ant-table-small .ant-table-tbody > tr > td { padding: 2px 8px; }
 .ant-table-small .ant-table-title,
 .ant-table-small .ant-table-footer,
-.ant-table-small .ant-table-thead > tr > th { padding: 4px 8px; }
+.ant-table-small .ant-table-thead > tr > th:not(.ant-table-selection-column) { padding: 4px 8px; }
 .ant-table-pagination { margin: 8px 0; float: none; }
 .ant-pagination-prev:hover,
 .ant-pagination-next:hover { border-color: #B71C1C; }

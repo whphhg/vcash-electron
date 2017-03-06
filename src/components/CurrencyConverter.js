@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Button, Col, Input, Popover, Row } from 'antd'
+import { Col, Input, Row } from 'antd'
 import { decimalSeparator } from '../utilities/common'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
@@ -11,19 +11,29 @@ import { decimalSeparator } from '../utilities/common'
 /** Make the component reactive and inject MobX stores. */
 @inject('rates', 'ui') @observer
 
-class CurrencyConverter extends React.Component {
-  @observable from = 'vcash'
-  @observable amount = 1
+export default class CurrencyConverter extends React.Component {
+  @observable amount
+  @observable from
 
   constructor (props) {
     super(props)
     this.t = props.t
+
+    /** Observable properties. */
+    this.amount = 1
+    this.from = 'vcash'
+
+    /** Injected stores. */
     this.rates = props.rates
     this.ui = props.ui
-    this.onChange = this.onChange.bind(this)
   }
 
-  @computed get converted () {
+  /**
+   * Get converted amounts.
+   * @function amounts
+   * @return {object} Converted amounts.
+   */
+  @computed get amounts () {
     const { average, local } = this.rates
 
     switch (this.from) {
@@ -50,9 +60,14 @@ class CurrencyConverter extends React.Component {
     }
   }
 
-  @action onChange (e) {
-    const from = e.target.name
+  /**
+   * Set amount and converting currency.
+   * @function convert
+   * @param {object} e - Input element event.
+   */
+  @action convert = (e) => {
     const amount = e.target.value
+    const from = e.target.name
 
     /** Allow only amount in 0000000[.,]000000 format. */
     switch (decimalSeparator()) {
@@ -65,98 +80,89 @@ class CurrencyConverter extends React.Component {
         break
     }
 
-    this.from = from
     this.amount = amount
-  }
-
-  popoverTitle () {
-    const { bittrex, poloniex } = this.rates
-
-    return (
-      <div className='popoverTitle'>
-        <p>{this.t('wallet:currencyConverterLong')}</p>
-        <div style={{float: 'right'}}>
-          <img src='./assets/images/exchangePoloniex.png' />
-          <p>
-            <span>
-              {
-                new Intl.NumberFormat(this.ui.language, {
-                  minimumFractionDigits: 8,
-                  maximumFractionDigits: 8
-                }).format(poloniex.last)
-              }
-            </span> BTC
-          </p>
-          <img src='./assets/images/exchangeBittrex.png' />
-          <p>
-            <span>
-              {
-                new Intl.NumberFormat(this.ui.language, {
-                  minimumFractionDigits: 8,
-                  maximumFractionDigits: 8
-                }).format(bittrex.Last)
-              }
-            </span> BTC
-          </p>
-        </div>
-      </div>
-    )
-  }
-
-  popoverContent () {
-    return (
-      <Row>
-        <Col span={7}>
-          <p style={{margin: '0 0 5px 0'}}>
-            <span className='text-dotted'>XVC</span>
-          </p>
-          <Input
-            name='vcash'
-            placeholder={this.t('wallet:amount')}
-            onChange={this.onChange}
-            value={this.converted.vcash}
-          />
-        </Col>
-        <Col offset={1} span={8}>
-          <p style={{margin: '0 0 5px 0'}}>
-            <span className='text-dotted'>BTC</span>
-          </p>
-          <Input
-            name='bitcoin'
-            placeholder={this.t('wallet:amount')}
-            onChange={this.onChange}
-            value={this.converted.bitcoin}
-          />
-        </Col>
-        <Col offset={1} span={7}>
-          <p style={{margin: '0 0 5px 0'}}>
-            <span className='text-dotted'>
-              {this.rates.localCurrency}
-            </span>
-          </p>
-          <Input
-            name='local'
-            placeholder={this.t('wallet:amount')}
-            onChange={this.onChange}
-            value={this.converted.local}
-          />
-        </Col>
-      </Row>
-    )
+    this.from = from
   }
 
   render () {
     return (
-      <Popover
-        trigger='click'
-        placement='bottomLeft'
-        title={this.popoverTitle()}
-        content={this.popoverContent()}
-      >
-        <Button>{this.t('wallet:currencyConverter')}</Button>
-      </Popover>
+      <div>
+        <Row>
+          <Col span={12}>
+            {this.t('wallet:currencyConverter')}
+          </Col>
+          <Col span={1} offset={1}>
+            <Col span={18} offset={6}>
+              <img
+                src='./assets/images/exchangePoloniex.png'
+                style={{margin: '1px 0 0 0'}}
+              />
+            </Col>
+          </Col>
+          <Col span={4} style={{textAlign: 'right'}}>
+            <span style={{fontWeight: '500'}}>
+              {
+                new Intl.NumberFormat(this.ui.language, {
+                  minimumFractionDigits: 8,
+                  maximumFractionDigits: 8
+                }).format(this.rates.poloniex.last)
+              }
+            </span> BTC
+          </Col>
+          <Col span={1} offset={1}>
+            <Col span={18} offset={6}>
+              <img
+                src='./assets/images/exchangeBittrex.png'
+                style={{margin: '1px 0 0 0'}}
+              />
+            </Col>
+          </Col>
+          <Col span={4} style={{textAlign: 'right'}}>
+            <span style={{fontWeight: '500'}}>
+              {
+                new Intl.NumberFormat(this.ui.language, {
+                  minimumFractionDigits: 8,
+                  maximumFractionDigits: 8
+                }).format(this.rates.bittrex.Last)
+              }
+            </span> BTC
+          </Col>
+        </Row>
+        <Row style={{margin: '10px 0 0 0'}}>
+          <Col span={8}>
+            <Input
+              name='vcash'
+              size='small'
+              addonBefore='XVC'
+              placeholder={this.t('wallet:amount')}
+              onChange={this.convert}
+              value={this.amounts.vcash}
+            />
+          </Col>
+          <Col span={8}>
+            <div style={{margin: '0 5px 0 5px'}}>
+              <Input
+                name='bitcoin'
+                size='small'
+                addonBefore='BTC'
+                placeholder={this.t('wallet:amount')}
+                onChange={this.convert}
+                value={this.amounts.bitcoin}
+              />
+            </div>
+          </Col>
+          <Col span={8}>
+            <Input
+              name='local'
+              size='small'
+              addonBefore={this.rates.localCurrency}
+              placeholder={this.t('wallet:amount')}
+              onChange={this.convert}
+              value={this.amounts.local}
+            />
+          </Col>
+        </Row>
+      </div>
     )
   }
 }
-
-export default CurrencyConverter
