@@ -1,24 +1,26 @@
 import { action, computed, observable, reaction } from 'mobx'
-import { notification } from 'antd'
+import { message } from 'antd'
 import i18next from '../utilities/i18next'
 
 /** Required store instances. */
 import rpc from './rpc'
-import rates from './rates'
 import ui from './ui'
 
 class Addresses {
   /**
    * Observable properties.
    * @property {array} receivedByAddress - listreceivedbyaddress RPC response.
+   * @property {string} viewing - Address details being viewed.
    */
   @observable receivedByAddress = []
+  @observable viewing = null
 
   constructor () {
-    /** When RPC status changes. */
+    /** List addresses when RPC becomes available. */
     reaction(() => rpc.status, (status) => {
-      /** Run when RPC becomes available. */
-      if (status === true) this.listreceivedbyaddress()
+      if (status === true) {
+        this.listreceivedbyaddress()
+      }
     })
   }
 
@@ -68,14 +70,24 @@ class Addresses {
     return this.receivedByAddress.reduce((addresses, obj) => {
       addresses.push({
         ...obj,
-        localAmount: new Intl.NumberFormat(ui.language, {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        }).format(obj.amount * rates.local * rates.average)
+        key: obj.address,
+        amount: new Intl.NumberFormat(ui.language, {
+          minimumFractionDigits: 6,
+          maximumFractionDigits: 6
+        }).format(obj.amount)
       })
 
       return addresses
     }, [])
+  }
+
+  /**
+   * Set the address being viewed.
+   * @function setViewing
+   * @param {string} address - Address.
+   */
+  @action setViewing (address = null) {
+    this.viewing = address
   }
 
   /**
@@ -129,17 +141,6 @@ class Addresses {
           }
 
           return false
-        }
-
-        if (response[0].hasOwnProperty('result') === true) {
-          this.listreceivedbyaddress()
-
-          /** Display notification. */
-          notification.success({
-            message: i18next.t('wallet:addressGenerated'),
-            description: response[0].result,
-            duration: 10
-          })
         }
 
         return callback(response[0].result, error())
@@ -216,12 +217,8 @@ class Addresses {
         }
 
         if (response[0].hasOwnProperty('result') === true) {
-          /** Display notification. */
-          notification.success({
-            message: i18next.t('wallet:privateKeyImported'),
-            description: i18next.t('wallet:privateKeyImportedLong'),
-            duration: 6
-          })
+          /** Display a message */
+          message.success(i18next.t('wallet:privateKeyImported'), 6)
         }
 
         return callback(response[0].result, error())

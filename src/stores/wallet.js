@@ -61,6 +61,11 @@ class Wallet {
     })
   }
 
+  /**
+   * Set RPC info responses.
+   * @function setResponses
+   * @param {array} responses - RPC info responses.
+   */
   @action setResponses (responses) {
     const which = ['info', 'chainBlender']
 
@@ -87,10 +92,21 @@ class Wallet {
     })
   }
 
+  /**
+   * Set blending status.
+   * @function setBlendingStatus
+   * @param {boolean} isBlending - Is blending?
+   */
   @action setBlendingStatus (isBlending) {
     this.isBlending = isBlending
   }
 
+  /**
+   * Set lock status.
+   * @function setLockStatus
+   * @param {boolean} isEncrypted - Is encrypted?
+   * @param {boolean} isLocked - Is locked?
+   */
   @action setLockStatus (isEncrypted, isLocked) {
     this.isLocked = isLocked
     this.isEncrypted = isEncrypted

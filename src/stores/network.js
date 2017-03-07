@@ -8,6 +8,10 @@ import rpc from './rpc'
 import wallet from './wallet'
 
 class Network {
+  @observable networkInfo = observable.object({})
+  @observable peerInfo = observable.array([])
+  @observable statsByMinute = observable.array([])
+
   @observable difficulty = {
     'proof-of-work': 0,
     'proof-of-stake': 0,
@@ -36,10 +40,6 @@ class Network {
     pooledtx: 0,
     testnet: false
   }
-
-  @observable networkInfo = observable.object({})
-  @observable peerInfo = observable.array([])
-  @observable statsByMinute = observable.array([])
 
   /**
    * @constructor
@@ -152,6 +152,11 @@ class Network {
       : [...this.statsByMinute, ...this.statsByMinute]
   }
 
+  /**
+   * Set RPC info responses.
+   * @function setResponses
+   * @param {array} responses - RPC info responses.
+   */
   @action setResponses (responses) {
     this.networkInfo = responses[0].result
     this.peerInfo = responses[1].result

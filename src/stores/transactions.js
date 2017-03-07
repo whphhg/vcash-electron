@@ -1,5 +1,6 @@
 import { action, computed, observable, reaction } from 'mobx'
 import { notification } from 'antd'
+import { shortUid } from '../utilities/common'
 import i18next from '../utilities/i18next'
 import moment from 'moment'
 
@@ -409,6 +410,7 @@ class Transactions {
 
               /** Address and amount tuples for use in tables. */
               tx.inputs.push({
+                key: shortUid(),
                 address: input.vout[tx.vin[i].vout].scriptPubKey.addresses[0],
                 value: input.vout[tx.vin[i].vout].value
               })
@@ -420,6 +422,7 @@ class Transactions {
         tx.outputs = tx.vout.reduce((outputs, output) => {
           if (output.scriptPubKey.type !== 'nonstandard') {
             outputs.push({
+              key: shortUid(),
               address: output.scriptPubKey.addresses[0],
               value: output.value
             })
@@ -542,7 +545,7 @@ class Transactions {
 
       /** Type: blended. */
       if (tx.hasOwnProperty('blended') === true) {
-        /** TODO: Loop outputs and find the address that is yours. */
+        /** TODO: Loop outputs, find your address and assign the amount. */
 
         if (tx.confirmations > 0) {
           save.category = 'blended'
