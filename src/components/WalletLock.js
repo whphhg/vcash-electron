@@ -1,5 +1,6 @@
 import React from 'react'
 import { translate } from 'react-i18next'
+import { action } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button, Tooltip } from 'antd'
 
@@ -14,17 +15,22 @@ export default class WalletLock extends React.Component {
     super(props)
     this.t = props.t
     this.wallet = props.wallet
-    this.lock = this.lock.bind(this)
   }
 
-  lock () {
+  /**
+   * Lock the wallet.
+   * @function lock
+   */
+  @action lock = () => {
     this.wallet.lock()
   }
 
   render () {
-    const { isEncrypted, isLocked } = this.wallet
+    if (
+      this.wallet.isEncrypted === false ||
+      this.wallet.isLocked === true
+    ) return null
 
-    if (isEncrypted === false || isLocked === true) return null
     return (
       <Tooltip
         title={this.t('wallet:unlocked')}

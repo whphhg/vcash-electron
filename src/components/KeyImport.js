@@ -22,12 +22,8 @@ export default class KeyImport extends React.Component {
     this.t = props.t
     this.addresses = props.addresses
     this.wallet = props.wallet
-    this.importKey = this.importKey.bind(this)
-    this.setAccount = this.setAccount.bind(this)
-    this.setPrivateKey = this.setPrivateKey.bind(this)
-    this.togglePopover = this.togglePopover.bind(this)
 
-    /** Clear previous RPC response errors on private key change. */
+    /** Clear previous error on private key change. */
     reaction(() => this.privateKey, (privateKey) => {
       if (privateKey !== '') {
         this.setError()
@@ -44,6 +40,11 @@ export default class KeyImport extends React.Component {
     })
   }
 
+  /**
+   * Get error status.
+   * @function errorStatus
+   * @return {string|false} Current error or false if none.
+   */
   @computed get errorStatus () {
     if (this.account.match(/^[a-zA-Z0-9 -]{0,100}$/) === null) {
       return 'invalidCharacters'
@@ -54,15 +55,30 @@ export default class KeyImport extends React.Component {
     return false
   }
 
-  @action setError (error = false) {
+  /**
+   * Set rpc error.
+   * @function setError
+   * @param {string} error - RPC error.
+   */
+  @action setError = (error = false) => {
     this.error = error
   }
 
-  @action setAccount (account) {
+  /**
+   * Set account.
+   * @function setAccount
+   * @param {string} account - Account name.
+   */
+  @action setAccount = (account) => {
     this.account = account
   }
 
-  @action setPrivateKey (e) {
+  /**
+   * Set private key.
+   * @function setPrivateKey
+   * @param {object} e - Input element event.
+   */
+  @action setPrivateKey = (e) => {
     if (e === undefined) {
       this.privateKey = ''
     } else {
@@ -72,15 +88,27 @@ export default class KeyImport extends React.Component {
     }
   }
 
-  @action toggleLoading () {
+  /**
+   * Toggle loading.
+   * @function toggleLoading
+   */
+  @action toggleLoading = () => {
     this.loading = !this.loading
   }
 
-  @action togglePopover () {
+  /**
+   * Toggle popover.
+   * @function togglePopover
+   */
+  @action togglePopover = () => {
     this.popover = !this.popover
   }
 
-  importKey () {
+  /**
+   * Import private key.
+   * @function importKey
+   */
+  @action importKey = () => {
     /** Disable the button and show the loading indicator. */
     this.toggleLoading()
 
@@ -127,7 +155,7 @@ export default class KeyImport extends React.Component {
         </Row>
         <Row>
           <Col span={14}>
-            <p className='text-error'>
+            <p className='red' style={{margin: '3px 0 3px 1px'}}>
               {
                 (
                   this.errorStatus === 'invalidCharacters' &&
@@ -142,7 +170,7 @@ export default class KeyImport extends React.Component {
               }
             </p>
           </Col>
-          <Col span={10} className='text-right'>
+          <Col span={10} style={{textAlign: 'right'}}>
             <Button
               style={{margin: '5px 0 0 0'}}
               onClick={this.importKey}

@@ -77,7 +77,7 @@ const CustomTooltip = (props) => {
               <p>{i18next.t('wallet:amount')}</p>
               <p>{i18next.t('wallet:date')}</p>
             </Col>
-            <Col span={18} className='text-right'>
+            <Col span={18} style={{textAlign: 'right'}}>
               <p style={{color: color}}>
                 {
                   new Intl.NumberFormat(ui.language, {
@@ -113,7 +113,7 @@ const CustomTooltip = (props) => {
                         {i18next.t('wallet:' + entry.name)}
                       </p>
                     </Col>
-                    <Col span={12} className='text-right'>
+                    <Col span={12} style={{textAlign: 'right'}}>
                       <p style={{color: entry.color}}>
                         {
                           (

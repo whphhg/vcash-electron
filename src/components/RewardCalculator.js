@@ -19,32 +19,61 @@ export default class RewardCalculator extends React.Component {
     this.t = props.t
     this.ui = props.ui
     this.wallet = props.wallet
-    this.setBlock = this.setBlock.bind(this)
   }
 
+  /**
+   * Get block.
+   * @function block
+   * @return {number} Entered or current block.
+   */
   @computed get block () {
     return this.enteredBlock.length === 0
       ? this.wallet.info.blocks
       : Math.round(this.enteredBlock)
   }
 
+  /**
+   * Get proof-of-work reward.
+   * @function powReward
+   * @return {number} Reward.
+   */
   @computed get powReward () {
     return calculatePoW(this.block)
   }
 
+  /**
+   * Get incentive percent of PoW reward.
+   * @function incentivePercent
+   * @return {number} Percent.
+   */
   @computed get incentivePercent () {
     return calculateIncentive(this.block)
   }
 
+  /**
+   * Get mining share.
+   * @function miningReward
+   * @return {number} Reward.
+   */
   @computed get miningReward () {
     return this.powReward - this.incentiveReward
   }
 
+  /**
+   * Get incentive share.
+   * @function incentiveReward
+   * @return {number} Reward.
+   */
   @computed get incentiveReward () {
     return (this.powReward / 100) * this.incentivePercent
   }
 
-  @action setBlock (e) {
+  /**
+   * Set block.
+   * @function setBlock
+   * @param {object} e - Input element event.
+   */
+  @action setBlock = (e) => {
     const block = e === undefined
       ? ''
       : e.target.value
@@ -86,7 +115,7 @@ export default class RewardCalculator extends React.Component {
                 {this.t('wallet:powReward')}
               </Col>
               <Col span={24}>
-                <span className='text-dotted'>
+                <span style={{fontWeight: '500'}}>
                   {
                     new Intl.NumberFormat(this.ui.language, {
                       minimumFractionDigits: 6,
@@ -103,15 +132,14 @@ export default class RewardCalculator extends React.Component {
                 {this.t('wallet:miningReward')}
               </Col>
               <Col span={24}>
-                <span className='text-dotted'>
+                <span style={{fontWeight: '500'}}>
                   {
                     new Intl.NumberFormat(this.ui.language, {
                       minimumFractionDigits: 6,
                       maximumFractionDigits: 6
                     }).format(this.miningReward)
                   }
-                </span>
-                <span> XVC ({100 - this.incentivePercent}%)</span>
+                </span> XVC ({100 - this.incentivePercent}%)
               </Col>
             </Row>
           </Col>
@@ -121,15 +149,14 @@ export default class RewardCalculator extends React.Component {
                 {this.t('wallet:incentiveReward')}
               </Col>
               <Col span={24}>
-                <span className='text-dotted'>
+                <span style={{fontWeight: '500'}}>
                   {
                     new Intl.NumberFormat(this.ui.language, {
                       minimumFractionDigits: 6,
                       maximumFractionDigits: 6
                     }).format(this.incentiveReward)
                   }
-                </span>
-                <span> XVC ({this.incentivePercent}%)</span>
+                </span> XVC ({this.incentivePercent}%)
               </Col>
             </Row>
           </Col>

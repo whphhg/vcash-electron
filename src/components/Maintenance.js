@@ -34,20 +34,26 @@ export default class Maintenance extends React.Component {
         <Row>
           <Col span={24} className='shadow'>
             <div className='toolbar'>
-              <i className='material-icons md-20 left'>language</i>
-              <div className='left'>
+              <div style={{float: 'left'}}>
+                <i className='material-icons md-20'>language</i>
                 <p>{this.t('wallet:selectLanguage')}</p>
                 <SelectLanguage />
               </div>
-              <div className='right'>
+              <div style={{float: 'right'}}>
+                <i className='material-icons md-20'>monetization_on</i>
                 <p>{this.t('wallet:selectCurrency')}</p>
                 <SelectCurrency />
               </div>
-              <i className='material-icons md-20 right'>monetization_on</i>
             </div>
           </Col>
         </Row>
-        <Row id='maintenance' className='shadow'>
+        <Row
+          className='shadow'
+          style={{
+            minHeight: '354px',
+            margin: '0 0 10px 0'
+          }}
+        >
           <Col span={12}>
             <div style={{margin: '10px 10px 0 10px'}}>
               <WalletBackup />

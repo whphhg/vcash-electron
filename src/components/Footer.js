@@ -20,32 +20,53 @@ export default class Footer extends React.Component {
   render () {
     return (
       <footer className='shadow'>
-        <i className='material-icons md-16'>extension</i>
-        <p>
-          {this.t('wallet:onBlock')}
-          <span> {
-            new Intl.NumberFormat(this.ui.language)
-              .format(this.wallet.info.blocks)
-          }</span>
-        </p>
-        <i className='material-icons md-16'>settings_input_antenna</i>
-        <p>
-          <span>{this.network.tcp} TCP </span>
-          {this.t('wallet:and')}
-          <span> {this.network.udp} UDP </span>
-          {this.t('wallet:connections')}
-        </p>
-        <p className='right'>
-          UI <span>{process.env.npm_package_version}</span>
-        </p>
-        <p className='right'>
-          {this.t('wallet:wallet')}
-          <span> {this.wallet.info.walletversion}</span>
-        </p>
-        <p className='right'>
-          Vcash
-          <span> {this.wallet.info.version.split(':')[1]}</span>
-        </p>
+        <div style={{float: 'left'}}>
+          <i className='material-icons md-16'>extension</i>
+          <p>
+            {this.t('wallet:onBlock')}
+            <span> {
+              new Intl.NumberFormat(this.ui.language)
+                .format(this.wallet.info.blocks)
+              }
+            </span>
+          </p>
+          <i className='material-icons md-16'>settings_input_antenna</i>
+          <p>
+            <span>{this.network.tcp} TCP </span>
+            {this.t('wallet:and')}
+            <span> {this.network.udp} UDP </span>
+            {this.t('wallet:connections')}
+          </p>
+        </div>
+        <div
+          style={{
+            float: 'right',
+            margin: '0 10px 0 0'
+          }}
+        >
+          <img
+            src='./assets/images/logoGrey.png'
+            style={{
+              width: '15px',
+              height: '15px',
+              margin: '0 5px 0 0'
+            }}
+          />
+          <p>
+            Vcash
+            <span> {this.wallet.info.version.split(':')[1]}</span>
+          </p>
+          <i className='material-icons md-16'>account_balance_wallet</i>
+          <p>
+            {this.t('wallet:wallet')}
+            <span> {this.wallet.info.walletversion}</span>
+          </p>
+          <i className='material-icons md-16'>computer</i>
+          <p>
+            UI
+            <span> {process.env.npm_package_version}</span>
+          </p>
+        </div>
       </footer>
     )
   }

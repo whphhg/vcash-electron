@@ -21,11 +21,8 @@ export default class KeyDump extends React.Component {
     this.t = props.t
     this.addresses = props.addresses
     this.wallet = props.wallet
-    this.dumpKey = this.dumpKey.bind(this)
-    this.setAddress = this.setAddress.bind(this)
-    this.togglePopover = this.togglePopover.bind(this)
 
-    /** Clear private key and previous RPC response errors on address change. */
+    /** Clear private key and previous error on address change. */
     reaction(() => this.address, (address) => {
       if (this.privateKey !== '') {
         this.setPrivateKey()
@@ -43,6 +40,11 @@ export default class KeyDump extends React.Component {
     })
   }
 
+  /**
+   * Get error status.
+   * @function errorStatus
+   * @return {string|false} Current error or false if none.
+   */
   @computed get errorStatus () {
     if (this.address.match(/^[a-zA-Z0-9]{0,34}$/) === null) {
       return 'invalidCharacters'
@@ -53,23 +55,46 @@ export default class KeyDump extends React.Component {
     return false
   }
 
-  @action setError (error = false) {
+  /**
+   * Set rpc error.
+   * @function setError
+   * @param {string} error - RPC error.
+   */
+  @action setError = (error = false) => {
     this.error = error
   }
 
-  @action setAddress (address = '') {
+  /**
+   * Set address.
+   * @function setAddress
+   * @param {object} address - New address.
+   */
+  @action setAddress = (address = '') => {
     this.address = address
   }
 
-  @action setPrivateKey (privateKey = '') {
+  /**
+   * Set private key.
+   * @function setPrivateKey
+   * @param {string} privateKey - Private key.
+   */
+  @action setPrivateKey = (privateKey = '') => {
     this.privateKey = privateKey
   }
 
-  @action togglePopover () {
+  /**
+   * Toggle popover.
+   * @function togglePopover
+   */
+  @action togglePopover = () => {
     this.popover = !this.popover
   }
 
-  dumpKey () {
+  /**
+   * Dump private key.
+   * @function dumpKey
+   */
+  @action dumpKey = () => {
     this.addresses.dumpKey(this.address, (result, error) => {
       if (result !== undefined) {
         this.setPrivateKey(result)
@@ -111,7 +136,7 @@ export default class KeyDump extends React.Component {
         </Row>
         <Row>
           <Col span={15}>
-            <p className='text-error'>
+            <p className='red' style={{margin: '3px 0 3px 1px'}}>
               {
                 (
                   this.errorStatus === 'invalidCharacters' &&
@@ -126,7 +151,7 @@ export default class KeyDump extends React.Component {
               }
             </p>
           </Col>
-          <Col span={9} className='text-right'>
+          <Col span={9} style={{textAlign: 'right'}}>
             <Button
               style={{margin: '5px 0 0 0'}}
               onClick={this.dumpKey}

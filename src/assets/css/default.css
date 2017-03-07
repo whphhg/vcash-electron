@@ -6,7 +6,6 @@
 @import url(https://fonts.googleapis.com/icon?family=Material+Icons);
 
 /** Elements */
-::-moz-selection { background: #B71C1C; }
 ::selection { background: #B71C1C; }
 a { color: #B71C1C; }
 a:hover { color: #43464B; }
@@ -23,32 +22,26 @@ header .controls { float: right; margin: 0 10px 0 0; }
 header nav { float: right; margin: 5px 14px 0 0; }
 header nav i { vertical-align: text-bottom; }
 header button { margin: 13px 0 0 0; }
-main .toolbar { margin: 7px 10px; min-height: 21px; }
-main .toolbar button:nth-of-type(n+2) { margin: 0 0 0 5px; }
-main .toolbar p { display: inline; padding: 0 10px 0 6px; vertical-align: middle; height: 22px; }
+header .ant-btn-primary { color: #FFFFFF; background-color: #43464B; border-color: #43464B; min-height: 30px; }
+header .ant-btn-primary i { vertical-align: middle; }
+header .ant-btn-primary:hover, header .ant-btn-primary:focus { color: #B71C1C; background-color: #43464B; border-color: #43464B; font-weight: bold; }
+main .toolbar { margin: 7px 10px; min-height: 21px }
+main .toolbar p { display: inline; padding: 0 10px 0 5px; vertical-align: 5px; }
+main .toolbar p:last-child { padding: 0 0 0 5px; }
 main .toolbar p span { font-weight: 600; }
-main .toolbar p:last-child { padding: 0 3px 0 6px; }
 main .toolbar i { margin: 1px 0 0 0; }
-main .toolbar .left { float: left; }
-main .toolbar .right { float: right; }
+main .toolbar .ant-select { vertical-align: 5px; }
+main .toolbar .ant-switch { vertical-align: 0px; }
+footer { width: 100%; height: 25px; bottom: 0; position: fixed; z-index: 1; }
+footer i { margin: 4px 5px 0 10px; }
+footer p { display: inline; color: #757575; vertical-align: 3px; }
+footer p span { font-weight: 500; }
+
+
 main #addresses { min-height: 569px; margin: 10px; }
-main #transactions { min-height: 410px; margin: 10px; text-align: center; }
-main #transactions ul { display: inline-block; }
-main #maintenance { min-height: 354px; margin: 0 0 10px 0; }
-main #network { min-height: 478px; margin: 0 0 10px 0; }
-main #network-info { margin: 0 10px 10px 10px; }
 main hr#send { margin: 5px 0 5px 0; }
 main #sendRecipients { max-height: 462px; overflow-y: scroll; }
 main #sendRecipients::-webkit-scrollbar { display: none; }
-footer { width: 100%; height: 25px; bottom: 0; position: fixed; z-index: 1; }
-footer i { float: left; margin: 4px 5px 0 10px; }
-footer p { float: left; font-size: 12px; color: #757575; line-height: 26px; }
-footer p span { font-weight: 500; }
-footer p.right { float: right; margin: 0 10px 0 0; }
-.popoverTitle img { float: left; margin: 8px 6px 0 0px; }
-.popoverTitle img:nth-of-type(n+2) { margin: 8px 6px 0 10px; }
-.popoverTitle p { float: left; font-size: 12px; color: #757575; line-height: 33px; }
-.popoverTitle p span { font-weight: 500; }
 
 /** Shadows */
 .shadow { box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12); }
@@ -66,12 +59,6 @@ footer p.right { float: right; margin: 0 10px 0 0; }
 
 /** Helpers */
 .text-mono { font-family: 'Roboto Mono'; font-size: 13px; }
-.text-dotted { font-weight: 500; border-bottom: 1px dotted #000; }
-.text-right { text-align: right; }
-.text-center { text-align: center; }
-.text-justify { text-align: justify; }
-.text-icon { margin: 0 0 0 7px; vertical-align: 4px; }
-.text-error { font-size: 10px; margin: 3px 0 3px 1px; color: red; }
 .green { color: #4fb71c; }
 .orange { color: #ff7200; }
 .red { color: #B71C1C; }
@@ -160,9 +147,6 @@ footer p.right { float: right; margin: 0 10px 0 0; }
 .ant-menu-horizontal > .ant-menu-item:hover, .ant-menu-horizontal > .ant-menu-item-selected { border-bottom: 2px solid #FFFFFF;color: #FFFFFF; }
 .ant-btn { vertical-align: top; }
 .ant-btn:hover, .ant-btn:focus { color: #B71C1C; border-color: #B71C1C; }
-header .ant-btn-primary { color: #FFFFFF; background-color: #43464B; border-color: #43464B; min-height: 30px; }
-header .ant-btn-primary i { vertical-align: middle; }
-header .ant-btn-primary:hover, header .ant-btn-primary:focus { color: #B71C1C; background-color: #43464B; border-color: #43464B; font-weight: bold; }
 .ant-input:focus { border-color: #B71C1C; outline: 0; box-shadow: 0 0 0 2px rgba(183, 28, 28, 0.2); }
 .ant-input:hover { border-color: #B71C1C; outline: 0; }
 .ant-radio-button-wrapper:hover, .ant-radio-button-wrapper-focused { color: #B71C1C; }

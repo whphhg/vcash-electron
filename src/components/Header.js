@@ -1,5 +1,6 @@
 import React from 'react'
 import { translate } from 'react-i18next'
+import { action } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Menu } from 'antd'
 
@@ -21,10 +22,14 @@ export default class Header extends React.Component {
     this.transactions = props.transactions
     this.ui = props.ui
     this.wallet = props.wallet
-    this.setRoute = this.setRoute.bind(this)
   }
 
-  setRoute (e) {
+  /**
+   * Set route.
+   * @function setRoute
+   * @param {object} e - Event.
+   */
+  @action setRoute = (e) => {
     this.ui.setRoute(e.key)
   }
 
@@ -35,90 +40,97 @@ export default class Header extends React.Component {
 
     return (
       <header className='shadow'>
-        <img src='./assets/images/logoRed.png' />
-        <p>
-          {this.t('wallet:balance')}
-          <br />
-          <span>
+        <div style={{float: 'left'}}>
+          <img src='./assets/images/logoRed.png' />
+          <p>
+            {this.t('wallet:balance')}
+            <br />
+            <span>
+              {
+                new Intl.NumberFormat(this.ui.language, {
+                  minimumFractionDigits: 6,
+                  maximumFractionDigits: 6
+                }).format(balance)
+              }
+            </span> XVC
+          </p>
+          <p className='balance'>
+            ~<span>
+              {
+                new Intl.NumberFormat(this.ui.language, {
+                  minimumFractionDigits: 8,
+                  maximumFractionDigits: 8
+                }).format(balance * average)
+              }
+            </span> BTC
+          </p>
+          <p className='balance'>
+            ~<span>
+              {
+                new Intl.NumberFormat(this.ui.language, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                }).format(balance * average * local)
+              }
+            </span> {localCurrency}
+          </p>
+          <div className='incoming'>
             {
-              new Intl.NumberFormat(this.ui.language, {
-                minimumFractionDigits: 6,
-                maximumFractionDigits: 6
-              }).format(balance)
+              this.transactions.pendingAmount > 0 && (
+                <p>
+                  {this.t('wallet:pending')}
+                  <br />
+                  <span>
+                    {
+                      new Intl.NumberFormat(this.ui.language, {
+                        minimumFractionDigits: 6,
+                        maximumFractionDigits: 6
+                      }).format(this.transactions.pendingAmount)
+                    }
+                  </span> XVC
+                </p>
+              )
             }
-          </span> XVC
-        </p>
-        <p className='balance'>
-          ~<span>
             {
-              new Intl.NumberFormat(this.ui.language, {
-                minimumFractionDigits: 8,
-                maximumFractionDigits: 8
-              }).format(balance * average)
+              newmint > 0 && (
+                <p>
+                  {this.t('wallet:immature')}
+                  <br />
+                  <span>
+                    {
+                      new Intl.NumberFormat(this.ui.language, {
+                        minimumFractionDigits: 6,
+                        maximumFractionDigits: 6
+                      }).format(newmint)
+                    }
+                  </span> XVC
+                </p>
+              )
             }
-          </span> BTC
-        </p>
-        <p className='balance'>
-          ~<span>
             {
-              new Intl.NumberFormat(this.ui.language, {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-              }).format(balance * average * local)
+              stake > 0 && (
+                <p>
+                  {this.t('wallet:staking')}
+                  <br />
+                  <span>
+                    {
+                      new Intl.NumberFormat(this.ui.language, {
+                        minimumFractionDigits: 6,
+                        maximumFractionDigits: 6
+                      }).format(stake)
+                    }
+                  </span> XVC
+                </p>
+              )
             }
-          </span> {localCurrency}
-        </p>
-        <div className='incoming'>
-          {
-            this.transactions.pendingAmount > 0 && (
-              <p>
-                {this.t('wallet:pending')}
-                <br />
-                <span>
-                  {
-                    new Intl.NumberFormat(this.ui.language, {
-                      minimumFractionDigits: 6,
-                      maximumFractionDigits: 6
-                    }).format(this.transactions.pendingAmount)
-                  }
-                </span> XVC
-              </p>
-            )
-          }
-          {
-            newmint > 0 && (
-              <p>
-                {this.t('wallet:immature')}
-                <br />
-                <span>
-                  {
-                    new Intl.NumberFormat(this.ui.language, {
-                      minimumFractionDigits: 6,
-                      maximumFractionDigits: 6
-                    }).format(newmint)
-                  }
-                </span> XVC
-              </p>
-            )
-          }
-          {
-            stake > 0 && (
-              <p>
-                {this.t('wallet:staking')}
-                <br />
-                <span>
-                  {
-                    new Intl.NumberFormat(this.ui.language, {
-                      minimumFractionDigits: 6,
-                      maximumFractionDigits: 6
-                    }).format(stake)
-                  }
-                </span> XVC
-              </p>
-            )
-          }
+          </div>
         </div>
-        <div className='controls'>
+        <div
+          style={{
+            float: 'right',
+            margin: '0 10px 0 0'
+          }}
+        >
           <WalletLock />
           <WalletUnlock />
         </div>

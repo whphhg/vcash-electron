@@ -1,3 +1,5 @@
+/** TODO: Remote RPC using tunnel-ssh, ssh -L9195:localhost:9195 user@ip. */
+
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
@@ -14,8 +16,6 @@ export default class RpcManager extends React.Component {
     super(props)
     this.t = props.t
     this.rpc = props.rpc
-
-    /** TODO: Remote RPC using tunnel-ssh, ssh -L9195:localhost:9195 user@ip. */
   }
 
   render () {

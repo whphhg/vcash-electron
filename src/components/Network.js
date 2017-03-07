@@ -1,17 +1,13 @@
 import React from 'react'
 import { translate } from 'react-i18next'
+import { action } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button, Col, Row } from 'antd'
 import { humanReadable } from '../utilities/common'
 
 /** Required components. */
 import RewardCalculator from './RewardCalculator'
-import {
-  Difficulties,
-  HashRate,
-  RewardSpread,
-  RewardsPerDay
-} from './charts'
+import { Difficulties, HashRate, RewardSpread, RewardsPerDay } from './charts'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -27,10 +23,13 @@ export default class Incentive extends React.Component {
     this.transactions = props.transactions
     this.ui = props.ui
     this.wallet = props.wallet
-    this.incentiveStake = this.incentiveStake.bind(this)
   }
 
-  incentiveStake () {
+  /**
+   * Stake incentive collateral.
+   * @function incentiveStake
+   */
+  @action incentiveStake = () => {
     this.network.incentiveStake()
   }
 
@@ -40,59 +39,61 @@ export default class Incentive extends React.Component {
         <Row>
           <Col span={24} className='shadow'>
             <div className='toolbar'>
-              <Button
-                onClick={this.incentiveStake}
-                disabled={this.wallet.isLocked === true}
-                size='small'
-                className='left'
-                style={{margin: '0 10px 0 0'}}
-              >
-                {this.t('wallet:stakeCollateral')}
-              </Button>
-              <i className='material-icons md-20 left'>redeem</i>
-              <div className='left' style={{margin: '0 10px 0 0'}}>
-                <p>{this.t('wallet:collateralBalance')}&nbsp;
-                  <span>
-                    {
+              <div style={{float: 'left'}}>
+                <Button
+                  onClick={this.incentiveStake}
+                  disabled={this.wallet.isLocked === true}
+                  size='small'
+                  style={{margin: '0 10px 0 0'}}
+                >
+                  {this.t('wallet:stakeCollateral')}
+                </Button>
+                <i className='material-icons md-20'>redeem</i>
+                <p>
+                  {this.t('wallet:collateralBalance')}
+                  <span> {
                       new Intl.NumberFormat(this.ui.language, {
                         maximumFractionDigits: 6
                       }).format(this.network.incentiveInfo.collateralbalance)
-                    }/
-                    {
+                    } / {
                       new Intl.NumberFormat(this.ui.language)
                         .format(this.network.incentiveInfo.collateralrequired)
                     }
                   </span> XVC
                 </p>
-              </div>
-              <i className='material-icons md-20 left'>gavel</i>
-              <div className='left'>
-                <p>{this.t('wallet:voteCandidate')}&nbsp;
-                  <span>
-                    {
-                      this.network.incentiveInfo.votecandidate === true
-                        ? this.t('wallet:yes')
-                        : this.t('wallet:no')
+                <i className='material-icons md-20'>gavel</i>
+                <p>
+                  {this.t('wallet:voteCandidate')}
+                  <span> {
+                    this.network.incentiveInfo.votecandidate === true
+                      ? this.t('wallet:yes')
+                      : this.t('wallet:no')
                     }
                   </span>
                 </p>
               </div>
-              <div className='right'>
-                <p>{this.t('wallet:defaultAddress')}&nbsp;
-                  <span>
-                    {
-                      this.network.incentiveInfo.walletaddress === ''
-                        ? this.t('wallet:unlockRevealed')
-                        : this.network.incentiveInfo.walletaddress
+              <div style={{float: 'right'}}>
+                <i className='material-icons md-20'>account_circle</i>
+                <p>
+                  {this.t('wallet:defaultAddress')}
+                  <span> {
+                    this.network.incentiveInfo.walletaddress === ''
+                      ? this.t('wallet:unlockRevealed')
+                      : this.network.incentiveInfo.walletaddress
                     }
                   </span>
                 </p>
               </div>
-              <i className='material-icons md-20 right'>account_circle</i>
             </div>
           </Col>
         </Row>
-        <Row id='network' className='shadow'>
+        <Row
+          className='shadow'
+          style={{
+            minHeight: '478px',
+            margin: '0 0 10px 0'
+          }}
+        >
           <Col span={12}>
             <div style={{margin: '10px 10px 0 10px'}}>
               <Row>
@@ -138,7 +139,7 @@ export default class Incentive extends React.Component {
             </div>
           </Col>
         </Row>
-        <Row id='network-info'>
+        <Row style={{margin: '0 10px 10px 10px'}}>
           <Col span={10}>
             <RewardCalculator />
           </Col>
@@ -153,7 +154,7 @@ export default class Incentive extends React.Component {
                     {this.t('wallet:listeningOn')}
                   </Col>
                   <Col span={11}>
-                    <span className='text-dotted'>
+                    <span style={{fontWeight: '500'}}>
                       {this.wallet.info.ip}:{this.wallet.info.port}
                     </span>
                   </Col>
@@ -166,7 +167,7 @@ export default class Incentive extends React.Component {
                     {this.t('wallet:portOpen')}
                   </Col>
                   <Col span={11}>
-                    <span className='text-dotted'>
+                    <span style={{fontWeight: '500'}}>
                       {
                         this.network.incentiveInfo.networkstatus === 'ok'
                           ? this.t('wallet:yes')
@@ -183,8 +184,8 @@ export default class Incentive extends React.Component {
                     {this.t('wallet:collateralizedNodes')}
                   </Col>
                   <Col span={11}>
-                    <span className='text-dotted'>
-                      {this.network.collateralized}/{this.network.endpoints}
+                    <span style={{fontWeight: '500'}}>
+                      {this.network.collateralized} / {this.network.endpoints}
                     </span>
                   </Col>
                 </Row>
@@ -196,7 +197,7 @@ export default class Incentive extends React.Component {
                     {this.t('wallet:testnet')}
                   </Col>
                   <Col span={11}>
-                    <span className='text-dotted'>
+                    <span style={{fontWeight: '500'}}>
                       {
                         this.network.miningInfo.testnet === true
                           ? this.t('wallet:yes')
@@ -215,7 +216,7 @@ export default class Incentive extends React.Component {
                     {this.t('wallet:moneySupply')}
                   </Col>
                   <Col span={10}>
-                    <span className='text-dotted'>
+                    <span style={{fontWeight: '500'}}>
                       {
                         new Intl.NumberFormat(this.ui.language, {
                           maximumFractionDigits: 0
@@ -232,7 +233,7 @@ export default class Incentive extends React.Component {
                     {this.t('wallet:currentBlockSize')}
                   </Col>
                   <Col span={10}>
-                    <span className='text-dotted'>
+                    <span style={{fontWeight: '500'}}>
                       {
                         humanReadable(
                           this.network.miningInfo.currentblocksize,
@@ -250,7 +251,7 @@ export default class Incentive extends React.Component {
                     {this.t('wallet:currentBlockTxs')}
                   </Col>
                   <Col span={10}>
-                    <span className='text-dotted'>
+                    <span style={{fontWeight: '500'}}>
                       {this.network.miningInfo.currentblocktx}
                     </span>
                   </Col>
@@ -263,7 +264,7 @@ export default class Incentive extends React.Component {
                     {this.t('wallet:pooledTxs')}
                   </Col>
                   <Col span={10}>
-                    <span className='text-dotted'>
+                    <span style={{fontWeight: '500'}}>
                       {this.network.miningInfo.pooledtx}
                     </span>
                   </Col>

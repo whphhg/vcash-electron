@@ -20,8 +20,6 @@ export default class WalletPassphraseChange extends React.Component {
     super(props)
     this.t = props.t
     this.wallet = props.wallet
-    this.passphraseChange = this.passphraseChange.bind(this)
-    this.setPassphrase = this.setPassphrase.bind(this)
 
     /** Clear previous error on current passphrase change. */
     reaction(() => this.current, (current) => {
@@ -31,6 +29,11 @@ export default class WalletPassphraseChange extends React.Component {
     })
   }
 
+  /**
+   * Get error status.
+   * @function errorStatus
+   * @return {string|false} Current error or false if none.
+   */
   @computed get errorStatus () {
     /** Get lengths only once. */
     const len = {
@@ -47,15 +50,29 @@ export default class WalletPassphraseChange extends React.Component {
     return false
   }
 
-  @action setError (error = false) {
+  /**
+   * Set rpc error.
+   * @function setError
+   * @param {string} error - RPC error.
+   */
+  @action setError = (error = false) => {
     this.error = error
   }
 
-  @action setPassphrase (e) {
+  /**
+   * Set passphrase.
+   * @function setPassphrase
+   * @param {object} e - Input element event.
+   */
+  @action setPassphrase = (e) => {
     this[e.target.name] = e.target.value
   }
 
-  passphraseChange () {
+  /**
+   * Change wallet passphrase.
+   * @function passphraseChange
+   */
+  @action passphraseChange = () => {
     this.wallet.passphraseChange(this.current, this.next, (result, error) => {
       if (error !== this.error) {
         this.setError(error)
@@ -69,7 +86,12 @@ export default class WalletPassphraseChange extends React.Component {
       <div>
         <p style={{margin: '0 0 5px 0'}}>
           <i className='material-icons md-18'>vpn_key</i>
-          <span className='text-icon'>
+          <span
+            style={{
+              margin: '0 0 0 7px',
+              verticalAlign: 'top'
+            }}
+          >
             {this.t('wallet:passphraseChangeLong')}
           </span>
         </p>
@@ -109,8 +131,8 @@ export default class WalletPassphraseChange extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col offset={4} span={13}>
-            <p className='text-error'>
+          <Col span={13} offset={4}>
+            <p className='red' style={{margin: '3px 0 3px 1px'}}>
               {
                 (
                   this.errorStatus === 'notMatching' &&
@@ -125,7 +147,7 @@ export default class WalletPassphraseChange extends React.Component {
               }
             </p>
           </Col>
-          <Col span={7} className='text-right'>
+          <Col span={7} style={{textAlign: 'right'}}>
             <Button
               style={{margin: '5px 0 0 0'}}
               onClick={this.passphraseChange}

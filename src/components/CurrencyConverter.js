@@ -12,18 +12,12 @@ import { decimalSeparator } from '../utilities/common'
 @inject('rates', 'ui') @observer
 
 export default class CurrencyConverter extends React.Component {
-  @observable amount
-  @observable from
+  @observable amount = 1
+  @observable from = 'vcash'
 
   constructor (props) {
     super(props)
     this.t = props.t
-
-    /** Observable properties. */
-    this.amount = 1
-    this.from = 'vcash'
-
-    /** Injected stores. */
     this.rates = props.rates
     this.ui = props.ui
   }

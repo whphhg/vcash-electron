@@ -1,5 +1,6 @@
 import React from 'react'
 import { translate } from 'react-i18next'
+import { action } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button, Col, Input, Row } from 'antd'
 import { dataPath } from '../utilities/common'
@@ -15,10 +16,13 @@ export default class WalletDump extends React.Component {
     super(props)
     this.t = props.t
     this.wallet = props.wallet
-    this.dump = this.dump.bind(this)
   }
 
-  dump () {
+  /**
+   * Dump the wallet.
+   * @function dump
+   */
+  @action dump = () => {
     this.wallet.dump()
   }
 
@@ -27,7 +31,12 @@ export default class WalletDump extends React.Component {
       <div>
         <p style={{margin: '0 0 5px 0'}}>
           <i className='material-icons md-18'>assignment</i>
-          <span className='text-icon'>
+          <span
+            style={{
+              margin: '0 0 0 7px',
+              verticalAlign: 'top'
+            }}
+          >
             {this.t('wallet:dumpLong')}
           </span>
         </p>
@@ -45,7 +54,7 @@ export default class WalletDump extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col className='text-right'>
+          <Col style={{textAlign: 'right'}}>
             <Button
               style={{margin: '5px 0 0 0'}}
               onClick={this.dump}

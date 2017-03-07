@@ -20,9 +20,6 @@ export default class AddressNew extends React.Component {
     super(props)
     this.t = props.t
     this.addresses = props.addresses
-    this.getNew = this.getNew.bind(this)
-    this.setAccount = this.setAccount.bind(this)
-    this.togglePopover = this.togglePopover.bind(this)
 
     /** Clear address when the popover closes. */
     reaction(() => this.popover, (popover) => {
@@ -32,6 +29,11 @@ export default class AddressNew extends React.Component {
     })
   }
 
+  /**
+   * Get error status.
+   * @function errorStatus
+   * @return {string|false} Current error or false if none.
+   */
   @computed get errorStatus () {
     if (this.account.match(/^[a-zA-Z0-9 -]{0,100}$/) === null) {
       return 'invalidCharacters'
@@ -41,23 +43,46 @@ export default class AddressNew extends React.Component {
     return false
   }
 
-  @action setError (error = false) {
+  /**
+   * Set rpc error.
+   * @function setError
+   * @param {string} error - RPC error.
+   */
+  @action setError = (error = false) => {
     this.error = error
   }
 
-  @action setAccount (account) {
+  /**
+   * Set account.
+   * @function setAccount
+   * @param {string} account - Account name.
+   */
+  @action setAccount = (account) => {
     this.account = account
   }
 
-  @action setAddress (address = '') {
+  /**
+   * Set address.
+   * @function setAddress
+   * @param {object} address - New address.
+   */
+  @action setAddress = (address = '') => {
     this.address = address
   }
 
-  @action togglePopover () {
+  /**
+   * Toggle popover.
+   * @function togglePopover
+   */
+  @action togglePopover = () => {
     this.popover = !this.popover
   }
 
-  getNew () {
+  /**
+   * Get new address.
+   * @function getNew
+   */
+  @action getNew = () => {
     this.addresses.getNew(this.account, (result, error) => {
       if (result !== undefined) {
         this.setAddress(result)
@@ -97,7 +122,7 @@ export default class AddressNew extends React.Component {
         </div>
         <Row>
           <Col span={14}>
-            <p className='text-error'>
+            <p className='red' style={{margin: '3px 0 3px 1px'}}>
               {
                 (
                   this.errorStatus === 'invalidCharacters' &&
@@ -109,7 +134,7 @@ export default class AddressNew extends React.Component {
               }
             </p>
           </Col>
-          <Col span={10} className='text-right'>
+          <Col span={10} style={{textAlign: 'right'}}>
             <Button
               style={{margin: '5px 0 0 0'}}
               onClick={this.getNew}

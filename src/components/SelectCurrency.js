@@ -1,5 +1,6 @@
 import React from 'react'
 import { translate } from 'react-i18next'
+import { action } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Select } from 'antd'
 
@@ -14,11 +15,15 @@ export default class SelectCurrency extends React.Component {
     super(props)
     this.t = props.t
     this.rates = props.rates
-    this.setLocalCurrency = this.setLocalCurrency.bind(this)
   }
 
-  setLocalCurrency (value) {
-    this.rates.setLocalCurrency(value)
+  /**
+   * Set local currency.
+   * @function setLocalCurrency
+   * @param {string} currency - Local currency.
+   */
+  @action setLocalCurrency = (currency) => {
+    this.rates.setLocalCurrency(currency)
   }
 
   render () {
@@ -27,12 +32,12 @@ export default class SelectCurrency extends React.Component {
     return (
       <Select
         showSearch
+        size='small'
         style={{width: '80px'}}
         defaultValue={this.rates.localCurrency}
         optionFilterProp='children'
         notFoundContent={this.t('wallet:notFound')}
         onChange={this.setLocalCurrency}
-        size='small'
       >
         {
           this.rates.localCurrencies.map((currency) => (

@@ -1,5 +1,6 @@
 import React from 'react'
 import { translate } from 'react-i18next'
+import { action } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Input, Row, Table } from 'antd'
 import moment from 'moment'
@@ -21,15 +22,24 @@ export default class Transactions extends React.Component {
     this.rates = props.rates
     this.transactions = props.transactions
     this.searchUpdateTimer = null
-    this.setSearch = this.setSearch.bind(this)
-    this.rowClick = this.rowClick.bind(this)
   }
 
-  rowClick (record, index) {
+  /**
+   * View transaction details on row click.
+   * @function view
+   * @param {object} record - Table row data.
+   * @param {number} index - Table row index.
+   */
+  @action view = (record, index) => {
     this.transactions.setViewing(record.txid)
   }
 
-  setSearch (e) {
+  /**
+   * Set search string.
+   * @function setSearch
+   * @param {object} e - Input element event.
+   */
+  @action setSearch = (e) => {
     clearTimeout(this.searchUpdateTimer)
 
     /** Save entered values. */
@@ -49,24 +59,38 @@ export default class Transactions extends React.Component {
       <div>
         <Row className='shadow'>
           <div className='toolbar'>
-            <ChainBlender />
-            <Input
-              size='small'
-              className='right'
-              onChange={this.setSearch}
-              placeholder={this.t('wallet:searchTransactions')}
-              style={{width: '230px'}}
-            />
+            <div style={{float: 'left'}}>
+              <ChainBlender />
+            </div>
+            <div style={{float: 'right'}}>
+              <Input
+                size='small'
+                onChange={this.setSearch}
+                placeholder={this.t('wallet:searchTransactions')}
+                style={{width: '230px'}}
+              />
+            </div>
           </div>
         </Row>
         <div className='shadow-2'>
-          <div id='transactions'>
+          <div
+            style={{
+              minHeight: '410px',
+              margin: '10px',
+              textAlign: 'center'
+            }}
+          >
             <Table
               bordered
               size='small'
-              pagination={{defaultPageSize: 15}}
+              pagination={{
+                defaultPageSize: 15,
+                style: {
+                  display: 'inline-block'
+                }
+              }}
               dataSource={this.transactions.tableData}
-              onRowClick={this.rowClick}
+              onRowClick={this.view}
               locale={{
                 filterConfirm: this.t('wallet:ok'),
                 filterReset: this.t('wallet:reset'),
@@ -123,7 +147,10 @@ export default class Transactions extends React.Component {
                   dataIndex: 'amount',
                   width: 150,
                   render: (text, record) => (
-                    <p className={'text-right ' + record.color}>
+                    <p
+                      className={record.color}
+                      style={{textAlign: 'right'}}
+                    >
                       {text} XVC
                     </p>
                   )
@@ -133,7 +160,10 @@ export default class Transactions extends React.Component {
                   dataIndex: 'amountLocal',
                   width: 150,
                   render: (text, record) => (
-                    <p className={'text-right ' + record.color}>
+                    <p
+                      className={record.color}
+                      style={{textAlign: 'right'}}
+                    >
                       {text} {this.rates.localCurrency}
                     </p>
                   )

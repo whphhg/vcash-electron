@@ -1,5 +1,6 @@
 import React from 'react'
 import { translate } from 'react-i18next'
+import { action } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Col, Modal, Row, Table } from 'antd'
 import moment from 'moment'
@@ -17,15 +18,21 @@ export default class Transaction extends React.Component {
     this.rates = props.rates
     this.transactions = props.transactions
     this.ui = props.ui
-    this.ztlock = this.ztlock.bind(this)
-    this.toggleModal = this.toggleModal.bind(this)
   }
 
-  ztlock () {
+  /**
+   * Lock transaction.
+   * @function ztlock
+   */
+  @action ztlock = () => {
     this.transactions.ztlock(this.transactions.viewing)
   }
 
-  toggleModal () {
+  /**
+   * Toggle modal.
+   * @function toggleModal
+   */
+  @action toggleModal = () => {
     this.transactions.setViewing()
   }
 
@@ -52,7 +59,7 @@ export default class Transaction extends React.Component {
                 {this.t('wallet:transactionId')}
               </Col>
               <Col span={19}>
-                <span className='text-dotted'>
+                <span style={{fontWeight: '500'}}>
                   {viewingTx.txid}
                 </span>
               </Col>
@@ -68,7 +75,7 @@ export default class Transaction extends React.Component {
                     {this.t('wallet:includedInBlock')}
                   </Col>
                   <Col span={19}>
-                    <span className='text-dotted'>
+                    <span style={{fontWeight: '500'}}>
                       {viewingTx.blockhash}
                     </span>
                   </Col>
@@ -105,7 +112,7 @@ export default class Transaction extends React.Component {
               )
             }
           </Col>
-          <Col span={6} className='text-right'>
+          <Col span={6} style={{textAlign: 'right'}}>
             <p>
               <a
                 target='_blank'
@@ -148,7 +155,11 @@ export default class Transaction extends React.Component {
             }
           </Col>
         </Row>
-        <Row style={{margin: '15px 0 0 0'}} align='bottom' type='flex'>
+        <Row
+          style={{margin: '15px 0 0 0'}}
+          align='bottom'
+          type='flex'
+        >
           <Col span={9}>
             <Row>
               <Col span={2}>
@@ -229,7 +240,7 @@ export default class Transaction extends React.Component {
                       </Col>
                     </Row>
                   </Col>
-                  <Col span={18} className='text-justify'>
+                  <Col span={18} style={{textAlign: 'justify'}}>
                     {viewingTx.to}
                   </Col>
                 </Row>
@@ -248,7 +259,7 @@ export default class Transaction extends React.Component {
                       </Col>
                     </Row>
                   </Col>
-                  <Col span={18} className='text-justify'>
+                  <Col span={18} style={{textAlign: 'justify'}}>
                     {viewingTx.comment}
                   </Col>
                 </Row>
@@ -267,7 +278,7 @@ export default class Transaction extends React.Component {
                   : {}
               }
               pagination={false}
-              dataSource={viewingTx.inputs}
+              dataSource={viewingTx.inputs.slice()}
               locale={{
                 emptyText: this.t('wallet:coinbase')
               }}
@@ -284,7 +295,7 @@ export default class Transaction extends React.Component {
                   title: this.t('wallet:amount'),
                   dataIndex: 'value',
                   render: text => (
-                    <p className='text-right'>
+                    <p style={{textAlign: 'right'}}>
                       {
                         new Intl.NumberFormat(this.ui.language, {
                           minimumFractionDigits: 6,
@@ -297,7 +308,7 @@ export default class Transaction extends React.Component {
               ]}
             />
           </Col>
-          <Col span={2} className='text-center'>
+          <Col span={2} style={{textAlign: 'center'}}>
             <i className='material-icons md-20'>forward</i>
           </Col>
           <Col span={11}>
@@ -310,7 +321,7 @@ export default class Transaction extends React.Component {
                   : {}
               }
               pagination={false}
-              dataSource={viewingTx.outputs}
+              dataSource={viewingTx.outputs.slice()}
               columns={[
                 {
                   title: this.t('wallet:to'),
@@ -324,7 +335,7 @@ export default class Transaction extends React.Component {
                   title: this.t('wallet:amount'),
                   dataIndex: 'value',
                   render: text => (
-                    <p className='text-right'>
+                    <p style={{textAlign: 'right'}}>
                       {
                         new Intl.NumberFormat(this.ui.language, {
                           minimumFractionDigits: 6,

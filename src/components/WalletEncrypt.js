@@ -18,10 +18,13 @@ export default class WalletEncrypt extends React.Component {
     super(props)
     this.t = props.t
     this.wallet = props.wallet
-    this.encrypt = this.encrypt.bind(this)
-    this.setPassphrase = this.setPassphrase.bind(this)
   }
 
+  /**
+   * Get error status.
+   * @function errorStatus
+   * @return {string|false} Current error or false if none.
+   */
   @computed get errorStatus () {
     /** Get lengths only once. */
     const len = {
@@ -35,11 +38,20 @@ export default class WalletEncrypt extends React.Component {
     return false
   }
 
-  @action setPassphrase (e) {
+  /**
+   * Set passphrase.
+   * @function setPassphrase
+   * @param {object} e - Input element event.
+   */
+  @action setPassphrase = (e) => {
     this[e.target.name] = e.target.value
   }
 
-  encrypt () {
+  /**
+   * Encrypt the wallet.
+   * @function encrypt
+   */
+  @action encrypt = () => {
     this.wallet.encrypt(this.passphrase)
   }
 
@@ -49,7 +61,12 @@ export default class WalletEncrypt extends React.Component {
       <div>
         <p style={{margin: '0 0 5px 0'}}>
           <i className='material-icons md-18'>vpn_key</i>
-          <span className='text-icon'>
+          <span
+            style={{
+              margin: '0 0 0 7px',
+              verticalAlign: 'top'
+            }}
+          >
             {this.t('wallet:encryptLong')}
           </span>
         </p>
@@ -79,15 +96,15 @@ export default class WalletEncrypt extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col offset={4} span={13}>
-            <p className='text-error'>
+          <Col span={13} offset={4}>
+            <p className='red' style={{margin: '3px 0 3px 1px'}}>
               {
                 this.errorStatus === 'notMatching' &&
                 this.t('wallet:passphrasesNotMatching')
               }
             </p>
           </Col>
-          <Col span={7} className='text-right'>
+          <Col span={7} style={{textAlign: 'right'}}>
             <Button
               style={{margin: '5px 0 0 0'}}
               onClick={this.encrypt}

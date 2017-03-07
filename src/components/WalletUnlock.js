@@ -19,9 +19,6 @@ export default class WalletUnlock extends React.Component {
     super(props)
     this.t = props.t
     this.wallet = props.wallet
-    this.unlock = this.unlock.bind(this)
-    this.setPassphrase = this.setPassphrase.bind(this)
-    this.toggleModal = this.toggleModal.bind(this)
 
     /** Clear previous error on passphrase change. */
     reaction(() => this.passphrase, (passphrase) => {
@@ -40,27 +37,50 @@ export default class WalletUnlock extends React.Component {
     })
   }
 
+  /**
+   * Get error status.
+   * @function errorStatus
+   * @return {string|false} Current error or false if none.
+   */
   @computed get errorStatus () {
     if (this.passphrase.length < 1) return 'emptyField'
     if (this.error !== false) return this.error
     return false
   }
 
-  @action setError (error = false) {
+  /**
+   * Set rpc error.
+   * @function setError
+   * @param {string} error - RPC error.
+   */
+  @action setError = (error = false) => {
     this.error = error
   }
 
-  @action setPassphrase (e) {
+  /**
+   * Set passphrase.
+   * @function setPassphrase
+   * @param {object} e - Input element event.
+   */
+  @action setPassphrase = (e) => {
     this.passphrase = e === undefined
       ? ''
       : e.target.value
   }
 
-  @action toggleModal () {
+  /**
+   * Toggle modal.
+   * @function toggleModal
+   */
+  @action toggleModal = () => {
     this.modal = !this.modal
   }
 
-  unlock () {
+  /**
+   * Unlock the wallet.
+   * @function unlock
+   */
+  @action unlock = () => {
     this.wallet.unlock(this.passphrase, (result, error) => {
       if (result !== undefined) {
         this.toggleModal()
@@ -89,19 +109,20 @@ export default class WalletUnlock extends React.Component {
                 placeholder={this.t('wallet:passphraseLong')}
                 value={this.passphrase}
                 onChange={this.setPassphrase}
+                onPressEnter={this.unlock}
               />
             </Col>
           </Row>
           <Row>
-            <Col span={14}>
-              <p className='text-error'>
+            <Col span={17}>
+              <p className='red' style={{margin: '3px 0 3px 1px'}}>
                 {
                   this.errorStatus === 'incorrectPassphrase' &&
                   this.t('wallet:passphraseIncorrect')
                 }
               </p>
             </Col>
-            <Col span={10} className='text-right'>
+            <Col span={7} style={{textAlign: 'right'}}>
               <Button
                 style={{margin: '5px 0 0 0'}}
                 onClick={this.unlock}

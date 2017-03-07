@@ -21,20 +21,32 @@ export default class WalletBackup extends React.Component {
     super(props)
     this.t = props.t
     this.wallet = props.wallet
-    this.backup = this.backup.bind(this)
-    this.setPath = this.setPath.bind(this)
   }
 
+  /**
+   * Get error status.
+   * @function errorStatus
+   * @return {string|false} Current error or false if none.
+   */
   @computed get errorStatus () {
     if (this.error !== false) return this.error
     return false
   }
 
-  @action setError (error = false) {
+  /**
+   * Set rpc error.
+   * @function setError
+   * @param {string} error - RPC error.
+   */
+  @action setError = (error = false) => {
     this.error = error
   }
 
-  @action setPath () {
+  /**
+   * Set backup path.
+   * @function setPath
+   */
+  @action setPath = () => {
     /** Open directory browser. */
     const selected = remote.dialog.showOpenDialog({
       properties: ['openDirectory']
@@ -46,7 +58,11 @@ export default class WalletBackup extends React.Component {
     }
   }
 
-  backup () {
+  /**
+   * Backup the wallet.
+   * @function backup
+   */
+  @action backup = () => {
     this.wallet.backup(this.path, (result, error) => {
       if (error !== this.error) {
         this.setError(error)
@@ -59,7 +75,12 @@ export default class WalletBackup extends React.Component {
       <div>
         <p style={{margin: '0 0 5px 0'}}>
           <i className='material-icons md-18'>save</i>
-          <span className='text-icon'>
+          <span
+            style={{
+              margin: '0 0 0 7px',
+              verticalAlign: 'top'
+            }}
+          >
             {this.t('wallet:backupLong')}
           </span>
         </p>
@@ -77,15 +98,15 @@ export default class WalletBackup extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col offset={3} span={12}>
-            <p className='text-error'>
+          <Col span={12} offset={3}>
+            <p className='red' style={{margin: '3px 0 3px 1px'}}>
               {
                 this.errorStatus === 'backupFailed' &&
                 this.t('wallet:backupFailed')
               }
             </p>
           </Col>
-          <Col span={9} className='text-right'>
+          <Col span={9} style={{textAlign: 'right'}}>
             <Button
               style={{margin: '5px 0 0 0'}}
               onClick={this.setPath}

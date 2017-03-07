@@ -1,5 +1,6 @@
 import React from 'react'
 import { translate } from 'react-i18next'
+import { action } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Switch } from 'antd'
 
@@ -15,10 +16,13 @@ export default class ChainBlender extends React.Component {
     this.t = props.t
     this.ui = props.ui
     this.wallet = props.wallet
-    this.toggle = this.toggle.bind(this)
   }
 
-  toggle () {
+  /**
+   * Toggle ChainBlender.
+   * @function toggle
+   */
+  @action toggle = () => {
     this.wallet.toggleBlender()
   }
 
@@ -26,7 +30,7 @@ export default class ChainBlender extends React.Component {
     const { chainBlender, isBlending, isLocked } = this.wallet
 
     return (
-      <div className='left'>
+      <div>
         <Switch
           size='small'
           checked={isBlending === true}
@@ -50,8 +54,8 @@ export default class ChainBlender extends React.Component {
           }
         />
         <p style={{margin: '0 0 0 11px'}}>
-          {this.t('wallet:blended')} <span>
-            {
+          {this.t('wallet:blended')}
+          <span> {
               new Intl.NumberFormat(this.ui.language, {
                 minimumFractionDigits: 6,
                 maximumFractionDigits: 6
@@ -70,8 +74,8 @@ export default class ChainBlender extends React.Component {
         {
           this.wallet.isLocked === false && (
             <p>
-              {this.t('wallet:denominated')} <span>
-                {
+              {this.t('wallet:denominated')}
+              <span> {
                   new Intl.NumberFormat(this.ui.language, {
                     minimumFractionDigits: 6,
                     maximumFractionDigits: 6

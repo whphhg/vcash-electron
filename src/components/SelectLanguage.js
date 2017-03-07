@@ -1,5 +1,6 @@
 import React from 'react'
 import { translate } from 'react-i18next'
+import { action } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Select } from 'antd'
 
@@ -14,10 +15,14 @@ export default class SelectLanguage extends React.Component {
     super(props)
     this.t = props.t
     this.ui = props.ui
-    this.setLanguage = this.setLanguage.bind(this)
   }
 
-  setLanguage (language) {
+  /**
+   * Set display language.
+   * @function setLanguage
+   * @param {string} language - Locale.
+   */
+  @action setLanguage = (language) => {
     this.ui.setLanguage(language)
   }
 
@@ -27,12 +32,15 @@ export default class SelectLanguage extends React.Component {
     return (
       <Select
         showSearch
-        style={{width: '120px', margin: '0 10px 0 0'}}
+        size='small'
+        style={{
+          width: '120px',
+          margin: '0 10px 0 0'
+        }}
         defaultValue={this.ui.language}
         optionFilterProp='children'
         notFoundContent={this.t('wallet:notFound')}
         onChange={this.setLanguage}
-        size='small'
       >
         {
           this.ui.languages.map((entry) => (

@@ -18,30 +18,48 @@ export default class WalletSeedDump extends React.Component {
     super(props)
     this.t = props.t
     this.wallet = props.wallet
-    this.dumpSeed = this.dumpSeed.bind(this)
-    this.setSeed = this.setSeed.bind(this)
   }
 
+  /** Clear seed when component unmounts. */
   componentWillUnmount () {
     if (this.seed !== '') {
       this.setSeed()
     }
   }
 
+  /**
+   * Get error status.
+   * @function errorStatus
+   * @return {string|false} Current error or false if none.
+   */
   @computed get errorStatus () {
     if (this.error !== false) return this.error
     return false
   }
 
-  @action setError (error = false) {
+  /**
+   * Set rpc error.
+   * @function setError
+   * @param {string} error - RPC error.
+   */
+  @action setError = (error = false) => {
     this.error = error
   }
 
-  @action setSeed (seed = '') {
+  /**
+   * Set wallet seed.
+   * @function setSeed
+   * @param {string} seed - Wallet seed.
+   */
+  @action setSeed = (seed = '') => {
     this.seed = seed
   }
 
-  dumpSeed () {
+  /**
+   * Dump wallet seed.
+   * @function dumpSeed
+   */
+  @action dumpSeed = () => {
     this.wallet.dumpSeed((result, error) => {
       if (result !== undefined) {
         this.setSeed(result)
@@ -58,7 +76,12 @@ export default class WalletSeedDump extends React.Component {
       <div>
         <p style={{margin: '0 0 5px 0'}}>
           <i className='material-icons md-18'>fingerprint</i>
-          <span className='text-icon'>
+          <span
+            style={{
+              margin: '0 0 0 7px',
+              verticalAlign: 'top'
+            }}
+          >
             {this.t('wallet:seedDumpLong')}
           </span>
         </p>
@@ -77,15 +100,15 @@ export default class WalletSeedDump extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col offset={3} span={8}>
-            <p className='text-error'>
+          <Col span={13} offset={3}>
+            <p className='red' style={{margin: '3px 0 3px 1px'}}>
               {
                 this.errorStatus === 'notDeterministic' &&
                 this.t('wallet:notDeterministic')
               }
             </p>
           </Col>
-          <Col span={13} className='text-right'>
+          <Col span={8} style={{textAlign: 'right'}}>
             <Button
               style={{margin: '5px 0 0 0'}}
               onClick={this.dumpSeed}
