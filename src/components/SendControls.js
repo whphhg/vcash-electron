@@ -1,7 +1,7 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Button, Col, Input, Popconfirm, Row } from 'antd'
+import { Button, Popconfirm, Switch } from 'antd'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -9,7 +9,7 @@ import { Button, Col, Input, Popconfirm, Row } from 'antd'
 /** Make the component reactive and inject MobX stores. */
 @inject('rates', 'send', 'ui', 'wallet') @observer
 
-class Send extends React.Component {
+export default class Send extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
@@ -17,30 +17,36 @@ class Send extends React.Component {
     this.send = props.send
     this.ui = props.ui
     this.wallet = props.wallet
-    this.confirm = this.confirm.bind(this)
-    this.addRecipient = this.addRecipient.bind(this)
-    this.clear = this.clear.bind(this)
   }
 
-  confirm () {
+  /**
+   * Confirm sending.
+   * @function confirm
+   */
+  confirm = () => {
     this.send.confirm()
   }
 
-  addRecipient () {
+  /**
+   * Add empty recipient.
+   * @function addRecipient
+   */
+  addRecipient = () => {
     this.send.addRecipient()
   }
 
-  clear () {
+  /**
+   * Clear recipients and options.
+   * @function clear
+   */
+  clear = () => {
     this.send.clear()
   }
 
   render () {
-    const { local, localCurrency, average } = this.rates
-    const { errorStatus, fromAccount, total } = this.send
-
     return (
-      <Row>
-        <Col span={11}>
+      <div>
+        <div style={{float: 'left'}}>
           <Popconfirm
             placement='bottomLeft'
             title={this.t('wallet:sendConfirm')}
@@ -52,17 +58,19 @@ class Send extends React.Component {
               disabled={
                 this.wallet.isLocked === true ||
                 this.wallet.balance < 0.0005 ||
-                errorStatus !== false
+                this.send.errorStatus !== false
               }
+              size='small'
             >
               {this.t('wallet:send')}
             </Button>
           </Popconfirm>
           <Button
             onClick={this.addRecipient}
-            disabled={fromAccount === null}
+            disabled={this.send.fromAccount === null}
+            size='small'
           >
-            <i className='material-icons md-16'>person_add</i>
+            {this.t('wallet:recipientAdd')}
           </Button>
           <Popconfirm
             placement='bottom'
@@ -71,39 +79,56 @@ class Send extends React.Component {
             cancelText={this.t('wallet:no')}
             onConfirm={this.clear}
           >
-            <Button>{this.t('wallet:reset')}</Button>
+            <Button size='small'>{this.t('wallet:reset')}</Button>
           </Popconfirm>
-        </Col>
-        <Col span={8}>
-          <div style={{margin: '0 5px 0 0'}}>
-            <Input
-              disabled
-              value={
-                new Intl.NumberFormat(this.ui.language, {
-                  minimumFractionDigits: 6,
-                  maximumFractionDigits: 6
-                }).format(total)
-              }
-              addonBefore={this.t('wallet:total')}
-              addonAfter='XVC'
-            />
-          </div>
-        </Col>
-        <Col span={5}>
-          <Input
-            disabled
-            value={
-              new Intl.NumberFormat(this.ui.language, {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-              }).format(total * local * average)
+        </div>
+        <div style={{float: 'right'}}>
+          <i className='material-icons md-20'>timer_off</i>
+          <p>{this.t('wallet:zeroTime')}</p>
+          <Switch
+            size='small'
+            style={{verticalAlign: '1px', margin: '0 20px 0 0'}}
+            checkedChildren={
+              <i
+                className='material-icons md-16'
+                style={{margin: '-2px 0 0 0'}}
+              >
+                done
+              </i>
             }
-            addonAfter={localCurrency}
+            unCheckedChildren={
+              <i
+                className='material-icons md-16'
+                style={{margin: '-2px 0 0 0'}}
+              >
+                clear
+              </i>
+            }
           />
-        </Col>
-      </Row>
+          <i className='material-icons md-20'>shuffle</i>
+          <p>{this.t('wallet:blendedOnly')}</p>
+          <Switch
+            size='small'
+            style={{verticalAlign: '1px'}}
+            checkedChildren={
+              <i
+                className='material-icons md-16'
+                style={{margin: '-2px 0 0 0'}}
+              >
+                done
+              </i>
+            }
+            unCheckedChildren={
+              <i
+                className='material-icons md-16'
+                style={{margin: '-2px 0 0 0'}}
+              >
+                clear
+              </i>
+            }
+          />
+        </div>
+      </div>
     )
   }
 }
-
-export default Send

@@ -16,12 +16,16 @@ class Send {
    * @property {number} minConf - Minimum number of confirmations.
    * @property {string} comment - Comment about transaction.
    * @property {string} commentTo - Comment about recipient.
+   * @property {boolean} zeroTime - Use ZeroTime.
+   * @property {boolean} blendedOnly - Use blended outputs only.
    */
   @observable fromAccount = null
   @observable recipients = observable.map({})
   @observable minConf = 1
   @observable comment = ''
   @observable commentTo = ''
+  @observable zeroTime = false
+  @observable blendedOnly = false
 
   constructor () {
     autorun(() => {
@@ -246,6 +250,24 @@ class Send {
    */
   @action setCommentTo (commentTo = '') {
     this.commentTo = commentTo
+  }
+
+  /**
+   * Set ZeroTime flag.
+   * @function setZeroTime
+   * @param {boolean} zeroTime - Use ZeroTime.
+   */
+  @action setZeroTime (zeroTime = false) {
+    this.zeroTime = zeroTime
+  }
+
+  /**
+   * Set blended only flag.
+   * @function setBlendedOnly
+   * @param {boolean} blendedOnly - Blended only.
+   */
+  @action setBlendedOnly (blendedOnly = false) {
+    this.blendedOnly = blendedOnly
   }
 
   /**

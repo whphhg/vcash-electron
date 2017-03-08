@@ -21,6 +21,7 @@
   "balance": "Stanje",
   "banScore": "Prepoved",
   "blended": "Zmešano",
+  "blendedOnly": "Samo zmešani",
   "blending": "Mešam",
   "block": "Blok",
   "blockEstimation": "Predvidena najdba",
@@ -113,6 +114,7 @@
   "received": "Prejeto",
   "receiving": "Prejemam",
   "recipient": "Prejemnik",
+  "recipientAdd": "Dodaj prejemnika",
   "recipientLong": "Lokalno-shranjen komentar, ki opisuje prejemnika",
   "recipientRemove": "Potrdi odstranitev prejemnika.",
   "relayedOn": "Posredovana",
@@ -161,5 +163,6 @@
   "version": "Verzija",
   "voteCandidate": "Kandidat za glasovanje",
   "wallet": "Denarnica",
-  "yes": "Da"
+  "yes": "Da",
+  "zeroTime": "ZeroTime"
 }

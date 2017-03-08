@@ -9,7 +9,7 @@ import { Col, Input, Popconfirm, Row } from 'antd'
 /** Make the component reactive and inject MobX stores. */
 @inject('rates', 'send', 'ui') @observer
 
-class SendRecipient extends React.Component {
+export default class SendRecipient extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
@@ -17,15 +17,23 @@ class SendRecipient extends React.Component {
     this.rates = props.rates
     this.send = props.send
     this.ui = props.ui
-    this.removeRecipient = this.removeRecipient.bind(this)
-    this.setRecipient = this.setRecipient.bind(this)
   }
 
-  removeRecipient (uid) {
+  /**
+   * Remove recipient.
+   * @function removeRecipient
+   * @param {string} uid - Uid.
+   */
+  removeRecipient = (uid) => {
     this.send.removeRecipient(uid)
   }
 
-  setRecipient (e) {
+  /**
+   * Set recipient.
+   * @function setRecipient
+   * @param {object} e - Input element event.
+   */
+  setRecipient = (e) => {
     this.send.setRecipient(e.target.id, e.target.name, e.target.value)
   }
 
@@ -94,5 +102,3 @@ class SendRecipient extends React.Component {
     )
   }
 }
-
-export default SendRecipient

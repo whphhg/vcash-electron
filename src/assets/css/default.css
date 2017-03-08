@@ -25,23 +25,19 @@ header button { margin: 13px 0 0 0; }
 header .ant-btn-primary { color: #FFFFFF; background-color: #43464B; border-color: #43464B; min-height: 30px; }
 header .ant-btn-primary i { vertical-align: middle; }
 header .ant-btn-primary:hover, header .ant-btn-primary:focus { color: #B71C1C; background-color: #43464B; border-color: #43464B; font-weight: bold; }
-main .toolbar { margin: 7px 10px; min-height: 21px }
+main #sendRecipients { max-height: 360px; overflow-y: scroll; margin: 0 0 5px 0; }
+main #sendRecipients::-webkit-scrollbar { display: none; }
+main .toolbar { margin: 7px 10px; min-height: 21px; }
 main .toolbar p { display: inline; padding: 0 10px 0 5px; vertical-align: 5px; }
 main .toolbar p:last-child { padding: 0 0 0 5px; }
 main .toolbar p span { font-weight: 600; }
 main .toolbar i { margin: 1px 0 0 0; }
 main .toolbar .ant-select { vertical-align: 5px; }
-main .toolbar .ant-switch { vertical-align: 0px; }
+main .toolbar .ant-btn { margin: 0 5px 0 0; }
 footer { width: 100%; height: 25px; bottom: 0; position: fixed; z-index: 1; }
 footer i { margin: 4px 5px 0 10px; }
 footer p { display: inline; color: #757575; vertical-align: 3px; }
 footer p span { font-weight: 500; }
-
-
-main #addresses { min-height: 569px; margin: 10px; }
-main hr#send { margin: 5px 0 5px 0; }
-main #sendRecipients { max-height: 462px; overflow-y: scroll; }
-main #sendRecipients::-webkit-scrollbar { display: none; }
 
 /** Shadows */
 .shadow { box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12); }
@@ -83,6 +79,8 @@ main #sendRecipients::-webkit-scrollbar { display: none; }
 .ant-input:focus { border-color: #B71C1C; }
 .ant-input-group-addon .ant-select-focused .ant-select-selection { color: #B71C1C; }
 .ant-breadcrumb a:hover { color: #B71C1C; }
+.ant-btn { background-color: #f7f7f7; }
+.ant-btn:hover { background-color: #f7f7f7; }
 .ant-btn:focus { color: #B71C1C; border-color: #B71C1C; }
 .ant-btn.active { color: #B71C1C; border-color: #B71C1C; }
 .ant-btn-primary { background-color: #B71C1C; border-color: #B71C1C; }

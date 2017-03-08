@@ -53,7 +53,12 @@ export default class ChainBlender extends React.Component {
             </i>
           }
         />
-        <p style={{margin: '0 0 0 11px'}}>
+        <p
+          style={{
+            margin: '0 0 0 11px',
+            verticalAlign: '-1px'
+          }}
+        >
           {this.t('wallet:blended')}
           <span> {
               new Intl.NumberFormat(this.ui.language, {
@@ -73,7 +78,12 @@ export default class ChainBlender extends React.Component {
         </p>
         {
           this.wallet.isLocked === false && (
-            <p>
+            <p
+              style={{
+                margin: '0 0 0 11px',
+                verticalAlign: '-1px'
+              }}
+            >
               {this.t('wallet:denominated')}
               <span> {
                   new Intl.NumberFormat(this.ui.language, {

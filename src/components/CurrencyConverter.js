@@ -85,41 +85,47 @@ export default class CurrencyConverter extends React.Component {
           <Col span={12}>
             {this.t('wallet:currencyConverter')}
           </Col>
-          <Col span={1} offset={1}>
-            <Col span={18} offset={6}>
-              <img
-                src='./assets/images/exchangePoloniex.png'
-                style={{margin: '1px 0 0 0'}}
-              />
-            </Col>
-          </Col>
-          <Col span={4} style={{textAlign: 'right'}}>
-            <span style={{fontWeight: '500'}}>
-              {
-                new Intl.NumberFormat(this.ui.language, {
-                  minimumFractionDigits: 8,
-                  maximumFractionDigits: 8
-                }).format(this.rates.poloniex.last)
-              }
-            </span> BTC
-          </Col>
-          <Col span={1} offset={1}>
-            <Col span={18} offset={6}>
-              <img
-                src='./assets/images/exchangeBittrex.png'
-                style={{margin: '1px 0 0 0'}}
-              />
-            </Col>
-          </Col>
-          <Col span={4} style={{textAlign: 'right'}}>
-            <span style={{fontWeight: '500'}}>
-              {
-                new Intl.NumberFormat(this.ui.language, {
-                  minimumFractionDigits: 8,
-                  maximumFractionDigits: 8
-                }).format(this.rates.bittrex.Last)
-              }
-            </span> BTC
+          <Col span={12} style={{textAlign: 'right'}}>
+            <img
+              src='./assets/images/exchangePoloniex.png'
+              style={{margin: '1px 0 0 0'}}
+            />
+            <p
+              style={{
+                margin: '0 10px 0 5px',
+                verticalAlign: '2px',
+                display: 'inline'
+              }}
+            >
+              <span style={{fontWeight: '500'}}>
+                {
+                  new Intl.NumberFormat(this.ui.language, {
+                    minimumFractionDigits: 8,
+                    maximumFractionDigits: 8
+                  }).format(this.rates.poloniex.last)
+                }
+              </span> BTC
+            </p>
+            <img
+              src='./assets/images/exchangeBittrex.png'
+              style={{margin: '1px 0 0 0'}}
+            />
+            <p
+              style={{
+                margin: '0 0 0 5px',
+                verticalAlign: '2px',
+                display: 'inline'
+              }}
+            >
+              <span style={{fontWeight: '500'}}>
+                {
+                  new Intl.NumberFormat(this.ui.language, {
+                    minimumFractionDigits: 8,
+                    maximumFractionDigits: 8
+                  }).format(this.rates.bittrex.Last)
+                }
+              </span> BTC
+            </p>
           </Col>
         </Row>
         <Row style={{margin: '10px 0 0 0'}}>

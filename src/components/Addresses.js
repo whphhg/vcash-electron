@@ -1,7 +1,7 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Col, Row, Table } from 'antd'
+import { Col, Input, Row, Table } from 'antd'
 
 /** Required components. */
 import AddressNew from './AddressNew'
@@ -16,7 +16,7 @@ import SendRecipient from './SendRecipient'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('addresses', 'rates', 'send', 'wallet') @observer
+@inject('addresses', 'rates', 'send', 'ui', 'wallet') @observer
 
 export default class Addresses extends React.Component {
   constructor (props) {
@@ -25,28 +25,30 @@ export default class Addresses extends React.Component {
     this.addresses = props.addresses
     this.rates = props.rates
     this.send = props.send
+    this.ui = props.ui
     this.wallet = props.wallet
   }
 
   render () {
+    const { total } = this.send
+    const { local, localCurrency, average } = this.rates
+
     return (
       <div>
         <Row>
           <Col span={24} className='shadow'>
-            <Row>
+            <div className='toolbar'>
               <Col span={11}>
-                <div className='toolbar'>
-                  <AddressNew />
-                  <KeyImport />
-                  <KeyDump />
-                </div>
+                <AddressNew />
+                <KeyImport />
+                <KeyDump />
               </Col>
               <Col span={13}>
-                <div className='toolbar'>
+                <div style={{margin: '0 0 0 9px'}}>
                   <SendControls />
                 </div>
               </Col>
-            </Row>
+            </div>
           </Col>
         </Row>
         <Row>
@@ -57,10 +59,13 @@ export default class Addresses extends React.Component {
                 size='small'
                 scroll={
                   this.addresses.all.length > 15
-                    ? {y: 503}
+                    ? {y: 527}
                     : {}
                 }
                 pagination={false}
+                expandedRowRender={record => (
+                  <p>Address details {record.address}</p>
+                )}
                 dataSource={this.addresses.all}
                 columns={[
                   {
@@ -73,7 +78,7 @@ export default class Addresses extends React.Component {
                     title: this.t('wallet:balance'),
                     dataIndex: 'amount',
                     render: text => (
-                      <p className='text-right'>{text} XVC</p>
+                      <p style={{textAlign: 'right'}}>{text} XVC</p>
                     )
                   }
                 ]}
@@ -92,9 +97,43 @@ export default class Addresses extends React.Component {
                   ))
                 }
               </div>
-              <hr id='send' />
+              {
+                this.send.recipients.size > 1 && (
+                  <Row>
+                    <Col span={6} offset={13}>
+                      <div style={{margin: '0 5px 5px 0'}}>
+                        <Input
+                          disabled
+                          value={
+                            new Intl.NumberFormat(this.ui.language, {
+                              minimumFractionDigits: 6,
+                              maximumFractionDigits: 6
+                            }).format(total)
+                          }
+                          addonAfter='XVC'
+                        />
+                      </div>
+                    </Col>
+                    <Col span={5}>
+                      <div style={{margin: '0 0 5px 0'}}>
+                        <Input
+                          disabled
+                          value={
+                            new Intl.NumberFormat(this.ui.language, {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2
+                            }).format(total * local * average)
+                          }
+                          addonAfter={localCurrency}
+                        />
+                      </div>
+                    </Col>
+                  </Row>
+                )
+              }
+              <hr style={{margin: '5px 0 9px 0'}} />
               <SendOptions />
-              <hr id='send' />
+              <hr style={{margin: '10px 0 9px 0'}} />
               <CurrencyConverter />
             </div>
           </Col>

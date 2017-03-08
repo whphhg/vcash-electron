@@ -143,6 +143,10 @@ class Addresses {
           return false
         }
 
+        if (response[0].hasOwnProperty('result') === true) {
+          this.listreceivedbyaddress()
+        }
+
         return callback(response[0].result, error())
       }
     })

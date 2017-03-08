@@ -21,6 +21,7 @@
   "balance": "Balance",
   "banScore": "Ban score",
   "blended": "Blended",
+  "blendedOnly": "Blended only",
   "blending": "Blending",
   "block": "Block",
   "blockEstimation": "Estimated to be found on",
@@ -113,6 +114,7 @@
   "received": "Received",
   "receiving": "Receiving",
   "recipient": "Recipient",
+  "recipientAdd": "Add recipient",
   "recipientLong": "Locally-stored comment describing the recipient",
   "recipientRemove": "Are you sure you want to remove this recipient?",
   "relayedOn": "Relayed on",
@@ -161,5 +163,6 @@
   "version": "Version",
   "voteCandidate": "Vote candidate",
   "wallet": "Wallet",
-  "yes": "Yes"
+  "yes": "Yes",
+  "zeroTime": "ZeroTime"
 }

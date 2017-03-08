@@ -9,32 +9,48 @@ import { Col, Input, Row, Select } from 'antd'
 /** Make the component reactive and inject MobX stores. */
 @inject('addresses', 'send', 'ui') @observer
 
-class SendOptions extends React.Component {
+export default class SendOptions extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
     this.addresses = props.addresses
     this.send = props.send
     this.ui = props.ui
-    this.setAccount = this.setAccount.bind(this)
-    this.setMinConf = this.setMinConf.bind(this)
-    this.setComment = this.setComment.bind(this)
-    this.setCommentTo = this.setCommentTo.bind(this)
   }
 
-  setAccount (account) {
+  /**
+   * Set account.
+   * @function setAccount
+   * @param {string} account - Account name.
+   */
+  setAccount = (account) => {
     this.send.setAccount(account)
   }
 
-  setMinConf (e) {
+  /**
+   * Set minimum confirmations.
+   * @function setMinConf
+   * @param {object} e - Input element event.
+   */
+  setMinConf = (e) => {
     this.send.setMinConf(e.target.value)
   }
 
-  setComment (e) {
+  /**
+   * Set transaction comment.
+   * @function setComment
+   * @param {object} e - Input element event.
+   */
+  setComment = (e) => {
     this.send.setComment(e.target.value)
   }
 
-  setCommentTo (e) {
+  /**
+   * Set recipient comment.
+   * @function setCommentTo
+   * @param {object} e - Input element event.
+   */
+  setCommentTo = (e) => {
     this.send.setCommentTo(e.target.value)
   }
 
@@ -46,12 +62,13 @@ class SendOptions extends React.Component {
       <div>
         <Row>
           <Col span={6}>
-            <p style={{margin: '4px 0 0 0'}}>
+            <p style={{margin: '1px 0 0 0'}}>
               {this.t('wallet:spendFrom')}
             </p>
           </Col>
           <Col span={10}>
             <Select
+              size='small'
               style={{width: '247px'}}
               value={fromAccount}
               optionFilterProp='children'
@@ -80,6 +97,7 @@ class SendOptions extends React.Component {
           </Col>
           <Col span={8}>
             <Input
+              size='small'
               disabled
               defaultValue={
                 new Intl.NumberFormat(this.ui.language, {
@@ -94,13 +112,14 @@ class SendOptions extends React.Component {
         </Row>
         <Row>
           <Col span={6}>
-            <p style={{margin: '9px 0 0 0'}}>
-              {this.t('wallet:transactionComment')}
+            <p style={{margin: '6px 0 0 0'}}>
+              {this.t('wallet:description')}
             </p>
           </Col>
           <Col span={18}>
             <Input
-              placeholder={this.t('wallet:transactionCommentLong')}
+              size='small'
+              placeholder={this.t('wallet:descriptionLong')}
               style={{margin: '5px 0 0 0'}}
               value={comment}
               onChange={this.setComment}
@@ -111,13 +130,14 @@ class SendOptions extends React.Component {
           recipients.size === 1 && (
             <Row>
               <Col span={6}>
-                <p style={{margin: '9px 0 0 0'}}>
-                  {this.t('wallet:recipientComment')}
+                <p style={{margin: '6px 0 0 0'}}>
+                  {this.t('wallet:recipient')}
                 </p>
               </Col>
               <Col span={18}>
                 <Input
-                  placeholder={this.t('wallet:recipientCommentLong')}
+                  size='small'
+                  placeholder={this.t('wallet:recipientLong')}
                   style={{margin: '5px 0 0 0'}}
                   value={commentTo}
                   onChange={this.setCommentTo}
@@ -130,12 +150,13 @@ class SendOptions extends React.Component {
           fromAccount !== null && (
             <Row>
               <Col span={6}>
-                <p style={{margin: '9px 0 0 0'}}>
+                <p style={{margin: '6px 0 0 0'}}>
                   {this.t('wallet:minimumConfirmations')}
                 </p>
               </Col>
               <Col span={3}>
                 <Input
+                  size='small'
                   style={{margin: '5px 0 0 0'}}
                   value={minConf}
                   onChange={this.setMinConf}
@@ -148,5 +169,3 @@ class SendOptions extends React.Component {
     )
   }
 }
-
-export default SendOptions
