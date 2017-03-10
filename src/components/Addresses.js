@@ -18,6 +18,8 @@ import SendRecipient from './SendRecipient'
 /** Make the component reactive and inject MobX stores. */
 @inject('addresses', 'rates', 'send', 'ui', 'wallet') @observer
 
+/** TODO: Table filters Change, Spent, Unspent, New */
+
 export default class Addresses extends React.Component {
   constructor (props) {
     super(props)
@@ -77,6 +79,7 @@ export default class Addresses extends React.Component {
                   {
                     title: this.t('wallet:balance'),
                     dataIndex: 'amount',
+                    sorter: (a, b) => a.amount - b.amount,
                     render: text => (
                       <p style={{textAlign: 'right'}}>{text} XVC</p>
                     )
