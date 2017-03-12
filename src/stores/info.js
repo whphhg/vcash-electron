@@ -1,4 +1,5 @@
 import { action, computed, observable, reaction } from 'mobx'
+import { shortUid } from '../utilities/common'
 
 /** Required store instances. */
 import rpc from './rpc'
@@ -31,7 +32,7 @@ class Info {
         /** Restart network info update loop. */
         this.restart('getNetworkInfo')
 
-        /** Check lock status. */
+        /** Update lock status. */
         this.getLockStatus()
       }
     })
@@ -217,15 +218,15 @@ class Info {
     if (this.responses.has('getpeerinfo') === true) {
       const peerInfo = this.responses.get('getpeerinfo')
 
-      return peerInfo.reduce((peers, item) => {
-        if (item.lastsend !== 0 && item.startingheight !== -1) {
+      return peerInfo.reduce((peers, peer) => {
+        if (peer.lastsend !== 0 && peer.startingheight !== -1) {
           peers.push({
-            ...item,
-            key: item.addr,
-            version: item.subver.match(/\/(.*)\(/).pop().split(':')[1],
-            os: item.subver.split(' ')[1].replace(')/', ''),
-            ip: item.addr.split(':')[0],
-            port: item.addr.split(':')[1]
+            ...peer,
+            key: shortUid(),
+            version: peer.subver.match(/\/(.*)\(/).pop().split(':')[1],
+            os: peer.subver.split(' ')[1].replace(')/', ''),
+            ip: peer.addr.split(':')[0],
+            port: peer.addr.split(':')[1]
           })
         }
 

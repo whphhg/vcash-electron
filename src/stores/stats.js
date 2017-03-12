@@ -62,22 +62,18 @@ class Stats {
    * @return {array} Daily totals by category.
    */
   @computed get dailyTotals () {
-    /** Treshold for including transactions, today - 31 days. */
+    /** Threshold for including transactions, today - 31 days. */
     const threshold = new Date().getTime() - (31 * 24 * 60 * 60 * 1000)
 
-    const today = moment(new Date())
-    let data = []
-    let dataByDate = []
+    /** Map with dates as keys. */
+    let dailyTotals = new Map()
 
-    for (let i = 0; i < 31; i++) {
-      const date = i === 0
-        ? today.format('L')
-        : today.subtract(1, 'day').format('L')
+    /** Populate the dailyTotals map with dates. */
+    for (let i = 1; i <= 31; i++) {
+      const date = moment(threshold).add(i, 'day').format('YYYYMMDD')
 
-      /** Add to the beginning of arrays. */
-      dataByDate.unshift(date)
-      data.unshift({
-        date: Math.round(today.format('x')),
+      dailyTotals.set(date, {
+        date: Math.round(moment(threshold).add(i, 'day').format('x')),
         sent: 0,
         received: 0,
         stakingReward: 0,
@@ -86,21 +82,21 @@ class Stats {
       })
     }
 
+    /** Add category counts to the dailyTotals map. */
     wallet.txids.forEach((tx, txid) => {
-      /** Check if time is in the last 31 days window. */
+      /** Check if tx time is in the last 31 days window. */
       if (tx.time > threshold) {
-        const txDate = moment(tx.time).format('L')
-        const index = dataByDate.indexOf(txDate)
+        const date = moment(tx.time).format('YYYYMMDD')
 
-        if (index > -1) {
-          if (data[index].hasOwnProperty(tx.category) === true) {
-            data[index][tx.category] += Math.round(Math.abs(tx.amount) * 1e6) / 1e6
-          }
+        if (dailyTotals.has(date) === true) {
+          let saved = dailyTotals.get(date)
+          saved[tx.category] += Math.round(Math.abs(tx.amount) * 1e6) / 1e6
         }
       }
     })
 
-    return data
+    /** Convert dailyTotals map to array. */
+    return [...dailyTotals.values()]
   }
 
   /**
@@ -109,7 +105,7 @@ class Stats {
    * @return {array} Rewards.
    */
   @computed get rewardsPerDay () {
-    /** Treshold for including transactions, today - 31 days. */
+    /** Threshold for including transactions, today - 31 days. */
     const threshold = new Date().getTime() - (31 * 24 * 60 * 60 * 1000)
 
     /** Map with dates as keys. */
@@ -158,7 +154,7 @@ class Stats {
    * @return {object} Rewards.
    */
   @computed get rewardSpread () {
-    /** Treshold for including transactions, today - 31 days. */
+    /** Threshold for including transactions, today - 31 days. */
     const threshold = new Date().getTime() - (31 * 24 * 60 * 60 * 1000)
 
     let rewardSpread = {
