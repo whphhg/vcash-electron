@@ -8,13 +8,14 @@ import { Button, Tooltip } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('wallet') @observer
+@inject('info', 'rpc') @observer
 
 export default class WalletLock extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.wallet = props.wallet
+    this.info = props.info
+    this.rpc = props.rpc
   }
 
   /**
@@ -22,13 +23,13 @@ export default class WalletLock extends React.Component {
    * @function lock
    */
   @action lock = () => {
-    this.wallet.lock()
+    this.rpc.lockWallet()
   }
 
   render () {
     if (
-      this.wallet.isEncrypted === false ||
-      this.wallet.isLocked === true
+      this.info.isEncrypted === false ||
+      this.info.isLocked === true
     ) return null
 
     return (

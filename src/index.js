@@ -15,28 +15,18 @@ import Root from './components/Root'
 import Transactions from './components/Transactions'
 
 /** Store instances. */
-import addresses from './stores/addresses'
-import network from './stores/network'
+import info from './stores/info'
 import rates from './stores/rates'
 import rpc from './stores/rpc'
 import send from './stores/send'
-import transactions from './stores/transactions'
+import stats from './stores/stats'
 import ui from './stores/ui'
 import wallet from './stores/wallet'
 
 /** Use MobX strict mode, allowing only actions to alter the state. */
 useStrict(true)
 
-const stores = {
-  addresses,
-  network,
-  rates,
-  rpc,
-  send,
-  transactions,
-  ui,
-  wallet
-}
+const stores = { info, rates, rpc, send, stats, ui, wallet }
 
 render(
   <Provider {...stores}>

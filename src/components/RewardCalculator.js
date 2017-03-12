@@ -9,7 +9,7 @@ import { calculateIncentive, calculatePoW } from '../utilities/blockRewards'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('ui', 'wallet') @observer
+@inject('info', 'ui') @observer
 
 export default class RewardCalculator extends React.Component {
   @observable enteredBlock = ''
@@ -17,8 +17,8 @@ export default class RewardCalculator extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
+    this.info = props.info
     this.ui = props.ui
-    this.wallet = props.wallet
   }
 
   /**
@@ -28,7 +28,7 @@ export default class RewardCalculator extends React.Component {
    */
   @computed get block () {
     return this.enteredBlock.length === 0
-      ? this.wallet.info.blocks
+      ? this.info.wallet.blocks
       : Math.round(this.enteredBlock)
   }
 

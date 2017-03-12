@@ -8,7 +8,7 @@ import { Button, Col, Input, Row } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('wallet') @observer
+@inject('info', 'rpc') @observer
 
 export default class WalletEncrypt extends React.Component {
   @observable passphrase = ''
@@ -17,7 +17,8 @@ export default class WalletEncrypt extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.wallet = props.wallet
+    this.info = props.info
+    this.rpc = props.rpc
   }
 
   /**
@@ -52,11 +53,11 @@ export default class WalletEncrypt extends React.Component {
    * @function encrypt
    */
   @action encrypt = () => {
-    this.wallet.encrypt(this.passphrase)
+    this.rpc.encryptWallet(this.passphrase)
   }
 
   render () {
-    if (this.wallet.isEncrypted === true) return null
+    if (this.info.isEncrypted === true) return null
     return (
       <div>
         <p style={{margin: '0 0 5px 0'}}>

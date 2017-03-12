@@ -21,20 +21,20 @@ import { CustomTick, CustomTooltip } from './RechartsCustom'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('network') @observer
+@inject('stats') @observer
 
 export default class Difficulties extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.network = props.network
+    this.stats = props.stats
   }
 
   render () {
     return (
       <ResponsiveContainer width='100%' height={210}>
         <AreaChart
-          data={this.network.stats}
+          data={this.stats.network}
           syncId='0'
           margin={{top: 15, right: 60, bottom: 5, left: 30}}
         >

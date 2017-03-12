@@ -12,14 +12,14 @@ import WalletUnlock from './WalletUnlock'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('rates', 'transactions', 'ui', 'wallet') @observer
+@inject('info', 'rates', 'ui', 'wallet') @observer
 
 export default class Header extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
+    this.info = props.info
     this.rates = props.rates
-    this.transactions = props.transactions
     this.ui = props.ui
     this.wallet = props.wallet
   }
@@ -35,7 +35,7 @@ export default class Header extends React.Component {
 
   render () {
     const { local, localCurrency, average } = this.rates
-    const { balance, newmint, stake } = this.wallet.info
+    const { balance, newmint, stake } = this.info.wallet
     const { Item } = Menu
 
     return (
@@ -76,7 +76,7 @@ export default class Header extends React.Component {
           </p>
           <div className='incoming'>
             {
-              this.transactions.pendingAmount > 0 && (
+              this.wallet.pendingAmount > 0 && (
                 <p>
                   {this.t('wallet:pending')}
                   <br />
@@ -85,7 +85,7 @@ export default class Header extends React.Component {
                       new Intl.NumberFormat(this.ui.language, {
                         minimumFractionDigits: 6,
                         maximumFractionDigits: 6
-                      }).format(this.transactions.pendingAmount)
+                      }).format(this.wallet.pendingAmount)
                     }
                   </span> XVC
                 </p>

@@ -5,7 +5,7 @@ import i18next from '../utilities/i18next'
 
 /** Required store instances. */
 import rpc from './rpc'
-import transactions from './transactions'
+import info from './info'
 import wallet from './wallet'
 
 class Send {
@@ -162,7 +162,7 @@ class Send {
       /** Check if the new total amount is over wallet balance. */
       if (
         this.total - parseFloat(saved.amount) + parseFloat(value) >
-        wallet.info.balance
+        info.wallet.balance
       ) return
 
       /** Set ammount that passed above checks. */
@@ -189,11 +189,8 @@ class Send {
 
       /** Validate address when it reaches 34 characters. */
       if (value.length === 34) {
-        rpc.call([
-          {
-            method: 'validateaddress',
-            params: [value]
-          }
+        rpc.exec([
+          { method: 'validateaddress', params: [value] }
         ], action('recipientValidate', (response) => {
           if (response !== null) {
             saved.addressValid = response[0].result.isvalid
@@ -226,7 +223,7 @@ class Send {
       if (confirmations !== '') {
         confirmations = parseInt(confirmations)
 
-        if (confirmations > wallet.info.blocks) return
+        if (confirmations > info.wallet.blocks) return
         if (confirmations < 1) return
       }
 
@@ -308,7 +305,7 @@ class Send {
     /** Get the recipient data. */
     const recipient = this.recipients.values()
 
-    rpc.call([
+    rpc.exec([
       {
         method: 'sendtoaddress',
         params: [
@@ -326,7 +323,7 @@ class Send {
           this.clear()
 
           /** Open transaction details. */
-          transactions.setViewing(response[0].result)
+          wallet.setViewing(response[0].result)
         }
 
         /** Sending failed. */
@@ -355,7 +352,7 @@ class Send {
     /** Get the recipient data. */
     const recipient = this.recipients.values()
 
-    rpc.call([
+    rpc.exec([
       {
         method: 'sendfrom',
         params: [
@@ -377,7 +374,7 @@ class Send {
           this.clear()
 
           /** Open transaction details. */
-          transactions.setViewing(response[0].result)
+          wallet.setViewing(response[0].result)
         }
 
         /** Sending failed. */
@@ -409,7 +406,7 @@ class Send {
       return recipients
     }, {})
 
-    rpc.call([
+    rpc.exec([
       {
         method: 'sendmany',
         params: [
@@ -429,7 +426,7 @@ class Send {
           this.clear()
 
           /** Open transaction details. */
-          transactions.setViewing(response[0].result)
+          wallet.setViewing(response[0].result)
         }
 
         /** Sending failed. */

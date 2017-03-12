@@ -7,15 +7,15 @@ import { Col, Input, Row, Select } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('addresses', 'send', 'ui') @observer
+@inject('send', 'ui', 'wallet') @observer
 
 export default class SendOptions extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.addresses = props.addresses
     this.send = props.send
     this.ui = props.ui
+    this.wallet = props.wallet
   }
 
   /**
@@ -84,7 +84,7 @@ export default class SendOptions extends React.Component {
                 {this.t('wallet:default')}
               </Option>
               {
-                this.addresses.accounts.map((account) => (
+                this.wallet.accounts.map((account) => (
                   <Option
                     key={account}
                     value={account}

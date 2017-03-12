@@ -9,13 +9,14 @@ import { dataPath } from '../utilities/common'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('wallet') @observer
+@inject('info', 'rpc') @observer
 
 export default class WalletDump extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.wallet = props.wallet
+    this.info = props.info
+    this.rpc = props.rpc
   }
 
   /**
@@ -23,7 +24,7 @@ export default class WalletDump extends React.Component {
    * @function dump
    */
   @action dump = () => {
-    this.wallet.dump()
+    this.rpc.dumpWallet()
   }
 
   render () {
@@ -58,7 +59,7 @@ export default class WalletDump extends React.Component {
             <Button
               style={{margin: '5px 0 0 0'}}
               onClick={this.dump}
-              disabled={this.wallet.isLocked === true}
+              disabled={this.info.isLocked === true}
             >
               {this.t('wallet:dump')}
             </Button>

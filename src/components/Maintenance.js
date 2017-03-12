@@ -17,15 +17,14 @@ import WalletSeedDump from './WalletSeedDump'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('network', 'ui', 'wallet') @observer
+@inject('info', 'ui') @observer
 
 export default class Maintenance extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.network = props.network
+    this.info = props.info
     this.ui = props.ui
-    this.wallet = props.wallet
   }
 
   render () {
@@ -76,12 +75,12 @@ export default class Maintenance extends React.Component {
             bordered
             size='small'
             scroll={
-              this.network.peers.length > 8
+              this.info.peers.length > 8
                 ? {y: 183}
                 : {}
             }
             pagination={false}
-            dataSource={this.network.peers}
+            dataSource={this.info.peers}
             columns={[
               {
                 title: this.t('wallet:peers'),

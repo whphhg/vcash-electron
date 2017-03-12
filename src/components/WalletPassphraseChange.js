@@ -8,7 +8,7 @@ import { Button, Col, Input, Row } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('wallet') @observer
+@inject('info', 'rpc') @observer
 
 export default class WalletPassphraseChange extends React.Component {
   @observable current = ''
@@ -19,7 +19,8 @@ export default class WalletPassphraseChange extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.wallet = props.wallet
+    this.info = props.info
+    this.rpc = props.rpc
 
     /** Clear previous error on current passphrase change. */
     reaction(() => this.current, (current) => {
@@ -73,7 +74,7 @@ export default class WalletPassphraseChange extends React.Component {
    * @function passphraseChange
    */
   @action passphraseChange = () => {
-    this.wallet.passphraseChange(this.current, this.next, (result, error) => {
+    this.rpc.passphraseChange(this.current, this.next, (result, error) => {
       if (error !== this.error) {
         this.setError(error)
       }
@@ -81,7 +82,7 @@ export default class WalletPassphraseChange extends React.Component {
   }
 
   render () {
-    if (this.wallet.isEncrypted === false) return null
+    if (this.info.isEncrypted === false) return null
     return (
       <div>
         <p style={{margin: '0 0 5px 0'}}>

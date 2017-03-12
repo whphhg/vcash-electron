@@ -16,15 +16,13 @@ import SendRecipient from './SendRecipient'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('addresses', 'rates', 'send', 'ui', 'wallet') @observer
+@inject('rates', 'send', 'ui', 'wallet') @observer
 
 /** TODO: Table filters Change, Spent, Unspent, New */
-
 export default class Addresses extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.addresses = props.addresses
     this.rates = props.rates
     this.send = props.send
     this.ui = props.ui
@@ -60,7 +58,7 @@ export default class Addresses extends React.Component {
                 bordered
                 size='small'
                 scroll={
-                  this.addresses.all.length > 15
+                  this.wallet.all.length > 15
                     ? {y: 527}
                     : {}
                 }
@@ -68,7 +66,7 @@ export default class Addresses extends React.Component {
                 expandedRowRender={record => (
                   <p>Address details {record.address}</p>
                 )}
-                dataSource={this.addresses.all}
+                dataSource={this.wallet.all}
                 columns={[
                   {
                     title: this.t('wallet:addresses'),

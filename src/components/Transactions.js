@@ -13,14 +13,14 @@ import { TransactionsStatistics } from './charts'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('rates', 'transactions') @observer
+@inject('rates', 'wallet') @observer
 
 export default class Transactions extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
     this.rates = props.rates
-    this.transactions = props.transactions
+    this.wallet = props.wallet
     this.searchUpdateTimer = null
   }
 
@@ -31,7 +31,7 @@ export default class Transactions extends React.Component {
    * @param {number} index - Table row index.
    */
   @action view = (record, index) => {
-    this.transactions.setViewing(record.txid)
+    this.wallet.setViewing(record.txid)
   }
 
   /**
@@ -50,7 +50,7 @@ export default class Transactions extends React.Component {
      * are no changes made in the last half second.
      */
     this.searchUpdateTimer = setTimeout(() => {
-      this.transactions.setSearch(keywords)
+      this.wallet.setSearch(keywords)
     }, 0.5 * 1000)
   }
 
@@ -89,7 +89,7 @@ export default class Transactions extends React.Component {
                   display: 'inline-block'
                 }
               }}
-              dataSource={this.transactions.tableData}
+              dataSource={this.wallet.tableData}
               onRowClick={this.view}
               locale={{
                 filterConfirm: this.t('wallet:ok'),

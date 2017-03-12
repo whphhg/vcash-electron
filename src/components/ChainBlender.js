@@ -8,14 +8,15 @@ import { Switch } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('ui', 'wallet') @observer
+@inject('info', 'ui', 'rpc') @observer
 
 export default class ChainBlender extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
+    this.info = props.info
+    this.rpc = props.rpc
     this.ui = props.ui
-    this.wallet = props.wallet
   }
 
   /**
@@ -23,18 +24,16 @@ export default class ChainBlender extends React.Component {
    * @function toggle
    */
   @action toggle = () => {
-    this.wallet.toggleBlender()
+    this.rpc.toggleChainBlender()
   }
 
   render () {
-    const { chainBlender, isBlending, isLocked } = this.wallet
-
     return (
       <div>
         <Switch
           size='small'
-          checked={isBlending === true}
-          disabled={isLocked === true}
+          checked={this.info.isBlending === true}
+          disabled={this.info.isLocked === true}
           onChange={this.toggle}
           checkedChildren={
             <i
@@ -64,7 +63,7 @@ export default class ChainBlender extends React.Component {
               new Intl.NumberFormat(this.ui.language, {
                 minimumFractionDigits: 6,
                 maximumFractionDigits: 6
-              }).format(chainBlender.blendedbalance)
+              }).format(this.info.chainBlender.blendedbalance)
             }
           </span> XVC (
           <span>
@@ -72,12 +71,12 @@ export default class ChainBlender extends React.Component {
               new Intl.NumberFormat(this.ui.language, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
-              }).format(chainBlender.blendedpercentage)
+              }).format(this.info.chainBlender.blendedpercentage)
             }
           </span>%)
         </p>
         {
-          this.wallet.isLocked === false && (
+          this.info.isLocked === false && (
             <p
               style={{
                 margin: '0 0 0 11px',
@@ -89,7 +88,7 @@ export default class ChainBlender extends React.Component {
                   new Intl.NumberFormat(this.ui.language, {
                     minimumFractionDigits: 6,
                     maximumFractionDigits: 6
-                  }).format(chainBlender.denominatedbalance)
+                  }).format(this.info.chainBlender.denominatedbalance)
                 }
               </span> XVC
             </p>

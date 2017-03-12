@@ -8,7 +8,7 @@ import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('addresses') @observer
+@inject('rpc', 'wallet') @observer
 
 export default class AddressNew extends React.Component {
   @observable account = ''
@@ -19,7 +19,8 @@ export default class AddressNew extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.addresses = props.addresses
+    this.rpc = props.rpc
+    this.wallet = props.wallet
 
     /** Clear address when the popover closes. */
     reaction(() => this.popover, (popover) => {
@@ -83,7 +84,7 @@ export default class AddressNew extends React.Component {
    * @function getNew
    */
   @action getNew = () => {
-    this.addresses.getNew(this.account, (result, error) => {
+    this.rpc.getNewAddress(this.account, (result, error) => {
       if (result !== undefined) {
         this.setAddress(result)
       }
@@ -104,7 +105,7 @@ export default class AddressNew extends React.Component {
               style={{width: '100%'}}
               getPopupContainer={triggerNode => triggerNode.parentNode}
               value={this.account}
-              dataSource={this.addresses.accounts}
+              dataSource={this.wallet.accounts}
               onChange={this.setAccount}
             />
           </Col>

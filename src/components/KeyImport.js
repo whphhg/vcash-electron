@@ -8,7 +8,7 @@ import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('addresses', 'wallet') @observer
+@inject('info', 'rpc', 'wallet') @observer
 
 export default class KeyImport extends React.Component {
   @observable privateKey = ''
@@ -20,7 +20,8 @@ export default class KeyImport extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.addresses = props.addresses
+    this.info = props.info
+    this.rpc = props.rpc
     this.wallet = props.wallet
 
     /** Clear previous error on private key change. */
@@ -112,7 +113,7 @@ export default class KeyImport extends React.Component {
     /** Disable the button and show the loading indicator. */
     this.toggleLoading()
 
-    this.addresses.importKey(this.privateKey, this.account, (result, error) => {
+    this.rpc.importKey(this.privateKey, this.account, (result, error) => {
       /** Re-enable the button and hide the loading indicator. */
       this.toggleLoading()
 
@@ -148,7 +149,7 @@ export default class KeyImport extends React.Component {
               style={{width: '100%'}}
               getPopupContainer={triggerNode => triggerNode.parentNode}
               value={this.account}
-              dataSource={this.addresses.accounts}
+              dataSource={this.wallet.accounts}
               onChange={this.setAccount}
             />
           </Col>
@@ -196,7 +197,7 @@ export default class KeyImport extends React.Component {
         content={this.popoverContent()}
       >
         <Button
-          disabled={this.wallet.isLocked === true}
+          disabled={this.info.isLocked === true}
           size='small'
         >
           {this.t('wallet:privateKeyImport')}

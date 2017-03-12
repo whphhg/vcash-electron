@@ -8,7 +8,7 @@ import { Button, Col, Input, Modal, Row, Tooltip } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('wallet') @observer
+@inject('info', 'rpc') @observer
 
 export default class WalletUnlock extends React.Component {
   @observable passphrase = ''
@@ -18,7 +18,8 @@ export default class WalletUnlock extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.wallet = props.wallet
+    this.info = props.info
+    this.rpc = props.rpc
 
     /** Clear previous error on passphrase change. */
     reaction(() => this.passphrase, (passphrase) => {
@@ -81,7 +82,7 @@ export default class WalletUnlock extends React.Component {
    * @function unlock
    */
   @action unlock = () => {
-    this.wallet.unlock(this.passphrase, (result, error) => {
+    this.rpc.unlockWallet(this.passphrase, (result, error) => {
       if (result !== undefined) {
         this.toggleModal()
       }
@@ -93,7 +94,7 @@ export default class WalletUnlock extends React.Component {
   }
 
   render () {
-    if (this.wallet.isLocked === false) return null
+    if (this.info.isLocked === false) return null
     return (
       <div>
         <Modal

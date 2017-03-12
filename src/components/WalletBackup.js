@@ -11,7 +11,7 @@ import { dataPath } from '../utilities/common'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive. */
-@inject('wallet') @observer
+@inject('rpc') @observer
 
 export default class WalletBackup extends React.Component {
   @observable path = dataPath()
@@ -20,7 +20,7 @@ export default class WalletBackup extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.wallet = props.wallet
+    this.rpc = props.rpc
   }
 
   /**
@@ -63,7 +63,7 @@ export default class WalletBackup extends React.Component {
    * @function backup
    */
   @action backup = () => {
-    this.wallet.backup(this.path, (result, error) => {
+    this.rpc.backupWallet(this.path, (result, error) => {
       if (error !== this.error) {
         this.setError(error)
       }

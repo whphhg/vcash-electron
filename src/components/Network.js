@@ -13,16 +13,15 @@ import { Difficulties, HashRate, RewardSpread, RewardsPerDay } from './charts'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('network', 'transactions', 'ui', 'wallet') @observer
+@inject('info', 'rpc', 'ui') @observer
 
 export default class Incentive extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.network = props.network
-    this.transactions = props.transactions
+    this.info = props.info
+    this.rpc = props.rpc
     this.ui = props.ui
-    this.wallet = props.wallet
   }
 
   /**
@@ -30,7 +29,7 @@ export default class Incentive extends React.Component {
    * @function incentiveStake
    */
   @action incentiveStake = () => {
-    this.network.incentiveStake()
+    this.rpc.incentiveStake()
   }
 
   render () {
@@ -42,7 +41,7 @@ export default class Incentive extends React.Component {
               <div style={{float: 'left'}}>
                 <Button
                   onClick={this.incentiveStake}
-                  disabled={this.wallet.isLocked === true}
+                  disabled={this.info.isLocked === true}
                   size='small'
                   style={{margin: '0 10px 0 0'}}
                 >
@@ -54,10 +53,10 @@ export default class Incentive extends React.Component {
                   <span> {
                       new Intl.NumberFormat(this.ui.language, {
                         maximumFractionDigits: 6
-                      }).format(this.network.incentiveInfo.collateralbalance)
+                      }).format(this.info.incentive.collateralbalance)
                     } / {
                       new Intl.NumberFormat(this.ui.language)
-                        .format(this.network.incentiveInfo.collateralrequired)
+                        .format(this.info.incentive.collateralrequired)
                     }
                   </span> XVC
                 </p>
@@ -65,7 +64,7 @@ export default class Incentive extends React.Component {
                 <p>
                   {this.t('wallet:voteCandidate')}
                   <span> {
-                    this.network.incentiveInfo.votecandidate === true
+                    this.info.incentive.votecandidate === true
                       ? this.t('wallet:yes')
                       : this.t('wallet:no')
                     }
@@ -77,9 +76,9 @@ export default class Incentive extends React.Component {
                 <p>
                   {this.t('wallet:defaultAddress')}
                   <span> {
-                    this.network.incentiveInfo.walletaddress === ''
+                    this.info.incentive.walletaddress === ''
                       ? this.t('wallet:unlockRevealed')
-                      : this.network.incentiveInfo.walletaddress
+                      : this.info.incentive.walletaddress
                     }
                   </span>
                 </p>
@@ -155,7 +154,7 @@ export default class Incentive extends React.Component {
                   </Col>
                   <Col span={11}>
                     <span style={{fontWeight: '500'}}>
-                      {this.wallet.info.ip}:{this.wallet.info.port}
+                      {this.info.wallet.ip}:{this.info.wallet.port}
                     </span>
                   </Col>
                 </Row>
@@ -169,7 +168,7 @@ export default class Incentive extends React.Component {
                   <Col span={11}>
                     <span style={{fontWeight: '500'}}>
                       {
-                        this.network.incentiveInfo.networkstatus === 'ok'
+                        this.info.incentive.networkstatus === 'ok'
                           ? this.t('wallet:yes')
                           : this.t('wallet:no')
                       }
@@ -185,7 +184,8 @@ export default class Incentive extends React.Component {
                   </Col>
                   <Col span={11}>
                     <span style={{fontWeight: '500'}}>
-                      {this.network.collateralized} / {this.network.endpoints}
+                      {this.info.network.collateralized + ' / '}
+                      {this.info.network.endpoints.length}
                     </span>
                   </Col>
                 </Row>
@@ -199,7 +199,7 @@ export default class Incentive extends React.Component {
                   <Col span={11}>
                     <span style={{fontWeight: '500'}}>
                       {
-                        this.network.miningInfo.testnet === true
+                        this.info.mining.testnet === true
                           ? this.t('wallet:yes')
                           : this.t('wallet:no')
                       }
@@ -220,7 +220,7 @@ export default class Incentive extends React.Component {
                       {
                         new Intl.NumberFormat(this.ui.language, {
                           maximumFractionDigits: 0
-                        }).format(this.wallet.info.moneysupply)
+                        }).format(this.info.wallet.moneysupply)
                       }
                     </span> XVC
                   </Col>
@@ -236,7 +236,7 @@ export default class Incentive extends React.Component {
                     <span style={{fontWeight: '500'}}>
                       {
                         humanReadable(
-                          this.network.miningInfo.currentblocksize,
+                          this.info.mining.currentblocksize,
                           false
                         )
                       }
@@ -252,7 +252,7 @@ export default class Incentive extends React.Component {
                   </Col>
                   <Col span={10}>
                     <span style={{fontWeight: '500'}}>
-                      {this.network.miningInfo.currentblocktx}
+                      {this.info.mining.currentblocktx}
                     </span>
                   </Col>
                 </Row>
@@ -265,7 +265,7 @@ export default class Incentive extends React.Component {
                   </Col>
                   <Col span={10}>
                     <span style={{fontWeight: '500'}}>
-                      {this.network.miningInfo.pooledtx}
+                      {this.info.mining.pooledtx}
                     </span>
                   </Col>
                 </Row>

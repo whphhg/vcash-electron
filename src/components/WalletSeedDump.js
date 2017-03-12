@@ -8,7 +8,7 @@ import { Button, Col, Input, Row } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('wallet') @observer
+@inject('info', 'rpc') @observer
 
 export default class WalletSeedDump extends React.Component {
   @observable seed = ''
@@ -17,7 +17,8 @@ export default class WalletSeedDump extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.wallet = props.wallet
+    this.info = props.info
+    this.rpc = props.rpc
   }
 
   /** Clear seed when component unmounts. */
@@ -60,7 +61,7 @@ export default class WalletSeedDump extends React.Component {
    * @function dumpSeed
    */
   @action dumpSeed = () => {
-    this.wallet.dumpSeed((result, error) => {
+    this.rpc.dumpWalletSeed((result, error) => {
       if (result !== undefined) {
         this.setSeed(result)
       }
@@ -114,7 +115,7 @@ export default class WalletSeedDump extends React.Component {
               onClick={this.dumpSeed}
               disabled={
                 this.errorStatus !== false ||
-                this.wallet.isLocked === true
+                this.info.isLocked === true
               }
             >
               {this.t('wallet:seedDump')}

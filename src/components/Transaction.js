@@ -9,15 +9,16 @@ import moment from 'moment'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('rates', 'transactions', 'ui') @observer
+@inject('rates', 'rpc', 'ui', 'wallet') @observer
 
 export default class Transaction extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
     this.rates = props.rates
-    this.transactions = props.transactions
+    this.rpc = props.rpc
     this.ui = props.ui
+    this.wallet = props.wallet
   }
 
   /**
@@ -25,7 +26,7 @@ export default class Transaction extends React.Component {
    * @function ztlock
    */
   @action ztlock = () => {
-    this.transactions.ztlock(this.transactions.viewing)
+    this.rpc.ztlock(this.wallet.viewing)
   }
 
   /**
@@ -33,12 +34,12 @@ export default class Transaction extends React.Component {
    * @function toggleModal
    */
   @action toggleModal = () => {
-    this.transactions.setViewing()
+    this.wallet.setViewing()
   }
 
   render () {
     const { local, localCurrency, average } = this.rates
-    const { viewing, viewingTx } = this.transactions
+    const { viewing, viewingTx } = this.wallet
 
     if (viewing === null) return null
     return (

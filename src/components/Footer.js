@@ -6,15 +6,14 @@ import { inject, observer } from 'mobx-react'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('network', 'ui', 'wallet') @observer
+@inject('info', 'ui') @observer
 
 export default class Footer extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.network = props.network
+    this.info = props.info
     this.ui = props.ui
-    this.wallet = props.wallet
   }
 
   render () {
@@ -26,15 +25,15 @@ export default class Footer extends React.Component {
             {this.t('wallet:onBlock')}
             <span> {
               new Intl.NumberFormat(this.ui.language)
-                .format(this.wallet.info.blocks)
+                .format(this.info.wallet.blocks)
               }
             </span>
           </p>
           <i className='material-icons md-16'>settings_input_antenna</i>
           <p>
-            <span>{this.network.tcp} TCP </span>
+            <span>{this.info.network.tcp} TCP </span>
             {this.t('wallet:and')}
-            <span> {this.network.udp} UDP </span>
+            <span> {this.info.network.udp} UDP </span>
             {this.t('wallet:connections')}
           </p>
         </div>
@@ -54,12 +53,12 @@ export default class Footer extends React.Component {
           />
           <p>
             Vcash
-            <span> {this.wallet.info.version.split(':')[1]}</span>
+            <span> {this.info.wallet.version.split(':')[1]}</span>
           </p>
           <i className='material-icons md-16'>account_balance_wallet</i>
           <p>
             {this.t('wallet:wallet')}
-            <span> {this.wallet.info.walletversion}</span>
+            <span> {this.info.wallet.walletversion}</span>
           </p>
           <i className='material-icons md-16'>computer</i>
           <p>

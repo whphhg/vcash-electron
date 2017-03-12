@@ -8,7 +8,7 @@ import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('addresses', 'wallet') @observer
+@inject('info', 'rpc', 'wallet') @observer
 
 export default class KeyDump extends React.Component {
   @observable address = ''
@@ -19,7 +19,8 @@ export default class KeyDump extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.addresses = props.addresses
+    this.info = props.info
+    this.rpc = props.rpc
     this.wallet = props.wallet
 
     /** Clear private key and previous error on address change. */
@@ -95,7 +96,7 @@ export default class KeyDump extends React.Component {
    * @function dumpKey
    */
   @action dumpKey = () => {
-    this.addresses.dumpKey(this.address, (result, error) => {
+    this.rpc.dumpKey(this.address, (result, error) => {
       if (result !== undefined) {
         this.setPrivateKey(result)
       }
@@ -116,7 +117,7 @@ export default class KeyDump extends React.Component {
               style={{width: '100%'}}
               getPopupContainer={triggerNode => triggerNode.parentNode}
               value={this.address}
-              dataSource={this.addresses.list}
+              dataSource={this.wallet.list}
               onChange={this.setAddress}
             />
           </Col>
@@ -176,7 +177,7 @@ export default class KeyDump extends React.Component {
         onVisibleChange={this.togglePopover}
       >
         <Button
-          disabled={this.wallet.isLocked === true}
+          disabled={this.info.isLocked === true}
           size='small'
         >
           {this.t('wallet:privateKeyDump')}

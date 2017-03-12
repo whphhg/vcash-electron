@@ -19,13 +19,13 @@ import { CustomTick, CustomTooltip } from './RechartsCustom'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('transactions') @observer
+@inject('stats') @observer
 
 export default class RewardsPerDay extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.transactions = props.transactions
+    this.stats = props.stats
   }
 
   render () {
@@ -34,7 +34,7 @@ export default class RewardsPerDay extends React.Component {
     return (
       <ResponsiveContainer width='100%' height={210}>
         <BarChart
-          data={this.transactions.rewardsPerDay}
+          data={this.stats.rewardsPerDay}
           margin={{top: 15, right: 20, bottom: 5, left: 20}}
         >
           <Bar

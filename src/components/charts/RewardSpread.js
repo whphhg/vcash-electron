@@ -19,13 +19,13 @@ import { CustomTick, CustomTooltip } from './RechartsCustom'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('transactions') @observer
+@inject('stats') @observer
 
 export default class RewardSpread extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.transactions = props.transactions
+    this.stats = props.stats
   }
 
   render () {
@@ -38,17 +38,17 @@ export default class RewardSpread extends React.Component {
         >
           <Scatter
             name={this.t('wallet:stakingReward')}
-            data={this.transactions.rewardSpread.stakingReward}
+            data={this.stats.rewardSpread.stakingReward}
             fill='#FE9950'
           />
           <Scatter
             name={this.t('wallet:miningReward')}
-            data={this.transactions.rewardSpread.miningReward}
+            data={this.stats.rewardSpread.miningReward}
             fill='#EC5E44'
           />
           <Scatter
             name={this.t('wallet:incentiveReward')}
-            data={this.transactions.rewardSpread.incentiveReward}
+            data={this.stats.rewardSpread.incentiveReward}
             fill='#803888'
           />
           <XAxis
