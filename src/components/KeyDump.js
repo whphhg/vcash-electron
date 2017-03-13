@@ -117,7 +117,7 @@ export default class KeyDump extends React.Component {
               style={{width: '100%'}}
               getPopupContainer={triggerNode => triggerNode.parentNode}
               value={this.address}
-              dataSource={this.wallet.list}
+              dataSource={this.wallet.addressList}
               onChange={this.setAddress}
             />
           </Col>

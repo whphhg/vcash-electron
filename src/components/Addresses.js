@@ -58,7 +58,7 @@ export default class Addresses extends React.Component {
                 bordered
                 size='small'
                 scroll={
-                  this.wallet.all.length > 15
+                  this.wallet.addressData.length > 15
                     ? {y: 527}
                     : {}
                 }
@@ -66,7 +66,8 @@ export default class Addresses extends React.Component {
                 expandedRowRender={record => (
                   <p>Address details {record.address}</p>
                 )}
-                dataSource={this.wallet.all}
+                dataSource={this.wallet.addressData}
+                rowKey='address'
                 columns={[
                   {
                     title: this.t('wallet:addresses'),
@@ -76,10 +77,17 @@ export default class Addresses extends React.Component {
                   },
                   {
                     title: this.t('wallet:balance'),
-                    dataIndex: 'amount',
-                    sorter: (a, b) => a.amount - b.amount,
-                    render: text => (
-                      <p style={{textAlign: 'right'}}>{text} XVC</p>
+                    dataIndex: 'balance',
+                    sorter: (a, b) => a.balance - b.balance,
+                    render: balance => (
+                      <p style={{textAlign: 'right'}}>
+                        {
+                          new Intl.NumberFormat(this.ui.language, {
+                            minimumFractionDigits: 6,
+                            maximumFractionDigits: 6
+                          }).format(balance)
+                        } XVC
+                      </p>
                     )
                   }
                 ]}

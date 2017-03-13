@@ -12,21 +12,18 @@ import ui from './ui'
 class Wallet {
   /**
    * Observable properties.
-   * @property {map} txids - Transactions RPC responses.
-   * @property {array} search - Search txs using these keywords.
-   * @property {string|null} viewing - Transaction being viewed.
-   * @property {string|null} viewingQueue - Tx waiting to be viewed (just sent).
+   * @property {map} addresses - Wallet label and change addresses.
+   * @property {map} transactions - Wallet transactions.
+   * @property {map} outputs - Outputs available to be spent.
    */
-  @observable txids = observable.map({})
-  @observable search = observable.array([])
-  @observable viewing = null
-  @observable viewingQueue = null
-
   @observable addresses = observable.map({})
   @observable transactions = observable.map({})
   @observable outputs = observable.map({})
 
-  @observable receivedByAddress = []
+  @observable txids = observable.map({})
+  @observable search = observable.array([])
+  @observable viewing = null
+  @observable viewingQueue = null
 
   /**
    * @constructor
@@ -37,10 +34,14 @@ class Wallet {
     this.loopTimeout = null
     this.sinceBlock = ''
 
-    /** Start update loop when RPC becomes available. */
+    /** When RPC becomes available: */
     reaction(() => rpc.status, (status) => {
       if (status === true) {
-        this.restartLoop()
+        /** Start the update loop. */
+        this.getTransactions()
+
+        /** Update addresses. */
+        this.getAddresses()
       }
     })
 
@@ -50,17 +51,7 @@ class Wallet {
         this.setViewing(this.viewingQueue)
       }
     })
-
-    /** List addresses when RPC becomes available. */
-    reaction(() => rpc.status, (status) => {
-      if (status === true) {
-        this.listreceivedbyaddress()
-      }
-    })
   }
-
-  @action getAddresses () {}
-  @action getTransactions () {}
 
   /**
    * Get a list of account names in alphabetical order.
@@ -68,11 +59,14 @@ class Wallet {
    * @return {array} Account list.
    */
   @computed get accounts () {
-    /** Reduce the array and add account names to the Set. */
-    let accounts = this.receivedByAddress.reduce((accounts, obj) => {
-      if (obj.account !== '') accounts.add(obj.account)
-      return accounts
-    }, new Set())
+    let accounts = new Set()
+
+    /** Add accounts to the set. */
+    this.addresses.forEach((address) => {
+      if (address.account !== '') {
+        accounts.add(address.account)
+      }
+    })
 
     /** Convert Set to Array. */
     accounts = [...accounts]
@@ -86,54 +80,20 @@ class Wallet {
 
   /**
    * Get a list of addresses.
-   * @function list
+   * @function addressList
    * @return {array} Address list.
    */
-  @computed get list () {
-    /** Reduce the array and add addresses to the Set. */
-    const addresses = this.receivedByAddress.reduce((addresses, obj) => {
-      addresses.add(obj.address)
-      return addresses
-    }, new Set())
-
-    return [...addresses]
+  @computed get addressList () {
+    return [...this.addresses.keys()]
   }
 
   /**
-   * Get addresses data with local amounts.
-   * @function all
-   * @return {array} Addresses data with local amounts.
+   * Get addresses data.
+   * @function addressData
+   * @return {array} Addresses data.
    */
-  @computed get all () {
-    return this.receivedByAddress.reduce((addresses, obj) => {
-      addresses.push({
-        ...obj,
-        key: obj.address,
-        amount: new Intl.NumberFormat(ui.language, {
-          minimumFractionDigits: 6,
-          maximumFractionDigits: 6
-        }).format(obj.amount)
-      })
-
-      return addresses
-    }, [])
-  }
-
-  /**
-   * Get all addresses, including unused.
-   * @function listreceivedbyaddress
-   */
-  listreceivedbyaddress () {
-    rpc.exec([
-      {
-        method: 'listreceivedbyaddress',
-        params: [0, true]
-      }
-    ], (response) => {
-      if (response !== null) {
-        this.receivedByAddress = response[0].result
-      }
-    })
+  @computed get addressData () {
+    return [...this.addresses.values()]
   }
 
   /**
@@ -296,6 +256,41 @@ class Wallet {
         this.viewingQueue = null
       }
     }
+  }
+
+  /**
+   * Set searching keywords.
+   * @function setSearch
+   * @param {string} keywords - Keywords to search transactions by.
+   */
+  @action setSearch (keywords) {
+    this.search = keywords.match(/[^ ]+/g) || []
+  }
+
+  /**
+   * Set addresses.
+   * @function setAddresses
+   * @param {array} addresses - Addresses.
+   */
+  @action setAddresses (addresses) {
+    addresses.forEach((obj) => {
+      const isSaved = this.addresses.has(obj.address)
+
+      /** Saved: update account name incase it changed. */
+      if (isSaved === true) {
+        let saved = this.addresses.get(obj.address)
+        saved.account = obj.account
+      }
+
+      /** Add any unsaved addresses. */
+      if (isSaved === false) {
+        this.addresses.set(obj.address, {
+          address: obj.address,
+          account: obj.account,
+          balance: obj.amount
+        })
+      }
+    })
   }
 
   /**
@@ -582,74 +577,40 @@ class Wallet {
   }
 
   /**
-   * Set searching keywords.
-   * @function setSearch
-   * @param {string} keywords - Keywords to search transactions by.
+   * Get addresses (including unused).
+   * @function getAddresses
    */
-  @action setSearch (keywords) {
-    this.search = keywords.match(/[^ ]+/g) || []
-  }
-
-  /**
-   * Clear current loop timeout.
-   * @function clearLoopTimeout
-   */
-  @action clearLoopTimeout () {
-    clearTimeout(this.loopTimeout)
-    this.loopTimeout = null
-  }
-
-  /**
-   * Start new loop and save its timeout id.
-   * @function setLoopTimeout
-   * @param {string} block - List since this blockhash.
-   */
-  @action setLoopTimeout (block) {
-    this.sinceBlock = block
-
-    /** Set loop timeout using provided blockhash. */
-    this.loopTimeout = setTimeout(() => {
-      this.loop(block)
-    }, 10 * 1000)
-  }
-
-  /**
-   * Restart the update loop.
-   * @function restartLoop
-   * @param {boolean} fromGenesis - Start from beginning?
-   */
-  restartLoop (fromGenesis = false) {
-    this.clearLoopTimeout()
-
-    if (fromGenesis === true) {
-      this.loop(this.sinceBlock)
-    } else {
-      this.loop()
-    }
+  getAddresses () {
+    rpc.exec([
+      { method: 'listreceivedbyaddress', params: [0, true] }
+    ], (response) => {
+      if (response !== null) {
+        this.setAddresses(response[0].result)
+      }
+    })
   }
 
   /**
    * Get transactions since provided block.
-   * @param {string} Previous response blockhash.
-   * @function loop
+   * @param {string} sinceBlock - Previous response blockhash.
+   * @function getTransactions
    */
-  loop (block = '') {
+  getTransactions (sinceBlock = '') {
     rpc.exec([
-      {
-        method: 'listsinceblock',
-        params: [block]
-      },
-      {
-        method: 'getrawmempool',
-        params: [true]
-      }
+      { method: 'listsinceblock', params: [sinceBlock] },
+      { method: 'getrawmempool', params: [true] }
     ], (response) => {
       if (response !== null) {
         let lsb = response[0].result
         let mempool = response[1].result
 
-        /** Start new loop. */
-        this.setLoopTimeout(lsb.lastblock)
+        /** Retrieved transactions up to this block. */
+        this.sinceBlock = lsb.lastblock
+
+        /** Set a new timeout for 10 seconds. */
+        this.loopTimeout = setTimeout(() => {
+          this.getTransactions(lsb.lastblock)
+        }, 10 * 1000)
 
         /** Add txid of the transaction being viewed. */
         if (this.viewing !== null) {
@@ -727,6 +688,29 @@ class Wallet {
         }
       }
     })
+  }
+
+  /**
+   * Restart the update loop.
+   * @function restart
+   * @param {boolean} fromGenesis - Start from genesis or last listed block.
+   * @param {boolean} getAddresses - Update addresses as well.
+   */
+  restart (fromGenesis = false, getAddresses = false) {
+    /** Clear previous timeout id. */
+    clearTimeout(this.loopTimeout)
+
+    /** Update addresses. */
+    if (getAddresses === true) {
+      this.getAddresses()
+    }
+
+    /** Restart from genesis or last known block. */
+    if (fromGenesis === true) {
+      this.getTransactions(this.sinceBlock)
+    } else {
+      this.getTransactions()
+    }
   }
 }
 
