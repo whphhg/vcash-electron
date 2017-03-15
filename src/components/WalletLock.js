@@ -1,6 +1,5 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { action } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button, Tooltip } from 'antd'
 
@@ -22,7 +21,7 @@ export default class WalletLock extends React.Component {
    * Lock the wallet.
    * @function lock
    */
-  @action lock = () => {
+  lock = () => {
     this.rpc.lockWallet()
   }
 

@@ -11,7 +11,7 @@ import { Button, Popconfirm, Switch } from 'antd'
 @inject('info', 'rates', 'send', 'ui') @observer
 
 export default class Send extends React.Component {
-  @observable popconfirmVisible = false
+  @observable popconfirm = false
 
   constructor (props) {
     super(props)
@@ -25,14 +25,13 @@ export default class Send extends React.Component {
   /**
    * Toggle visibility of popconfirm.
    * @function togglePopconfirm
-   * @param {boolean} visible - Popconfirm visibiltiy.
    */
-  @action togglePopconfirm = (visible) => {
+  @action togglePopconfirm = () => {
     if (
       this.info.isLocked === false &&
       this.send.errorStatus === false
     ) {
-      this.popconfirmVisible = visible
+      this.popconfirm = !this.popconfirm
     }
   }
 
@@ -70,7 +69,7 @@ export default class Send extends React.Component {
             okText={this.t('wallet:yes')}
             cancelText={this.t('wallet:no')}
             onConfirm={this.confirm}
-            visible={this.popconfirmVisible}
+            visible={this.popconfirm}
             onVisibleChange={this.togglePopconfirm}
           >
             <Button

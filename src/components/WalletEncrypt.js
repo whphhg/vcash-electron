@@ -52,7 +52,7 @@ export default class WalletEncrypt extends React.Component {
    * Encrypt the wallet.
    * @function encrypt
    */
-  @action encrypt = () => {
+  encrypt = () => {
     this.rpc.encryptWallet(this.passphrase)
   }
 

@@ -73,7 +73,7 @@ export default class WalletPassphraseChange extends React.Component {
    * Change wallet passphrase.
    * @function passphraseChange
    */
-  @action passphraseChange = () => {
+  passphraseChange = () => {
     this.rpc.passphraseChange(this.current, this.next, (result, error) => {
       if (error !== this.error) {
         this.setError(error)

@@ -1,6 +1,5 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { action } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Select } from 'antd'
 
@@ -22,7 +21,7 @@ export default class SelectLanguage extends React.Component {
    * @function setLanguage
    * @param {string} language - Locale.
    */
-  @action setLanguage = (language) => {
+  setLanguage = (language) => {
     this.ui.setLanguage(language)
   }
 

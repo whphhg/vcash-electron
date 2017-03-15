@@ -98,7 +98,7 @@ export default class KeyImport extends React.Component {
   }
 
   /**
-   * Toggle popover.
+   * Toggle visibility of popover.
    * @function togglePopover
    */
   @action togglePopover = () => {
@@ -111,7 +111,7 @@ export default class KeyImport extends React.Component {
    * Import private key.
    * @function importKey
    */
-  @action importKey = () => {
+  importKey = () => {
     /** Disable the button and show the loading indicator. */
     this.toggleLoading()
 

@@ -83,7 +83,7 @@ export default class AddressNew extends React.Component {
    * Get new address.
    * @function getNew
    */
-  @action getNew = () => {
+  getNew = () => {
     this.rpc.getNewAddress(this.account, (result, error) => {
       if (result !== undefined) {
         this.setAddress(result)

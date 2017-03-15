@@ -1,6 +1,5 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { action } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Switch, Tooltip } from 'antd'
 
@@ -23,7 +22,7 @@ export default class ChainBlender extends React.Component {
    * Toggle ChainBlender.
    * @function toggle
    */
-  @action toggle = () => {
+  toggle = () => {
     this.rpc.toggleChainBlender()
   }
 

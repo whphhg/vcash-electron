@@ -60,7 +60,7 @@ export default class WalletSeedDump extends React.Component {
    * Dump wallet seed.
    * @function dumpSeed
    */
-  @action dumpSeed = () => {
+  dumpSeed = () => {
     this.rpc.dumpWalletSeed((result, error) => {
       if (result !== undefined) {
         this.setSeed(result)

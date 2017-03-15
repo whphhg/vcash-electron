@@ -81,7 +81,7 @@ export default class WalletUnlock extends React.Component {
    * Unlock the wallet.
    * @function unlock
    */
-  @action unlock = () => {
+  unlock = () => {
     this.rpc.unlockWallet(this.passphrase, (result, error) => {
       if (result !== undefined) {
         this.toggleModal()

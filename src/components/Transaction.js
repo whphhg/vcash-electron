@@ -1,6 +1,5 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { action } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Col, Modal, Row, Table } from 'antd'
 import moment from 'moment'
@@ -25,7 +24,7 @@ export default class Transaction extends React.Component {
    * Lock transaction.
    * @function ztlock
    */
-  @action ztlock = () => {
+  ztlock = () => {
     this.rpc.ztlock(this.wallet.viewing)
   }
 
@@ -33,7 +32,7 @@ export default class Transaction extends React.Component {
    * Toggle modal.
    * @function toggleModal
    */
-  @action toggleModal = () => {
+  toggleModal = () => {
     this.wallet.setViewing()
   }
 

@@ -62,7 +62,7 @@ export default class WalletBackup extends React.Component {
    * Backup the wallet.
    * @function backup
    */
-  @action backup = () => {
+  backup = () => {
     this.rpc.backupWallet(this.path, (result, error) => {
       if (error !== this.error) {
         this.setError(error)

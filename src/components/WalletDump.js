@@ -1,6 +1,5 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { action } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button, Col, Input, Row } from 'antd'
 import { dataPath } from '../utilities/common'
@@ -23,7 +22,7 @@ export default class WalletDump extends React.Component {
    * Dump the wallet.
    * @function dump
    */
-  @action dump = () => {
+  dump = () => {
     this.rpc.dumpWallet()
   }
 

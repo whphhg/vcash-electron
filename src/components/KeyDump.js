@@ -84,7 +84,7 @@ export default class KeyDump extends React.Component {
   }
 
   /**
-   * Toggle popover.
+   * Toggle visibility of popover.
    * @function togglePopover
    */
   @action togglePopover = () => {
@@ -97,7 +97,7 @@ export default class KeyDump extends React.Component {
    * Dump private key.
    * @function dumpKey
    */
-  @action dumpKey = () => {
+  dumpKey = () => {
     this.rpc.dumpKey(this.address, (result, error) => {
       if (result !== undefined) {
         this.setPrivateKey(result)

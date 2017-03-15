@@ -1,6 +1,5 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { action } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Menu } from 'antd'
 
@@ -29,7 +28,7 @@ export default class Header extends React.Component {
    * @function setRoute
    * @param {object} e - Event.
    */
-  @action setRoute = (e) => {
+  setRoute = (e) => {
     this.ui.setRoute(e.key)
   }
 

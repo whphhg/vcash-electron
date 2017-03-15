@@ -1,6 +1,5 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { action } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Select } from 'antd'
 
@@ -22,7 +21,7 @@ export default class SelectCurrency extends React.Component {
    * @function setLocalCurrency
    * @param {string} currency - Local currency.
    */
-  @action setLocalCurrency = (currency) => {
+  setLocalCurrency = (currency) => {
     this.rates.setLocalCurrency(currency)
   }
 

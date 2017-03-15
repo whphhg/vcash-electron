@@ -39,7 +39,7 @@ export default class Transactions extends React.Component {
    * @function setSearch
    * @param {object} e - Input element event.
    */
-  @action setSearch = (e) => {
+  setSearch = (e) => {
     clearTimeout(this.searchUpdateTimer)
 
     /** Save entered values. */
