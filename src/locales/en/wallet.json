@@ -148,6 +148,7 @@
   "testnet": "Testnet",
   "to": "To",
   "toBeConfirmed": "to be confirmed",
+  "toggleChainBlender": "Toggle ChainBlender",
   "total": "Total",
   "transactionDetails": "Transaction details",
   "transactionId": "Transaction ID",

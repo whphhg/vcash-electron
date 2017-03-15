@@ -148,6 +148,7 @@
   "testnet": "Testnet",
   "to": "Za",
   "toBeConfirmed": "čaka na potrditev",
+  "toggleChainBlender": "Preklopi mešalnik",
   "total": "Skupaj",
   "transactionDetails": "Podatki o transakciji",
   "transactionId": "ID transakcije",

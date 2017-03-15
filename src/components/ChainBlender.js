@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Switch } from 'antd'
+import { Switch, Tooltip } from 'antd'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -30,28 +30,33 @@ export default class ChainBlender extends React.Component {
   render () {
     return (
       <div>
-        <Switch
-          size='small'
-          checked={this.info.isBlending === true}
-          disabled={this.info.isLocked === true}
-          onChange={this.toggle}
-          checkedChildren={
-            <i
-              className='material-icons md-16'
-              style={{margin: '-2px 0 0 0'}}
-            >
-              done
-            </i>
-          }
-          unCheckedChildren={
-            <i
-              className='material-icons md-16'
-              style={{margin: '-2px 0 0 0'}}
-            >
-              clear
-            </i>
-          }
-        />
+        <Tooltip
+          title={this.t('wallet:toggleChainBlender')}
+          placement='bottomLeft'
+        >
+          <Switch
+            size='small'
+            checked={this.info.isBlending === true}
+            disabled={this.info.isLocked === true}
+            onChange={this.toggle}
+            checkedChildren={
+              <i
+                className='material-icons md-16'
+                style={{margin: '-2px 0 0 0'}}
+              >
+                done
+              </i>
+            }
+            unCheckedChildren={
+              <i
+                className='material-icons md-16'
+                style={{margin: '-2px 0 0 0'}}
+              >
+                clear
+              </i>
+            }
+          />
+        </Tooltip>
         <p
           style={{
             margin: '0 0 0 11px',
