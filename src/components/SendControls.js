@@ -1,5 +1,6 @@
 import React from 'react'
 import { translate } from 'react-i18next'
+import { action, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button, Popconfirm, Switch } from 'antd'
 
@@ -10,6 +11,8 @@ import { Button, Popconfirm, Switch } from 'antd'
 @inject('info', 'rates', 'send', 'ui') @observer
 
 export default class Send extends React.Component {
+  @observable popconfirmVisible = false
+
   constructor (props) {
     super(props)
     this.t = props.t
@@ -17,6 +20,20 @@ export default class Send extends React.Component {
     this.rates = props.rates
     this.send = props.send
     this.ui = props.ui
+  }
+
+  /**
+   * Toggle visibility of popconfirm.
+   * @function togglePopconfirm
+   * @param {boolean} visible - Popconfirm visibiltiy.
+   */
+  @action togglePopconfirm = (visible) => {
+    if (
+      this.info.isLocked === false &&
+      this.send.errorStatus === false
+    ) {
+      this.popconfirmVisible = visible
+    }
   }
 
   /**
@@ -53,6 +70,8 @@ export default class Send extends React.Component {
             okText={this.t('wallet:yes')}
             cancelText={this.t('wallet:no')}
             onConfirm={this.confirm}
+            visible={this.popconfirmVisible}
+            onVisibleChange={this.togglePopconfirm}
           >
             <Button
               disabled={
