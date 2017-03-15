@@ -88,7 +88,9 @@ export default class KeyDump extends React.Component {
    * @function togglePopover
    */
   @action togglePopover = () => {
-    this.popover = !this.popover
+    if (this.info.isLocked === false) {
+      this.popover = !this.popover
+    }
   }
 
   /**
@@ -173,7 +175,7 @@ export default class KeyDump extends React.Component {
         trigger='click'
         placement='bottomLeft'
         content={this.popoverContent()}
-        visible={this.popover === true}
+        visible={this.popover}
         onVisibleChange={this.togglePopover}
       >
         <Button

@@ -102,7 +102,9 @@ export default class KeyImport extends React.Component {
    * @function togglePopover
    */
   @action togglePopover = () => {
-    this.popover = !this.popover
+    if (this.info.isLocked === false) {
+      this.popover = !this.popover
+    }
   }
 
   /**
@@ -192,7 +194,7 @@ export default class KeyImport extends React.Component {
         trigger='click'
         placement='bottomLeft'
         title={this.t('wallet:privateKeyImportLong')}
-        visible={this.popover === true}
+        visible={this.popover}
         onVisibleChange={this.togglePopover}
         content={this.popoverContent()}
       >
