@@ -156,7 +156,7 @@ export default class AddressNew extends React.Component {
         trigger='click'
         placement='bottomLeft'
         content={this.popoverContent()}
-        visible={this.popover === true}
+        visible={this.popover}
         onVisibleChange={this.togglePopover}
       >
         <Button size='small'>{this.t('wallet:addressGenerate')}</Button>

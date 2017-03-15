@@ -33,6 +33,7 @@
   "chainBlender_stop": "ChainBlender ustavljen",
   "collateralBalance": "Vsota zavarovalnine",
   "collateralizedNodes": "Vozlišča z zavarovalnino",
+  "collateralStakeConfirm": "Potrdi vložitev zavarovalnine.",
   "comment": "Komentar",
   "confirmations": "Potrditve",
   "connected": "Povezan",

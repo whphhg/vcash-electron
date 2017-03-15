@@ -33,6 +33,7 @@
   "chainBlender_stop": "ChainBlender stopped",
   "collateralBalance": "Collateral balance",
   "collateralizedNodes": "Collateralized nodes",
+  "collateralStakeConfirm": "Are you sure you want to stake the collateral?",
   "comment": "Comment",
   "confirmations": "Confirmations",
   "connected": "Connected",

@@ -1,8 +1,8 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { action } from 'mobx'
+import { action, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Button, Col, Row } from 'antd'
+import { Button, Col, Popconfirm, Row } from 'antd'
 import { humanReadable } from '../utilities/common'
 
 /** Required components. */
@@ -16,6 +16,8 @@ import { Difficulties, HashRate, RewardSpread, RewardsPerDay } from './charts'
 @inject('info', 'rpc', 'ui') @observer
 
 export default class Incentive extends React.Component {
+  @observable popconfirm = false
+
   constructor (props) {
     super(props)
     this.t = props.t
@@ -25,10 +27,20 @@ export default class Incentive extends React.Component {
   }
 
   /**
+   * Toggle visibility of popconfirm.
+   * @function togglePopconfirm
+   */
+  @action togglePopconfirm = () => {
+    if (this.info.isLocked === false) {
+      this.popconfirm = !this.popconfirm
+    }
+  }
+
+  /**
    * Stake incentive collateral.
    * @function incentiveStake
    */
-  @action incentiveStake = () => {
+  incentiveStake = () => {
     this.rpc.incentiveStake()
   }
 
@@ -39,14 +51,25 @@ export default class Incentive extends React.Component {
           <Col span={24} className='shadow'>
             <div className='toolbar'>
               <div style={{float: 'left'}}>
-                <Button
-                  onClick={this.incentiveStake}
-                  disabled={this.info.isLocked === true}
-                  size='small'
-                  style={{margin: '0 10px 0 0'}}
-                >
-                  {this.t('wallet:stakeCollateral')}
-                </Button>
+                <div style={{float: 'left'}}>
+                  <Popconfirm
+                    placement='bottomLeft'
+                    title={this.t('wallet:collateralStakeConfirm')}
+                    okText={this.t('wallet:yes')}
+                    cancelText={this.t('wallet:no')}
+                    onConfirm={this.incentiveStake}
+                    visible={this.popconfirm}
+                    onVisibleChange={this.togglePopconfirm}
+                  >
+                    <Button
+                      disabled={this.info.isLocked === true}
+                      size='small'
+                      style={{margin: '0 10px 0 0'}}
+                    >
+                      {this.t('wallet:stakeCollateral')}
+                    </Button>
+                  </Popconfirm>
+                </div>
                 <i className='material-icons md-20'>redeem</i>
                 <p>
                   {this.t('wallet:collateralBalance')}
