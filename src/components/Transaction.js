@@ -278,7 +278,7 @@ export default class Transaction extends React.Component {
                   : {}
               }
               pagination={false}
-              dataSource={viewingTx.inputs.slice()}
+              dataSource={[...viewingTx.inputs]}
               locale={{
                 emptyText: this.t('wallet:coinbase')
               }}
@@ -287,20 +287,20 @@ export default class Transaction extends React.Component {
                   title: this.t('wallet:from'),
                   dataIndex: 'address',
                   width: 290,
-                  render: text => (
-                    <p className='text-mono'>{text}</p>
+                  render: address => (
+                    <p className='text-mono'>{address}</p>
                   )
                 },
                 {
                   title: this.t('wallet:amount'),
-                  dataIndex: 'value',
-                  render: text => (
+                  dataIndex: 'amount',
+                  render: amount => (
                     <p style={{textAlign: 'right'}}>
                       {
                         new Intl.NumberFormat(this.ui.language, {
                           minimumFractionDigits: 6,
                           maximumFractionDigits: 6
-                        }).format(text)
+                        }).format(amount)
                       } XVC
                     </p>
                   )
@@ -321,26 +321,29 @@ export default class Transaction extends React.Component {
                   : {}
               }
               pagination={false}
-              dataSource={viewingTx.outputs.slice()}
+              dataSource={[...viewingTx.outputs]}
               columns={[
                 {
                   title: this.t('wallet:to'),
                   dataIndex: 'address',
                   width: 290,
-                  render: text => (
-                    <p className='text-mono'>{text}</p>
+                  render: address => (
+                    <p className='text-mono'>{address}</p>
                   )
                 },
                 {
                   title: this.t('wallet:amount'),
-                  dataIndex: 'value',
-                  render: text => (
-                    <p style={{textAlign: 'right'}}>
+                  dataIndex: 'amount',
+                  render: (amount, record) => (
+                    <p
+                      style={{textAlign: 'right'}}
+                      className={record.color}
+                    >
                       {
                         new Intl.NumberFormat(this.ui.language, {
                           minimumFractionDigits: 6,
                           maximumFractionDigits: 6
-                        }).format(text)
+                        }).format(amount)
                       } XVC
                     </p>
                   )
