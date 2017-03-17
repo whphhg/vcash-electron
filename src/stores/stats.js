@@ -83,7 +83,7 @@ class Stats {
     }
 
     /** Add category counts to the dailyTotals map. */
-    wallet.txids.forEach((tx, txid) => {
+    wallet.transactions.forEach((tx, txid) => {
       /** Check if tx time is in the last 31 days window. */
       if (tx.time > threshold) {
         const date = moment(tx.time).format('YYYYMMDD')

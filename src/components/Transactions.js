@@ -1,6 +1,5 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { action } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Input, Row, Table } from 'antd'
 import moment from 'moment'
@@ -30,7 +29,7 @@ export default class Transactions extends React.Component {
    * @param {object} record - Table row data.
    * @param {number} index - Table row index.
    */
-  @action view = (record, index) => {
+  view = (record, index) => {
     this.wallet.setViewing(record.txid)
   }
 
@@ -89,7 +88,7 @@ export default class Transactions extends React.Component {
                   display: 'inline-block'
                 }
               }}
-              dataSource={this.wallet.tableData}
+              dataSource={this.wallet.transactionsData}
               onRowClick={this.view}
               locale={{
                 filterConfirm: this.t('wallet:ok'),
