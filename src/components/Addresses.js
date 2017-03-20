@@ -4,6 +4,7 @@ import { inject, observer } from 'mobx-react'
 import { Col, Input, Row, Table } from 'antd'
 
 /** Required components. */
+import Address from './Address'
 import AddressNew from './AddressNew'
 import CurrencyConverter from './CurrencyConverter'
 import KeyDump from './KeyDump'
@@ -18,7 +19,6 @@ import SendRecipient from './SendRecipient'
 /** Make the component reactive and inject MobX stores. */
 @inject('rates', 'send', 'ui', 'wallet') @observer
 
-/** TODO: Table filters Change, Spent, Unspent, New */
 export default class Addresses extends React.Component {
   constructor (props) {
     super(props)
@@ -57,15 +57,16 @@ export default class Addresses extends React.Component {
               <Table
                 bordered
                 size='small'
-                scroll={
-                  this.wallet.addressData.length > 15
-                    ? {y: 527}
-                    : {}
-                }
+                scroll={{y: 527}}
                 pagination={false}
-                expandedRowRender={record => (
-                  <p>Address details {record.address}</p>
+                expandedRowRender={data => (
+                  <Address data={data} />
                 )}
+                locale={{
+                  filterConfirm: this.t('wallet:ok'),
+                  filterReset: this.t('wallet:reset'),
+                  emptyText: this.t('wallet:notFound')
+                }}
                 dataSource={this.wallet.addressData}
                 rowKey='address'
                 columns={[
@@ -73,7 +74,34 @@ export default class Addresses extends React.Component {
                     title: this.t('wallet:addresses'),
                     dataIndex: 'address',
                     width: 290,
-                    render: text => <p className='text-mono'>{text}</p>
+                    render: address => <p className='text-mono'>{address}</p>,
+                    filters: [
+                      {
+                        text: this.t('wallet:used'),
+                        value: 'used'
+                      },
+                      {
+                        text: this.t('wallet:unused'),
+                        value: 'unused'
+                      },
+                      {
+                        text: this.t('wallet:new'),
+                        value: 'new'
+                      }
+                    ],
+                    onFilter: (value, record) => {
+                      switch (value) {
+                        case 'used':
+                          return record.received - record.spent === 0 &&
+                            record.received > 0
+
+                        case 'unused':
+                          return record.received - record.spent !== 0
+
+                        case 'new':
+                          return record.received === 0
+                      }
+                    }
                   },
                   {
                     title: this.t('wallet:balance'),
