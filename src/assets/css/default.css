@@ -6,7 +6,7 @@
 @import url(https://fonts.googleapis.com/icon?family=Material+Icons);
 
 /** Elements */
-::selection { background: #B71C1C; }
+::selection { background: #43464B; }
 a { color: #B71C1C; }
 a:hover { color: #43464B; }
 a:active { color: #B71C1C; }
@@ -194,5 +194,5 @@ footer p span { font-weight: 500; }
 .ant-table-thead > tr.ant-table-row-hover > td,
 .ant-table-tbody > tr.ant-table-row-hover > td,
 .ant-table-thead > tr:hover > td,
-.ant-table-tbody > tr:hover > td { background: #fdecec; }
+.ant-table-tbody > tr:hover > td { background: #f2f2f2; }
 .ant-select-auto-complete.ant-select .ant-input:focus { border-color: #B71C1C; outline: 0; box-shadow: 0 0 0 2px rgba(183, 28, 28, 0.2); }
