@@ -80,6 +80,14 @@ export default class AddressNew extends React.Component {
   }
 
   /**
+   * Update address list.
+   * @function updateAddresses
+   */
+  updateAddresses = () => {
+    this.wallet.getWallet(false, true)
+  }
+
+  /**
    * Get new address.
    * @function getNew
    */
@@ -87,6 +95,9 @@ export default class AddressNew extends React.Component {
     this.rpc.getNewAddress(this.account, (result, error) => {
       if (result !== undefined) {
         this.setAddress(result)
+
+        /** Update address list. */
+        this.updateAddresses()
       }
 
       if (error !== this.error) {

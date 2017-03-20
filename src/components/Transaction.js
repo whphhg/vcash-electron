@@ -26,6 +26,9 @@ export default class Transaction extends React.Component {
    */
   ztlock = () => {
     this.rpc.ztlock(this.wallet.viewing)
+
+    /** Update ztlock status. */
+    this.wallet.getWallet()
   }
 
   /**
@@ -273,7 +276,7 @@ export default class Transaction extends React.Component {
               bordered
               size='small'
               scroll={
-                viewingTx.inputs.length > 7
+                viewingTx.inputs.length > 8
                   ? {y: 190}
                   : {}
               }
@@ -316,7 +319,7 @@ export default class Transaction extends React.Component {
               bordered
               size='small'
               scroll={
-                viewingTx.outputs.length > 7
+                viewingTx.outputs.length > 8
                   ? {y: 190}
                   : {}
               }

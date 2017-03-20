@@ -106,7 +106,7 @@ export default class Transactions extends React.Component {
                   title: this.t('wallet:category'),
                   dataIndex: 'category',
                   width: 130,
-                  render: text => this.t('wallet:' + text),
+                  render: category => this.t('wallet:' + category),
                   filters: [
                     {
                       text: this.t('wallet:received'),

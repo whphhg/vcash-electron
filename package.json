@@ -1,6 +1,6 @@
 {
   "name": "vcash-electron",
-  "version": "0.20.1",
+  "version": "0.20.2",
   "description": "Multi-platform UI for Vcash, a decentralized currency for the internet.",
   "main": "initialize.js",
   "scripts": {
