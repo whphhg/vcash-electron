@@ -77,12 +77,12 @@ export default class Addresses extends React.Component {
                     render: address => <p className='text-mono'>{address}</p>,
                     filters: [
                       {
-                        text: this.t('wallet:used'),
-                        value: 'used'
+                        text: this.t('wallet:spent'),
+                        value: 'spent'
                       },
                       {
-                        text: this.t('wallet:unused'),
-                        value: 'unused'
+                        text: this.t('wallet:spendable'),
+                        value: 'spendable'
                       },
                       {
                         text: this.t('wallet:new'),
@@ -91,11 +91,11 @@ export default class Addresses extends React.Component {
                     ],
                     onFilter: (value, record) => {
                       switch (value) {
-                        case 'used':
+                        case 'spent':
                           return record.received - record.spent === 0 &&
                             record.received > 0
 
-                        case 'unused':
+                        case 'spendable':
                           return record.received - record.spent !== 0
 
                         case 'new':
