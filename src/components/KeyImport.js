@@ -108,14 +108,6 @@ export default class KeyImport extends React.Component {
   }
 
   /**
-   * Get txs that use the imported address and update address list.
-   * @function updateWallet
-   */
-  updateWallet = () => {
-    this.wallet.getWallet(true, true)
-  }
-
-  /**
    * Import private key.
    * @function importKey
    */
@@ -133,7 +125,7 @@ export default class KeyImport extends React.Component {
         }
 
         /** Get txs that use the imported address and update address list. */
-        this.updateWallet()
+        this.wallet.getWallet(true, true)
       }
 
       if (error !== this.error) {
