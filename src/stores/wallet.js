@@ -587,7 +587,16 @@ class Wallet {
 
         /** Blended. */
         if (tx.hasOwnProperty('blended') === true) {
-          /** TODO: Loop outputs, find your address and assign the amount. */
+          /** Count the sum of outputs belonging to this wallet. */
+          if (isSaved === false) {
+            save.amount = 0
+
+            save.vout.forEach((vout) => {
+              if (vout.hasOwnProperty('spentTxid') === true) {
+                save.amount += vout.value
+              }
+            })
+          }
 
           if (tx.confirmations > 0) {
             save.category = 'blended'
