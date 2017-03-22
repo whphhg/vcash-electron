@@ -1,9 +1,9 @@
 ## Vcash Electron UI
-Multi-platform UI for [Vcash](https://vcash.info/), a decentralized currency for the internet. Latest releases can be found [here](https://github.com/whphhg/vcash-ui/releases).
+Multi-platform UI for [Vcash](https://vcash.info/). Latest releases can be found [here](https://github.com/whphhg/vcash-ui/releases).
 
 :hatching_chick: **Warning**: This is beta software that is being actively developed.
 
-![Screenshots](http://i.imgur.com/zfjel56.gif)
+![Screenshots](http://i.imgur.com/OBt1iOA.gif)
 
 ### Installing from source
 The following dependencies are required to be installed:

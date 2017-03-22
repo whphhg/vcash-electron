@@ -18,7 +18,7 @@ app.on('window-all-closed', () => {
   }
 })
 
-/** Ready to load the application. */
+/** Ready to load the UI. */
 app.on('ready', () => {
   /** Enable live reloading on code changes if in dev mode. */
   process.env.NODE_ENV === 'dev' && enableLiveReload()
@@ -32,7 +32,7 @@ app.on('ready', () => {
   /** Hide browsers menu bar. */
   mainWindow.setMenu(null)
 
-  /** Load the application starting point. */
+  /** Load the UI starting point. */
   mainWindow.loadURL('file://' + __dirname + '/src/index.html')
 
   /** Open Chromium DevTools if in dev mode. */
