@@ -40,15 +40,15 @@ export default class Difficulties extends React.Component {
         >
           <defs>
             <linearGradient id='colorPoW' x1='0' y1='0' x2='0' y2='1'>
-              <stop offset='35%' stopColor='#B71C1C' stopOpacity={0.9} />
-              <stop offset='100%' stopColor='#B71C1C' stopOpacity={0.3} />
+              <stop offset='35%' stopColor='#b60127' stopOpacity={0.9} />
+              <stop offset='100%' stopColor='#b60127' stopOpacity={0.3} />
             </linearGradient>
           </defs>
           <Area
             yAxisId='left'
             type='monotone'
             dataKey='hashRate'
-            stroke='#B71C1C'
+            stroke='#b60127'
             fillOpacity={1}
             fill='url(#colorPoW)'
           />
