@@ -270,23 +270,6 @@ class RPC {
   }
 
   /**
-   * Stake incentive collateral.
-   * @function incentiveStake
-   */
-  incentiveStake () {
-    this.exec([
-      { method: 'incentive', params: ['stake'] }
-    ], (response) => {
-      if (response !== null) {
-        /** Upon success display a message. */
-        if (response[0].hasOwnProperty('result') === true) {
-          message.success(i18next.t('wallet:incentiveStake'), 6)
-        }
-      }
-    })
-  }
-
-  /**
    * Lock the wallet.
    * @function lockWallet
    */
