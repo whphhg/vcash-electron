@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Button, Col, Input, Row } from 'antd'
+import { Button, Col, Input, Row, notification } from 'antd'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -40,6 +40,15 @@ export default class WalletEncrypt extends React.Component {
   }
 
   /**
+   * Clear entered passphrases.
+   * @function clear
+   */
+  @action clear = () => {
+    this.passphrase = ''
+    this.repeat = ''
+  }
+
+  /**
    * Set passphrase.
    * @function setPassphrase
    * @param {object} e - Input element event.
@@ -53,7 +62,25 @@ export default class WalletEncrypt extends React.Component {
    * @function encrypt
    */
   encrypt = () => {
-    this.rpc.encryptWallet(this.passphrase)
+    this.rpc.execute([
+      { method: 'encryptwallet', params: [this.passphrase] }
+    ], (response) => {
+      /** Handle result. */
+      if (response[0].hasOwnProperty('result') === true) {
+        /** Update lock status. */
+        this.info.getLockStatus()
+
+        /** Clear entered passphrases. */
+        this.clear()
+
+        /** Display a restart warning that can not be closed. */
+        notification.success({
+          message: this.t('wallet:encrypted'),
+          description: this.t('wallet:encryptedLong'),
+          duration: 0
+        })
+      }
+    })
   }
 
   render () {

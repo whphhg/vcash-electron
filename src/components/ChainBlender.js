@@ -1,7 +1,7 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Switch, Tooltip } from 'antd'
+import { Switch, Tooltip, message } from 'antd'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -23,7 +23,27 @@ export default class ChainBlender extends React.Component {
    * @function toggle
    */
   toggle = () => {
-    this.rpc.toggleChainBlender()
+    this.rpc.execute([
+      {
+        method: 'chainblender',
+        params: [this.info.isBlending === true ? 'stop' : 'start']
+      }
+    ], (response) => {
+      /** Handle result. */
+      if (response[0].hasOwnProperty('result') === true) {
+        /** Update blending status. */
+        this.info.setBlendingStatus()
+
+        /** Display a success message. */
+        message.success(
+          this.t('wallet:chainBlender',
+            {
+              context: this.info.isBlending === true ? 'start' : 'stop'
+            }
+          ), 6
+        )
+      }
+    })
   }
 
   render () {

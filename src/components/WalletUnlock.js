@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, observable, reaction } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Button, Col, Input, Modal, Row, Tooltip } from 'antd'
+import { Button, Col, Input, Modal, Row, Tooltip, message } from 'antd'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -50,7 +50,7 @@ export default class WalletUnlock extends React.Component {
   }
 
   /**
-   * Set rpc error.
+   * Set RPC error.
    * @function setError
    * @param {string} error - RPC error.
    */
@@ -82,13 +82,30 @@ export default class WalletUnlock extends React.Component {
    * @function unlock
    */
   unlock = () => {
-    this.rpc.unlockWallet(this.passphrase, (result, error) => {
-      if (result !== undefined) {
+    this.rpc.execute([
+      { method: 'walletpassphrase', params: [this.passphrase] }
+    ], (response) => {
+      /** Handle result. */
+      if (response[0].hasOwnProperty('result') === true) {
+        /** Update lock status. */
+        this.info.getLockStatus()
+
+        /** Hide modal. */
         this.toggleModal()
+
+        /** Display a success message. */
+        message.success(this.t('wallet:unlocked'), 6)
       }
 
-      if (error !== this.error) {
-        this.setError(error)
+      /** Handle error. */
+      if (response[0].hasOwnProperty('error') === true) {
+        /** Convert error code to string. */
+        switch (response[0].error.code) {
+          /** -14 = error_code_wallet_passphrase_incorrect */
+          case -14:
+            this.setError('incorrectPassphrase')
+            break
+        }
       }
     })
   }

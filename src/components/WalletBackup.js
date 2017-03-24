@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Button, Col, Input, Row } from 'antd'
+import { Button, Col, Input, Row, message } from 'antd'
 import { remote } from 'electron'
 import { sep } from 'path'
 import { dataPath } from '../utilities/common'
@@ -34,7 +34,7 @@ export default class WalletBackup extends React.Component {
   }
 
   /**
-   * Set rpc error.
+   * Set RPC error.
    * @function setError
    * @param {string} error - RPC error.
    */
@@ -63,9 +63,24 @@ export default class WalletBackup extends React.Component {
    * @function backup
    */
   backup = () => {
-    this.rpc.backupWallet(this.path, (result, error) => {
-      if (error !== this.error) {
-        this.setError(error)
+    this.rpc.execute([
+      { method: 'backupwallet', params: [this.path] }
+    ], (response) => {
+      /** Handle result. */
+      if (response[0].hasOwnProperty('result') === true) {
+        /** Display a success message. */
+        message.success(this.t('wallet:backedUp'), 6)
+      }
+
+      /** Handle error. */
+      if (response[0].hasOwnProperty('error') === true) {
+        /** Convert error code to string. */
+        switch (response[0].error.code) {
+          /** -4 = error_code_wallet_error */
+          case -4:
+            this.setError('backupFailed')
+            break
+        }
       }
     })
   }

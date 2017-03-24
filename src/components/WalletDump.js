@@ -1,7 +1,7 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Button, Col, Input, Row } from 'antd'
+import { Button, Col, Input, Row, message } from 'antd'
 import { dataPath } from '../utilities/common'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
@@ -23,7 +23,15 @@ export default class WalletDump extends React.Component {
    * @function dump
    */
   dump = () => {
-    this.rpc.dumpWallet()
+    this.rpc.execute([
+      { method: 'dumpwallet', params: [] }
+    ], (response) => {
+      /** Handle result. */
+      if (response[0].hasOwnProperty('result') === true) {
+        /** Display a success message. */
+        message.success(this.t('wallet:dumped'), 6)
+      }
+    })
   }
 
   render () {

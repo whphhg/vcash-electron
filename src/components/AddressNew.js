@@ -45,7 +45,7 @@ export default class AddressNew extends React.Component {
   }
 
   /**
-   * Set rpc error.
+   * Set RPC error.
    * @function setError
    * @param {string} error - RPC error.
    */
@@ -84,16 +84,26 @@ export default class AddressNew extends React.Component {
    * @function getNew
    */
   getNew = () => {
-    this.rpc.getNewAddress(this.account, (result, error) => {
-      if (result !== undefined) {
-        this.setAddress(result)
+    this.rpc.execute([
+      { method: 'getnewaddress', params: [this.account] }
+    ], (response) => {
+      /** Handle result. */
+      if (response[0].hasOwnProperty('result') === true) {
+        this.setAddress(response[0].result)
 
         /** Update address list. */
         this.wallet.getWallet(false, true)
       }
 
-      if (error !== this.error) {
-        this.setError(error)
+      /** Handle error. */
+      if (response[0].hasOwnProperty('error') === true) {
+        /** Convert error code to string. */
+        switch (response[0].error.code) {
+          /** - 12 = error_code_wallet_keypool_ran_out */
+          case -12:
+            this.setError('keypoolRanOut')
+            break
+        }
       }
     })
   }

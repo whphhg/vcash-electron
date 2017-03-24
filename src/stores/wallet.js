@@ -742,7 +742,7 @@ class Wallet {
       })
     }
 
-    rpc.exec(options, (response) => {
+    rpc.execute(options, (response) => {
       if (response !== null) {
         let lsb = response[0].result
         let mempool = response[1].result
@@ -802,7 +802,7 @@ class Wallet {
             this.setWallet(null, addresses)
           }
         } else {
-          rpc.exec([...options.values()], (transactions) => {
+          rpc.execute([...options.values()], (transactions) => {
             let options = new Map()
 
             transactions.forEach((tx) => {
@@ -847,7 +847,7 @@ class Wallet {
             if (options.size === 0) {
               this.setWallet(transactions, addresses)
             } else {
-              rpc.exec([...options.values()], (io, options) => {
+              rpc.execute([...options.values()], (io, options) => {
                 if (io !== null) {
                   this.setWallet(transactions, addresses, io, options)
                 }

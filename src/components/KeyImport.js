@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, observable, reaction } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
+import { AutoComplete, Button, Col, Input, Popover, Row, message } from 'antd'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -57,7 +57,7 @@ export default class KeyImport extends React.Component {
   }
 
   /**
-   * Set rpc error.
+   * Set RPC error.
    * @function setError
    * @param {string} error - RPC error.
    */
@@ -115,21 +115,38 @@ export default class KeyImport extends React.Component {
     /** Disable the button and show the loading indicator. */
     this.toggleLoading()
 
-    this.rpc.importKey(this.privateKey, this.account, (result, error) => {
+    this.rpc.execute([
+      { method: 'importprivkey', params: [this.privateKey, this.account] }
+    ], (response) => {
       /** Re-enable the button and hide the loading indicator. */
       this.toggleLoading()
 
-      if (result !== undefined) {
-        if (this.popover === true) {
-          this.togglePopover()
-        }
+      /** Handle result. */
+      if (response[0].hasOwnProperty('result') === true) {
+        /** Close popover if still open. */
+        if (this.popover === true) this.togglePopover()
 
         /** Get txs that use the imported address and update address list. */
         this.wallet.getWallet(true, true)
+
+        /** Display a success message. */
+        message.success(this.t('wallet:privateKeyImported'), 6)
       }
 
-      if (error !== this.error) {
-        this.setError(error)
+      /** Handle error. */
+      if (response[0].hasOwnProperty('error') === true) {
+        /** Convert error code to string. */
+        switch (response[0].error.code) {
+          /** -4 = error_code_wallet_error */
+          case -4:
+            this.setError('isMine')
+            break
+
+          /** -5 = error_code_invalid_address_or_key */
+          case -5:
+            this.setError('invalidKey')
+            break
+        }
       }
     })
   }

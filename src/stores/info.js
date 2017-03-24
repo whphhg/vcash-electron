@@ -270,7 +270,7 @@ class Info {
    * @function getLockStatus
    */
   getLockStatus () {
-    rpc.exec([
+    rpc.execute([
       { method: 'walletpassphrase', params: [] }
     ], (response) => {
       if (response !== null) {
@@ -305,7 +305,7 @@ class Info {
    * @function getNetworkInfo
    */
   getNetworkInfo () {
-    rpc.exec([
+    rpc.execute([
       { method: 'getnetworkinfo', params: [] },
       { method: 'getpeerinfo', params: [] },
       { method: 'getincentiveinfo', params: [] },
@@ -328,7 +328,7 @@ class Info {
    * @function getWalletInfo
    */
   getWalletInfo () {
-    rpc.exec([
+    rpc.execute([
       { method: 'getinfo', params: [] },
       { method: 'chainblender', params: ['info'] }
     ], (response, options) => {

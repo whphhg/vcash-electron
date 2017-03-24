@@ -57,7 +57,7 @@ export default class KeyDump extends React.Component {
   }
 
   /**
-   * Set rpc error.
+   * Set RPC error.
    * @function setError
    * @param {string} error - RPC error.
    */
@@ -98,13 +98,28 @@ export default class KeyDump extends React.Component {
    * @function dumpKey
    */
   dumpKey = () => {
-    this.rpc.dumpKey(this.address, (result, error) => {
-      if (result !== undefined) {
-        this.setPrivateKey(result)
+    this.rpc.execute([
+      { method: 'dumpprivkey', params: [this.address] }
+    ], (response) => {
+      /** Handle result. */
+      if (response[0].hasOwnProperty('result') === true) {
+        this.setPrivateKey(response[0].result)
       }
 
-      if (error !== this.error) {
-        this.setError(error)
+      /** Handle error. */
+      if (response[0].hasOwnProperty('error') === true) {
+        /** Convert error code to string. */
+        switch (response[0].error.code) {
+          /** -4 = error_code_wallet_error */
+          case -4:
+            this.setError('unknownAddress')
+            break
+
+          /** -5 = error_code_invalid_address_or_key */
+          case -5:
+            this.setError('invalidAddress')
+            break
+        }
       }
     })
   }

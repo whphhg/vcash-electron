@@ -1,7 +1,7 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Col, Modal, Row, Table } from 'antd'
+import { Col, Modal, Row, Table, message } from 'antd'
 import moment from 'moment'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
@@ -25,10 +25,18 @@ export default class Transaction extends React.Component {
    * @function ztlock
    */
   ztlock = () => {
-    this.rpc.ztlock(this.wallet.viewing)
+    this.rpc.execute([
+      { method: 'ztlock', params: [this.wallet.viewing] }
+    ], (response) => {
+      /** Handle result. */
+      if (response[0].hasOwnProperty('result') === true) {
+        /** Update txs ztlock status. */
+        this.wallet.getWallet()
 
-    /** Update ztlock status. */
-    this.wallet.getWallet()
+        /** Display a success message. */
+        message.success(this.t('wallet:transactionLocked'), 6)
+      }
+    })
   }
 
   /**

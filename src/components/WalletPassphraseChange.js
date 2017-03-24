@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, observable, reaction } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Button, Col, Input, Row } from 'antd'
+import { Button, Col, Input, Row, message } from 'antd'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -52,7 +52,17 @@ export default class WalletPassphraseChange extends React.Component {
   }
 
   /**
-   * Set rpc error.
+   * Clear entered passphrases.
+   * @function clear
+   */
+  @action clear = () => {
+    this.current = ''
+    this.next = ''
+    this.repeat = ''
+  }
+
+  /**
+   * Set RPC error.
    * @function setError
    * @param {string} error - RPC error.
    */
@@ -74,9 +84,30 @@ export default class WalletPassphraseChange extends React.Component {
    * @function passphraseChange
    */
   passphraseChange = () => {
-    this.rpc.passphraseChange(this.current, this.next, (result, error) => {
-      if (error !== this.error) {
-        this.setError(error)
+    this.rpc.execute([
+      { method: 'walletpassphrasechange', params: [this.current, this.next] }
+    ], (response) => {
+      /** Handle result. */
+      if (response[0].hasOwnProperty('result') === true) {
+        /** Update lock status. */
+        this.info.getLockStatus()
+
+        /** Clear entered passphrases. */
+        this.clear()
+
+        /** Display a success message. */
+        message.success(this.t('wallet:passphraseChanged'), 6)
+      }
+
+      /** Handle error. */
+      if (response[0].hasOwnProperty('error') === true) {
+        /** Convert error code to string. */
+        switch (response[0].error.code) {
+          /** -14 = error_code_wallet_passphrase_incorrect */
+          case -14:
+            this.setError('incorrectPassphrase')
+            break
+        }
       }
     })
   }

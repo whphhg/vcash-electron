@@ -189,7 +189,7 @@ class Send {
 
       /** Validate address when it reaches 34 characters. */
       if (value.length === 34) {
-        rpc.exec([
+        rpc.execute([
           { method: 'validateaddress', params: [value] }
         ], action('recipientValidate', (response) => {
           if (response !== null) {
@@ -305,7 +305,7 @@ class Send {
     /** Get the recipient data. */
     const recipient = this.recipients.values()
 
-    rpc.exec([
+    rpc.execute([
       {
         method: 'sendtoaddress',
         params: [
@@ -352,7 +352,7 @@ class Send {
     /** Get the recipient data. */
     const recipient = this.recipients.values()
 
-    rpc.exec([
+    rpc.execute([
       {
         method: 'sendfrom',
         params: [
@@ -406,7 +406,7 @@ class Send {
       return recipients
     }, {})
 
-    rpc.exec([
+    rpc.execute([
       {
         method: 'sendmany',
         params: [

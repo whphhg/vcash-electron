@@ -1,7 +1,7 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Button, Tooltip } from 'antd'
+import { Button, Tooltip, message } from 'antd'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -22,7 +22,18 @@ export default class WalletLock extends React.Component {
    * @function lock
    */
   lock = () => {
-    this.rpc.lockWallet()
+    this.rpc.execute([
+      { method: 'walletlock', params: [] }
+    ], (response) => {
+      /** Handle result. */
+      if (response[0].hasOwnProperty('result') === true) {
+        /** Update lock status. */
+        this.info.getLockStatus()
+
+        /** Display a success message. */
+        message.success(this.t('wallet:locked'), 6)
+      }
+    })
   }
 
   render () {

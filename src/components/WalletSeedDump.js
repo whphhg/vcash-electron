@@ -39,7 +39,7 @@ export default class WalletSeedDump extends React.Component {
   }
 
   /**
-   * Set rpc error.
+   * Set RPC error.
    * @function setError
    * @param {string} error - RPC error.
    */
@@ -61,13 +61,23 @@ export default class WalletSeedDump extends React.Component {
    * @function dumpSeed
    */
   dumpSeed = () => {
-    this.rpc.dumpWalletSeed((result, error) => {
-      if (result !== undefined) {
-        this.setSeed(result)
+    this.rpc.execute([
+      { method: 'dumpwalletseed', params: [] }
+    ], (response) => {
+      /** Handle result. */
+      if (response[0].hasOwnProperty('result') === true) {
+        this.setSeed(response[0].result)
       }
 
-      if (error !== this.error) {
-        this.setError(error)
+      /** Handle error. */
+      if (response[0].hasOwnProperty('error') === true) {
+        /** Convert error code to string. */
+        switch (response[0].error.code) {
+          /** -4 = error_code_wallet_error */
+          case -4:
+            this.setError('notDeterministic')
+            break
+        }
       }
     })
   }
