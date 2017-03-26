@@ -1,5 +1,5 @@
 {
-  "name": "vcash-ui",
+  "name": "vcash-electron",
   "version": "0.22.0",
   "description": "Multi-platform UI for Vcash.",
   "main": "initialize.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/whphhg/vcash-ui.git"
+    "url": "git+https://github.com/whphhg/vcash-electron.git"
   },
   "keywords": [
     "vcash",
@@ -20,9 +20,9 @@
   "author": "whphhg",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/whphhg/vcash-ui/issues"
+    "url": "https://github.com/whphhg/vcash-electron/issues"
   },
-  "homepage": "https://github.com/whphhg/vcash-ui#readme",
+  "homepage": "https://github.com/whphhg/vcash-electron#readme",
   "standard": {
     "parser": "babel-eslint"
   },
