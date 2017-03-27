@@ -3,7 +3,7 @@ import backend from 'i18next-node-fs-backend'
 import { getItem } from '../utilities/localStorage'
 import { join } from 'path'
 
-/** Initialize an i18next instance. */
+/** Initialize a i18next instance. */
 i18next
   .use(backend)
   .init({

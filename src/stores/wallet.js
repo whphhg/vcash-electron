@@ -33,9 +33,9 @@ class Wallet {
     this.updateTimeout = null
     this.lastBlock = ''
 
-    /** Get txs and addresses when RPC becomes available. */
-    reaction(() => rpc.status, (status) => {
-      if (status === true) {
+    /** Get txs and addresses when RPC is ready. */
+    reaction(() => rpc.ready, (ready) => {
+      if (ready === true) {
         this.getWallet(true, true)
       }
     })
@@ -743,118 +743,114 @@ class Wallet {
     }
 
     rpc.execute(options, (response) => {
-      if (response !== null) {
-        let lsb = response[0].result
-        let mempool = response[1].result
-        let options = new Map()
+      let lsb = response[0].result
+      let mempool = response[1].result
+      let options = new Map()
 
-        /** Assign addresses if they were looked up. */
-        const addresses = response.length === 3
-          ? response[2].result
-          : null
+      /** Assign addresses if they were looked up. */
+      const addresses = response.length === 3
+        ? response[2].result
+        : null
 
-        /** Set last looked up block. */
-        this.lastBlock = lsb.lastblock
+      /** Set last looked up block. */
+      this.lastBlock = lsb.lastblock
 
-        /** Set a new timeout for 10 seconds. */
-        this.updateTimeout = setTimeout(() => {
-          this.getWallet()
-        }, 10 * 1000)
+      /** Set a new timeout for 10 seconds. */
+      this.updateTimeout = setTimeout(() => {
+        this.getWallet()
+      }, 10 * 1000)
 
-        /** Add currently viewing transaction. */
-        if (this.viewing !== null) {
-          options.set(this.viewing, {
+      /** Add currently viewing transaction. */
+      if (this.viewing !== null) {
+        options.set(this.viewing, {
+          method: 'gettransaction',
+          params: [this.viewing]
+        })
+      }
+
+      /** Add pending generated transactions below 220 confirmations. */
+      if (this.generatedPending.size > 0) {
+        this.generatedPending.forEach((tx) => {
+          options.set(tx.txid, {
             method: 'gettransaction',
-            params: [this.viewing]
+            params: [tx.txid]
+          })
+        })
+      }
+
+      /** Sort transactions received from lsb by time ASC. */
+      lsb.transactions.sort((a, b) => {
+        if (a.time < b.time) return -1
+        if (a.time > b.time) return 1
+        return 0
+      })
+
+      /** Add transactions received from lsb, excluding orphaned. */
+      lsb.transactions.forEach((tx) => {
+        if (tx.confirmations !== -1) {
+          options.set(tx.txid, {
+            method: 'gettransaction',
+            params: [tx.txid]
           })
         }
+      })
 
-        /** Add pending generated transactions below 220 confirmations. */
-        if (this.generatedPending.size > 0) {
-          this.generatedPending.forEach((tx) => {
-            options.set(tx.txid, {
-              method: 'gettransaction',
-              params: [tx.txid]
-            })
-          })
+      /** Return addresses if there are no further lookups. */
+      if (options.size === 0) {
+        if (addresses !== null) {
+          this.setWallet(null, addresses)
         }
+      } else {
+        rpc.execute([...options.values()], (transactions) => {
+          let options = new Map()
 
-        /** Sort transactions received from lsb by time ASC. */
-        lsb.transactions.sort((a, b) => {
-          if (a.time < b.time) return -1
-          if (a.time > b.time) return 1
-          return 0
-        })
+          transactions.forEach((tx) => {
+            tx = tx.result
 
-        /** Add transactions received from lsb, excluding orphaned. */
-        lsb.transactions.forEach((tx) => {
-          if (tx.confirmations !== -1) {
-            options.set(tx.txid, {
-              method: 'gettransaction',
-              params: [tx.txid]
-            })
-          }
-        })
-
-        /** Return addresses if there are no further lookups. */
-        if (options.size === 0) {
-          if (addresses !== null) {
-            this.setWallet(null, addresses)
-          }
-        } else {
-          rpc.execute([...options.values()], (transactions) => {
-            let options = new Map()
-
-            transactions.forEach((tx) => {
-              tx = tx.result
-
-              /** Update ztlock status of transactions in mempool. */
-              if (Array.isArray(mempool) === false) {
-                if (mempool.hasOwnProperty(tx.txid) === true) {
-                  tx.ztlock = mempool[tx.txid].ztlock
-                }
+            /** Update ztlock status of transactions in mempool. */
+            if (Array.isArray(mempool) === false) {
+              if (mempool.hasOwnProperty(tx.txid) === true) {
+                tx.ztlock = mempool[tx.txid].ztlock
               }
+            }
 
-              /** Lookup inputs and outputs of unsaved transactions. */
-              if (this.transactions.has(tx.txid) === false) {
-                /** Lookup inputs, excluding coinbase. */
-                tx.vin.forEach((input) => {
-                  if (input.hasOwnProperty('coinbase') === false) {
-                    options.set(input.txid, {
-                      method: 'gettransaction',
-                      params: [input.txid]
+            /** Lookup inputs and outputs of unsaved transactions. */
+            if (this.transactions.has(tx.txid) === false) {
+              /** Lookup inputs, excluding coinbase. */
+              tx.vin.forEach((input) => {
+                if (input.hasOwnProperty('coinbase') === false) {
+                  options.set(input.txid, {
+                    method: 'gettransaction',
+                    params: [input.txid]
+                  })
+                }
+              })
+
+              /** Lookup outputs, excluding nonstandard. */
+              tx.vout.forEach((output) => {
+                if (output.scriptPubKey.type !== 'nonstandard') {
+                  const address = output.scriptPubKey.addresses[0]
+
+                  if (this.addresses.has(address) === false) {
+                    options.set(address, {
+                      method: 'validateaddress',
+                      params: [address]
                     })
                   }
-                })
-
-                /** Lookup outputs, excluding nonstandard. */
-                tx.vout.forEach((output) => {
-                  if (output.scriptPubKey.type !== 'nonstandard') {
-                    const address = output.scriptPubKey.addresses[0]
-
-                    if (this.addresses.has(address) === false) {
-                      options.set(address, {
-                        method: 'validateaddress',
-                        params: [address]
-                      })
-                    }
-                  }
-                })
-              }
-            })
-
-            /** Return txs and addresses if there are no further lookups. */
-            if (options.size === 0) {
-              this.setWallet(transactions, addresses)
-            } else {
-              rpc.execute([...options.values()], (io, options) => {
-                if (io !== null) {
-                  this.setWallet(transactions, addresses, io, options)
                 }
               })
             }
           })
-        }
+
+          /** Return txs and addresses if there are no further lookups. */
+          if (options.size === 0) {
+            this.setWallet(transactions, addresses)
+          } else {
+            rpc.execute([...options.values()], (io, options) => {
+              this.setWallet(transactions, addresses, io, options)
+            })
+          }
+        })
       }
     })
   }

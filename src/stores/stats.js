@@ -14,12 +14,10 @@ class Stats {
   @observable networkByMinute = observable.array([])
 
   constructor () {
-    /** Start updating network stats when RPC becomes available. */
-    reaction(() => rpc.status, (status) => {
-      if (status === true) {
-        setTimeout(() => {
-          this.setNetworkByMinute()
-        }, 3 * 1000)
+    /** Start updating network stats when RPC is ready. */
+    reaction(() => rpc.ready, (ready) => {
+      if (ready === true) {
+        setTimeout(() => { this.setNetworkByMinute() }, 3 * 1000)
       }
     })
   }
@@ -37,11 +35,9 @@ class Stats {
       hashRate: info.mining.networkhashps
     })
 
-    /** Set new timeout only while RPC is available. */
-    if (rpc.status === true) {
-      setTimeout(() => {
-        this.setNetworkByMinute()
-      }, 60 * 1000)
+    /** Set new timeout only while RPC is ready. */
+    if (rpc.ready === true) {
+      setTimeout(() => { this.setNetworkByMinute() }, 60 * 1000)
     }
   }
 

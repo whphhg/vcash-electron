@@ -1,19 +1,88 @@
-import { action, observable } from 'mobx'
+import { action, computed, observable, reaction } from 'mobx'
+import { getItem, setItem } from '../utilities/localStorage'
 
 class RPC {
   /**
    * Observable properties.
-   * @property {null|boolean} status - RPC connection status.
+   * @property {string} enteredPort - User entered RPC port.
+   * @property {boolean} reachable - Daemon connectivity status.
+   * @property {boolean} started - Start button status.
    */
-  @observable status = null
+  @observable enteredPort = getItem('rpcPort') || ''
+  @observable reachable = false
+  @observable started = false
 
   /**
-   * Set RPC status.
-   * @function setStatus
-   * @param {boolean} status - RPC status.
+   * @constructor
+   * @property {number|null} testTimeout - testExecute() timeout id.
    */
-  @action setStatus (status) {
-    this.status = status
+  constructor () {
+    this.testTimeout = null
+
+    /** Test execute() on start-up. */
+    reaction(() => this.started, (started) => {
+      if (started === false) this.testExecute()
+    }, true)
+
+    /** Test execute() on port change if previously reachable. */
+    reaction(() => this.enteredPort, (enteredPort) => {
+      if (this.reachable === true) this.testExecute()
+    })
+  }
+
+  /**
+   * Get RPC port.
+   * @function port
+   * @return {string} RPC port.
+   */
+  @computed get port () {
+    if (this.enteredPort === '') return '9195'
+    return this.enteredPort
+  }
+
+  /**
+   * Flag for UI to know when to begin and stop updating data.
+   * @function ready
+   * @return {boolean} Ready status.
+   */
+  @computed get ready () {
+    if (this.reachable === false) return false
+    return this.started
+  }
+
+  /**
+   * Set RPC port.
+   * @function setPort
+   * @param {number} port - Port.
+   */
+  @action setPort (port = '') {
+    if (port !== '') {
+      /** Allow only numbers below 65536. */
+      if (port.match(/^\d+$/) === null || parseInt(port) > 65535) return
+    }
+
+    /** Save port that passed above checks. */
+    this.enteredPort = port
+
+    /** Save to local storage. */
+    setItem('rpcPort', port)
+  }
+
+  /**
+   * Set reachable.
+   * @function setReachable
+   * @param {boolean} reachable - Reachable.
+   */
+  @action setReachable (reachable) {
+    this.reachable = reachable
+  }
+
+  /**
+   * Set started.
+   * @function setStarted
+   */
+  @action setStarted () {
+    this.started = true
   }
 
   /**
@@ -30,7 +99,7 @@ class RPC {
     })
 
     window
-      .fetch('http://127.0.0.1:9195', {
+      .fetch('http://127.0.0.1:' + this.port, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -39,16 +108,33 @@ class RPC {
         body: JSON.stringify(options)
       })
       .then((response) => {
-        if (response.ok) return response.json()
+        if (response.ok === true) return response.json()
       })
       .then((data) => {
-        if (this.status !== true) this.setStatus(true)
+        if (this.reachable === false) this.setReachable(true)
         return callback(data, options)
       })
       .catch((error) => {
-        if (this.status !== false) this.setStatus(false)
+        if (this.reachable === true) this.setReachable(false)
+
+        /** Log error to the console. */
         console.error('RPC:', error.message)
+
+        /** Test execute every 5s until daemon is reachable. */
+        this.testTimeout = setTimeout(() => { this.testExecute() }, 5 * 1000)
       })
+  }
+
+  /**
+   * Test execute() connectivity.
+   * @function testExecute
+   */
+  testExecute () {
+    /** Clear previous timeout id. */
+    clearTimeout(this.testTimeout)
+
+    /** Try getinfo RPC method. */
+    this.execute([{ method: 'getinfo', params: [] }], (response) => {})
   }
 }
 

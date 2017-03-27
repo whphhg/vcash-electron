@@ -17,19 +17,23 @@ class Info {
   @observable isEncrypted = false
   @observable isLocked = false
 
+  /**
+   * @constructor
+   * @property {object} timeouts - Timeout ids.
+   */
   constructor () {
     this.timeouts = {
       getNetworkInfo: null,
       getWalletInfo: null
     }
 
-    /** Start wallet info update loop. */
-    this.getWalletInfo()
+    /** Start update loops when RPC is ready. */
+    reaction(() => rpc.ready, (ready) => {
+      if (ready === true) {
+        /** Start wallet info update loop. */
+        this.restart('getWalletInfo')
 
-    /** When RPC becomes available: */
-    reaction(() => rpc.status, (status) => {
-      if (status === true) {
-        /** Restart network info update loop. */
+        /** Start network info update loop. */
         this.restart('getNetworkInfo')
 
         /** Update lock status. */
@@ -38,8 +42,8 @@ class Info {
     })
 
     /**
-     * Restart network info update loop after 8 seconds,
-     * when the wallet gets unlocked for the first time.
+     * Restart network info update loop 8s after
+     * the wallet gets unlocked for the first time.
      */
     reaction(() => this.isLocked, (isLocked) => {
       if (isLocked === false) {
@@ -273,29 +277,27 @@ class Info {
     rpc.execute([
       { method: 'walletpassphrase', params: [] }
     ], (response) => {
-      if (response !== null) {
-        switch (response[0].error.code) {
-          /**
-           * Unencrypted,
-           * error_code_wallet_wrong_enc_state = -15
-           */
-          case -15:
-            return this.setLockStatus(false, false)
+      switch (response[0].error.code) {
+        /**
+         * Unencrypted,
+         * error_code_wallet_wrong_enc_state = -15
+         */
+        case -15:
+          return this.setLockStatus(false, false)
 
-          /**
-           * Encrypted and unlocked,
-           * error_code_wallet_already_unlocked = -17
-           */
-          case -17:
-            return this.setLockStatus(true, false)
+        /**
+         * Encrypted and unlocked,
+         * error_code_wallet_already_unlocked = -17
+         */
+        case -17:
+          return this.setLockStatus(true, false)
 
-          /**
-           * Encrypted and locked,
-           * error_code_invalid_params = -32602
-           */
-          case -32602:
-            return this.setLockStatus(true, true)
-        }
+        /**
+         * Encrypted and locked,
+         * error_code_invalid_params = -32602
+         */
+        case -32602:
+          return this.setLockStatus(true, true)
       }
     })
   }
@@ -312,14 +314,12 @@ class Info {
       { method: 'getmininginfo', params: [] },
       { method: 'getdifficulty', params: [] }
     ], (response, options) => {
-      if (response !== null) {
-        this.setInfo(response, options)
+      this.setInfo(response, options)
 
-        /** Set a new timeout for 60 seconds. */
-        this.timeouts.getNetworkInfo = setTimeout(() => {
-          this.getNetworkInfo()
-        }, 60 * 1000)
-      }
+      /** Set a new timeout for 60 seconds. */
+      this.timeouts.getNetworkInfo = setTimeout(() => {
+        this.getNetworkInfo()
+      }, 60 * 1000)
     })
   }
 
@@ -332,14 +332,9 @@ class Info {
       { method: 'getinfo', params: [] },
       { method: 'chainblender', params: ['info'] }
     ], (response, options) => {
-      if (response !== null) {
-        this.setInfo(response, options)
-      }
+      this.setInfo(response, options)
 
-      /**
-       * Set a new timeout for 10 seconds,
-       * regardless of response success.
-       */
+      /** Set a new timeout for 10 seconds. */
       this.timeouts.getWalletInfo = setTimeout(() => {
         this.getWalletInfo()
       }, 10 * 1000)

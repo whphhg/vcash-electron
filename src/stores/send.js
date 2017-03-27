@@ -191,11 +191,11 @@ class Send {
       if (value.length === 34) {
         rpc.execute([
           { method: 'validateaddress', params: [value] }
-        ], action('recipientValidate', (response) => {
-          if (response !== null) {
+        ],
+          action('Validate recipient', (response) => {
             saved.addressValid = response[0].result.isvalid
-          }
-        }))
+          })
+        )
       } else {
         saved.addressValid = null
       }
@@ -316,29 +316,27 @@ class Send {
         ]
       }
     ], (response) => {
-      if (response !== null) {
-        /** Sending succeded. */
-        if (response[0].hasOwnProperty('result') === true) {
-          /** Clear sending form. */
-          this.clear()
+      /** Sending succeded. */
+      if (response[0].hasOwnProperty('result') === true) {
+        /** Clear sending form. */
+        this.clear()
 
-          /** Open transaction details. */
-          wallet.setViewing(response[0].result)
-        }
+        /** Open transaction details. */
+        wallet.setViewing(response[0].result)
+      }
 
-        /** Sending failed. */
-        if (response[0].hasOwnProperty('error') === true) {
-          /** In case of an unknown error, print details to assist fixing. */
-          console.error('Failed sending using sendtoaddress', response[0])
+      /** Sending failed. */
+      if (response[0].hasOwnProperty('error') === true) {
+        /** In case of an unknown error, print details to assist fixing. */
+        console.error('Failed sending using sendtoaddress', response[0])
 
-          switch (response[0].error.code) {
-            /**
-             * Insufficient funds,
-             * error_code_wallet_insufficient_funds = -4
-             */
-            case -4:
-              return this.failed('insufficientFunds')
-          }
+        switch (response[0].error.code) {
+          /**
+           * Insufficient funds,
+           * error_code_wallet_insufficient_funds = -4
+           */
+          case -4:
+            return this.failed('insufficientFunds')
         }
       }
     })
@@ -367,29 +365,27 @@ class Send {
         ]
       }
     ], (response) => {
-      if (response !== null) {
-        /** Sending succeded. */
-        if (response[0].hasOwnProperty('result') === true) {
-          /** Clear sending form. */
-          this.clear()
+      /** Sending succeded. */
+      if (response[0].hasOwnProperty('result') === true) {
+        /** Clear sending form. */
+        this.clear()
 
-          /** Open transaction details. */
-          wallet.setViewing(response[0].result)
-        }
+        /** Open transaction details. */
+        wallet.setViewing(response[0].result)
+      }
 
-        /** Sending failed. */
-        if (response[0].hasOwnProperty('error') === true) {
-          /** In case of an unknown error, print details to assist fixing. */
-          console.error('Failed sending using sendfrom', response[0])
+      /** Sending failed. */
+      if (response[0].hasOwnProperty('error') === true) {
+        /** In case of an unknown error, print details to assist fixing. */
+        console.error('Failed sending using sendfrom', response[0])
 
-          switch (response[0].error.code) {
-            /**
-             * Insufficient funds,
-             * error_code_wallet_insufficient_funds = -6
-             */
-            case -6:
-              return this.failed('insufficientFunds')
-          }
+        switch (response[0].error.code) {
+          /**
+           * Insufficient funds,
+           * error_code_wallet_insufficient_funds = -6
+           */
+          case -6:
+            return this.failed('insufficientFunds')
         }
       }
     })
@@ -419,36 +415,34 @@ class Send {
         ]
       }
     ], (response) => {
-      if (response !== null) {
-        /** Sending succeded. */
-        if (response[0].hasOwnProperty('result') === true) {
-          /** Clear sending form. */
-          this.clear()
+      /** Sending succeded. */
+      if (response[0].hasOwnProperty('result') === true) {
+        /** Clear sending form. */
+        this.clear()
 
-          /** Open transaction details. */
-          wallet.setViewing(response[0].result)
-        }
+        /** Open transaction details. */
+        wallet.setViewing(response[0].result)
+      }
 
-        /** Sending failed. */
-        if (response[0].hasOwnProperty('error') === true) {
-          /** In case of an unknown error, print details to assist fixing. */
-          console.error('Failed sending using sendmany', response[0])
+      /** Sending failed. */
+      if (response[0].hasOwnProperty('error') === true) {
+        /** In case of an unknown error, print details to assist fixing. */
+        console.error('Failed sending using sendmany', response[0])
 
-          switch (response[0].error.code) {
-            /**
-             * Nonstandard transaction type,
-             * error_code = -4
-             */
-            case -4:
-              return this.failed('transactionNotStandard')
+        switch (response[0].error.code) {
+          /**
+           * Nonstandard transaction type,
+           * error_code = -4
+           */
+          case -4:
+            return this.failed('transactionNotStandard')
 
-            /**
-             * Insufficient funds,
-             * error_code_wallet_insufficient_funds = -6
-             */
-            case -6:
-              return this.failed('insufficientFunds')
-          }
+          /**
+           * Insufficient funds,
+           * error_code_wallet_insufficient_funds = -6
+           */
+          case -6:
+            return this.failed('insufficientFunds')
         }
       }
     })

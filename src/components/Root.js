@@ -5,7 +5,6 @@ import { message, notification } from 'antd'
 /** Required components. */
 import Footer from './Footer'
 import Header from './Header'
-import RpcManager from './RpcManager'
 import Transaction from './Transaction'
 
 /** Set notification and message top margin. */
@@ -18,7 +17,6 @@ const Root = (props) => (
     <Header />
     <main>{props.children}</main>
     <Transaction />
-    <RpcManager />
     <Footer />
   </div>
 )

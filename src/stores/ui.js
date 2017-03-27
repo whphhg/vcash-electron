@@ -4,6 +4,9 @@ import { getItem, setItem } from '../utilities/localStorage'
 import i18next from '../utilities/i18next'
 import moment from 'moment'
 
+/** Required store instances. */
+import rpc from './rpc'
+
 class UI {
   /**
    * Observable properties.
@@ -28,16 +31,15 @@ class UI {
       i18next.changeLanguage(language)
       moment.locale(language)
     }, true)
-  }
 
-  /**
-   * Set route.
-   * @action setRoute
-   * @param {string} route - Active route.
-   */
-  @action setRoute (route) {
-    this.activeRoute = route
-    hashHistory.push(route)
+    /** Redirect to welcome screen when RPC is unreachable. */
+    reaction(() => rpc.ready, (ready) => {
+      if (ready === false) {
+        this.setRoute('/welcome')
+      } else {
+        this.setRoute('/')
+      }
+    }, true)
   }
 
   /**
@@ -50,6 +52,16 @@ class UI {
 
     /** Save to local storage. */
     setItem('language', language)
+  }
+
+  /**
+   * Set active route.
+   * @action setRoute
+   * @param {string} route - Active route.
+   */
+  @action setRoute (route) {
+    this.activeRoute = route
+    hashHistory.push(route)
   }
 }
 
