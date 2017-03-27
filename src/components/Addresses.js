@@ -1,5 +1,6 @@
 import React from 'react'
 import { translate } from 'react-i18next'
+import { action, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Col, Input, Row, Table } from 'antd'
 
@@ -20,6 +21,10 @@ import SendRecipient from './SendRecipient'
 @inject('rates', 'send', 'ui', 'wallet') @observer
 
 export default class Addresses extends React.Component {
+  @observable filters = {
+    address: ['spendable', 'new']
+  }
+
   constructor (props) {
     super(props)
     this.t = props.t
@@ -27,6 +32,14 @@ export default class Addresses extends React.Component {
     this.send = props.send
     this.ui = props.ui
     this.wallet = props.wallet
+  }
+
+  /**
+   * Handle table change.
+   * @function tableChange
+   */
+  @action tableChange = (pagination, filters, sorter) => {
+    this.filters = filters
   }
 
   render () {
@@ -68,6 +81,7 @@ export default class Addresses extends React.Component {
                   emptyText: this.t('wallet:notFound')
                 }}
                 dataSource={this.wallet.addressData}
+                onChange={this.tableChange}
                 rowKey='address'
                 columns={[
                   {
@@ -75,6 +89,7 @@ export default class Addresses extends React.Component {
                     dataIndex: 'address',
                     width: 290,
                     render: address => <p className='text-mono'>{address}</p>,
+                    filteredValue: this.filters.address.slice() || null,
                     filters: [
                       {
                         text: this.t('wallet:spent'),
