@@ -1,5 +1,4 @@
 import React from 'react'
-import DevTools from 'mobx-react-devtools'
 import { message, notification } from 'antd'
 
 /** Required components. */
@@ -13,7 +12,6 @@ message.config({top: 11})
 
 const Root = (props) => (
   <div>
-    {process.env.NODE_ENV === 'dev' && <DevTools />}
     <Header />
     <main>{props.children}</main>
     <Transaction />

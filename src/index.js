@@ -3,6 +3,7 @@ import { render } from 'react-dom'
 import { I18nextProvider } from 'react-i18next'
 import { Router, Route, IndexRoute, hashHistory } from 'react-router'
 import { useStrict } from 'mobx'
+import { enableLogging } from 'mobx-logger'
 import { Provider } from 'mobx-react'
 import i18next from './utilities/i18next'
 import './utilities/rightClickMenu'
@@ -20,6 +21,9 @@ import * as stores from './stores'
 
 /** Use MobX strict mode, allowing only actions to alter the state. */
 useStrict(true)
+
+/** Enable MobX logging in dev mode. */
+process.env.NODE_ENV === 'dev' && enableLogging()
 
 render(
   <Provider {...stores}>
