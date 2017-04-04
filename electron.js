@@ -1,5 +1,4 @@
 import { app, BrowserWindow, shell } from 'electron'
-import { enableLiveReload } from 'electron-compile'
 
 /**
  * Keep a global reference of the window object, else the window will
@@ -20,9 +19,6 @@ app.on('window-all-closed', () => {
 
 /** Ready to load the UI. */
 app.on('ready', () => {
-  /** Enable live reloading on code changes if in dev mode. */
-  process.env.NODE_ENV === 'dev' && enableLiveReload()
-
   mainWindow = new BrowserWindow({
     width: 1152,
     height: 700,
