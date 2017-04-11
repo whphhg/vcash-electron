@@ -9,7 +9,7 @@ import { calculateIncentive, calculatePoW } from '../utilities/blockRewards'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('info', 'ui') @observer
+@inject('gui', 'info') @observer
 
 export default class RewardCalculator extends React.Component {
   @observable enteredBlock = ''
@@ -17,8 +17,8 @@ export default class RewardCalculator extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
+    this.gui = props.gui
     this.info = props.info
-    this.ui = props.ui
   }
 
   /**
@@ -117,7 +117,7 @@ export default class RewardCalculator extends React.Component {
               <Col span={24}>
                 <span style={{fontWeight: '500'}}>
                   {
-                    new Intl.NumberFormat(this.ui.language, {
+                    new Intl.NumberFormat(this.gui.language, {
                       minimumFractionDigits: 6,
                       maximumFractionDigits: 6
                     }).format(this.powReward)
@@ -134,7 +134,7 @@ export default class RewardCalculator extends React.Component {
               <Col span={24}>
                 <span style={{fontWeight: '500'}}>
                   {
-                    new Intl.NumberFormat(this.ui.language, {
+                    new Intl.NumberFormat(this.gui.language, {
                       minimumFractionDigits: 6,
                       maximumFractionDigits: 6
                     }).format(this.miningReward)
@@ -151,7 +151,7 @@ export default class RewardCalculator extends React.Component {
               <Col span={24}>
                 <span style={{fontWeight: '500'}}>
                   {
-                    new Intl.NumberFormat(this.ui.language, {
+                    new Intl.NumberFormat(this.gui.language, {
                       minimumFractionDigits: 6,
                       maximumFractionDigits: 6
                     }).format(this.incentiveReward)

@@ -7,15 +7,15 @@ import { Switch, Tooltip, message } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('info', 'ui', 'rpc') @observer
+@inject('gui', 'info', 'rpc') @observer
 
 export default class ChainBlender extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
+    this.gui = props.gui
     this.info = props.info
     this.rpc = props.rpc
-    this.ui = props.ui
   }
 
   /**
@@ -84,7 +84,7 @@ export default class ChainBlender extends React.Component {
         >
           {this.t('wallet:blended')}
           <span> {
-              new Intl.NumberFormat(this.ui.language, {
+              new Intl.NumberFormat(this.gui.language, {
                 minimumFractionDigits: 6,
                 maximumFractionDigits: 6
               }).format(this.info.chainBlender.blendedbalance)
@@ -92,7 +92,7 @@ export default class ChainBlender extends React.Component {
           </span> XVC (
           <span>
             {
-              new Intl.NumberFormat(this.ui.language, {
+              new Intl.NumberFormat(this.gui.language, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
               }).format(this.info.chainBlender.blendedpercentage)
@@ -109,7 +109,7 @@ export default class ChainBlender extends React.Component {
             >
               {this.t('wallet:denominated')}
               <span> {
-                  new Intl.NumberFormat(this.ui.language, {
+                  new Intl.NumberFormat(this.gui.language, {
                     minimumFractionDigits: 6,
                     maximumFractionDigits: 6
                   }).format(this.info.chainBlender.denominatedbalance)

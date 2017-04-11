@@ -12,13 +12,13 @@ import { TransactionsStatistics } from './charts'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('rates', 'wallet') @observer
+@inject('gui', 'wallet') @observer
 
 export default class Transactions extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.rates = props.rates
+    this.gui = props.gui
     this.wallet = props.wallet
     this.searchUpdateTimer = null
   }
@@ -155,7 +155,7 @@ export default class Transactions extends React.Component {
                   )
                 },
                 {
-                  title: this.rates.localCurrency,
+                  title: this.gui.localCurrency,
                   dataIndex: 'amountLocal',
                   width: 150,
                   render: (text, record) => (
@@ -163,7 +163,7 @@ export default class Transactions extends React.Component {
                       className={record.color}
                       style={{textAlign: 'right'}}
                     >
-                      {text} {this.rates.localCurrency}
+                      {text} {this.gui.localCurrency}
                     </p>
                   )
                 }

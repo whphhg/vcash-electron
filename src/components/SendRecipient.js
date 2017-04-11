@@ -7,16 +7,16 @@ import { Col, Input, Popconfirm, Row } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('rates', 'send', 'ui') @observer
+@inject('gui', 'rates', 'send') @observer
 
 export default class SendRecipient extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
     this.data = props.data
+    this.gui = props.gui
     this.rates = props.rates
     this.send = props.send
-    this.ui = props.ui
   }
 
   /**
@@ -38,7 +38,7 @@ export default class SendRecipient extends React.Component {
   }
 
   render () {
-    const { local, localCurrency, average } = this.rates
+    const { local, average } = this.rates
     const { uid, address, addressValid, amount } = this.data
 
     return (
@@ -89,12 +89,12 @@ export default class SendRecipient extends React.Component {
             <Input
               disabled
               value={
-                new Intl.NumberFormat(this.ui.language, {
+                new Intl.NumberFormat(this.gui.language, {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
                 }).format(amount * average * local)
               }
-              addonAfter={localCurrency}
+              addonAfter={this.gui.localCurrency}
             />
           </Col>
         </Row>

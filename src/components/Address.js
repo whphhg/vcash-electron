@@ -7,14 +7,14 @@ import { Col, Row, Table } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('ui', 'wallet') @observer
+@inject('gui', 'wallet') @observer
 
 export default class Address extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
     this.data = props.data
-    this.ui = props.ui
+    this.gui = props.gui
     this.wallet = props.wallet
   }
 
@@ -128,7 +128,7 @@ export default class Address extends React.Component {
                           className={record.color}
                         >
                           {
-                            new Intl.NumberFormat(this.ui.language, {
+                            new Intl.NumberFormat(this.gui.language, {
                               minimumFractionDigits: 6,
                               maximumFractionDigits: 6
                             }).format(amount)

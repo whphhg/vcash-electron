@@ -2,7 +2,7 @@ import { homedir } from 'os'
 import { sep } from 'path'
 
 /** Required store instances. */
-import ui from '../stores/ui'
+import gui from '../stores/gui'
 
 /**
  * Get decimal separator.
@@ -78,7 +78,7 @@ export const humanReadable = (num = 0, dec = true, suffix = 'B') => {
     unit < units.length - 1
   )
 
-  return new Intl.NumberFormat(ui.language, {
+  return new Intl.NumberFormat(gui.language, {
     maximumFractionDigits: 2
   }).format(num) + ' ' + units[unit] + suffix
 }

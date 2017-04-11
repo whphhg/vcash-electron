@@ -79,22 +79,6 @@ footer p span { font-weight: 500; }
 .ant-input:focus { border-color: #b60127; }
 .ant-input-group-addon .ant-select-focused .ant-select-selection { color: #b60127; }
 .ant-breadcrumb a:hover { color: #b60127; }
-.ant-btn { background-color: #f7f7f7; }
-.ant-btn:hover { background-color: #f7f7f7; }
-.ant-btn:focus { color: #b60127; border-color: #b60127; }
-.ant-btn.active { color: #b60127; border-color: #b60127; }
-.ant-btn-primary { background-color: #b60127; border-color: #b60127; }
-.ant-btn-primary:hover, .ant-btn-primary:focus { background-color: #b60127; border-color: #b60127; }
-.ant-btn-primary:active, .ant-btn-primary.active { background-color: #b60127; border-color: #b60127; }
-.ant-btn-group .ant-btn-primary:not(:first-child):not(:last-child) { border-right-color: #b60127; border-left-color: #b60127; }
-.ant-btn-group .ant-btn-primary:first-child:not(:last-child) { border-right-color: #b60127; }
-.ant-btn-group .ant-btn-primary:last-child:not(:first-child),
-.ant-btn-group .ant-btn-primary + .ant-btn { border-left-color: #b60127; }
-.ant-btn-ghost:hover, .ant-btn-ghost:focus { color: #b60127; border-color: #b60127; }
-.ant-btn-ghost:active, .ant-btn-ghost.active { color: #b60127; border-color: #b60127; }
-.ant-btn-dashed:hover, .ant-btn-dashed:focus { color: #b60127; border-color: #b60127; }
-.ant-btn-dashed:active, .ant-btn-dashed.active { color: #b60127; border-color: #b60127; }
-.ant-btn-clicked:after { border: 0 solid #b60127; }
 .ant-radio-wrapper:hover .ant-radio .ant-radio-inner,
 .ant-radio:hover .ant-radio-inner,
 .ant-radio-focused .ant-radio-inner { border-color: #b60127; }
@@ -143,8 +127,23 @@ footer p span { font-weight: 500; }
 .ant-menu { background: #b60127; color: #FFFFFF; }
 .ant-menu-horizontal { border: none; }
 .ant-menu-horizontal > .ant-menu-item:hover, .ant-menu-horizontal > .ant-menu-item-selected { border-bottom: 2px solid #FFFFFF;color: #FFFFFF; }
-.ant-btn { vertical-align: top; }
+.ant-btn { vertical-align: top; background-color: #f7f7f7; }
 .ant-btn:hover, .ant-btn:focus { color: #b60127; border-color: #b60127; }
+.ant-btn:hover { background-color: #f7f7f7; }
+.ant-btn:focus { color: #b60127; border-color: #b60127; }
+.ant-btn.active { color: #b60127; border-color: #b60127; }
+.ant-btn-primary { background-color: #b60127; border-color: #b60127; }
+.ant-btn-primary:hover, .ant-btn-primary:focus { color: #ffffff; background-color: #43464B; border-color: #43464B; }
+.ant-btn-primary:active, .ant-btn-primary.active { background-color: #b60127; border-color: #b60127; }
+.ant-btn-group .ant-btn-primary:not(:first-child):not(:last-child) { border-right-color: #b60127; border-left-color: #b60127; }
+.ant-btn-group .ant-btn-primary:first-child:not(:last-child) { border-right-color: #b60127; }
+.ant-btn-group .ant-btn-primary:last-child:not(:first-child),
+.ant-btn-group .ant-btn-primary + .ant-btn { border-left-color: #b60127; }
+.ant-btn-ghost:hover, .ant-btn-ghost:focus { color: #b60127; border-color: #b60127; }
+.ant-btn-ghost:active, .ant-btn-ghost.active { color: #b60127; border-color: #b60127; }
+.ant-btn-dashed:hover, .ant-btn-dashed:focus { color: #b60127; border-color: #b60127; }
+.ant-btn-dashed:active, .ant-btn-dashed.active { color: #b60127; border-color: #b60127; }
+.ant-btn-clicked:after { border: 0 solid #b60127; }
 .ant-input:focus { border-color: #b60127; outline: 0; box-shadow: 0 0 0 2px rgba(183, 28, 28, 0.2); }
 .ant-input:hover { border-color: #b60127; outline: 0; }
 .ant-radio-button-wrapper:hover, .ant-radio-button-wrapper-focused { color: #b60127; }
@@ -196,3 +195,7 @@ footer p span { font-weight: 500; }
 .ant-table-thead > tr:hover > td,
 .ant-table-tbody > tr:hover > td { background: #f2f2f2; }
 .ant-select-auto-complete.ant-select .ant-input:focus { border-color: #b60127; outline: 0; box-shadow: 0 0 0 2px rgba(183, 28, 28, 0.2); }
+.ant-tabs-ink-bar { background-color: #b60127; }
+.ant-tabs-nav .ant-tabs-tab:hover { color: #43464B; }
+.ant-tabs-nav .ant-tabs-tab:active { color: #b60127; }
+.ant-tabs-nav .ant-tabs-tab-active { color: #b60127; }

@@ -12,14 +12,14 @@ import { Difficulties, HashRate, RewardSpread, RewardsPerDay } from './charts'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('info', 'ui') @observer
+@inject('gui', 'info') @observer
 
 export default class Network extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
+    this.gui = props.gui
     this.info = props.info
-    this.ui = props.ui
   }
 
   render () {
@@ -33,11 +33,11 @@ export default class Network extends React.Component {
                 <p>
                   {this.t('wallet:collateralBalance')}
                   <span> {
-                      new Intl.NumberFormat(this.ui.language, {
+                      new Intl.NumberFormat(this.gui.language, {
                         maximumFractionDigits: 6
                       }).format(this.info.incentive.collateralbalance)
                     } / {
-                      new Intl.NumberFormat(this.ui.language)
+                      new Intl.NumberFormat(this.gui.language)
                         .format(this.info.incentive.collateralrequired)
                     }
                   </span> XVC
@@ -200,7 +200,7 @@ export default class Network extends React.Component {
                   <Col span={10}>
                     <span style={{fontWeight: '500'}}>
                       {
-                        new Intl.NumberFormat(this.ui.language, {
+                        new Intl.NumberFormat(this.gui.language, {
                           maximumFractionDigits: 0
                         }).format(this.info.wallet.moneysupply)
                       }

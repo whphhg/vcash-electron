@@ -7,13 +7,13 @@ import { Select } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('ui') @observer
+@inject('gui') @observer
 
 export default class SelectLanguage extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.ui = props.ui
+    this.gui = props.gui
   }
 
   /**
@@ -22,7 +22,7 @@ export default class SelectLanguage extends React.Component {
    * @param {string} language - Locale.
    */
   setLanguage = (language) => {
-    this.ui.setLanguage(language)
+    this.gui.setLanguage(language)
   }
 
   render () {
@@ -36,13 +36,13 @@ export default class SelectLanguage extends React.Component {
           width: '120px',
           margin: '0 10px 0 0'
         }}
-        defaultValue={this.ui.language}
+        defaultValue={this.gui.language}
         optionFilterProp='children'
         notFoundContent={this.t('wallet:notFound')}
         onChange={this.setLanguage}
       >
         {
-          this.ui.languages.map((entry) => (
+          this.gui.languages.map((entry) => (
             <Option
               key={entry.language}
               value={entry.language}

@@ -1,5 +1,6 @@
 import React from 'react'
 import { translate } from 'react-i18next'
+import { withRouter } from 'react-router-dom'
 import { inject, observer } from 'mobx-react'
 import { Menu } from 'antd'
 
@@ -11,29 +12,21 @@ import WalletUnlock from './WalletUnlock'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('info', 'rates', 'ui', 'wallet') @observer
+@inject('connections', 'gui', 'info', 'rates', 'wallet') @observer
 
-export default class Header extends React.Component {
+class Header extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
+    this.connections = props.connections
+    this.gui = props.gui
     this.info = props.info
     this.rates = props.rates
-    this.ui = props.ui
     this.wallet = props.wallet
   }
 
-  /**
-   * Set route.
-   * @function setRoute
-   * @param {object} e - Event.
-   */
-  setRoute = (e) => {
-    this.ui.setRoute(e.key)
-  }
-
   render () {
-    const { local, localCurrency, average } = this.rates
+    const { local, average } = this.rates
     const { balance, newmint, stake } = this.info.wallet
     const { Item } = Menu
 
@@ -46,7 +39,7 @@ export default class Header extends React.Component {
             <br />
             <span>
               {
-                new Intl.NumberFormat(this.ui.language, {
+                new Intl.NumberFormat(this.gui.language, {
                   minimumFractionDigits: 6,
                   maximumFractionDigits: 6
                 }).format(balance)
@@ -56,7 +49,7 @@ export default class Header extends React.Component {
           <p className='balance'>
             ~<span>
               {
-                new Intl.NumberFormat(this.ui.language, {
+                new Intl.NumberFormat(this.gui.language, {
                   minimumFractionDigits: 8,
                   maximumFractionDigits: 8
                 }).format(balance * average)
@@ -66,12 +59,12 @@ export default class Header extends React.Component {
           <p className='balance'>
             ~<span>
               {
-                new Intl.NumberFormat(this.ui.language, {
+                new Intl.NumberFormat(this.gui.language, {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
                 }).format(balance * average * local)
               }
-            </span> {localCurrency}
+            </span> {this.gui.localCurrency}
           </p>
           <div className='incoming'>
             {
@@ -81,7 +74,7 @@ export default class Header extends React.Component {
                   <br />
                   <span>
                     {
-                      new Intl.NumberFormat(this.ui.language, {
+                      new Intl.NumberFormat(this.gui.language, {
                         minimumFractionDigits: 6,
                         maximumFractionDigits: 6
                       }).format(this.wallet.pendingAmount)
@@ -97,7 +90,7 @@ export default class Header extends React.Component {
                   <br />
                   <span>
                     {
-                      new Intl.NumberFormat(this.ui.language, {
+                      new Intl.NumberFormat(this.gui.language, {
                         minimumFractionDigits: 6,
                         maximumFractionDigits: 6
                       }).format(newmint)
@@ -113,7 +106,7 @@ export default class Header extends React.Component {
                   <br />
                   <span>
                     {
-                      new Intl.NumberFormat(this.ui.language, {
+                      new Intl.NumberFormat(this.gui.language, {
                         minimumFractionDigits: 6,
                         maximumFractionDigits: 6
                       }).format(stake)
@@ -124,31 +117,34 @@ export default class Header extends React.Component {
             }
           </div>
         </div>
-        <div
-          style={{
-            float: 'right',
-            margin: '0 10px 0 0'
-          }}
-        >
+        <div style={{float: 'right', margin: '0 10px 0 0'}}>
           <WalletLock />
           <WalletUnlock />
         </div>
         <nav>
           <Menu
-            onClick={this.setRoute}
-            selectedKeys={[this.ui.activeRoute]}
             mode='horizontal'
+            defaultSelectedKeys={['/']}
+            onClick={
+              (item) => {
+                this.props.history.push(
+                  '/' +
+                  this.connections.viewing +
+                  item.key
+                )
+              }
+            }
           >
             <Item key='/'>
               <i className='material-icons md-20'>account_balance_wallet</i>
             </Item>
-            <Item key='addresses'>
+            <Item key='/addresses'>
               <i className='material-icons md-20'>send</i>
             </Item>
-            <Item key='network'>
+            <Item key='/network'>
               <i className='material-icons md-20'>public</i>
             </Item>
-            <Item key='maintenance'>
+            <Item key='/maintenance'>
               <i className='material-icons md-20'>settings</i>
             </Item>
           </Menu>
@@ -157,3 +153,5 @@ export default class Header extends React.Component {
     )
   }
 }
+
+export default withRouter(Header)

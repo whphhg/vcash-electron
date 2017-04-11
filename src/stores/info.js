@@ -1,10 +1,7 @@
 import { action, computed, observable, reaction } from 'mobx'
 import { shortUid } from '../utilities/common'
 
-/** Required store instances. */
-import rpc from './rpc'
-
-class Info {
+export default class Info {
   /**
    * Observable properties.
    * @property {map} responses - Saved RPC responses.
@@ -19,16 +16,18 @@ class Info {
 
   /**
    * @constructor
+   * @param {object} rpc - RPC store.
    * @property {object} timeouts - Timeout ids.
    */
-  constructor () {
+  constructor (rpc) {
+    this.rpc = rpc
     this.timeouts = {
       getNetworkInfo: null,
       getWalletInfo: null
     }
 
-    /** Start update loops when RPC is ready. */
-    reaction(() => rpc.ready, (ready) => {
+    reaction(() => this.rpc.ready, (ready) => {
+      /** Begin updating when RPC becomes active. */
       if (ready === true) {
         /** Start wallet info update loop. */
         this.restart('getWalletInfo')
@@ -38,6 +37,12 @@ class Info {
 
         /** Update lock status. */
         this.getLockStatus()
+      }
+
+      /** Clear timeouts when RPC becomes inactive */
+      if (ready === false) {
+        clearTimeout(this.timeouts.getNetworkInfo)
+        clearTimeout(this.timeouts.getWalletInfo)
       }
     })
 
@@ -50,18 +55,14 @@ class Info {
         if (this.responses.has('getincentiveinfo') === true) {
           const info = this.responses.get('getincentiveinfo')
 
-          if (info.walletaddress === '') {
-            this.restart('getNetworkInfo')
-          }
+          if (info.walletaddress === '') this.restart('getNetworkInfo')
         }
       }
     }, { delay: 8000 })
 
     /** Restart wallet info update loop when the wallet gets unlocked. */
     reaction(() => this.isLocked, (isLocked) => {
-      if (isLocked === false) {
-        this.restart('getWalletInfo')
-      }
+      if (isLocked === false) this.restart('getWalletInfo')
     })
   }
 
@@ -274,7 +275,7 @@ class Info {
    * @function getLockStatus
    */
   getLockStatus () {
-    rpc.execute([
+    this.rpc.execute([
       { method: 'walletpassphrase', params: [] }
     ], (response) => {
       switch (response[0].error.code) {
@@ -307,7 +308,7 @@ class Info {
    * @function getNetworkInfo
    */
   getNetworkInfo () {
-    rpc.execute([
+    this.rpc.execute([
       { method: 'getnetworkinfo', params: [] },
       { method: 'getpeerinfo', params: [] },
       { method: 'getincentiveinfo', params: [] },
@@ -328,7 +329,7 @@ class Info {
    * @function getWalletInfo
    */
   getWalletInfo () {
-    rpc.execute([
+    this.rpc.execute([
       { method: 'getinfo', params: [] },
       { method: 'chainblender', params: ['info'] }
     ], (response, options) => {
@@ -354,13 +355,3 @@ class Info {
     this[timeout]()
   }
 }
-
-/** Initialize a new globally used store. */
-const info = new Info()
-
-/**
- * Export initialized store as default export,
- * and store class as named export.
- */
-export default info
-export { Info }

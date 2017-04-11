@@ -8,15 +8,15 @@ import moment from 'moment'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('rates', 'rpc', 'ui', 'wallet') @observer
+@inject('gui', 'rates', 'rpc', 'wallet') @observer
 
 export default class Transaction extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
+    this.gui = props.gui
     this.rates = props.rates
     this.rpc = props.rpc
-    this.ui = props.ui
     this.wallet = props.wallet
   }
 
@@ -48,7 +48,7 @@ export default class Transaction extends React.Component {
   }
 
   render () {
-    const { local, localCurrency, average } = this.rates
+    const { local, average } = this.rates
     const { viewing, viewingTx } = this.wallet
 
     if (viewing === null) return null
@@ -192,17 +192,17 @@ export default class Transaction extends React.Component {
               </Col>
               <Col span={14} className={viewingTx.color}>
                 {
-                  new Intl.NumberFormat(this.ui.language, {
+                  new Intl.NumberFormat(this.gui.language, {
                     minimumFractionDigits: 6,
                     maximumFractionDigits: 6
                   }).format(viewingTx.amount)
                 } XVC (
                 {
-                  new Intl.NumberFormat(this.ui.language, {
+                  new Intl.NumberFormat(this.gui.language, {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2
                   }).format(viewingTx.amount * local * average)
-                } {localCurrency})
+                } {this.gui.localCurrency})
               </Col>
             </Row>
             {
@@ -216,7 +216,7 @@ export default class Transaction extends React.Component {
                   </Col>
                   <Col span={12} className='red'>
                     {
-                      new Intl.NumberFormat(this.ui.language, {
+                      new Intl.NumberFormat(this.gui.language, {
                         minimumFractionDigits: 6,
                         maximumFractionDigits: 6
                       }).format(viewingTx.fee)
@@ -308,7 +308,7 @@ export default class Transaction extends React.Component {
                   render: amount => (
                     <p style={{textAlign: 'right'}}>
                       {
-                        new Intl.NumberFormat(this.ui.language, {
+                        new Intl.NumberFormat(this.gui.language, {
                           minimumFractionDigits: 6,
                           maximumFractionDigits: 6
                         }).format(amount)
@@ -351,7 +351,7 @@ export default class Transaction extends React.Component {
                       className={record.color}
                     >
                       {
-                        new Intl.NumberFormat(this.ui.language, {
+                        new Intl.NumberFormat(this.gui.language, {
                           minimumFractionDigits: 6,
                           maximumFractionDigits: 6
                         }).format(amount)

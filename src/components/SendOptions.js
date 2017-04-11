@@ -7,14 +7,14 @@ import { Col, Input, Row, Select } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('send', 'ui', 'wallet') @observer
+@inject('gui', 'send', 'wallet') @observer
 
 export default class SendOptions extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
+    this.gui = props.gui
     this.send = props.send
-    this.ui = props.ui
     this.wallet = props.wallet
   }
 
@@ -100,7 +100,7 @@ export default class SendOptions extends React.Component {
               size='small'
               disabled
               defaultValue={
-                new Intl.NumberFormat(this.ui.language, {
+                new Intl.NumberFormat(this.gui.language, {
                   minimumFractionDigits: 6,
                   maximumFractionDigits: 6
                 }).format(0)

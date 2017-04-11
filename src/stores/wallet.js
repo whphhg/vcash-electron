@@ -4,12 +4,7 @@ import { shortUid } from '../utilities/common'
 import i18next from '../utilities/i18next'
 import moment from 'moment'
 
-/** Required store instances. */
-import rpc from './rpc'
-import rates from './rates'
-import ui from './ui'
-
-class Wallet {
+export default class Wallet {
   /**
    * Observable properties.
    * @property {map} addresses - Wallet label and change addresses.
@@ -26,18 +21,25 @@ class Wallet {
 
   /**
    * @constructor
+   * @param {object} rpc - RPC store.
+   * @param {object} rates - Rates store.
+   * @param {object} gui - GUI store.
    * @property {number|null} updateTimeout - getWallet() timeout id.
    * @property {string} lastBlock - Last looked up block.
    */
-  constructor () {
+  constructor (gui, rpc, rates) {
+    this.gui = gui
+    this.rpc = rpc
+    this.rates = rates
     this.updateTimeout = null
     this.lastBlock = ''
 
-    /** Get txs and addresses when RPC is ready. */
-    reaction(() => rpc.ready, (ready) => {
-      if (ready === true) {
-        this.getWallet(true, true)
-      }
+    reaction(() => this.rpc.ready, (ready) => {
+      /** Begin updating when RPC becomes active. */
+      if (ready === true) this.getWallet(true, true)
+
+      /** Clear timeout when RPC becomes inactive */
+      if (ready === false) clearTimeout(this.updateTimeout)
     })
 
     /** Check if there's a sent transaction waiting to be viewed. */
@@ -196,15 +198,15 @@ class Wallet {
     this.transactions.forEach((tx, txid) => {
       let keywordMatches = 0
 
-      const amount = new Intl.NumberFormat(ui.language, {
+      const amount = new Intl.NumberFormat(this.gui.language, {
         minimumFractionDigits: 6,
         maximumFractionDigits: 6
       }).format(tx.amount)
 
-      const amountLocal = new Intl.NumberFormat(ui.language, {
+      const amountLocal = new Intl.NumberFormat(this.gui.language, {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
-      }).format(tx.amount * rates.average * rates.local)
+      }).format(tx.amount * this.rates.average * this.rates.local)
 
       /** Increment keywordMatches by 1 each time a keyword matches. */
       this.search.forEach((keyword) => {
@@ -652,7 +654,7 @@ class Wallet {
       /** Open notifications for pending transactions. */
       notifications.pending.forEach((total, category) => {
         /** Convert the amount to local notation. */
-        total = new Intl.NumberFormat(ui.language, {
+        total = new Intl.NumberFormat(this.gui.language, {
           minimumFractionDigits: 6,
           maximumFractionDigits: 6
         }).format(total)
@@ -671,7 +673,7 @@ class Wallet {
        */
       notifications.spendable.forEach((total, category) => {
         /** Convert the amount to local notation. */
-        total = new Intl.NumberFormat(ui.language, {
+        total = new Intl.NumberFormat(this.gui.language, {
           minimumFractionDigits: 6,
           maximumFractionDigits: 6
         }).format(total)
@@ -742,7 +744,7 @@ class Wallet {
       })
     }
 
-    rpc.execute(options, (response) => {
+    this.rpc.execute(options, (response) => {
       let lsb = response[0].result
       let mempool = response[1].result
       let options = new Map()
@@ -801,7 +803,7 @@ class Wallet {
           this.setWallet(null, addresses)
         }
       } else {
-        rpc.execute([...options.values()], (transactions) => {
+        this.rpc.execute([...options.values()], (transactions) => {
           let options = new Map()
 
           transactions.forEach((tx) => {
@@ -846,7 +848,7 @@ class Wallet {
           if (options.size === 0) {
             this.setWallet(transactions, addresses)
           } else {
-            rpc.execute([...options.values()], (io, options) => {
+            this.rpc.execute([...options.values()], (io, options) => {
               this.setWallet(transactions, addresses, io, options)
             })
           }
@@ -855,13 +857,3 @@ class Wallet {
     })
   }
 }
-
-/** Initialize a new globally used store. */
-const wallet = new Wallet()
-
-/**
- * Export initialized store as default export,
- * and store class as named export.
- */
-export default wallet
-export { Wallet }

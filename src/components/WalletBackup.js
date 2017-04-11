@@ -14,13 +14,14 @@ import { dataPath } from '../utilities/common'
 @inject('rpc') @observer
 
 export default class WalletBackup extends React.Component {
-  @observable path = dataPath()
+  @observable path
   @observable error = false
 
   constructor (props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpc
+    this.path = this.rpc.connection.status.tunnel === true ? '' : dataPath()
   }
 
   /**
@@ -108,7 +109,11 @@ export default class WalletBackup extends React.Component {
           <Col span={21}>
             <Input
               disabled
-              value={this.path}
+              value={
+                this.rpc.connection.status.tunnel === true
+                  ? this.t('wallet:remoteDataFolder')
+                  : this.path
+              }
             />
           </Col>
         </Row>
@@ -123,6 +128,7 @@ export default class WalletBackup extends React.Component {
           </Col>
           <Col span={9} style={{textAlign: 'right'}}>
             <Button
+              disabled={this.rpc.connection.status.tunnel === true}
               style={{margin: '5px 0 0 0'}}
               onClick={this.setPath}
             >

@@ -1,24 +1,36 @@
 import { action, computed, observable, reaction } from 'mobx'
 import moment from 'moment'
 
-/** Required store instances. */
-import info from './info'
-import rpc from './rpc'
-import wallet from './wallet'
-
-class Stats {
+export default class Stats {
   /**
    * Observable properties.
    * @property {array} networkByMinute - Hash rate and diff. in 1min interval.
    */
   @observable networkByMinute = observable.array([])
 
-  constructor () {
-    /** Start updating network stats when RPC is ready. */
-    reaction(() => rpc.ready, (ready) => {
+  /**
+   * @constructor
+   * @param {object} info - Info store.
+   * @param {object} rpc - RPC store.
+   * @param {object} wallet - Wallet store.
+   * @property {number|null} updateTimeout - setNetworkByMinute timeout id.
+   */
+  constructor (info, rpc, wallet) {
+    this.info = info
+    this.rpc = rpc
+    this.wallet = wallet
+    this.updateTimeout = null
+
+    reaction(() => this.rpc.ready, (ready) => {
+      /** Begin updating when RPC becomes active. */
       if (ready === true) {
-        setTimeout(() => { this.setNetworkByMinute() }, 3 * 1000)
+        this.updateTimeout = setTimeout(() => {
+          this.setNetworkByMinute()
+        }, 3 * 1000)
       }
+
+      /** Clear timeout when RPC becomes inactive */
+      if (ready === false) clearTimeout(this.updateTimeout)
     })
   }
 
@@ -30,14 +42,16 @@ class Stats {
   @action setNetworkByMinute () {
     this.networkByMinute.push({
       date: new Date().getTime(),
-      posDifficulty: info.difficulty['proof-of-stake'],
-      powDifficulty: info.difficulty['proof-of-work'],
-      hashRate: info.mining.networkhashps
+      posDifficulty: this.info.difficulty['proof-of-stake'],
+      powDifficulty: this.info.difficulty['proof-of-work'],
+      hashRate: this.info.mining.networkhashps
     })
 
     /** Set new timeout only while RPC is ready. */
-    if (rpc.ready === true) {
-      setTimeout(() => { this.setNetworkByMinute() }, 60 * 1000)
+    if (this.rpc.ready === true) {
+      this.updateTimeout = setTimeout(() => {
+        this.setNetworkByMinute()
+      }, 60 * 1000)
     }
   }
 
@@ -79,7 +93,7 @@ class Stats {
     }
 
     /** Add category counts to the dailyTotals map. */
-    wallet.transactions.forEach((tx, txid) => {
+    this.wallet.transactions.forEach((tx, txid) => {
       /** Check if tx time is in the last 31 days window. */
       if (tx.time > threshold) {
         const date = moment(tx.time).format('YYYYMMDD')
@@ -120,8 +134,8 @@ class Stats {
     }
 
     /** Add category counts to the rewardsPerDay map. */
-    for (let i = 0; i < wallet.generated.length; i++) {
-      const tx = wallet.generated[i]
+    for (let i = 0; i < this.wallet.generated.length; i++) {
+      const tx = this.wallet.generated[i]
 
       /** Check if tx time is in the last 31 days window. */
       if (tx.time > threshold) {
@@ -159,8 +173,8 @@ class Stats {
       incentiveReward: []
     }
 
-    for (let i = 0; i < wallet.generated.length; i++) {
-      const tx = wallet.generated[i]
+    for (let i = 0; i < this.wallet.generated.length; i++) {
+      const tx = this.wallet.generated[i]
 
       /** Check if tx time is in the last 31 days window. */
       if (tx.time > threshold) {
@@ -189,13 +203,3 @@ class Stats {
     return rewardSpread
   }
 }
-
-/** Initialize a new globally used store. */
-const stats = new Stats()
-
-/**
- * Export initialized store as default export,
- * and store class as named export.
- */
-export default stats
-export { Stats }

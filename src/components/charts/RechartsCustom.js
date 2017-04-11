@@ -5,7 +5,7 @@ import i18next from '../../utilities/i18next'
 import moment from 'moment'
 
 /** Required stores. */
-import ui from '../../stores/ui'
+import gui from '../../stores/gui'
 
 /**
  * Custom axis tick.
@@ -17,7 +17,7 @@ const CustomTick = (props) => {
   switch (props.textType) {
     case 'date':
       value = new Date(props.payload.value)
-        .toLocaleDateString(ui.language, {
+        .toLocaleDateString(gui.language, {
           day: '2-digit',
           month: '2-digit'
         })
@@ -32,7 +32,7 @@ const CustomTick = (props) => {
       break
 
     case 'number':
-      value = new Intl.NumberFormat(ui.language, {
+      value = new Intl.NumberFormat(gui.language, {
         maximumFractionDigits: 2
       }).format(props.payload.value)
       break
@@ -80,7 +80,7 @@ const CustomTooltip = (props) => {
             <Col span={18} style={{textAlign: 'right'}}>
               <p style={{color: color}}>
                 {
-                  new Intl.NumberFormat(ui.language, {
+                  new Intl.NumberFormat(gui.language, {
                     minimumFractionDigits: 6,
                     maximumFractionDigits: 6
                   }).format(amount)
@@ -122,14 +122,14 @@ const CustomTooltip = (props) => {
                             )
                           ) || (
                             props.amounts === true && (
-                              new Intl.NumberFormat(ui.language, {
+                              new Intl.NumberFormat(gui.language, {
                                 minimumFractionDigits: 6,
                                 maximumFractionDigits: 6
                               }).format(entry.value) + ' XVC'
                             )
                           ) || (
                             props.amounts !== true && (
-                              new Intl.NumberFormat(ui.language, {
+                              new Intl.NumberFormat(gui.language, {
                                 maximumFractionDigits: 2
                               }).format(entry.value)
                             )

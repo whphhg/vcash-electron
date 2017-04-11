@@ -17,14 +17,14 @@ import WalletSeedDump from './WalletSeedDump'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('info', 'ui') @observer
+@inject('gui', 'info') @observer
 
 export default class Maintenance extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
+    this.gui = props.gui
     this.info = props.info
-    this.ui = props.ui
   }
 
   render () {
@@ -134,7 +134,7 @@ export default class Maintenance extends React.Component {
                 dataIndex: 'startingheight',
                 width: 110,
                 render: text =>
-                  new Intl.NumberFormat(this.ui.language).format(text)
+                  new Intl.NumberFormat(this.gui.language).format(text)
               },
               {
                 title: this.t('wallet:banScore'),

@@ -1,88 +1,34 @@
-import { action, computed, observable, reaction } from 'mobx'
-import { getItem, setItem } from '../utilities/localStorage'
+import { computed, reaction } from 'mobx'
 
-class RPC {
-  /**
-   * Observable properties.
-   * @property {string} enteredPort - User entered RPC port.
-   * @property {boolean} reachable - Daemon connectivity status.
-   * @property {boolean} started - Start button status.
-   */
-  @observable enteredPort = getItem('rpcPort') || ''
-  @observable reachable = false
-  @observable started = false
-
+export default class RPC {
   /**
    * @constructor
+   * @param {object} connection - Connection settings and status.
+   * @param {function} setStatus - Set connection status.
    * @property {number|null} testTimeout - testExecute() timeout id.
    */
-  constructor () {
+  constructor (connection, setStatus) {
+    this.connection = connection
+    this.setStatus = setStatus
     this.testTimeout = null
 
     /** Test execute() on start-up. */
-    reaction(() => this.started, (started) => {
-      if (started === false) this.testExecute()
-    }, true)
+    reaction(() => this.connection.status.active, (active) => {
+      if (active === true) this.testExecute()
 
-    /** Test execute() on port change if previously reachable. */
-    reaction(() => this.enteredPort, (enteredPort) => {
-      if (this.reachable === true) this.testExecute()
+      /** Clear timeout on shut-down. */
+      if (active === false) clearTimeout(this.testTimeout)
     })
   }
 
   /**
-   * Get RPC port.
-   * @function port
-   * @return {string} RPC port.
-   */
-  @computed get port () {
-    if (this.enteredPort === '') return '9195'
-    return this.enteredPort
-  }
-
-  /**
-   * Flag for UI to know when to begin and stop updating data.
+   * Get RPC status.
    * @function ready
-   * @return {boolean} Ready status.
+   * @return {boolean} RPC status.
    */
   @computed get ready () {
-    if (this.reachable === false) return false
-    return this.started
-  }
-
-  /**
-   * Set RPC port.
-   * @function setPort
-   * @param {number} port - Port.
-   */
-  @action setPort (port = '') {
-    if (port !== '') {
-      /** Allow only numbers below 65536. */
-      if (port.match(/^\d+$/) === null || parseInt(port) > 65535) return
-    }
-
-    /** Save port that passed above checks. */
-    this.enteredPort = port
-
-    /** Save to local storage. */
-    setItem('rpcPort', port)
-  }
-
-  /**
-   * Set reachable.
-   * @function setReachable
-   * @param {boolean} reachable - Reachable.
-   */
-  @action setReachable (reachable) {
-    this.reachable = reachable
-  }
-
-  /**
-   * Set started.
-   * @function setStarted
-   */
-  @action setStarted () {
-    this.started = true
+    if (this.connection.status.active === false) return false
+    return this.connection.status.rpc
   }
 
   /**
@@ -99,7 +45,7 @@ class RPC {
     })
 
     window
-      .fetch('http://127.0.0.1:' + this.port, {
+      .fetch('http://127.0.0.1:' + this.connection.localPort, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -111,11 +57,21 @@ class RPC {
         if (response.ok === true) return response.json()
       })
       .then((data) => {
-        if (this.reachable === false) this.setReachable(true)
+        /** Update connection status. */
+        if (this.connection.status.rpc !== true) {
+          this.setStatus(this.connection.uid, { rpc: true })
+        }
+
         return callback(data, options)
       })
       .catch((error) => {
-        if (this.reachable === true) this.setReachable(false)
+        /** Update connection status. */
+        if (
+          this.connection.status.rpc !== false ||
+          this.testTimeout === null
+        ) {
+          this.setStatus(this.connection.uid, { rpc: false })
+        }
 
         /** Log error to the console. */
         console.error('RPC:', error.message)
@@ -137,13 +93,3 @@ class RPC {
     this.execute([{ method: 'getinfo', params: [] }], (response) => {})
   }
 }
-
-/** Initialize a new globally used store. */
-const rpc = new RPC()
-
-/**
- * Export initialized store as default export,
- * and store class as named export.
- */
-export default rpc
-export { RPC }

@@ -9,7 +9,7 @@ import { decimalSeparator } from '../utilities/common'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('rates', 'ui') @observer
+@inject('gui', 'rates') @observer
 
 export default class CurrencyConverter extends React.Component {
   @observable amount = 1
@@ -18,8 +18,8 @@ export default class CurrencyConverter extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
+    this.gui = props.gui
     this.rates = props.rates
-    this.ui = props.ui
   }
 
   /**
@@ -99,7 +99,7 @@ export default class CurrencyConverter extends React.Component {
             >
               <span style={{fontWeight: '500'}}>
                 {
-                  new Intl.NumberFormat(this.ui.language, {
+                  new Intl.NumberFormat(this.gui.language, {
                     minimumFractionDigits: 8,
                     maximumFractionDigits: 8
                   }).format(this.rates.poloniex.last)
@@ -119,7 +119,7 @@ export default class CurrencyConverter extends React.Component {
             >
               <span style={{fontWeight: '500'}}>
                 {
-                  new Intl.NumberFormat(this.ui.language, {
+                  new Intl.NumberFormat(this.gui.language, {
                     minimumFractionDigits: 8,
                     maximumFractionDigits: 8
                   }).format(this.rates.bittrex.Last)
@@ -155,7 +155,7 @@ export default class CurrencyConverter extends React.Component {
             <Input
               name='local'
               size='small'
-              addonBefore={this.rates.localCurrency}
+              addonBefore={this.gui.localCurrency}
               placeholder={this.t('wallet:amount')}
               onChange={this.convert}
               value={this.amounts.local}

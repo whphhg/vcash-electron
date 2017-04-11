@@ -39,12 +39,7 @@ export default class WalletDump extends React.Component {
       <div>
         <p style={{margin: '0 0 5px 0'}}>
           <i className='material-icons md-18'>assignment</i>
-          <span
-            style={{
-              margin: '0 0 0 7px',
-              verticalAlign: 'top'
-            }}
-          >
+          <span style={{margin: '0 0 0 7px', verticalAlign: 'top'}}>
             {this.t('wallet:dumpLong')}
           </span>
         </p>
@@ -57,7 +52,11 @@ export default class WalletDump extends React.Component {
           <Col span={21}>
             <Input
               disabled
-              value={dataPath()}
+              value={
+                this.rpc.connection.status.tunnel === true
+                  ? this.t('wallet:remoteDataFolder')
+                  : dataPath()
+              }
             />
           </Col>
         </Row>

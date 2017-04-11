@@ -3,12 +3,7 @@ import { decimalSeparator, shortUid } from '../utilities/common'
 import { notification } from 'antd'
 import i18next from '../utilities/i18next'
 
-/** Required store instances. */
-import rpc from './rpc'
-import info from './info'
-import wallet from './wallet'
-
-class Send {
+export default class Send {
   /**
    * Observable properties.
    * @property {string|null} fromAccount - Spend from this account.
@@ -27,7 +22,17 @@ class Send {
   @observable zeroTime = false
   @observable blendedOnly = false
 
-  constructor () {
+  /**
+   * @constructor
+   * @param {object} info - Info store.
+   * @param {object} rpc - RPC store.
+   * @param {object} wallet - Wallet store.
+   */
+  constructor (info, rpc, wallet) {
+    this.info = info
+    this.rpc = rpc
+    this.wallet = wallet
+
     autorun(() => {
       /** Always have one recipient available. */
       if (this.recipients.size === 0) this.addRecipient()
@@ -162,7 +167,7 @@ class Send {
       /** Check if the new total amount is over wallet balance. */
       if (
         this.total - parseFloat(saved.amount) + parseFloat(value) >
-        info.wallet.balance
+        this.info.wallet.balance
       ) return
 
       /** Set ammount that passed above checks. */
@@ -189,7 +194,7 @@ class Send {
 
       /** Validate address when it reaches 34 characters. */
       if (value.length === 34) {
-        rpc.execute([
+        this.rpc.execute([
           { method: 'validateaddress', params: [value] }
         ],
           action('Validate recipient', (response) => {
@@ -223,7 +228,7 @@ class Send {
       if (confirmations !== '') {
         confirmations = parseInt(confirmations)
 
-        if (confirmations > info.wallet.blocks) return
+        if (confirmations > this.info.wallet.blocks) return
         if (confirmations < 1) return
       }
 
@@ -305,7 +310,7 @@ class Send {
     /** Get the recipient data. */
     const recipient = this.recipients.values()
 
-    rpc.execute([
+    this.rpc.execute([
       {
         method: 'sendtoaddress',
         params: [
@@ -322,7 +327,7 @@ class Send {
         this.clear()
 
         /** Open transaction details. */
-        wallet.setViewing(response[0].result)
+        this.wallet.setViewing(response[0].result)
       }
 
       /** Sending failed. */
@@ -350,7 +355,7 @@ class Send {
     /** Get the recipient data. */
     const recipient = this.recipients.values()
 
-    rpc.execute([
+    this.rpc.execute([
       {
         method: 'sendfrom',
         params: [
@@ -371,7 +376,7 @@ class Send {
         this.clear()
 
         /** Open transaction details. */
-        wallet.setViewing(response[0].result)
+        this.wallet.setViewing(response[0].result)
       }
 
       /** Sending failed. */
@@ -402,7 +407,7 @@ class Send {
       return recipients
     }, {})
 
-    rpc.execute([
+    this.rpc.execute([
       {
         method: 'sendmany',
         params: [
@@ -421,7 +426,7 @@ class Send {
         this.clear()
 
         /** Open transaction details. */
-        wallet.setViewing(response[0].result)
+        this.wallet.setViewing(response[0].result)
       }
 
       /** Sending failed. */
@@ -448,13 +453,3 @@ class Send {
     })
   }
 }
-
-/** Initialize a new globally used store. */
-const send = new Send()
-
-/**
- * Export initialized store as default export,
- * and store class as named export.
- */
-export default send
-export { Send }

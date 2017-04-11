@@ -8,7 +8,7 @@ import { Button, Popconfirm, Switch } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('info', 'rates', 'send', 'ui') @observer
+@inject('info', 'rates', 'send') @observer
 
 export default class Send extends React.Component {
   @observable popconfirm = false
@@ -19,7 +19,6 @@ export default class Send extends React.Component {
     this.info = props.info
     this.rates = props.rates
     this.send = props.send
-    this.ui = props.ui
   }
 
   /**

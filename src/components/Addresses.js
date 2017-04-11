@@ -18,7 +18,7 @@ import SendRecipient from './SendRecipient'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('rates', 'send', 'ui', 'wallet') @observer
+@inject('gui', 'rates', 'send', 'wallet') @observer
 
 export default class Addresses extends React.Component {
   @observable filters = {
@@ -28,9 +28,9 @@ export default class Addresses extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
+    this.gui = props.gui
     this.rates = props.rates
     this.send = props.send
-    this.ui = props.ui
     this.wallet = props.wallet
   }
 
@@ -44,7 +44,7 @@ export default class Addresses extends React.Component {
 
   render () {
     const { total } = this.send
-    const { local, localCurrency, average } = this.rates
+    const { local, average } = this.rates
 
     return (
       <div>
@@ -125,7 +125,7 @@ export default class Addresses extends React.Component {
                     render: balance => (
                       <p style={{textAlign: 'right'}}>
                         {
-                          new Intl.NumberFormat(this.ui.language, {
+                          new Intl.NumberFormat(this.gui.language, {
                             minimumFractionDigits: 6,
                             maximumFractionDigits: 6
                           }).format(balance)
@@ -157,7 +157,7 @@ export default class Addresses extends React.Component {
                         <Input
                           disabled
                           value={
-                            new Intl.NumberFormat(this.ui.language, {
+                            new Intl.NumberFormat(this.gui.language, {
                               minimumFractionDigits: 6,
                               maximumFractionDigits: 6
                             }).format(total)
@@ -171,12 +171,12 @@ export default class Addresses extends React.Component {
                         <Input
                           disabled
                           value={
-                            new Intl.NumberFormat(this.ui.language, {
+                            new Intl.NumberFormat(this.gui.language, {
                               minimumFractionDigits: 2,
                               maximumFractionDigits: 2
                             }).format(total * local * average)
                           }
-                          addonAfter={localCurrency}
+                          addonAfter={this.gui.localCurrency}
                         />
                       </div>
                     </Col>

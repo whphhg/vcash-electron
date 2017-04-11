@@ -1,21 +1,24 @@
 import { action, computed, observable } from 'mobx'
-import { getItem, setItem } from '../utilities/localStorage'
+
+/** Required stores. */
+import gui from './gui'
 
 class Rates {
   /**
    * Observable properties.
-   * @property {string} localCurrency - Selected local currency.
    * @property {object} bitcoinAverage - Bitcoin average price index.
    * @property {object} poloniex - Poloniex ticker.
    * @property {object} bittrex - Bittrex ticker.
    */
-  @observable localCurrency = getItem('localCurrency') || 'EUR'
   @observable bitcoinAverage = {}
   @observable poloniex = { last: 0 }
   @observable bittrex = { Last: 0 }
 
+  /**
+   * Start upate loops.
+   * @constructor
+   */
   constructor () {
-    /** Start update loops. */
     this.fetchBitcoinAverage()
     this.fetchPoloniex()
     this.fetchBittrex()
@@ -49,8 +52,8 @@ class Rates {
    * @return {number} Local bitcoin price.
    */
   @computed get local () {
-    if (this.bitcoinAverage.hasOwnProperty(this.localCurrency) === true) {
-      return this.bitcoinAverage[this.localCurrency].last
+    if (this.bitcoinAverage.hasOwnProperty(gui.localCurrency) === true) {
+      return this.bitcoinAverage[gui.localCurrency].last
     }
 
     return 0
@@ -94,25 +97,16 @@ class Rates {
   }
 
   /**
-   * Set local currency and save to localStorage.
-   * @function setLocalCurrency
-   * @param {string} localCurrency - Local currency.
-   */
-  @action setLocalCurrency (localCurrency) {
-    this.localCurrency = localCurrency
-    setItem('localCurrency', localCurrency)
-  }
-
-  /**
-   * Fetch BitcoinAverage price index.
+   * Fetch BitcoinAverage price index every 15 minutes to obey the
+   * 100 requests per day limit.
    * @function fetchBitcoinAverage
    */
   fetchBitcoinAverage () {
-    window.fetch('https://api.bitcoinaverage.com/ticker/global/all')
+    window.fetch('https://apiv2.bitcoinaverage.com/ticker/global/all')
       .then((response) => { if (response.ok) return response.json() })
       .then((priceIndex) => { this.setBitcoinAverage(priceIndex) })
       .catch((error) => { console.error('BitcoinAverage:', error.message) })
-    setTimeout(() => { this.fetchBitcoinAverage() }, 120 * 1000)
+    setTimeout(() => { this.fetchBitcoinAverage() }, 900 * 1000)
   }
 
   /**

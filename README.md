@@ -1,5 +1,5 @@
-## Vcash Electron UI
-Multi-platform UI for [Vcash](https://vcash.info/). Latest releases can be found [here](https://github.com/whphhg/vcash-electron/releases).
+## Vcash Electron GUI
+Multi-platform and multi-node GUI for [Vcash](https://vcash.info/). Latest releases can be found [here](https://github.com/whphhg/vcash-electron/releases).
 
 :hatching_chick: **Warning**: This is beta software that is being actively developed.
 
@@ -17,11 +17,11 @@ Clone this repository using ``git clone``, move to the cloned directory using ``
     $ cd vcash-electron
     $ npm install
 
-After it is done installing dependencies, you can run the ui using ``npm run ui``.
+After it is done installing dependencies, you can run the GUI using ``npm run gui``.
 
-    $ npm run ui
+    $ npm run gui
 
-Alternatively, if you want to use development tools, run the ui using ``npm run dev``, or ``npm run dev-win`` if you are on Windows.
+Alternatively, if you want to use development tools, run the GUI using ``npm run dev``, or ``npm run dev-win`` if you are on Windows.
 
     $ npm run dev (Linux and OS X)
     $ npm run dev-win (Windows)
