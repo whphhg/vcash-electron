@@ -221,11 +221,7 @@ class Connections {
 
     /** Setup a SSH tunnel. */
     if (conn.type === 'ssh') {
-      /** Create a new SSH client. */
-      const ssh = new Client()
-
-      /** Connect to the SSH server. */
-      ssh.connect({
+      let config = {
         host: conn.host,
         port: conn.port,
         username: conn.username,
@@ -233,7 +229,16 @@ class Connections {
         privateKey: conn.privateKey === ''
           ? ''
           : readFileSync(conn.privateKey)
-      })
+      }
+
+      /** Add encrypted private key passphrase. */
+      if (conn.privateKey !== '') config['passphrase'] = conn.password
+
+      /** Create a new SSH client. */
+      const ssh = new Client()
+
+      /** Connect to the SSH server. */
+      ssh.connect(config)
 
       /** Emit SSH errors to the server. */
       ssh.on('error', (error) => server.emit('error', error))
