@@ -36,6 +36,7 @@
   "comment": "Comment",
   "confirmations": "Confirmations",
   "connected": "Connected",
+  "connection": "Connection",
   "connectionLocal": "Local connection",
   "connectionManager": "Connection manager",
   "connectionRemove": "Remove connection",

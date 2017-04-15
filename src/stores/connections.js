@@ -1,9 +1,11 @@
 import { action, autorunAsync, computed, observable, reaction } from 'mobx'
+import { notification } from 'antd'
 import { readFileSync } from 'fs'
 import { createServer } from 'net'
 import { Client } from 'ssh2'
 import { shortUid } from '../utilities/common'
 import { getItem, setItem } from '../utilities/localStorage'
+import i18next from '../utilities/i18next'
 
 /** Required stores. */
 import gui from './gui'
@@ -221,24 +223,20 @@ class Connections {
 
     /** Setup a SSH tunnel. */
     if (conn.type === 'ssh') {
-      let config = {
-        host: conn.host,
-        port: conn.port,
-        username: conn.username,
-        password: conn.password,
-        privateKey: conn.privateKey === ''
-          ? ''
-          : readFileSync(conn.privateKey)
-      }
-
-      /** Add encrypted private key passphrase. */
-      if (conn.privateKey !== '') config['passphrase'] = conn.password
-
       /** Create a new SSH client. */
       const ssh = new Client()
 
       /** Connect to the SSH server. */
-      ssh.connect(config)
+      ssh.connect({
+        host: conn.host,
+        port: conn.port,
+        username: conn.username,
+        password: conn.password,
+        passphrase: conn.password,
+        privateKey: conn.privateKey === ''
+          ? ''
+          : readFileSync(conn.privateKey)
+      })
 
       /** Emit SSH errors to the server. */
       ssh.on('error', (error) => server.emit('error', error))
@@ -269,7 +267,13 @@ class Connections {
 
       /** Stop tunnel on error. */
       server.on('error', (error) => {
-        console.error(error)
+        /** Display a notification with the error message. */
+        notification.error({
+          message: i18next.t('wallet:connection') + ' ' + conn.host + ':' + conn.port,
+          description: error.message,
+          duration: 0
+        })
+
         this.stopTunnel(uid)
         this.setStatus(uid, { tunnel: false })
       })
