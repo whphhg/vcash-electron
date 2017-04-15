@@ -14,10 +14,17 @@ export default class RPC {
 
     /** Test execute() on start-up. */
     reaction(() => this.connection.status.active, (active) => {
-      if (active === true) this.testExecute()
+      if (active === true && this.connection.type === 'local') {
+        this.testExecute()
+      }
 
       /** Clear timeout on shut-down. */
       if (active === false) clearTimeout(this.testTimeout)
+    })
+
+    /** Test execute() on SSH tunnel ready. */
+    reaction(() => this.connection.status.tunnel, (tunnel) => {
+      if (tunnel === true) this.testExecute()
     })
   }
 

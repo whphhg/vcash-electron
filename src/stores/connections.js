@@ -1,6 +1,7 @@
 import { action, autorunAsync, computed, observable, reaction } from 'mobx'
 import { readFileSync } from 'fs'
-import tunnel from 'tunnel-ssh'
+import { createServer } from 'net'
+import { Client } from 'ssh2'
 import { shortUid } from '../utilities/common'
 import { getItem, setItem } from '../utilities/localStorage'
 
@@ -161,7 +162,6 @@ class Connections {
       }
     }
 
-    /** Update property in state. */
     connection[key] = value
   }
 
@@ -198,63 +198,79 @@ class Connections {
   }
 
   /**
-   * Create connection stores and start the tunnel (if set).
+   * Start connection.
    * @function start
    * @param {string} uid - Connection uid.
    */
   start (uid) {
-    const connection = this.saved.get(uid)
+    const conn = this.saved.get(uid)
 
     /** Initialize and set new connection stores. */
     if (this.stores.has(uid) === false) {
-      const rpc = new RPC(connection, this.setStatus)
+      const rpc = new RPC(conn, this.setStatus)
       const info = new Info(rpc)
-      const wallet = new Wallet(gui, rpc, rates)
+      const wallet = new Wallet(gui, rates, rpc)
       const send = new Send(info, rpc, wallet)
       const stats = new Stats(info, rpc, wallet)
 
       this.stores.set(uid, { info, rpc, send, stats, wallet })
     }
 
-    /** Start RPC immediately if the connection is local. */
-    if (connection.type === 'local') {
-      this.setStatus(uid, { active: true })
-    }
+    /** Set connection active. */
+    this.setStatus(uid, { active: true })
 
-    /** Start a new SSH tunnel. */
-    if (connection.type === 'ssh') {
-      /** Prepare config. */
-      const config = {
-        host: connection.host,
-        port: connection.port,
-        username: connection.username,
-        password: connection.password,
-        privateKey: connection.privateKey === ''
+    /** Setup a SSH tunnel. */
+    if (conn.type === 'ssh') {
+      /** Create a new SSH client. */
+      const ssh = new Client()
+
+      /** Connect to the SSH server. */
+      ssh.connect({
+        host: conn.host,
+        port: conn.port,
+        username: conn.username,
+        password: conn.password,
+        privateKey: conn.privateKey === ''
           ? ''
-          : readFileSync(connection.privateKey),
-        dstPort: connection.dstPort,
-        localPort: connection.localPort,
-        keepAlive: true
-      }
+          : readFileSync(conn.privateKey)
+      })
 
-      /** Start tunnel. */
-      const server = tunnel(config, (error, server) => {
-        if (typeof error === 'undefined') {
-          this.setStatus(connection.uid, { active: true, tunnel: true })
-        } else {
-          this.setStatus(connection.uid, { tunnel: false })
-        }
+      /** Emit SSH errors to the server. */
+      ssh.on('error', (error) => server.emit('error', error))
+
+      /** Set tunnel active on SSH connection ready. */
+      ssh.on('ready', () => this.setStatus(uid, { tunnel: true }))
+
+      /** Create a new server. */
+      const server = createServer((socket) => {
+        /** End sockets as they close or error out. */
+        socket.on('close', () => { socket.end() })
+        socket.on('error', () => { socket.end() })
+
+        /** Forward HTTP requests over SSH connection to the remote node. */
+        ssh.forwardOut('127.0.0.1', conn.localPort, '127.0.0.1', conn.dstPort,
+          (error, stream) => {
+            /** Return and emit forwarding errors to the server. */
+            if (typeof error !== 'undefined') return server.emit('error', error)
+
+            /** Emit stream errors to the server. */
+            stream.on('error', (error) => server.emit('error', error))
+
+            /** Pipe SSH stream to the socket. */
+            socket.pipe(stream).pipe(socket)
+          }
+        )
+      }).listen(conn.localPort, '127.0.0.1')
+
+      /** Stop tunnel on error. */
+      server.on('error', (error) => {
+        console.error(error)
+        this.stopTunnel(uid)
+        this.setStatus(uid, { tunnel: false })
       })
 
       /** Save tunnel. */
-      this.tunnels.set(connection.uid, server)
-
-      /** Stop tunnel on ssh connection error. */
-      server.on('error', (error) => {
-        console.error('connections.start:', error)
-        this.stopTunnel(connection.uid)
-        this.setStatus(connection.uid, { tunnel: false })
-      })
+      this.tunnels.set(uid, { ssh, server })
     }
   }
 
@@ -267,22 +283,23 @@ class Connections {
     /** Redirect to the welcome screen if stopping the viewing connection. */
     if (uid === this.viewing) this.setViewing()
 
-    /** Stop tunnel if it's active. */
+    /** Stop tunnel. */
     this.stopTunnel(uid)
 
-    /** Update connection status. */
+    /** Reset connection status. */
     this.setStatus(uid, { active: false, rpc: null, tunnel: null })
   }
 
   /**
-   * Stop and delete tunnel.
+   * Stop and delete the tunnel.
    * @function stopTunnel
    * @param {string} uid - Connection uid.
    */
   stopTunnel (uid) {
     if (this.tunnels.has(uid) === true) {
       const tunnel = this.tunnels.get(uid)
-      tunnel.close()
+      tunnel.server.close()
+      tunnel.ssh.end()
       this.tunnels.delete(uid)
     }
   }
