@@ -3,7 +3,6 @@ import React from 'react'
 const Welcome = () => (
   <div
     style={{
-      background: '#b60127',
       overflow: 'auto',
       position: 'fixed',
       top: 0,
@@ -21,7 +20,7 @@ const Welcome = () => (
       }}
     >
       <div style={{textAlign: 'center'}}>
-        <img src='./assets/images/logoGrey.png' />
+        <img src='./assets/images/logoRed.png' />
       </div>
     </div>
   </div>

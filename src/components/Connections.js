@@ -69,9 +69,16 @@ class Connections extends React.Component {
       }
     }
 
-    reaction(() => this.tab, (tab) => {
-      if (tab === '') this.setTab(this.connections.uids[0])
-    }, true)
+    /** Switch to the same view tab is on. */
+    reaction(() => this.tab, (uid) => {
+      const conn = this.connections.saved.get(uid)
+
+      if (conn.status.rpc === true) {
+        this.connections.setViewing(uid)
+      } else {
+        this.connections.setViewing()
+      }
+    })
 
     /** Set initially active tab. */
     reaction(() => this.connections.uids, (uids) => {
@@ -116,7 +123,7 @@ class Connections extends React.Component {
    * @function toggleModal
    */
   @action toggleModal = () => {
-    this.modal = !this.modal
+    if (this.connections.viewing !== '') this.modal = !this.modal
   }
 
   /**
