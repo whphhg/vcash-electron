@@ -2,8 +2,9 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Col, Input, Row } from 'antd'
+import { Col, Input, Row, Tooltip } from 'antd'
 import { decimalSeparator } from '../utilities/common'
+import moment from 'moment'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -97,14 +98,22 @@ export default class CurrencyConverter extends React.Component {
                 display: 'inline'
               }}
             >
-              <span style={{fontWeight: '500'}}>
-                {
-                  new Intl.NumberFormat(this.gui.language, {
-                    minimumFractionDigits: 8,
-                    maximumFractionDigits: 8
-                  }).format(this.rates.poloniex.last)
+              <Tooltip
+                placement='bottom'
+                title={
+                  this.t('wallet:lastUpdated') + ' ' +
+                  moment(this.rates.poloniex.updated).format('LTS')
                 }
-              </span> BTC
+              >
+                <span style={{fontWeight: '500'}}>
+                  {
+                    new Intl.NumberFormat(this.gui.language, {
+                      minimumFractionDigits: 8,
+                      maximumFractionDigits: 8
+                    }).format(this.rates.poloniex.last)
+                  }
+                </span> BTC
+              </Tooltip>
             </p>
             <img
               src='./assets/images/exchangeBittrex.png'
@@ -117,14 +126,22 @@ export default class CurrencyConverter extends React.Component {
                 display: 'inline'
               }}
             >
-              <span style={{fontWeight: '500'}}>
-                {
-                  new Intl.NumberFormat(this.gui.language, {
-                    minimumFractionDigits: 8,
-                    maximumFractionDigits: 8
-                  }).format(this.rates.bittrex.Last)
+              <Tooltip
+                placement='bottomRight'
+                title={
+                  this.t('wallet:lastUpdated') + ' ' +
+                  moment(this.rates.bittrex.updated).format('LTS')
                 }
-              </span> BTC
+              >
+                <span style={{fontWeight: '500'}}>
+                  {
+                    new Intl.NumberFormat(this.gui.language, {
+                      minimumFractionDigits: 8,
+                      maximumFractionDigits: 8
+                    }).format(this.rates.bittrex.Last)
+                  }
+                </span> BTC
+              </Tooltip>
             </p>
           </Col>
         </Row>

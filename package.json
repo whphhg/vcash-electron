@@ -1,6 +1,6 @@
 {
   "name": "vcash-electron",
-  "version": "0.25.2",
+  "version": "0.25.3",
   "description": "Multi-platform and multi-node GUI for Vcash.",
   "main": "initialize.js",
   "scripts": {
@@ -50,8 +50,8 @@
     "babel-preset-stage-0": "6.24.1",
     "babel-runtime": "6.23.0",
     "electron": "1.6.2",
-    "electron-compile": "6.3.1",
-    "electron-compilers": "5.7.0",
+    "electron-compile": "6.4.0",
+    "electron-compilers": "5.8.0",
     "mobx-logger": "0.5.0",
     "regenerator-runtime": "0.10.3",
     "standard": "10.0.2"

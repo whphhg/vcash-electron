@@ -76,6 +76,7 @@
   "keypoolRanOut": "Keypool ran out.",
   "lastSend": "Last sent",
   "lastReceived": "Last received",
+  "lastUpdated": "Last updated",
   "latestRewards": "Latest rewards",
   "listeningOn": "Listening on",
   "locked": "Wallet locked",

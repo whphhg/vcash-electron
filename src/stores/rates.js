@@ -84,7 +84,10 @@ class Rates {
    * @param {string} ticker - Ticker.
    */
   @action setPoloniex (ticker) {
-    this.poloniex = ticker['BTC_XVC']
+    this.poloniex = {
+      ...ticker['BTC_XVC'],
+      updated: new Date()
+    }
   }
 
   /**
@@ -93,7 +96,10 @@ class Rates {
    * @param {string} ticker - Ticker.
    */
   @action setBittrex (ticker) {
-    this.bittrex = ticker.result[0]
+    this.bittrex = {
+      ...ticker.result[0],
+      updated: new Date()
+    }
   }
 
   /**
