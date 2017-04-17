@@ -34,30 +34,6 @@ export default class Send extends React.Component {
     }
   }
 
-  /**
-   * Confirm sending.
-   * @function confirm
-   */
-  confirm = () => {
-    this.send.confirm()
-  }
-
-  /**
-   * Add empty recipient.
-   * @function addRecipient
-   */
-  addRecipient = () => {
-    this.send.addRecipient()
-  }
-
-  /**
-   * Clear recipients and options.
-   * @function clear
-   */
-  clear = () => {
-    this.send.clear()
-  }
-
   render () {
     return (
       <div>
@@ -67,7 +43,7 @@ export default class Send extends React.Component {
             title={this.t('wallet:sendConfirm')}
             okText={this.t('wallet:yes')}
             cancelText={this.t('wallet:no')}
-            onConfirm={this.confirm}
+            onConfirm={() => this.send.confirm()}
             visible={this.popconfirm}
             onVisibleChange={this.togglePopconfirm}
           >
@@ -83,7 +59,7 @@ export default class Send extends React.Component {
             </Button>
           </Popconfirm>
           <Button
-            onClick={this.addRecipient}
+            onClick={() => this.send.addRecipient()}
             disabled={this.send.fromAccount === null}
             size='small'
           >
@@ -94,7 +70,7 @@ export default class Send extends React.Component {
             title={this.t('wallet:sendReset')}
             okText={this.t('wallet:yes')}
             cancelText={this.t('wallet:no')}
-            onConfirm={this.clear}
+            onConfirm={() => this.send.clear()}
           >
             <Button size='small'>{this.t('wallet:reset')}</Button>
           </Popconfirm>

@@ -39,14 +39,6 @@ export default class Transaction extends React.Component {
     })
   }
 
-  /**
-   * Toggle modal.
-   * @function toggleModal
-   */
-  toggleModal = () => {
-    this.wallet.setViewing()
-  }
-
   render () {
     const { local, average } = this.rates
     const { viewing, viewingTx } = this.wallet
@@ -57,7 +49,7 @@ export default class Transaction extends React.Component {
         title={this.t('wallet:transactionDetails')}
         width={1000}
         visible={viewing !== ''}
-        onCancel={this.toggleModal}
+        onCancel={() => this.wallet.setViewing()}
         footer={null}
       >
         <Row>
