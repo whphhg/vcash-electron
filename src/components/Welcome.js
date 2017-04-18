@@ -13,47 +13,26 @@ export default class Welcome extends React.Component {
 
   render () {
     return (
-      <div
-        style={{
-          overflow: 'auto',
-          position: 'fixed',
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0
-        }}
-      >
-        <div
-          style={{
-            alignItems: 'center',
-            display: 'flex',
-            height: '100%',
-            justifyContent: 'center'
-          }}
-        >
-          <div style={{textAlign: 'center'}}>
-            <img src='./assets/images/logoRed.png' />
-          </div>
-          <Row
-            style={{
-              bottom: 0,
-              height: '25px',
-              position: 'fixed',
-              textAlign: 'center',
-              width: '100%'
-            }}
-          >
+      <div>
+        <div style={{bottom: '110px', position: 'absolute', left: 0, right: 0}}>
+          <div className='circlingLogo' />
+        </div>
+        <footer className='shadow'>
+          <Row style={{textAlign: 'center'}}>
             <Col span={8}>
-              <b>Shift-a</b> &nbsp; {this.t('wallet:connectionPrevious')}
+              <i className='material-icons md-16'>arrow_back</i>
+              <p><b>Shift-a</b> &nbsp; {this.t('wallet:connectionPrevious')}</p>
             </Col>
             <Col span={8}>
-              <b>Shift-s</b> &nbsp; {this.t('wallet:connectionManager')}
+              <i className='material-icons md-16'>cast_connected</i>
+              <p><b>Shift-s</b> &nbsp; {this.t('wallet:connectionManager')}</p>
             </Col>
             <Col span={8}>
-              <b>Shift-d</b> &nbsp; {this.t('wallet:connectionNext')}
+              <i className='material-icons md-16'>arrow_forward</i>
+              <p><b>Shift-d</b> &nbsp; {this.t('wallet:connectionNext')}</p>
             </Col>
           </Row>
-        </div>
+        </footer>
       </div>
     )
   }
