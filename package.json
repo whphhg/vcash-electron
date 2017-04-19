@@ -1,6 +1,6 @@
 {
   "name": "vcash-electron",
-  "version": "0.25.6",
+  "version": "0.25.7",
   "description": "Multi-platform and multi-node GUI for Vcash.",
   "main": "initialize.js",
   "scripts": {
@@ -37,7 +37,7 @@
     "react-dom": "15.5.4",
     "react-i18next": "3.1.0",
     "react-router-dom": "4.1.1",
-    "recharts": "0.22.2",
+    "recharts": "0.22.3",
     "ssh2": "0.5.4"
   },
   "devDependencies": {
