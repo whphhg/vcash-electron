@@ -6,67 +6,73 @@ import { inject, observer } from 'mobx-react'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('gui', 'info') @observer
+@inject('connections', 'gui', 'info') @observer
 
 export default class Footer extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
+    this.connections = props.connections
     this.gui = props.gui
     this.info = props.info
   }
 
   render () {
     return (
-      <footer className='shadow'>
-        <div style={{float: 'left'}}>
-          <i className='material-icons md-16'>extension</i>
-          <p>
-            {this.t('wallet:onBlock')}
-            <span> {
-              new Intl.NumberFormat(this.gui.language)
-                .format(this.info.wallet.blocks)
-              }
-            </span>
-          </p>
-          <i className='material-icons md-16'>settings_input_antenna</i>
-          <p>
-            <span>{this.info.network.tcp} TCP </span>
-            {this.t('wallet:and')}
-            <span> {this.info.network.udp} UDP </span>
-            {this.t('wallet:connections')}
-          </p>
+      <div className='shadow'>
+        <div style={{margin: '0 10px 0 10px'}}>
+          <div className='flex-sb' style={{height: '25px'}}>
+            <div className='flex'>
+              <i className='material-icons md-16'>extension</i>
+              <p style={{margin: '0 10px 0 5px'}}>
+                {this.t('wallet:onBlock')} <span style={{fontWeight: '500'}}>
+                  {
+                    new Intl.NumberFormat(this.gui.language)
+                      .format(this.info.wallet.blocks)
+                  }
+                </span>
+              </p>
+              <i className='material-icons md-16'>settings_input_antenna</i>
+              <p style={{margin: '0 10px 0 5px'}}>
+                <span style={{fontWeight: '500'}}>
+                  {this.info.network.tcp}
+                </span> TCP &bull; <span style={{fontWeight: '500'}}>
+                  {this.info.network.udp}
+                </span> UDP
+              </p>
+              <i className='material-icons md-16'>cast_connected</i>
+              <p>
+                <a onClick={() => this.connections.toggleModal()}>
+                  {this.t('wallet:connectionManager')}
+                </a>
+              </p>
+            </div>
+            <div className='flex'>
+              <img
+                src='./assets/images/logoGrey.png'
+                style={{height: '15px', width: '15px'}}
+              />
+              <p style={{margin: '0 10px 0 5px'}}>
+                Vcash <span style={{fontWeight: '500'}}>
+                  {this.info.wallet.version.split(':')[1]}
+                </span>
+              </p>
+              <i className='material-icons md-16'>account_balance_wallet</i>
+              <p style={{margin: '0 10px 0 5px'}}>
+                {this.t('wallet:wallet')} <span style={{fontWeight: '500'}}>
+                  {this.info.wallet.walletversion}
+                </span>
+              </p>
+              <i className='material-icons md-16'>computer</i>
+              <p>
+                GUI <span style={{fontWeight: '500'}}>
+                  {process.env.npm_package_version}
+                </span>
+              </p>
+            </div>
+          </div>
         </div>
-        <div
-          style={{
-            float: 'right',
-            margin: '0 10px 0 0'
-          }}
-        >
-          <img
-            src='./assets/images/logoGrey.png'
-            style={{
-              width: '15px',
-              height: '15px',
-              margin: '0 5px 0 0'
-            }}
-          />
-          <p>
-            Vcash
-            <span> {this.info.wallet.version.split(':')[1]}</span>
-          </p>
-          <i className='material-icons md-16'>account_balance_wallet</i>
-          <p>
-            {this.t('wallet:wallet')}
-            <span> {this.info.wallet.walletversion}</span>
-          </p>
-          <i className='material-icons md-16'>computer</i>
-          <p>
-            UI
-            <span> {process.env.npm_package_version}</span>
-          </p>
-        </div>
-      </footer>
+      </div>
     )
   }
 }

@@ -26,29 +26,21 @@ export default class SelectLanguage extends React.Component {
   }
 
   render () {
-    const { Option } = Select
-
     return (
       <Select
-        showSearch
-        size='small'
-        style={{
-          width: '120px',
-          margin: '0 10px 0 0'
-        }}
         defaultValue={this.gui.language}
-        optionFilterProp='children'
         notFoundContent={this.t('wallet:notFound')}
         onChange={this.setLanguage}
+        optionFilterProp='children'
+        showSearch
+        size='small'
+        style={{width: '120px'}}
       >
         {
           this.gui.languages.map((entry) => (
-            <Option
-              key={entry.language}
-              value={entry.language}
-            >
+            <Select.Option key={entry.language} value={entry.language}>
               {entry.name}
-            </Option>
+            </Select.Option>
           ))
         }
       </Select>

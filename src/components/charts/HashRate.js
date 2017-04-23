@@ -4,11 +4,11 @@ import { inject, observer } from 'mobx-react'
 import {
   AreaChart,
   Area,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
   defs,
   linearGradient,
   stop
@@ -32,11 +32,11 @@ export default class Difficulties extends React.Component {
 
   render () {
     return (
-      <ResponsiveContainer width='100%' height={210}>
+      <ResponsiveContainer width='100%' height={215}>
         <AreaChart
           data={this.stats.network}
-          syncId='0'
           margin={{top: 15, right: 60, bottom: 5, left: 30}}
+          syncId='0'
         >
           <defs>
             <linearGradient id='colorPoW' x1='0' y1='0' x2='0' y2='1'>
@@ -45,40 +45,24 @@ export default class Difficulties extends React.Component {
             </linearGradient>
           </defs>
           <Area
-            yAxisId='left'
-            type='monotone'
             dataKey='hashRate'
-            stroke='#b60127'
-            fillOpacity={1}
             fill='url(#colorPoW)'
+            fillOpacity={1}
+            stroke='#b60127'
+            type='monotone'
+            yAxisId='left'
           />
+          <CartesianGrid strokeDasharray='3 3' />
+          <Tooltip content={<CustomTooltip labelTime hashRate />} />
           <XAxis
             dataKey='date'
             domain={['dataMin', 'dataMax']}
-            tick={
-              <CustomTick
-                textX={0}
-                textY={15}
-                textType='time'
-              />
-            }
+            tick={<CustomTick textType='time' textX={0} textY={15} />}
           />
           <YAxis
-            yAxisId='left'
             orientation='left'
-            tick={
-              <CustomTick
-                textX={-5}
-                textY={4}
-                textType='hashRate'
-              />
-            }
-          />
-          <CartesianGrid strokeDasharray='3 3' />
-          <Tooltip
-            content={
-              <CustomTooltip labelTime hashRate />
-            }
+            tick={<CustomTick textType='hashRate' textX={-5} textY={4} />}
+            yAxisId='left'
           />
         </AreaChart>
       </ResponsiveContainer>

@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Button, Col, Input, Row, notification } from 'antd'
+import { Button, Input, notification } from 'antd'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -87,61 +87,41 @@ export default class WalletEncrypt extends React.Component {
     if (this.info.isEncrypted === true) return null
     return (
       <div>
-        <p style={{margin: '0 0 5px 0'}}>
-          <i className='material-icons md-18'>vpn_key</i>
-          <span
-            style={{
-              margin: '0 0 0 7px',
-              verticalAlign: 'top'
-            }}
-          >
-            {this.t('wallet:encryptLong')}
-          </span>
-        </p>
-        <Row>
-          <Col span={4}>
-            <p style={{margin: '4px 0 0 0'}}>
-              {this.t('wallet:passphrase')}
-            </p>
-            <p style={{margin: '14px 0 0 0'}}>
-              {this.t('wallet:passphraseRepeat')}
-            </p>
-          </Col>
-          <Col span={20}>
-            <Input
-              name='passphrase'
-              placeholder={this.t('wallet:passphraseLong')}
-              value={this.passphrase}
-              onChange={this.setPassphrase}
-            />
-            <Input
-              name='repeat'
-              placeholder={this.t('wallet:passphraseRepeatLong')}
-              style={{margin: '5px 0 0 0'}}
-              value={this.repeat}
-              onChange={this.setPassphrase}
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col span={13} offset={4}>
-            <p className='red' style={{margin: '3px 0 3px 1px'}}>
-              {
-                this.errorStatus === 'notMatching' &&
-                this.t('wallet:passphrasesNotMatching')
-              }
-            </p>
-          </Col>
-          <Col span={7} style={{textAlign: 'right'}}>
-            <Button
-              style={{margin: '5px 0 0 0'}}
-              onClick={this.encrypt}
-              disabled={this.errorStatus !== false}
-            >
-              {this.t('wallet:encrypt')}
-            </Button>
-          </Col>
-        </Row>
+        <div className='flex'>
+          <i className='material-icons md-16'>vpn_key</i>
+          <p>{this.t('wallet:encryptLong')}</p>
+        </div>
+        <div className='flex-sb' style={{margin: '10px 0 0 0'}}>
+          <p style={{width: '120px'}}>{this.t('wallet:passphrase')}</p>
+          <Input
+            name='passphrase'
+            onChange={this.setPassphrase}
+            placeholder={this.t('wallet:passphraseLong')}
+            style={{flex: 1}}
+            value={this.passphrase}
+          />
+        </div>
+        <div className='flex-sb' style={{margin: '5px 0 0 0'}}>
+          <p style={{width: '120px'}}>{this.t('wallet:passphraseRepeat')}</p>
+          <Input
+            name='repeat'
+            onChange={this.setPassphrase}
+            placeholder={this.t('wallet:passphraseRepeatLong')}
+            style={{flex: 1}}
+            value={this.repeat}
+          />
+        </div>
+        <div className='flex-sb' style={{margin: '5px 0 0 0'}}>
+          <p className='red' style={{margin: '0 0 0 120px'}}>
+            {
+              this.errorStatus === 'notMatching' &&
+              this.t('wallet:passphrasesNotMatching')
+            }
+          </p>
+          <Button disabled={this.errorStatus !== false} onClick={this.encrypt}>
+            {this.t('wallet:encrypt')}
+          </Button>
+        </div>
       </div>
     )
   }

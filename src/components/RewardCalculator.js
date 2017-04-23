@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Col, Input, Row } from 'antd'
+import { Input } from 'antd'
 import { calculateIncentive, calculatePoW } from '../utilities/blockRewards'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
@@ -85,82 +85,59 @@ export default class RewardCalculator extends React.Component {
 
   render () {
     return (
-      <div>
-        <Row
-          style={{
-            margin: '0 0 27px 0',
-            width: '300px'
-          }}
-        >
-          <Col span={2}>
-            <i className='material-icons md-18'>extension</i>
-          </Col>
-          <Col span={5}>
-            {this.t('wallet:block')}
-          </Col>
-          <Col span={5}>
-            <Input
-              placeholder={this.block}
-              value={this.enteredBlock}
-              onChange={this.setBlock}
-              maxLength={7}
-              size='small'
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col span={6}>
-            <Row>
-              <Col span={24}>
-                {this.t('wallet:powReward')}
-              </Col>
-              <Col span={24}>
-                <span style={{fontWeight: '500'}}>
-                  {
-                    new Intl.NumberFormat(this.gui.language, {
-                      minimumFractionDigits: 6,
-                      maximumFractionDigits: 6
-                    }).format(this.powReward)
-                  }
-                </span> XVC
-              </Col>
-            </Row>
-          </Col>
-          <Col span={8}>
-            <Row>
-              <Col span={24}>
-                {this.t('wallet:miningReward')}
-              </Col>
-              <Col span={24}>
-                <span style={{fontWeight: '500'}}>
-                  {
-                    new Intl.NumberFormat(this.gui.language, {
-                      minimumFractionDigits: 6,
-                      maximumFractionDigits: 6
-                    }).format(this.miningReward)
-                  }
-                </span> XVC ({100 - this.incentivePercent}%)
-              </Col>
-            </Row>
-          </Col>
-          <Col span={8}>
-            <Row>
-              <Col span={24}>
-                {this.t('wallet:incentiveReward')}
-              </Col>
-              <Col span={24}>
-                <span style={{fontWeight: '500'}}>
-                  {
-                    new Intl.NumberFormat(this.gui.language, {
-                      minimumFractionDigits: 6,
-                      maximumFractionDigits: 6
-                    }).format(this.incentiveReward)
-                  }
-                </span> XVC ({this.incentivePercent}%)
-              </Col>
-            </Row>
-          </Col>
-        </Row>
+      <div className='flex'>
+        <div style={{margin: '0 36px 0 0'}}>
+          <div className='flex' style={{margin: '0 0 5px 0'}}>
+            <i className='material-icons md-16'>extension</i>
+            <p>{this.t('wallet:block')}</p>
+          </div>
+          <div className='flex'>
+            <i className='material-icons md-16'>stars</i>
+            <p>{this.t('wallet:powReward')}</p>
+          </div>
+          <div className='flex'>
+            <i className='material-icons md-16'>developer_board</i>
+            <p>{this.t('wallet:miningReward')}</p>
+          </div>
+          <div className='flex'>
+            <i className='material-icons md-16'>event_seat</i>
+            <p>{this.t('wallet:incentiveReward')}</p>
+          </div>
+        </div>
+        <div style={{margin: '0 0 2px 0'}}>
+          <Input
+            maxLength={7}
+            onChange={this.setBlock}
+            placeholder={this.block}
+            size='small'
+            style={{margin: '0 0 5px 0', width: '60px'}}
+            value={this.enteredBlock}
+          />
+          <p><span style={{fontWeight: '500'}}>
+            {
+              new Intl.NumberFormat(this.gui.language, {
+                minimumFractionDigits: 6,
+                maximumFractionDigits: 6
+              }).format(this.powReward)
+            }
+          </span> XVC</p>
+          <p><span style={{fontWeight: '500'}}>
+            {
+              new Intl.NumberFormat(this.gui.language, {
+                minimumFractionDigits: 6,
+                maximumFractionDigits: 6
+              }).format(this.miningReward)
+            }
+          </span> XVC ({100 - this.incentivePercent}%)</p>
+          <p><span style={{fontWeight: '500'}}>
+            {
+              new Intl.NumberFormat(this.gui.language, {
+                minimumFractionDigits: 6,
+                maximumFractionDigits: 6
+              }).format(this.incentiveReward)
+            }
+          </span> XVC ({this.incentivePercent}%)</p>
+        </div>
       </div>
     )
   }

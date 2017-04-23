@@ -28,127 +28,115 @@ class Header extends React.Component {
   render () {
     const { local, average } = this.rates
     const { balance, newmint, stake } = this.info.wallet
-    const { Item } = Menu
 
     return (
-      <header className='shadow'>
-        <div style={{float: 'left'}}>
-          <img src='./assets/images/logoRed.png' />
-          <p>
-            {this.t('wallet:balance')}
-            <br />
-            <span>
+      <header className='flex-sb shadow' style={{height: '55px'}}>
+        <div
+          className='flex'
+          style={{alignItems: 'flex-end', justifyContent: 'flex-start'}}
+        >
+          <img
+            src='./assets/images/logoGrey.png'
+            style={{height: '36px', margin: '0 10px 0 10px', width: '36px'}}
+          />
+          <div style={{margin: '0 10px 0 5px'}}>
+            <p>{this.t('wallet:balance')}</p>
+            <p><span style={{fontWeight: '600'}}>
               {
                 new Intl.NumberFormat(this.gui.language, {
-                  minimumFractionDigits: 6,
                   maximumFractionDigits: 6
                 }).format(balance)
               }
-            </span> XVC
-          </p>
-          <p className='balance'>
-            ~<span>
+            </span> XVC</p>
+          </div>
+          <div style={{margin: '0 10px 0 0'}}>
+            <p>~<span style={{fontWeight: '600'}}>
               {
                 new Intl.NumberFormat(this.gui.language, {
-                  minimumFractionDigits: 8,
                   maximumFractionDigits: 8
                 }).format(balance * average)
               }
-            </span> BTC
-          </p>
-          <p className='balance'>
-            ~<span>
+            </span> BTC</p>
+          </div>
+          <div style={{margin: '0 20px 0 0'}}>
+            <p>~<span style={{fontWeight: '600'}}>
               {
                 new Intl.NumberFormat(this.gui.language, {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
                 }).format(balance * average * local)
               }
-            </span> {this.gui.localCurrency}
-          </p>
-          <div className='incoming'>
-            {
-              this.wallet.pendingAmount > 0 && (
-                <p>
-                  {this.t('wallet:pending')}
-                  <br />
-                  <span>
-                    {
-                      new Intl.NumberFormat(this.gui.language, {
-                        minimumFractionDigits: 6,
-                        maximumFractionDigits: 6
-                      }).format(this.wallet.pendingAmount)
-                    }
-                  </span> XVC
-                </p>
-              )
-            }
-            {
-              newmint > 0 && (
-                <p>
-                  {this.t('wallet:immature')}
-                  <br />
-                  <span>
-                    {
-                      new Intl.NumberFormat(this.gui.language, {
-                        minimumFractionDigits: 6,
-                        maximumFractionDigits: 6
-                      }).format(newmint)
-                    }
-                  </span> XVC
-                </p>
-              )
-            }
-            {
-              stake > 0 && (
-                <p>
-                  {this.t('wallet:staking')}
-                  <br />
-                  <span>
-                    {
-                      new Intl.NumberFormat(this.gui.language, {
-                        minimumFractionDigits: 6,
-                        maximumFractionDigits: 6
-                      }).format(stake)
-                    }
-                  </span> XVC
-                </p>
-              )
-            }
+            </span> {this.gui.localCurrency}</p>
+          </div>
+          {
+            this.wallet.pendingAmount > 0 && (
+              <div>
+                <p>{this.t('wallet:pending')}</p>
+                <p><span style={{fontWeight: '600'}}>
+                  {
+                    new Intl.NumberFormat(this.gui.language, {
+                      maximumFractionDigits: 6
+                    }).format(this.wallet.pendingAmount)
+                  }
+                </span> XVC</p>
+              </div>
+            )
+          }
+          {
+            newmint > 0 && (
+              <div style={{margin: '0 10px 0 10px'}}>
+                <p>{this.t('wallet:immature')}</p>
+                <p><span style={{fontWeight: '600'}}>
+                  {
+                    new Intl.NumberFormat(this.gui.language, {
+                      maximumFractionDigits: 6
+                    }).format(newmint)
+                  }
+                </span> XVC</p>
+              </div>
+            )
+          }
+          {
+            stake > 0 && (
+              <div>
+                <p>{this.t('wallet:staking')}</p>
+                <p><span style={{fontWeight: '600'}}>
+                  {
+                    new Intl.NumberFormat(this.gui.language, {
+                      maximumFractionDigits: 6
+                    }).format(stake)
+                  }
+                </span> XVC</p>
+              </div>
+            )
+          }
+        </div>
+        <div className='flex' style={{justifyContent: 'flex-end'}}>
+          <Menu
+            defaultSelectedKeys={['/']}
+            mode='horizontal'
+            onClick={(item) => {
+              this.props.history.push('/' + this.connections.viewing + item.key)
+            }}
+          >
+            <Menu.Item key='/'>
+              <i className='material-icons md-20'>account_balance_wallet</i>
+            </Menu.Item>
+            <Menu.Item key='/addresses'>
+              <i className='material-icons md-20'>send</i>
+            </Menu.Item>
+            <Menu.Item key='/network'>
+              <i className='material-icons md-20'>public</i>
+            </Menu.Item>
+            <Menu.Item key='/maintenance'>
+              <i className='material-icons md-20'>settings</i>
+            </Menu.Item>
+          </Menu>
+          <div style={{margin: '0 10px 0 14px'}}>
+            <WalletLock />
+            <WalletUnlock />
           </div>
         </div>
-        <div style={{float: 'right', margin: '0 10px 0 0'}}>
-          <WalletLock />
-          <WalletUnlock />
-        </div>
-        <nav>
-          <Menu
-            mode='horizontal'
-            defaultSelectedKeys={['/']}
-            onClick={
-              (item) => {
-                this.props.history.push(
-                  '/' +
-                  this.connections.viewing +
-                  item.key
-                )
-              }
-            }
-          >
-            <Item key='/'>
-              <i className='material-icons md-20'>account_balance_wallet</i>
-            </Item>
-            <Item key='/addresses'>
-              <i className='material-icons md-20'>send</i>
-            </Item>
-            <Item key='/network'>
-              <i className='material-icons md-20'>public</i>
-            </Item>
-            <Item key='/maintenance'>
-              <i className='material-icons md-20'>settings</i>
-            </Item>
-          </Menu>
-        </nav>
       </header>
     )
   }

@@ -1,7 +1,7 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Col, Modal, Row, Table, message } from 'antd'
+import { Modal, Table, message } from 'antd'
 import moment from 'moment'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
@@ -46,315 +46,258 @@ export default class Transaction extends React.Component {
     if (viewing === null) return null
     return (
       <Modal
-        title={this.t('wallet:transactionDetails')}
-        width={1000}
-        visible={viewing !== ''}
-        onCancel={() => this.wallet.setViewing()}
         footer={null}
+        onCancel={() => this.wallet.setViewing()}
+        title={this.t('wallet:transactionDetails')}
+        visible={viewing !== ''}
+        width={1000}
       >
-        <Row>
-          <Col span={18}>
-            <Row>
-              <Col span={1}>
-                <i className='material-icons md-18'>label</i>
-              </Col>
-              <Col span={4}>
-                {this.t('wallet:transactionId')}
-              </Col>
-              <Col span={19}>
-                <span style={{fontWeight: '500'}}>
-                  {viewingTx.txid}
-                </span>
-              </Col>
-            </Row>
+        <div className='flex-sb' style={{alignItems: 'flex-start'}}>
+          <div style={{margin: '0 36px 0 0'}}>
+            <div className='flex'>
+              <i className='material-icons md-16'>label</i>
+              <p>{this.t('wallet:transactionId')}</p>
+            </div>
             {
-              viewingTx.hasOwnProperty('blockhash') === true &&
-              (
-                <Row>
-                  <Col span={1}>
-                    <i className='material-icons md-18'>extension</i>
-                  </Col>
-                  <Col span={4}>
-                    {this.t('wallet:includedInBlock')}
-                  </Col>
-                  <Col span={19}>
-                    <span style={{fontWeight: '500'}}>
-                      {viewingTx.blockhash}
-                    </span>
-                  </Col>
-                </Row>
+              viewingTx.hasOwnProperty('blockhash') === true && (
+                <div className='flex'>
+                  <i className='material-icons md-16'>extension</i>
+                  <p>{this.t('wallet:includedInBlock')}</p>
+                </div>
               )
             }
-            <Row>
-              <Col span={1}>
-                <i className='material-icons md-18'>access_time</i>
-              </Col>
-              <Col span={4}>
-                {this.t('wallet:relayedOn')}
-              </Col>
-              <Col span={19}>
-                {moment(viewingTx.time).format('L - LTS')}
-                {' (' + moment().to(viewingTx.time)})
-              </Col>
-            </Row>
+            <div className='flex'>
+              <i className='material-icons md-16'>access_time</i>
+              <p>{this.t('wallet:relayedOn')}</p>
+            </div>
             {
               viewingTx.hasOwnProperty('blocktime') === true &&
-              viewingTx.blocktime > 0 &&
-              (
-                <Row>
-                  <Col span={1}>
-                    <i className='material-icons md-18'>access_time</i>
-                  </Col>
-                  <Col span={4}>
-                    {this.t('wallet:blockFound')}
-                  </Col>
-                  <Col span={19}>
-                    {moment(viewingTx.blocktime).format('L - LTS')}
-                  </Col>
-                </Row>
+              viewingTx.blocktime > 0 && (
+                <div className='flex'>
+                  <i className='material-icons md-16'>access_time</i>
+                  <p>{this.t('wallet:blockFound')}</p>
+                </div>
               )
             }
-          </Col>
-          <Col span={6} style={{textAlign: 'right'}}>
-            <p>
-              <a
-                target='_blank'
-                href={'https://explorer.vchain.info/tx/' + viewingTx.txid}
-              >
-                {this.t('wallet:transactionOnExplorer')}
-              </a>
-            </p>
-            <p>
-              <a
-                target='_blank'
-                href={'https://explorer.vchain.info/block/' + viewingTx.blockhash}
-                disabled={
-                  viewingTx.hasOwnProperty('blockhash') === false ||
-                  viewingTx.blockhash === '0000000000000000000000000000000000000000000000000000000000000000'
-                }
-              >
-                {this.t('wallet:blockOnExplorer')}
-              </a>
-            </p>
-            {
-              viewingTx.hasOwnProperty('ztlock') === true &&
-              viewingTx.confirmations === 0 &&
-              viewingTx.hasOwnProperty('generated') === false &&
-              viewingTx.hasOwnProperty('blended') === false &&
-              (
-                <p>
-                  <a
-                    onClick={this.ztlock}
-                    disabled={viewingTx.ztlock === true}
-                  >
-                    {
-                      viewingTx.ztlock === true
-                        ? this.t('wallet:transactionLocked')
-                        : this.t('wallet:transactionLock')
-                    }
-                  </a>
-                </p>
-              )
-            }
-          </Col>
-        </Row>
-        <Row
-          style={{margin: '15px 0 0 0'}}
-          align='bottom'
-          type='flex'
-        >
-          <Col span={9}>
-            <Row>
-              <Col span={2}>
-                <i className='material-icons md-18'>folder</i>
-              </Col>
-              <Col span={8}>
-                {this.t('wallet:category')}
-              </Col>
-              <Col span={14}>
-                {this.t('wallet:' + viewingTx.category)}
-              </Col>
-            </Row>
-            <Row>
-              <Col span={2}>
-                <i className='material-icons md-18'>monetization_on</i>
-              </Col>
-              <Col span={8}>
-                {this.t('wallet:amount')}
-              </Col>
-              <Col span={14} className={viewingTx.color}>
-                {
-                  new Intl.NumberFormat(this.gui.language, {
-                    minimumFractionDigits: 6,
-                    maximumFractionDigits: 6
-                  }).format(viewingTx.amount)
-                } XVC (
-                {
-                  new Intl.NumberFormat(this.gui.language, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                  }).format(viewingTx.amount * local * average)
-                } {this.gui.localCurrency})
-              </Col>
-            </Row>
+            <div className='flex' style={{margin: '10px 0 0 0'}}>
+              <i className='material-icons md-16'>folder</i>
+              <p>{this.t('wallet:category')}</p>
+            </div>
+            <div className='flex'>
+              <i className='material-icons md-16'>monetization_on</i>
+              <p>{this.t('wallet:amount')}</p>
+            </div>
             {
               viewingTx.hasOwnProperty('fee') === true && (
-                <Row>
-                  <Col span={2}>
-                    <i className='material-icons md-18'>card_giftcard</i>
-                  </Col>
-                  <Col span={8}>
-                    {this.t('wallet:fee')}
-                  </Col>
-                  <Col span={12} className='red'>
+                <div className='flex'>
+                  <i className='material-icons md-16'>card_giftcard</i>
+                  <p>{this.t('wallet:fee')}</p>
+                </div>
+              )
+            }
+            <div className='flex'>
+              <i className='material-icons md-16'>done_all</i>
+              <p>{this.t('wallet:confirmations')}</p>
+            </div>
+          </div>
+          <div style={{flex: 1}}>
+            <div style={{margin: '0 0 10px 0'}}>
+              <div className='flex-sb' style={{alignItems: 'flex-start'}}>
+                <div>
+                  <p style={{fontWeight: '500'}}>{viewingTx.txid}</p>
+                  {
+                    viewingTx.hasOwnProperty('blockhash') === true && (
+                      <p style={{fontWeight: '500'}}>{viewingTx.blockhash}</p>
+                    )
+                  }
+                  <p>
+                    {moment(viewingTx.time).format('L - LTS')} (
+                    {moment().to(viewingTx.time)})
+                  </p>
+                  {
+                    viewingTx.hasOwnProperty('blocktime') === true &&
+                    viewingTx.blocktime > 0 && (
+                      <p>{moment(viewingTx.blocktime).format('L - LTS')}</p>
+                    )
+                  }
+                </div>
+                <div style={{textAlign: 'right'}}>
+                  <p>
+                    <a
+                      target='_blank'
+                      href={'https://explorer.vchain.info/tx/' + viewingTx.txid}
+                    >
+                      {this.t('wallet:transactionOnExplorer')}
+                    </a>
+                  </p>
+                  <p>
+                    <a
+                      target='_blank'
+                      href={'https://explorer.vchain.info/block/' + viewingTx.blockhash}
+                      disabled={
+                        viewingTx.hasOwnProperty('blockhash') === false ||
+                        viewingTx.blockhash === '0'.repeat(64)
+                      }
+                    >
+                      {this.t('wallet:blockOnExplorer')}
+                    </a>
+                  </p>
+                  {
+                    viewingTx.hasOwnProperty('ztlock') === true &&
+                    viewingTx.confirmations === 0 &&
+                    viewingTx.hasOwnProperty('generated') === false &&
+                    viewingTx.hasOwnProperty('blended') === false &&
+                    (
+                      <p>
+                        <a
+                          onClick={this.ztlock}
+                          disabled={viewingTx.ztlock === true}
+                        >
+                          {
+                            viewingTx.ztlock === true
+                              ? this.t('wallet:transactionLocked')
+                              : this.t('wallet:transactionLock')
+                          }
+                        </a>
+                      </p>
+                    )
+                  }
+                </div>
+              </div>
+            </div>
+            <div className='flex-sb' style={{alignItems: 'flex-start'}}>
+              <div style={{margin: '0 36px 0 0'}}>
+                <p style={{fontWeight: '500'}}>
+                  {this.t('wallet:' + viewingTx.category)}
+                </p>
+                <p className={viewingTx.color}>
+                  {
+                    new Intl.NumberFormat(this.gui.language, {
+                      maximumFractionDigits: 6
+                    }).format(viewingTx.amount)
+                  } XVC (
+                  {
+                    new Intl.NumberFormat(this.gui.language, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    }).format(viewingTx.amount * local * average)
+                  } {this.gui.localCurrency})
+                </p>
+                {
+                  viewingTx.hasOwnProperty('fee') === true && (
+                    <p className='red'>
+                      {
+                        new Intl.NumberFormat(this.gui.language, {
+                          maximumFractionDigits: 6
+                        }).format(viewingTx.fee)
+                      } XVC
+                    </p>
+                  )
+                }
+                <p className={viewingTx.color}>{viewingTx.confirmations}</p>
+              </div>
+              <div style={{margin: '0 36px 0 36px'}}>
+                {
+                  viewingTx.hasOwnProperty('to') === true && (
+                    <div className='flex'>
+                      <i className='material-icons md-16'>perm_identity</i>
+                      <p>{this.t('wallet:recipient')}</p>
+                    </div>
+                  )
+                }
+                {
+                  viewingTx.hasOwnProperty('comment') === true && (
+                    <div className='flex'>
+                      <i className='material-icons md-16'>create</i>
+                      <p>{this.t('wallet:comment')}</p>
+                    </div>
+                  )
+                }
+              </div>
+              <div style={{flex: 1}}>
+                {
+                  viewingTx.hasOwnProperty('to') === true && (
+                    <p style={{fontWeight: '500'}}>{viewingTx.to}</p>
+                  )
+                }
+                {
+                  viewingTx.hasOwnProperty('comment') === true && (
+                    <p style={{textAlign: 'justify'}}>{viewingTx.comment}</p>
+                  )
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <div className='flex-sb'>
+          <Table
+            bordered
+            columns={[
+              {
+                dataIndex: 'address',
+                title: this.t('wallet:from'),
+                render: address => <p className='text-mono'>{address}</p>
+              },
+              {
+                dataIndex: 'amount',
+                title: (
+                  <p style={{textAlign: 'right'}}>
+                    {this.t('wallet:amount')}
+                  </p>
+                ),
+                render: amount => (
+                  <p style={{textAlign: 'right'}}>
                     {
                       new Intl.NumberFormat(this.gui.language, {
                         minimumFractionDigits: 6,
                         maximumFractionDigits: 6
-                      }).format(viewingTx.fee)
+                      }).format(amount)
                     } XVC
-                  </Col>
-                </Row>
-              )
-            }
-            <Row>
-              <Col span={2}>
-                <i className='material-icons md-18'>done_all</i>
-              </Col>
-              <Col span={8}>
-                {this.t('wallet:confirmations')}
-              </Col>
-              <Col span={12} className={viewingTx.color}>
-                {viewingTx.confirmations}
-              </Col>
-            </Row>
-          </Col>
-          <Col span={11} offset={4}>
-            {
-              viewingTx.hasOwnProperty('to') === true && (
-                <Row>
-                  <Col span={6}>
-                    <Row>
-                      <Col span={6}>
-                        <i className='material-icons md-18'>perm_identity</i>
-                      </Col>
-                      <Col span={18}>
-                        {this.t('wallet:recipient')}
-                      </Col>
-                    </Row>
-                  </Col>
-                  <Col span={18} style={{textAlign: 'justify'}}>
-                    {viewingTx.to}
-                  </Col>
-                </Row>
-              )
-            }
-            {
-              viewingTx.hasOwnProperty('comment') === true && (
-                <Row>
-                  <Col span={6}>
-                    <Row>
-                      <Col span={6}>
-                        <i className='material-icons md-18'>create</i>
-                      </Col>
-                      <Col span={18}>
-                        {this.t('wallet:comment')}
-                      </Col>
-                    </Row>
-                  </Col>
-                  <Col span={18} style={{textAlign: 'justify'}}>
-                    {viewingTx.comment}
-                  </Col>
-                </Row>
-              )
-            }
-          </Col>
-        </Row>
-        <Row style={{margin: '15px 0 0 0'}}>
-          <Col span={11}>
-            <Table
-              bordered
-              size='small'
-              scroll={
-                viewingTx.inputs.length > 8
-                  ? {y: 190}
-                  : {}
+                  </p>
+                )
               }
-              pagination={false}
-              dataSource={[...viewingTx.inputs]}
-              locale={{
-                emptyText: this.t('wallet:coinbase')
-              }}
-              columns={[
-                {
-                  title: this.t('wallet:from'),
-                  dataIndex: 'address',
-                  width: 290,
-                  render: address => (
-                    <p className='text-mono'>{address}</p>
-                  )
-                },
-                {
-                  title: this.t('wallet:amount'),
-                  dataIndex: 'amount',
-                  render: amount => (
-                    <p style={{textAlign: 'right'}}>
-                      {
-                        new Intl.NumberFormat(this.gui.language, {
-                          minimumFractionDigits: 6,
-                          maximumFractionDigits: 6
-                        }).format(amount)
-                      } XVC
-                    </p>
-                  )
-                }
-              ]}
-            />
-          </Col>
-          <Col span={2} style={{textAlign: 'center'}}>
-            <i className='material-icons md-20'>forward</i>
-          </Col>
-          <Col span={11}>
-            <Table
-              bordered
-              size='small'
-              scroll={
-                viewingTx.outputs.length > 8
-                  ? {y: 190}
-                  : {}
+            ]}
+            dataSource={[...viewingTx.inputs]}
+            locale={{emptyText: this.t('wallet:coinbase')}}
+            pagination={false}
+            scroll={viewingTx.inputs.length > 8 ? {y: 190} : {}}
+            size='small'
+            style={{flex: 1, margin: '0 10px 0 0'}}
+          />
+          <i className='material-icons md-18'>forward</i>
+          <Table
+            bordered
+            columns={[
+              {
+                dataIndex: 'address',
+                title: this.t('wallet:to'),
+                render: address => <p className='text-mono'>{address}</p>
+              },
+              {
+                dataIndex: 'amount',
+                title: (
+                  <p style={{textAlign: 'right'}}>{this.t('wallet:amount')}</p>
+                ),
+                render: (amount, record) => (
+                  <p className={record.color} style={{textAlign: 'right'}}>
+                    {
+                      new Intl.NumberFormat(this.gui.language, {
+                        minimumFractionDigits: 6,
+                        maximumFractionDigits: 6
+                      }).format(amount)
+                    } XVC
+                  </p>
+                )
               }
-              pagination={false}
-              dataSource={[...viewingTx.outputs]}
-              columns={[
-                {
-                  title: this.t('wallet:to'),
-                  dataIndex: 'address',
-                  width: 290,
-                  render: address => (
-                    <p className='text-mono'>{address}</p>
-                  )
-                },
-                {
-                  title: this.t('wallet:amount'),
-                  dataIndex: 'amount',
-                  render: (amount, record) => (
-                    <p
-                      style={{textAlign: 'right'}}
-                      className={record.color}
-                    >
-                      {
-                        new Intl.NumberFormat(this.gui.language, {
-                          minimumFractionDigits: 6,
-                          maximumFractionDigits: 6
-                        }).format(amount)
-                      } XVC
-                    </p>
-                  )
-                }
-              ]}
-            />
-          </Col>
-        </Row>
+            ]}
+            dataSource={[...viewingTx.outputs]}
+            pagination={false}
+            scroll={viewingTx.outputs.length > 8 ? {y: 190} : {}}
+            size='small'
+            style={{flex: 1, margin: '0 0 0 10px'}}
+          />
+        </div>
       </Modal>
     )
   }

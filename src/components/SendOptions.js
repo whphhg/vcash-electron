@@ -1,7 +1,7 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Col, Input, Row, Select } from 'antd'
+import { Input, Select } from 'antd'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -56,115 +56,106 @@ export default class SendOptions extends React.Component {
 
   render () {
     const { fromAccount, recipients, comment, commentTo, minConf } = this.send
-    const { Option } = Select
 
     return (
       <div>
-        <Row>
-          <Col span={6}>
-            <p style={{margin: '1px 0 0 0'}}>
-              {this.t('wallet:spendFrom')}
-            </p>
-          </Col>
-          <Col span={10}>
-            <Select
-              size='small'
-              style={{width: '247px'}}
-              value={fromAccount}
-              optionFilterProp='children'
-              onChange={this.setAccount}
-            >
-              <Option
-                value={null}
-                disabled={recipients.size > 1}
+        <div className='flex-sb'>
+          <div style={{lineHeight: '22px', margin: '0 36px 0 0'}}>
+            <div className='flex'>
+              <i className='material-icons md-16'>account_balance</i>
+              <p>{this.t('wallet:spendFrom')}</p>
+            </div>
+            {
+              recipients.size === 1 && (
+                <div className='flex' style={{margin: '5px 0 0 0'}}>
+                  <i className='material-icons md-16'>perm_identity</i>
+                  <p>{this.t('wallet:recipient')}</p>
+                </div>
+              )
+            }
+            <div className='flex' style={{margin: '5px 0 0 0'}}>
+              <i className='material-icons md-16'>create</i>
+              <p>{this.t('wallet:description')}</p>
+            </div>
+            {
+              fromAccount !== null && (
+                <div className='flex' style={{margin: '5px 0 0 0'}}>
+                  <i className='material-icons md-16'>done_all</i>
+                  <p>{this.t('wallet:minimumConfirmations')}</p>
+                </div>
+              )
+            }
+          </div>
+          <div style={{flex: 1}}>
+            <div className='flex'>
+              <Select
+                onChange={this.setAccount}
+                optionFilterProp='children'
+                size='small'
+                style={{flex: 1, margin: '0 10px 0 0'}}
+                value={fromAccount}
               >
-                {this.t('wallet:any')}
-              </Option>
-              <Option value='*'>
-                {this.t('wallet:default')}
-              </Option>
-              {
-                this.wallet.accounts.map((account) => (
-                  <Option
-                    key={account}
-                    value={account}
-                  >
-                    {account}
-                  </Option>
-                ))
-              }
-            </Select>
-          </Col>
-          <Col span={8}>
-            <Input
-              size='small'
-              disabled
-              defaultValue={
-                new Intl.NumberFormat(this.gui.language, {
-                  minimumFractionDigits: 6,
-                  maximumFractionDigits: 6
-                }).format(0)
-              }
-              addonBefore={this.t('wallet:balance')}
-              addonAfter='XVC'
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col span={6}>
-            <p style={{margin: '6px 0 0 0'}}>
-              {this.t('wallet:description')}
-            </p>
-          </Col>
-          <Col span={18}>
-            <Input
-              size='small'
-              placeholder={this.t('wallet:descriptionLong')}
-              style={{margin: '5px 0 0 0'}}
-              value={comment}
-              onChange={this.setComment}
-            />
-          </Col>
-        </Row>
-        {
-          recipients.size === 1 && (
-            <Row>
-              <Col span={6}>
-                <p style={{margin: '6px 0 0 0'}}>
-                  {this.t('wallet:recipient')}
-                </p>
-              </Col>
-              <Col span={18}>
+                <Select.Option disabled={recipients.size > 1} value={null}>
+                  {this.t('wallet:any')}
+                </Select.Option>
+                <Select.Option value='*'>
+                  {this.t('wallet:default')}
+                </Select.Option>
+                {
+                  this.wallet.accounts.map((account) => (
+                    <Select.Option key={account} value={account}>
+                      {account}
+                    </Select.Option>
+                  ))
+                }
+              </Select>
+              <div style={{width: '200px'}}>
                 <Input
+                  addonAfter='XVC'
+                  addonBefore={this.t('wallet:balance')}
+                  defaultValue={
+                    new Intl.NumberFormat(this.gui.language, {
+                      maximumFractionDigits: 6
+                    }).format(0)
+                  }
+                  disabled
                   size='small'
-                  placeholder={this.t('wallet:recipientLong')}
-                  style={{margin: '5px 0 0 0'}}
-                  value={commentTo}
-                  onChange={this.setCommentTo}
                 />
-              </Col>
-            </Row>
-          )
-        }
-        {
-          fromAccount !== null && (
-            <Row>
-              <Col span={6}>
-                <p style={{margin: '6px 0 0 0'}}>
-                  {this.t('wallet:minimumConfirmations')}
-                </p>
-              </Col>
-              <Col span={3}>
-                <Input
-                  size='small'
-                  style={{margin: '5px 0 0 0'}}
-                  value={minConf}
-                  onChange={this.setMinConf}
-                />
-              </Col>
-            </Row>
-          )
-        }
+              </div>
+            </div>
+            {
+              recipients.size === 1 && (
+                <div style={{flex: 1, margin: '5px 0 0 0'}}>
+                  <Input
+                    onChange={this.setCommentTo}
+                    placeholder={this.t('wallet:recipientLong')}
+                    size='small'
+                    value={commentTo}
+                  />
+                </div>
+              )
+            }
+            <div style={{flex: 1, margin: '5px 0 0 0'}}>
+              <Input
+                onChange={this.setComment}
+                placeholder={this.t('wallet:descriptionLong')}
+                size='small'
+                value={comment}
+              />
+            </div>
+            {
+              fromAccount !== null && (
+                <div style={{width: '60px', margin: '5px 0 0 0'}}>
+                  <Input
+                    onChange={this.setMinConf}
+                    size='small'
+                    value={minConf}
+                  />
+                </div>
+              )
+            }
+          </div>
+        </div>
       </div>
     )
   }

@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Col, Input, Row, Table } from 'antd'
+import { Table } from 'antd'
 
 /** Required components. */
 import Address from './Address'
@@ -12,7 +12,7 @@ import KeyDump from './KeyDump'
 import KeyImport from './KeyImport'
 import SendControls from './SendControls'
 import SendOptions from './SendOptions'
-import SendRecipient from './SendRecipient'
+import SendRecipients from './SendRecipients'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -21,9 +21,7 @@ import SendRecipient from './SendRecipient'
 @inject('gui', 'rates', 'send', 'wallet') @observer
 
 export default class Addresses extends React.Component {
-  @observable filters = {
-    address: ['spendable', 'new']
-  }
+  @observable filters = { address: ['spendable', 'new'] }
 
   constructor (props) {
     super(props)
@@ -43,153 +41,110 @@ export default class Addresses extends React.Component {
   }
 
   render () {
-    const { total } = this.send
-    const { local, average } = this.rates
-
     return (
-      <div>
-        <Row>
-          <Col span={24} className='shadow'>
-            <div className='toolbar'>
-              <Col span={11}>
-                <AddressNew />
-                <KeyImport />
-                <KeyDump />
-              </Col>
-              <Col span={13}>
-                <div style={{margin: '0 0 0 9px'}}>
-                  <SendControls />
-                </div>
-              </Col>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateRows: '35px 1fr',
+          height: '100%'
+        }}
+      >
+        <div className='shadow' style={{minHeight: '35px'}}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1.1fr 1.4fr',
+              height: '100%'
+            }}
+          >
+            <div className='flex' style={{margin: '0 10px 0 10px'}}>
+              <AddressNew />
+              <div style={{margin: '0 5px 0 5px'}}><KeyImport /></div>
+              <KeyDump />
             </div>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={11}>
-            <div style={{margin: '10px'}}>
-              <Table
-                bordered
-                size='small'
-                scroll={{y: 527}}
-                pagination={false}
-                expandedRowRender={data => (
-                  <Address data={data} />
-                )}
-                locale={{
-                  filterConfirm: this.t('wallet:ok'),
-                  filterReset: this.t('wallet:reset'),
-                  emptyText: this.t('wallet:notFound')
-                }}
-                dataSource={this.wallet.addressData}
-                onChange={this.tableChange}
-                rowKey='address'
-                columns={[
-                  {
-                    title: this.t('wallet:addresses'),
-                    dataIndex: 'address',
-                    width: 290,
-                    render: address => <p className='text-mono'>{address}</p>,
-                    filteredValue: this.filters.address.slice() || null,
-                    filters: [
-                      {
-                        text: this.t('wallet:spent'),
-                        value: 'spent'
-                      },
-                      {
-                        text: this.t('wallet:spendable'),
-                        value: 'spendable'
-                      },
-                      {
-                        text: this.t('wallet:new'),
-                        value: 'new'
-                      }
-                    ],
-                    onFilter: (value, record) => {
-                      switch (value) {
-                        case 'spent':
-                          return record.received - record.spent === 0 &&
-                            record.received > 0
-
-                        case 'spendable':
-                          return record.received - record.spent !== 0
-
-                        case 'new':
-                          return record.received === 0
-                      }
+            <div className='flex' style={{margin: '0 10px 0 10px'}}>
+              <SendControls />
+            </div>
+          </div>
+        </div>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1.1fr 1.4fr',
+            height: '100%'
+          }}
+        >
+          <div style={{margin: '10px'}}>
+            <Table
+              bordered
+              columns={[
+                {
+                  dataIndex: 'address',
+                  filteredValue: this.filters.address.slice() || null,
+                  filters: [
+                    { text: this.t('wallet:spent'), value: 'spent' },
+                    { text: this.t('wallet:spendable'), value: 'spendable' },
+                    { text: this.t('wallet:new'), value: 'new' }
+                  ],
+                  onFilter: (value, { received, spent }) => {
+                    switch (value) {
+                      case 'spent': return received - spent === 0 && received > 0
+                      case 'spendable': return received - spent !== 0
+                      case 'new': return received === 0
                     }
                   },
-                  {
-                    title: this.t('wallet:balance'),
-                    dataIndex: 'balance',
-                    sorter: (a, b) => a.balance - b.balance,
-                    render: balance => (
-                      <p style={{textAlign: 'right'}}>
-                        {
-                          new Intl.NumberFormat(this.gui.language, {
-                            minimumFractionDigits: 6,
-                            maximumFractionDigits: 6
-                          }).format(balance)
-                        } XVC
-                      </p>
-                    )
-                  }
-                ]}
-              />
-            </div>
-          </Col>
-          <Col span={13}>
-            <div style={{margin: '10px'}}>
-              <div id='sendRecipients'>
+                  title: this.t('wallet:addresses'),
+                  width: 290,
+                  render: address => <p className='text-mono'>{address}</p>
+                },
                 {
-                  this.send.recipients.entries().map((recipient) => (
-                    <SendRecipient
-                      data={recipient[1]}
-                      key={recipient[1].uid}
-                    />
-                  ))
+                  dataIndex: 'balance',
+                  sorter: (a, b) => a.balance - b.balance,
+                  title: this.t('wallet:balance'),
+                  render: balance => (
+                    <p style={{textAlign: 'right'}}>
+                      {
+                        new Intl.NumberFormat(this.gui.language, {
+                          minimumFractionDigits: 6,
+                          maximumFractionDigits: 6
+                        }).format(balance)
+                      } XVC
+                    </p>
+                  )
                 }
+              ]}
+              dataSource={this.wallet.addressData}
+              expandedRowRender={data => <Address data={data} />}
+              locale={{
+                emptyText: this.t('wallet:notFound'),
+                filterConfirm: this.t('wallet:ok'),
+                filterReset: this.t('wallet:reset')
+              }}
+              onChange={this.tableChange}
+              pagination={false}
+              rowKey='address'
+              scroll={{y: 536}}
+              size='small'
+            />
+          </div>
+          <div style={{margin: '10px'}}>
+            <div
+              style={{
+                display: 'grid',
+                gridGap: '10px',
+                gridTemplateRows: '1fr 175px',
+                height: '100%'
+              }}
+            >
+              <SendRecipients />
+              <div style={{alignSelf: 'end'}}>
+                <SendOptions />
+                <hr />
+                <CurrencyConverter />
               </div>
-              {
-                this.send.recipients.size > 1 && (
-                  <Row>
-                    <Col span={6} offset={13}>
-                      <div style={{margin: '0 5px 5px 0'}}>
-                        <Input
-                          disabled
-                          value={
-                            new Intl.NumberFormat(this.gui.language, {
-                              minimumFractionDigits: 6,
-                              maximumFractionDigits: 6
-                            }).format(total)
-                          }
-                          addonAfter='XVC'
-                        />
-                      </div>
-                    </Col>
-                    <Col span={5}>
-                      <div style={{margin: '0 0 5px 0'}}>
-                        <Input
-                          disabled
-                          value={
-                            new Intl.NumberFormat(this.gui.language, {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2
-                            }).format(total * local * average)
-                          }
-                          addonAfter={this.gui.localCurrency}
-                        />
-                      </div>
-                    </Col>
-                  </Row>
-                )
-              }
-              <hr style={{margin: '5px 0 9px 0'}} />
-              <SendOptions />
-              <hr style={{margin: '10px 0 9px 0'}} />
-              <CurrencyConverter />
             </div>
-          </Col>
-        </Row>
+          </div>
+        </div>
       </div>
     )
   }

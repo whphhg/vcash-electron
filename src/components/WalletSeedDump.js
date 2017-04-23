@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Button, Col, Input, Row } from 'antd'
+import { Button, Input } from 'antd'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -11,8 +11,8 @@ import { Button, Col, Input, Row } from 'antd'
 @inject('info', 'rpc') @observer
 
 export default class WalletSeedDump extends React.Component {
-  @observable seed = ''
   @observable error = false
+  @observable seed = ''
 
   constructor (props) {
     super(props)
@@ -23,9 +23,7 @@ export default class WalletSeedDump extends React.Component {
 
   /** Clear seed when component unmounts. */
   componentWillUnmount () {
-    if (this.seed !== '') {
-      this.setSeed()
-    }
+    if (this.seed !== '') this.setSeed()
   }
 
   /**
@@ -85,53 +83,33 @@ export default class WalletSeedDump extends React.Component {
   render () {
     return (
       <div>
-        <p style={{margin: '0 0 5px 0'}}>
-          <i className='material-icons md-18'>fingerprint</i>
-          <span
-            style={{
-              margin: '0 0 0 7px',
-              verticalAlign: 'top'
-            }}
+        <div className='flex'>
+          <i className='material-icons md-16'>fingerprint</i>
+          <p>{this.t('wallet:seedDumpLong')}</p>
+        </div>
+        <div className='flex-sb' style={{margin: '10px 0 0 0'}}>
+          <p style={{width: '120px'}}>{this.t('wallet:seed')}</p>
+          <Input
+            disabled={this.seed === ''}
+            readOnly
+            style={{flex: 1}}
+            value={this.seed}
+          />
+        </div>
+        <div className='flex-sb' style={{margin: '5px 0 0 0'}}>
+          <p className='red' style={{margin: '0 0 0 120px'}}>
+            {
+              this.errorStatus === 'notDeterministic' &&
+              this.t('wallet:notDeterministic')
+            }
+          </p>
+          <Button
+            disabled={this.errorStatus !== false || this.info.isLocked === true}
+            onClick={this.dumpSeed}
           >
-            {this.t('wallet:seedDumpLong')}
-          </span>
-        </p>
-        <Row>
-          <Col span={3}>
-            <p style={{margin: '4px 0 0 0'}}>
-              {this.t('wallet:seed')}
-            </p>
-          </Col>
-          <Col span={21}>
-            <Input
-              value={this.seed}
-              disabled={this.seed === ''}
-              readOnly
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col span={13} offset={3}>
-            <p className='red' style={{margin: '3px 0 3px 1px'}}>
-              {
-                this.errorStatus === 'notDeterministic' &&
-                this.t('wallet:notDeterministic')
-              }
-            </p>
-          </Col>
-          <Col span={8} style={{textAlign: 'right'}}>
-            <Button
-              style={{margin: '5px 0 0 0'}}
-              onClick={this.dumpSeed}
-              disabled={
-                this.errorStatus !== false ||
-                this.info.isLocked === true
-              }
-            >
-              {this.t('wallet:seedDump')}
-            </Button>
-          </Col>
-        </Row>
+            {this.t('wallet:seedDump')}
+          </Button>
+        </div>
       </div>
     )
   }

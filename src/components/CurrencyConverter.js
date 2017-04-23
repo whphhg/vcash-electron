@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Col, Input, Row, Tooltip } from 'antd'
+import { Input, Tooltip } from 'antd'
 import { decimalSeparator } from '../utilities/common'
 import moment from 'moment'
 
@@ -82,29 +82,21 @@ export default class CurrencyConverter extends React.Component {
   render () {
     return (
       <div>
-        <Row>
-          <Col span={12}>
-            {this.t('wallet:currencyConverter')}
-          </Col>
-          <Col span={12} style={{textAlign: 'right'}}>
-            <img
-              src='./assets/images/exchangePoloniex.png'
-              style={{margin: '1px 0 0 0'}}
-            />
-            <p
-              style={{
-                margin: '0 10px 0 5px',
-                verticalAlign: '2px',
-                display: 'inline'
-              }}
+        <div className='flex-sb' style={{margin: '0 0 10px 0'}}>
+          <div className='flex'>
+            <i className='material-icons md-16'>cached</i>
+            <p>{this.t('wallet:currencyConverter')}</p>
+          </div>
+          <div className='flex'>
+            <img src='./assets/images/exchangePoloniex.png' />
+            <Tooltip
+              placement='bottom'
+              title={
+                this.t('wallet:lastUpdated') + ' ' +
+                moment(this.rates.poloniex.updated).format('LTS')
+              }
             >
-              <Tooltip
-                placement='bottom'
-                title={
-                  this.t('wallet:lastUpdated') + ' ' +
-                  moment(this.rates.poloniex.updated).format('LTS')
-                }
-              >
+              <p style={{margin: '0 10px 0 5px'}}>
                 <span style={{fontWeight: '500'}}>
                   {
                     new Intl.NumberFormat(this.gui.language, {
@@ -113,26 +105,17 @@ export default class CurrencyConverter extends React.Component {
                     }).format(this.rates.poloniex.last)
                   }
                 </span> BTC
-              </Tooltip>
-            </p>
-            <img
-              src='./assets/images/exchangeBittrex.png'
-              style={{margin: '1px 0 0 0'}}
-            />
-            <p
-              style={{
-                margin: '0 0 0 5px',
-                verticalAlign: '2px',
-                display: 'inline'
-              }}
+              </p>
+            </Tooltip>
+            <img src='./assets/images/exchangeBittrex.png' />
+            <Tooltip
+              placement='bottomRight'
+              title={
+                this.t('wallet:lastUpdated') + ' ' +
+                moment(this.rates.bittrex.updated).format('LTS')
+              }
             >
-              <Tooltip
-                placement='bottomRight'
-                title={
-                  this.t('wallet:lastUpdated') + ' ' +
-                  moment(this.rates.bittrex.updated).format('LTS')
-                }
-              >
+              <p style={{margin: '0 0 0 5px'}}>
                 <span style={{fontWeight: '500'}}>
                   {
                     new Intl.NumberFormat(this.gui.language, {
@@ -141,44 +124,42 @@ export default class CurrencyConverter extends React.Component {
                     }).format(this.rates.bittrex.Last)
                   }
                 </span> BTC
-              </Tooltip>
-            </p>
-          </Col>
-        </Row>
-        <Row style={{margin: '10px 0 0 0'}}>
-          <Col span={8}>
+              </p>
+            </Tooltip>
+          </div>
+        </div>
+        <div className='flex-sb'>
+          <div style={{flex: '1'}}>
             <Input
-              name='vcash'
-              size='small'
               addonBefore='XVC'
-              placeholder={this.t('wallet:amount')}
+              name='vcash'
               onChange={this.convert}
+              placeholder={this.t('wallet:amount')}
+              size='small'
               value={this.amounts.vcash}
             />
-          </Col>
-          <Col span={8}>
-            <div style={{margin: '0 5px 0 5px'}}>
-              <Input
-                name='bitcoin'
-                size='small'
-                addonBefore='BTC'
-                placeholder={this.t('wallet:amount')}
-                onChange={this.convert}
-                value={this.amounts.bitcoin}
-              />
-            </div>
-          </Col>
-          <Col span={8}>
+          </div>
+          <div style={{flex: 1, margin: '0 10px 0 10px'}}>
             <Input
-              name='local'
-              size='small'
-              addonBefore={this.gui.localCurrency}
-              placeholder={this.t('wallet:amount')}
+              addonBefore='BTC'
+              name='bitcoin'
               onChange={this.convert}
+              placeholder={this.t('wallet:amount')}
+              size='small'
+              value={this.amounts.bitcoin}
+            />
+          </div>
+          <div style={{flex: '1'}}>
+            <Input
+              addonBefore={this.gui.localCurrency}
+              name='local'
+              onChange={this.convert}
+              placeholder={this.t('wallet:amount')}
+              size='small'
               value={this.amounts.local}
             />
-          </Col>
-        </Row>
+          </div>
+        </div>
       </div>
     )
   }

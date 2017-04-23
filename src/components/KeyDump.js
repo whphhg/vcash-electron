@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, observable, reaction } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
+import { AutoComplete, Button, Input, Popover } from 'antd'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -12,9 +12,9 @@ import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
 
 export default class KeyDump extends React.Component {
   @observable address = ''
-  @observable privateKey = ''
-  @observable popover = false
   @observable error = false
+  @observable popover = false
+  @observable privateKey = ''
 
   constructor (props) {
     super(props)
@@ -25,10 +25,7 @@ export default class KeyDump extends React.Component {
 
     /** Clear private key and previous error on address change. */
     reaction(() => this.address, (address) => {
-      if (this.privateKey !== '') {
-        this.setPrivateKey()
-      }
-
+      if (this.privateKey !== '') this.setPrivateKey()
       this.setError()
     })
 
@@ -88,9 +85,7 @@ export default class KeyDump extends React.Component {
    * @function togglePopover
    */
   @action togglePopover = () => {
-    if (this.info.isLocked === false) {
-      this.popover = !this.popover
-    }
+    if (this.info.isLocked === false) this.popover = !this.popover
   }
 
   /**
@@ -127,58 +122,42 @@ export default class KeyDump extends React.Component {
   popoverContent () {
     return (
       <div style={{width: '400px'}}>
-        <Row>
-          <Col span={24} style={{height: '28px'}}>
-            <AutoComplete
-              placeholder={this.t('wallet:address')}
-              style={{width: '100%'}}
-              getPopupContainer={triggerNode => triggerNode.parentNode}
-              value={this.address}
-              dataSource={this.wallet.addressList}
-              onChange={this.setAddress}
+        <AutoComplete
+          dataSource={this.wallet.addressList}
+          getPopupContainer={triggerNode => triggerNode.parentNode}
+          onChange={this.setAddress}
+          placeholder={this.t('wallet:address')}
+          style={{width: '100%'}}
+          value={this.address}
+        />
+        {
+          this.privateKey !== '' && (
+            <Input
+              readOnly
+              style={{margin: '5px 0 0 0'}}
+              value={this.privateKey}
             />
-          </Col>
-        </Row>
-        <Row>
-          <Col span={24}>
+          )
+        }
+        <div className='flex-sb' style={{margin: '5px 0 0 0'}}>
+          <p className='red'>
             {
-              this.privateKey !== '' && (
-                <Input
-                  style={{margin: '5px 0 0 0'}}
-                  value={this.privateKey}
-                  readOnly
-                />
+              (
+                this.errorStatus === 'invalidCharacters' &&
+                this.t('wallet:addressInvalidCharacters')
+              ) || (
+                this.errorStatus === 'unknownAddress' &&
+                this.t('wallet:addressUnknown')
+              ) || (
+                this.errorStatus === 'invalidAddress' &&
+                this.t('wallet:addressInvalid')
               )
             }
-          </Col>
-        </Row>
-        <Row>
-          <Col span={15}>
-            <p className='red' style={{margin: '3px 0 3px 1px'}}>
-              {
-                (
-                  this.errorStatus === 'invalidCharacters' &&
-                  this.t('wallet:addressInvalidCharacters')
-                ) || (
-                  this.errorStatus === 'unknownAddress' &&
-                  this.t('wallet:addressUnknown')
-                ) || (
-                  this.errorStatus === 'invalidAddress' &&
-                  this.t('wallet:addressInvalid')
-                )
-              }
-            </p>
-          </Col>
-          <Col span={9} style={{textAlign: 'right'}}>
-            <Button
-              style={{margin: '5px 0 0 0'}}
-              onClick={this.dumpKey}
-              disabled={this.errorStatus !== false}
-            >
-              {this.t('wallet:privateKeyDump')}
-            </Button>
-          </Col>
-        </Row>
+          </p>
+          <Button disabled={this.errorStatus !== false} onClick={this.dumpKey}>
+            {this.t('wallet:privateKeyDump')}
+          </Button>
+        </div>
       </div>
     )
   }
@@ -186,17 +165,14 @@ export default class KeyDump extends React.Component {
   render () {
     return (
       <Popover
+        content={this.popoverContent()}
+        onVisibleChange={this.togglePopover}
+        placement='bottomLeft'
         title={this.t('wallet:privateKeyDumpLong')}
         trigger='click'
-        placement='bottomLeft'
-        content={this.popoverContent()}
         visible={this.popover}
-        onVisibleChange={this.togglePopover}
       >
-        <Button
-          disabled={this.info.isLocked === true}
-          size='small'
-        >
+        <Button disabled={this.info.isLocked === true} size='small'>
           {this.t('wallet:privateKeyDump')}
         </Button>
       </Popover>

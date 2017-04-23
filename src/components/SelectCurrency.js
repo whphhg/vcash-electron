@@ -27,26 +27,21 @@ export default class SelectCurrency extends React.Component {
   }
 
   render () {
-    const { Option } = Select
-
     return (
       <Select
+        defaultValue={this.gui.localCurrency}
+        notFoundContent={this.t('wallet:notFound')}
+        onChange={this.setLocalCurrency}
+        optionFilterProp='children'
         showSearch
         size='small'
         style={{width: '80px'}}
-        defaultValue={this.gui.localCurrency}
-        optionFilterProp='children'
-        notFoundContent={this.t('wallet:notFound')}
-        onChange={this.setLocalCurrency}
       >
         {
           this.rates.localCurrencies.map((currency) => (
-            <Option
-              key={currency}
-              value={currency}
-            >
+            <Select.Option key={currency} value={currency}>
               {currency}
-            </Option>
+            </Select.Option>
           ))
         }
       </Select>

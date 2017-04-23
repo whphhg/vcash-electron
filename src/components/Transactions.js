@@ -1,7 +1,7 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Input, Row, Table } from 'antd'
+import { Input, Table } from 'antd'
 import moment from 'moment'
 
 /** Required components. */
@@ -55,58 +55,44 @@ export default class Transactions extends React.Component {
 
   render () {
     return (
-      <div>
-        <Row className='shadow'>
-          <div className='toolbar'>
-            <div style={{float: 'left'}}>
-              <ChainBlender />
-            </div>
-            <div style={{float: 'right'}}>
-              <Input
-                size='small'
-                onChange={this.setSearch}
-                placeholder={this.t('wallet:searchTransactions')}
-                style={{width: '230px'}}
-              />
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateRows: '35px 1fr 160px',
+          height: '100%'
+        }}
+      >
+        <div className='shadow'>
+          <div style={{margin: '0 10px 0 10px'}}>
+            <div className='flex-sb' style={{height: '35px'}}>
+              <div>
+                <ChainBlender />
+              </div>
+              <div className='flex'>
+                <Input
+                  onChange={this.setSearch}
+                  placeholder={this.t('wallet:searchTransactions')}
+                  prefix={<i className='material-icons md-14'>search</i>}
+                  size='small'
+                  style={{width: '268px'}}
+                />
+              </div>
             </div>
           </div>
-        </Row>
-        <div className='shadow-2'>
-          <div
-            style={{
-              minHeight: '410px',
-              margin: '10px',
-              textAlign: 'center'
-            }}
-          >
+        </div>
+        <div className='shadow'>
+          <div style={{margin: '10px 10px 0 10px', textAlign: 'center'}}>
             <Table
               bordered
-              size='small'
-              pagination={{
-                defaultPageSize: 15,
-                style: {
-                  display: 'inline-block'
-                }
-              }}
-              dataSource={this.wallet.transactionsData}
-              onRowClick={this.view}
-              locale={{
-                filterConfirm: this.t('wallet:ok'),
-                filterReset: this.t('wallet:reset'),
-                emptyText: this.t('wallet:notFound')
-              }}
               columns={[
                 {
-                  title: this.t('wallet:date'),
                   dataIndex: 'time',
+                  title: this.t('wallet:date'),
                   width: 140,
                   render: text => moment(text).format('L - LTS')
                 },
                 {
-                  title: this.t('wallet:category'),
                   dataIndex: 'category',
-                  width: 130,
-                  render: category => this.t('wallet:' + category),
                   filters: [
                     {
                       text: this.t('wallet:received'),
@@ -134,44 +120,53 @@ export default class Transactions extends React.Component {
                     }
                   ],
                   onFilter: (value, record) =>
-                    value.includes(record.category) === true
+                    value.includes(record.category) === true,
+                  title: this.t('wallet:category'),
+                  width: 150,
+                  render: category => this.t('wallet:' + category)
                 },
                 {
-                  title: this.t('wallet:description'),
                   dataIndex: 'comment',
-                  width: 380
+                  title: this.t('wallet:description'),
+                  width: 360
                 },
                 {
-                  title: this.t('wallet:amount'),
                   dataIndex: 'amount',
+                  title: this.t('wallet:amount'),
                   width: 150,
                   render: (text, record) => (
-                    <p
-                      className={record.color}
-                      style={{textAlign: 'right'}}
-                    >
+                    <p className={record.color} style={{textAlign: 'right'}}>
                       {text} XVC
                     </p>
                   )
                 },
                 {
-                  title: this.gui.localCurrency,
                   dataIndex: 'amountLocal',
+                  title: this.gui.localCurrency,
                   width: 150,
                   render: (text, record) => (
-                    <p
-                      className={record.color}
-                      style={{textAlign: 'right'}}
-                    >
+                    <p className={record.color} style={{textAlign: 'right'}}>
                       {text} {this.gui.localCurrency}
                     </p>
                   )
                 }
               ]}
+              dataSource={this.wallet.transactionsData}
+              locale={{
+                emptyText: this.t('wallet:notFound'),
+                filterConfirm: this.t('wallet:ok'),
+                filterReset: this.t('wallet:reset')
+              }}
+              onRowClick={this.view}
+              pagination={{
+                defaultPageSize: 15,
+                style: { display: 'inline-block' }
+              }}
+              size='small'
             />
           </div>
         </div>
-        <TransactionsStatistics />
+        <div style={{minWidth: '100%'}}><TransactionsStatistics /></div>
       </div>
     )
   }

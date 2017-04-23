@@ -34,10 +34,10 @@ export default class TransactionsStatistics extends React.Component {
     const beginning = new Date().getTime() - (31 * 24 * 60 * 60 * 1000)
 
     return (
-      <ResponsiveContainer width='100%' height={155}>
+      <ResponsiveContainer height={160} width='100%'>
         <AreaChart
           data={this.stats.dailyTotals}
-          margin={{top: 5, right: 37, bottom: 0, left: 37}}
+          margin={{top: 10, right: 37, bottom: 0, left: 37}}
         >
           <defs>
             <linearGradient id='colorSent' x1='0' y1='0' x2='0' y2='1'>
@@ -62,62 +62,47 @@ export default class TransactionsStatistics extends React.Component {
             </linearGradient>
           </defs>
           <Area
-            type='monotone'
             dataKey='sent'
-            stroke='#B60127'
-            fillOpacity={1}
             fill='url(#colorSent)'
+            fillOpacity={1}
+            stroke='#B60127'
+            type='monotone'
           />
           <Area
-            type='monotone'
             dataKey='received'
-            stroke='#33691E'
-            fillOpacity={1}
             fill='url(#colorReceived)'
+            fillOpacity={1}
+            stroke='#33691E'
+            type='monotone'
           />
           <Area
-            type='monotone'
             dataKey='stakingReward'
-            stroke='#FE9950'
-            fillOpacity={1}
             fill='url(#colorStaking)'
+            fillOpacity={1}
+            stroke='#FE9950'
+            type='monotone'
           />
           <Area
-            type='monotone'
             dataKey='miningReward'
-            stroke='#EC5E44'
-            fillOpacity={1}
             fill='url(#colorMining)'
+            fillOpacity={1}
+            stroke='#EC5E44'
+            type='monotone'
           />
           <Area
-            type='monotone'
             dataKey='incentiveReward'
-            stroke='#803888'
-            fillOpacity={1}
             fill='url(#colorIncentive)'
-          />
-          <XAxis
-            dataKey='date'
-            domain={[
-              Math.round(beginning),
-              Math.round(moment().format('x'))
-            ]}
-            interval={4}
-            tick={
-              <CustomTick
-                textX={0}
-                textY={15}
-                textType='date'
-              />
-            }
+            fillOpacity={1}
+            stroke='#803888'
+            type='monotone'
           />
           <CartesianGrid strokeDasharray='3 3' />
-          <Tooltip
-            content={
-              <CustomTooltip
-                amounts
-              />
-            }
+          <Tooltip content={<CustomTooltip amounts />} />
+          <XAxis
+            dataKey='date'
+            domain={[Math.round(beginning), Math.round(moment().format('x'))]}
+            interval={4}
+            tick={<CustomTick textType='date' textX={0} textY={15} />}
           />
         </AreaChart>
       </ResponsiveContainer>

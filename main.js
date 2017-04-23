@@ -20,9 +20,10 @@ app.on('window-all-closed', () => {
 /** Ready to load the UI. */
 app.on('ready', () => {
   mainWindow = new BrowserWindow({
-    width: 1152,
     height: 700,
-    icon: __dirname + '/src/assets/images/logoRed.png'
+    icon: __dirname + '/src/assets/images/logoRed.png',
+    webPreferences: { experimentalFeatures: true },
+    width: 1152
   })
 
   /** Hide browsers menu bar. */

@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Button, Col, Input, Row, message } from 'antd'
+import { Button, Input, message } from 'antd'
 import { remote } from 'electron'
 import { sep } from 'path'
 import { dataPath } from '../utilities/common'
@@ -14,8 +14,8 @@ import { dataPath } from '../utilities/common'
 @inject('rpc') @observer
 
 export default class WalletBackup extends React.Component {
-  @observable path
   @observable error = false
+  @observable path
 
   constructor (props) {
     super(props)
@@ -54,9 +54,7 @@ export default class WalletBackup extends React.Component {
     })
 
     /** Set selected path. */
-    if (typeof selected !== 'undefined') {
-      this.path = selected[0] + sep
-    }
+    if (typeof selected !== 'undefined') this.path = selected[0] + sep
   }
 
   /**
@@ -89,59 +87,43 @@ export default class WalletBackup extends React.Component {
   render () {
     return (
       <div>
-        <p style={{margin: '0 0 5px 0'}}>
-          <i className='material-icons md-18'>save</i>
-          <span
-            style={{
-              margin: '0 0 0 7px',
-              verticalAlign: 'top'
-            }}
-          >
-            {this.t('wallet:backupLong')}
-          </span>
-        </p>
-        <Row>
-          <Col span={3}>
-            <p style={{margin: '4px 0 0 0'}}>
-              {this.t('wallet:saveInto')}
-            </p>
-          </Col>
-          <Col span={21}>
-            <Input
-              disabled
-              value={
-                this.rpc.connection.status.tunnel === true
-                  ? this.t('wallet:remoteDataFolder')
-                  : this.path
-              }
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12} offset={3}>
-            <p className='red' style={{margin: '3px 0 3px 1px'}}>
-              {
-                this.errorStatus === 'backupFailed' &&
-                this.t('wallet:backupFailed')
-              }
-            </p>
-          </Col>
-          <Col span={9} style={{textAlign: 'right'}}>
+        <div className='flex'>
+          <i className='material-icons md-16'>save</i>
+          <p>{this.t('wallet:backupLong')}</p>
+        </div>
+        <div className='flex-sb' style={{margin: '10px 0 0 0'}}>
+          <p style={{width: '120px'}}>{this.t('wallet:saveInto')}</p>
+          <Input
+            disabled
+            style={{flex: 1}}
+            value={
+              this.rpc.connection.status.tunnel === true
+                ? this.t('wallet:remoteDataFolder')
+                : this.path
+            }
+          />
+        </div>
+        <div
+          className='flex-sb'
+          style={{alignItems: 'flex-start', margin: '5px 0 0 0'}}
+        >
+          <p className='red' style={{margin: '0 0 0 120px'}}>
+            {
+              this.errorStatus === 'backupFailed' &&
+              this.t('wallet:backupFailed')
+            }
+          </p>
+          <div className='flex' style={{justifyContent: 'flex-end'}}>
             <Button
               disabled={this.rpc.connection.status.tunnel === true}
-              style={{margin: '5px 0 0 0'}}
               onClick={this.setPath}
+              style={{margin: '0 5px 0 0'}}
             >
               {this.t('wallet:browse')}
             </Button>
-            <Button
-              style={{margin: '5px 0 0 5px'}}
-              onClick={this.backup}
-            >
-              {this.t('wallet:backup')}
-            </Button>
-          </Col>
-        </Row>
+            <Button onClick={this.backup}>{this.t('wallet:backup')}</Button>
+          </div>
+        </div>
       </div>
     )
   }

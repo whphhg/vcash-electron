@@ -37,21 +37,12 @@ export default class WalletLock extends React.Component {
   }
 
   render () {
-    if (
-      this.info.isEncrypted === false ||
-      this.info.isLocked === true
-    ) return null
+    const { isEncrypted, isLocked } = this.info
 
+    if (isEncrypted === false || isLocked === true) return null
     return (
-      <Tooltip
-        title={this.t('wallet:unlocked')}
-        placement='bottomRight'
-      >
-        <Button
-          size='small'
-          type='primary'
-          onClick={this.lock}
-        >
+      <Tooltip placement='bottomRight' title={this.t('wallet:unlocked')}>
+        <Button onClick={this.lock} size='small' type='primary'>
           <i className='material-icons md-20'>lock_open</i>
         </Button>
       </Tooltip>

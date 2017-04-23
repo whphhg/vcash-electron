@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, observable, reaction } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { AutoComplete, Button, Col, Input, Popover, Row, message } from 'antd'
+import { AutoComplete, Button, Input, Popover, message } from 'antd'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -11,11 +11,11 @@ import { AutoComplete, Button, Col, Input, Popover, Row, message } from 'antd'
 @inject('info', 'rpc', 'wallet') @observer
 
 export default class KeyImport extends React.Component {
-  @observable privateKey = ''
   @observable account = ''
+  @observable error = false
   @observable loading = false
   @observable popover = false
-  @observable error = false
+  @observable privateKey = ''
 
   constructor (props) {
     super(props)
@@ -26,18 +26,12 @@ export default class KeyImport extends React.Component {
 
     /** Clear previous error on private key change. */
     reaction(() => this.privateKey, (privateKey) => {
-      if (privateKey !== '') {
-        this.setError()
-      }
+      if (privateKey !== '') this.setError()
     })
 
     /** Clear private key when popover closes. */
     reaction(() => this.popover, (popover) => {
-      if (popover === false) {
-        if (this.privateKey !== '') {
-          this.setPrivateKey()
-        }
-      }
+      if (popover === false && this.privateKey !== '') this.setPrivateKey()
     })
   }
 
@@ -154,56 +148,46 @@ export default class KeyImport extends React.Component {
   popoverContent () {
     return (
       <div style={{width: '400px'}}>
-        <Row>
-          <Col span={24}>
-            <Input
-              style={{margin: '0 0 5px 0'}}
-              placeholder={this.t('wallet:privateKey')}
-              value={this.privateKey}
-              onChange={this.setPrivateKey}
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col span={24} style={{height: '28px'}}>
-            <AutoComplete
-              placeholder={this.t('wallet:accountName')}
-              style={{width: '100%'}}
-              getPopupContainer={triggerNode => triggerNode.parentNode}
-              value={this.account}
-              dataSource={this.wallet.accounts}
-              onChange={this.setAccount}
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col span={14}>
-            <p className='red' style={{margin: '3px 0 3px 1px'}}>
-              {
-                (
-                  this.errorStatus === 'invalidCharacters' &&
-                  this.t('wallet:accountInvalidCharacters')
-                ) || (
-                  this.errorStatus === 'invalidKey' &&
-                  this.t('wallet:privateKeyInvalid')
-                ) || (
-                  this.errorStatus === 'isMine' &&
-                  this.t('wallet:privateKeyIsMine')
-                )
-              }
-            </p>
-          </Col>
-          <Col span={10} style={{textAlign: 'right'}}>
-            <Button
-              style={{margin: '5px 0 0 0'}}
-              onClick={this.importKey}
-              disabled={this.errorStatus !== false}
-              loading={this.loading === true}
-            >
-              {this.t('wallet:privateKeyImport')}
-            </Button>
-          </Col>
-        </Row>
+        <Input
+          onChange={this.setPrivateKey}
+          placeholder={this.t('wallet:privateKey')}
+          style={{margin: '0 0 5px 0'}}
+          value={this.privateKey}
+        />
+        <AutoComplete
+          dataSource={this.wallet.accounts}
+          getPopupContainer={triggerNode => triggerNode.parentNode}
+          onChange={this.setAccount}
+          placeholder={this.t('wallet:accountName')}
+          style={{width: '100%'}}
+          value={this.account}
+        />
+        <div
+          className='flex-sb'
+          style={{alignItems: 'flex-start', margin: '5px 0 0 0'}}
+        >
+          <p className='red'>
+            {
+              (
+                this.errorStatus === 'invalidCharacters' &&
+                this.t('wallet:accountInvalidCharacters')
+              ) || (
+                this.errorStatus === 'invalidKey' &&
+                this.t('wallet:privateKeyInvalid')
+              ) || (
+                this.errorStatus === 'isMine' &&
+                this.t('wallet:privateKeyIsMine')
+              )
+            }
+          </p>
+          <Button
+            disabled={this.errorStatus !== false}
+            loading={this.loading === true}
+            onClick={this.importKey}
+          >
+            {this.t('wallet:privateKeyImport')}
+          </Button>
+        </div>
       </div>
     )
   }
@@ -211,17 +195,14 @@ export default class KeyImport extends React.Component {
   render () {
     return (
       <Popover
-        trigger='click'
+        content={this.popoverContent()}
+        onVisibleChange={this.togglePopover}
         placement='bottomLeft'
         title={this.t('wallet:privateKeyImportLong')}
+        trigger='click'
         visible={this.popover}
-        onVisibleChange={this.togglePopover}
-        content={this.popoverContent()}
       >
-        <Button
-          disabled={this.info.isLocked === true}
-          size='small'
-        >
+        <Button disabled={this.info.isLocked === true} size='small'>
           {this.t('wallet:privateKeyImport')}
         </Button>
       </Popover>

@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, observable, reaction } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
+import { AutoComplete, Button, Input, Popover } from 'antd'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -13,8 +13,8 @@ import { AutoComplete, Button, Col, Input, Popover, Row } from 'antd'
 export default class AddressNew extends React.Component {
   @observable account = ''
   @observable address = ''
-  @observable popover = false
   @observable error = false
+  @observable popover = false
 
   constructor (props) {
     super(props)
@@ -24,9 +24,7 @@ export default class AddressNew extends React.Component {
 
     /** Clear address when the popover closes. */
     reaction(() => this.popover, (popover) => {
-      if (popover === false) {
-        if (this.address !== '') this.setAddress()
-      }
+      if (popover === false && this.address !== '') this.setAddress()
     })
   }
 
@@ -111,53 +109,38 @@ export default class AddressNew extends React.Component {
   popoverContent () {
     return (
       <div style={{width: '400px'}}>
-        <Row>
-          <Col span={24} style={{height: '28px'}}>
-            <AutoComplete
-              placeholder={this.t('wallet:accountName')}
-              style={{width: '100%'}}
-              getPopupContainer={triggerNode => triggerNode.parentNode}
-              value={this.account}
-              dataSource={this.wallet.accounts}
-              onChange={this.setAccount}
-            />
-          </Col>
-        </Row>
-        <div>
-          {
-            this.address !== '' && (
-              <Input
-                style={{margin: '5px 0 0 0'}}
-                value={this.address}
-                readOnly
-              />
-            )
-          }
+        <AutoComplete
+          dataSource={this.wallet.accounts}
+          getPopupContainer={triggerNode => triggerNode.parentNode}
+          onChange={this.setAccount}
+          placeholder={this.t('wallet:accountName')}
+          style={{width: '100%'}}
+          value={this.account}
+        />
+        {
+          this.address !== '' && (
+            <Input readOnly style={{margin: '5px 0 0 0'}} value={this.address} />
+          )
+        }
+        <div
+          className='flex-sb'
+          style={{alignItems: 'flex-start', margin: '5px 0 0 0'}}
+        >
+          <p className='red'>
+            {
+              (
+                this.errorStatus === 'invalidCharacters' &&
+                this.t('wallet:accountInvalidCharacters')
+              ) || (
+                this.errorStatus === 'keypoolRanOut' &&
+                this.t('wallet:keypoolRanOut')
+              )
+            }
+          </p>
+          <Button disabled={this.errorStatus !== false} onClick={this.getNew}>
+            {this.t('wallet:addressGenerate')}
+          </Button>
         </div>
-        <Row>
-          <Col span={14}>
-            <p className='red' style={{margin: '3px 0 3px 1px'}}>
-              {
-                (
-                  this.errorStatus === 'invalidCharacters' &&
-                  this.t('wallet:accountInvalidCharacters')
-                ) || (
-                  this.errorStatus === 'keypoolRanOut' &&
-                  this.t('wallet:keypoolRanOut')
-                )
-              }
-            </p>
-          </Col>
-          <Col span={10} style={{textAlign: 'right'}}>
-            <Button
-              style={{margin: '5px 0 0 0'}}
-              onClick={this.getNew}
-              disabled={this.errorStatus !== false}
-            >
-              {this.t('wallet:addressGenerate')}
-            </Button>
-          </Col>
-        </Row>
       </div>
     )
   }
@@ -165,12 +148,12 @@ export default class AddressNew extends React.Component {
   render () {
     return (
       <Popover
+        content={this.popoverContent()}
+        onVisibleChange={this.togglePopover}
+        placement='bottomLeft'
         title={this.t('wallet:addressGenerateLong')}
         trigger='click'
-        placement='bottomLeft'
-        content={this.popoverContent()}
         visible={this.popover}
-        onVisibleChange={this.togglePopover}
       >
         <Button size='small'>{this.t('wallet:addressGenerate')}</Button>
       </Popover>

@@ -2,13 +2,13 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import {
+  CartesianGrid,
   LineChart,
   Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
+  ResponsiveContainer,
   Tooltip,
-  ResponsiveContainer
+  XAxis,
+  YAxis
 } from 'recharts'
 
 /** Required components. */
@@ -29,65 +29,49 @@ export default class Difficulties extends React.Component {
 
   render () {
     return (
-      <ResponsiveContainer width='100%' height={210}>
+      <ResponsiveContainer height={215} width='100%'>
         <LineChart
           data={this.stats.network}
-          syncId='0'
           margin={{top: 15, right: 0, bottom: 5, left: 30}}
+          syncId='0'
         >
+          <CartesianGrid strokeDasharray='3 3' />
           <Line
-            yAxisId='left'
-            type='monotone'
             dataKey='powDifficulty'
-            stroke='#EC5E44'
             dot={false}
+            stroke='#EC5E44'
+            type='monotone'
+            yAxisId='left'
           />
           <Line
-            yAxisId='right'
-            type='monotone'
             dataKey='posDifficulty'
-            stroke='#FE9950'
             dot={false}
+            stroke='#FE9950'
+            type='monotone'
+            yAxisId='right'
           />
+          <Tooltip content={<CustomTooltip labelTime />} />
           <XAxis
             dataKey='date'
             domain={['dataMin', 'dataMax']}
-            tick={
-              <CustomTick
-                textX={0}
-                textY={15}
-                textType='time'
-              />
-            }
+            tick={<CustomTick textType='time' textX={0} textY={15} />}
           />
           <YAxis
-            yAxisId='left'
             orientation='left'
-            tick={
-              <CustomTick
-                textX={-5}
-                textY={4}
-                textType='number'
-              />
-            }
+            tick={<CustomTick textType='number' textX={-5} textY={4} />}
+            yAxisId='left'
           />
           <YAxis
-            yAxisId='right'
             orientation='right'
             tick={
               <CustomTick
-                textX={5}
-                textY={4}
                 textAnchor='start'
                 textType='number'
+                textX={5}
+                textY={4}
               />
             }
-          />
-          <CartesianGrid strokeDasharray='3 3' />
-          <Tooltip
-            content={
-              <CustomTooltip labelTime />
-            }
+            yAxisId='right'
           />
         </LineChart>
       </ResponsiveContainer>

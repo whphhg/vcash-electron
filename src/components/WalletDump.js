@@ -1,7 +1,7 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Button, Col, Input, Row, message } from 'antd'
+import { Button, Input, message } from 'antd'
 import { dataPath } from '../utilities/common'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
@@ -37,40 +37,27 @@ export default class WalletDump extends React.Component {
   render () {
     return (
       <div>
-        <p style={{margin: '0 0 5px 0'}}>
-          <i className='material-icons md-18'>assignment</i>
-          <span style={{margin: '0 0 0 7px', verticalAlign: 'top'}}>
-            {this.t('wallet:dumpLong')}
-          </span>
-        </p>
-        <Row>
-          <Col span={3}>
-            <p style={{margin: '4px 0 0 0'}}>
-              {this.t('wallet:saveInto')}
-            </p>
-          </Col>
-          <Col span={21}>
-            <Input
-              disabled
-              value={
-                this.rpc.connection.status.tunnel === true
-                  ? this.t('wallet:remoteDataFolder')
-                  : dataPath()
-              }
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col style={{textAlign: 'right'}}>
-            <Button
-              style={{margin: '5px 0 0 0'}}
-              onClick={this.dump}
-              disabled={this.info.isLocked === true}
-            >
-              {this.t('wallet:dump')}
-            </Button>
-          </Col>
-        </Row>
+        <div className='flex'>
+          <i className='material-icons md-16'>assignment</i>
+          <p>{this.t('wallet:dumpLong')}</p>
+        </div>
+        <div className='flex-sb' style={{margin: '10px 0 5px 0'}}>
+          <p style={{width: '120px'}}>{this.t('wallet:saveInto')}</p>
+          <Input
+            disabled
+            style={{flex: 1}}
+            value={
+              this.rpc.connection.status.tunnel === true
+                ? this.t('wallet:remoteDataFolder')
+                : dataPath()
+            }
+          />
+        </div>
+        <div className='flex' style={{justifyContent: 'flex-end'}}>
+          <Button disabled={this.info.isLocked === true} onClick={this.dump}>
+            {this.t('wallet:dump')}
+          </Button>
+        </div>
       </div>
     )
   }

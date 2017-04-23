@@ -37,9 +37,7 @@ export default class ChainBlender extends React.Component {
         /** Display a success message. */
         message.success(
           this.t('wallet:chainBlender',
-            {
-              context: this.info.isBlending === true ? 'start' : 'stop'
-            }
+            { context: this.info.isBlending === true ? 'start' : 'stop' }
           ), 6
         )
       }
@@ -48,52 +46,41 @@ export default class ChainBlender extends React.Component {
 
   render () {
     return (
-      <div>
-        <Tooltip
-          title={this.t('wallet:toggleChainBlender')}
-          placement='bottomLeft'
-        >
-          <Switch
-            size='small'
-            checked={this.info.isBlending === true}
-            disabled={this.info.isLocked === true}
-            onChange={this.toggle}
-            checkedChildren={
-              <i
-                className='material-icons md-16'
-                style={{margin: '-2px 0 0 0'}}
-              >
-                done
-              </i>
-            }
-            unCheckedChildren={
-              <i
-                className='material-icons md-16'
-                style={{margin: '-2px 0 0 0'}}
-              >
-                clear
-              </i>
-            }
-          />
-        </Tooltip>
-        <p
-          style={{
-            margin: '0 0 0 11px',
-            verticalAlign: '-1px'
-          }}
-        >
-          {this.t('wallet:blended')}
-          <span> {
+      <div className='flex'>
+        <div style={{margin: '0 10px 3px 0'}}>
+          <Tooltip
+            placement='bottomLeft'
+            title={this.t('wallet:toggleChainBlender')}
+          >
+            <Switch
+              checked={this.info.isBlending === true}
+              checkedChildren={
+                <div style={{margin: '-2px 0 0 0'}}>
+                  <i className='material-icons md-16'>done</i>
+                </div>
+              }
+              disabled={this.info.isLocked === true}
+              onChange={this.toggle}
+              size='small'
+              unCheckedChildren={
+                <div style={{margin: '-2px 0 0 0'}}>
+                  <i className='material-icons md-16'>clear</i>
+                </div>
+              }
+            />
+          </Tooltip>
+        </div>
+        <i className='material-icons md-16'>shuffle</i>
+        <p>
+          {this.t('wallet:blended')} <span style={{fontWeight: 600}}>
+            {
               new Intl.NumberFormat(this.gui.language, {
-                minimumFractionDigits: 6,
                 maximumFractionDigits: 6
               }).format(this.info.chainBlender.blendedbalance)
             }
-          </span> XVC (
-          <span>
+          </span> XVC (<span style={{fontWeight: 600}}>
             {
               new Intl.NumberFormat(this.gui.language, {
-                minimumFractionDigits: 2,
                 maximumFractionDigits: 2
               }).format(this.info.chainBlender.blendedpercentage)
             }
@@ -101,21 +88,18 @@ export default class ChainBlender extends React.Component {
         </p>
         {
           this.info.isLocked === false && (
-            <p
-              style={{
-                margin: '0 0 0 11px',
-                verticalAlign: '-1px'
-              }}
-            >
-              {this.t('wallet:denominated')}
-              <span> {
-                  new Intl.NumberFormat(this.gui.language, {
-                    minimumFractionDigits: 6,
-                    maximumFractionDigits: 6
-                  }).format(this.info.chainBlender.denominatedbalance)
-                }
-              </span> XVC
-            </p>
+            <div className='flex' style={{margin: '0 0 0 10px'}}>
+              <i className='material-icons md-16'>grain</i>
+              <p>
+                {this.t('wallet:denominated')} <span style={{fontWeight: 600}}>
+                  {
+                    new Intl.NumberFormat(this.gui.language, {
+                      maximumFractionDigits: 6
+                    }).format(this.info.chainBlender.denominatedbalance)
+                  }
+                </span> XVC
+              </p>
+            </div>
           )
         }
       </div>

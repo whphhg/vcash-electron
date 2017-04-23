@@ -2,13 +2,13 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import {
-  ScatterChart,
-  Scatter,
-  XAxis,
-  YAxis,
   CartesianGrid,
+  ResponsiveContainer,
+  Scatter,
+  ScatterChart,
   Tooltip,
-  ResponsiveContainer
+  XAxis,
+  YAxis
 } from 'recharts'
 import moment from 'moment'
 
@@ -32,39 +32,30 @@ export default class RewardSpread extends React.Component {
     const beginning = new Date().getTime() - (30 * 24 * 60 * 60 * 1000)
 
     return (
-      <ResponsiveContainer width='100%' height={210}>
-        <ScatterChart
-          margin={{top: 15, right: 20, bottom: 5, left: 20}}
-        >
+      <ResponsiveContainer height={215} width='100%'>
+        <ScatterChart margin={{top: 15, right: 20, bottom: 5, left: 20}}>
+          <CartesianGrid strokeDasharray='3 3' />
           <Scatter
-            name={this.t('wallet:stakingReward')}
             data={this.stats.rewardSpread.stakingReward}
             fill='#FE9950'
+            name={this.t('wallet:stakingReward')}
           />
           <Scatter
-            name={this.t('wallet:miningReward')}
             data={this.stats.rewardSpread.miningReward}
             fill='#EC5E44'
+            name={this.t('wallet:miningReward')}
           />
           <Scatter
-            name={this.t('wallet:incentiveReward')}
             data={this.stats.rewardSpread.incentiveReward}
             fill='#803888'
+            name={this.t('wallet:incentiveReward')}
           />
+          <Tooltip content={<CustomTooltip tooltipType='rewardSpread' />} />
           <XAxis
             dataKey='date'
-            domain={[
-              Math.round(beginning),
-              Math.round(moment().format('x'))
-            ]}
+            domain={[Math.round(beginning), Math.round(moment().format('x'))]}
             interval={0}
-            tick={
-              <CustomTick
-                textX={0}
-                textY={15}
-                textType='date'
-              />
-            }
+            tick={<CustomTick textType='date' textX={0} textY={15} />}
             ticks={[
               Math.round(beginning),
               Math.round(moment(beginning).add(6, 'days').format('x')),
@@ -79,22 +70,8 @@ export default class RewardSpread extends React.Component {
             dataKey='y'
             domain={[0, 86400000]}
             interval={0}
-            tick={
-              <CustomTick
-                textX={-5}
-                textY={4}
-                textType='time'
-              />
-            }
+            tick={<CustomTick textType='time' textX={-5} textY={4} />}
             ticks={[0, 21600000, 43200000, 64800000, 86400000]}
-          />
-          <CartesianGrid strokeDasharray='3 3' />
-          <Tooltip
-            content={
-              <CustomTooltip
-                tooltipType='rewardSpread'
-              />
-            }
           />
         </ScatterChart>
       </ResponsiveContainer>

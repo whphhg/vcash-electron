@@ -30,15 +30,23 @@ class Root extends React.Component {
       <Provider {...this.connections.viewingStores}>
         <HashRouter>
           <div>
-            <Header />
-            <main>
-              <Route exact path='/:uid' component={Transactions} />
-              <Route path='/:uid/addresses' component={Addresses} />
-              <Route path='/:uid/maintenance' component={Maintenance} />
-              <Route path='/:uid/network' component={Network} />
-            </main>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateRows: '55px 1fr 25px',
+                height: '100vh'
+              }}
+            >
+              <Header />
+              <div>
+                <Route exact path='/:uid' component={Transactions} />
+                <Route path='/:uid/addresses' component={Addresses} />
+                <Route path='/:uid/maintenance' component={Maintenance} />
+                <Route path='/:uid/network' component={Network} />
+              </div>
+              <Footer />
+            </div>
             <Transaction />
-            <Footer />
           </div>
         </HashRouter>
       </Provider>

@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, observable, reaction } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Button, Col, Input, Row, message } from 'antd'
+import { Button, Input, message } from 'antd'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -12,9 +12,9 @@ import { Button, Col, Input, Row, message } from 'antd'
 
 export default class WalletPassphraseChange extends React.Component {
   @observable current = ''
+  @observable error = false
   @observable next = ''
   @observable repeat = ''
-  @observable error = false
 
   constructor (props) {
     super(props)
@@ -24,9 +24,7 @@ export default class WalletPassphraseChange extends React.Component {
 
     /** Clear previous error on current passphrase change. */
     reaction(() => this.current, (current) => {
-      if (this.error !== false) {
-        this.setError()
-      }
+      if (this.error !== false) this.setError()
     })
   }
 
@@ -116,79 +114,62 @@ export default class WalletPassphraseChange extends React.Component {
     if (this.info.isEncrypted === false) return null
     return (
       <div>
-        <p style={{margin: '0 0 5px 0'}}>
-          <i className='material-icons md-18'>vpn_key</i>
-          <span
-            style={{
-              margin: '0 0 0 7px',
-              verticalAlign: 'top'
-            }}
+        <div className='flex'>
+          <i className='material-icons md-16'>vpn_key</i>
+          <p>{this.t('wallet:passphraseChangeLong')}</p>
+        </div>
+        <div className='flex-sb' style={{margin: '10px 0 0 0'}}>
+          <p style={{width: '120px'}}>{this.t('wallet:passphrase')}</p>
+          <Input
+            name='current'
+            onChange={this.setPassphrase}
+            placeholder={this.t('wallet:passphraseLong')}
+            style={{flex: 1}}
+            value={this.current}
+          />
+        </div>
+        <div className='flex-sb' style={{margin: '5px 0 0 0'}}>
+          <p style={{width: '120px'}}>{this.t('wallet:passphraseNew')}</p>
+          <Input
+            name='next'
+            onChange={this.setPassphrase}
+            placeholder={this.t('wallet:passphraseNewLong')}
+            style={{flex: 1}}
+            value={this.next}
+          />
+        </div>
+        <div className='flex-sb' style={{margin: '5px 0 0 0'}}>
+          <p style={{width: '120px'}}>{this.t('wallet:passphraseRepeat')}</p>
+          <Input
+            name='repeat'
+            onChange={this.setPassphrase}
+            placeholder={this.t('wallet:passphraseRepeatLong')}
+            style={{flex: 1}}
+            value={this.repeat}
+          />
+        </div>
+        <div className='flex-sb' style={{margin: '5px 0 0 0'}}>
+          <p className='red' style={{margin: '0 0 0 120px'}}>
+            {
+              (
+                this.errorStatus === 'notMatching' &&
+                this.t('wallet:passphrasesNotMatching')
+              ) || (
+                this.errorStatus === 'incorrectPassphrase' &&
+                this.t('wallet:passphraseIncorrect')
+              ) || (
+                this.errorStatus === 'oldEqualsNew' &&
+                this.t('wallet:passphrasesEqual')
+              )
+            }
+          </p>
+          <Button
+            disabled={this.errorStatus !== false}
+            onClick={this.passphraseChange}
           >
-            {this.t('wallet:passphraseChangeLong')}
-          </span>
-        </p>
-        <Row>
-          <Col span={4}>
-            <p style={{margin: '4px 0 0 0'}}>
-              {this.t('wallet:passphrase')}
-            </p>
-            <p style={{margin: '14px 0 0 0'}}>
-              {this.t('wallet:passphraseNew')}
-            </p>
-            <p style={{margin: '14px 0 0 0'}}>
-              {this.t('wallet:passphraseRepeat')}
-            </p>
-          </Col>
-          <Col span={20}>
-            <Input
-              name='current'
-              placeholder={this.t('wallet:passphraseLong')}
-              value={this.current}
-              onChange={this.setPassphrase}
-            />
-            <Input
-              name='next'
-              placeholder={this.t('wallet:passphraseNewLong')}
-              style={{margin: '5px 0 0 0'}}
-              value={this.next}
-              onChange={this.setPassphrase}
-            />
-            <Input
-              name='repeat'
-              placeholder={this.t('wallet:passphraseRepeatLong')}
-              style={{margin: '5px 0 0 0'}}
-              value={this.repeat}
-              onChange={this.setPassphrase}
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col span={13} offset={4}>
-            <p className='red' style={{margin: '3px 0 3px 1px'}}>
-              {
-                (
-                  this.errorStatus === 'notMatching' &&
-                  this.t('wallet:passphrasesNotMatching')
-                ) || (
-                  this.errorStatus === 'incorrectPassphrase' &&
-                  this.t('wallet:passphraseIncorrect')
-                ) || (
-                  this.errorStatus === 'oldEqualsNew' &&
-                  this.t('wallet:passphrasesEqual')
-                )
-              }
-            </p>
-          </Col>
-          <Col span={7} style={{textAlign: 'right'}}>
-            <Button
-              style={{margin: '5px 0 0 0'}}
-              onClick={this.passphraseChange}
-              disabled={this.errorStatus !== false}
-            >
-              {this.t('wallet:passphraseChange')}
-            </Button>
-          </Col>
-        </Row>
+            {this.t('wallet:passphraseChange')}
+          </Button>
+        </div>
       </div>
     )
   }
