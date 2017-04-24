@@ -1,6 +1,7 @@
 import { action, computed, observable } from 'mobx'
+import { getItem, setItem } from '../utilities/localStorage'
 
-/** Required stores. */
+/** Required store instances. */
 import gui from './gui'
 
 class Rates {
@@ -10,7 +11,7 @@ class Rates {
    * @property {object} poloniex - Poloniex ticker.
    * @property {object} bittrex - Bittrex ticker.
    */
-  @observable bitcoinAverage = {}
+  @observable bitcoinAverage = getItem('bitcoinAverage') || { rates: {}, updated: 0 }
   @observable poloniex = { last: 0 }
   @observable bittrex = { Last: 0 }
 
@@ -52,8 +53,8 @@ class Rates {
    * @return {number} Local bitcoin price.
    */
   @computed get local () {
-    if (this.bitcoinAverage.hasOwnProperty(gui.localCurrency) === true) {
-      return this.bitcoinAverage[gui.localCurrency].last
+    if (this.bitcoinAverage.rates.hasOwnProperty(gui.localCurrency) === true) {
+      return this.bitcoinAverage.rates[gui.localCurrency].last
     }
 
     return 0
@@ -65,17 +66,19 @@ class Rates {
    * @return {array} Local currencies.
    */
   @computed get localCurrencies () {
-    return Object.keys(this.bitcoinAverage)
+    return Object.keys(this.bitcoinAverage.rates)
   }
 
   /**
    * Set bitcoin average price index.
    * @function setBitcoinAverage
-   * @param {string} priceIndex - Price index.
+   * @param {string} rates - Price index.
    */
-  @action setBitcoinAverage (priceIndex) {
-    delete priceIndex.timestamp
-    this.bitcoinAverage = priceIndex
+  @action setBitcoinAverage (rates) {
+    this.bitcoinAverage = { rates, updated: new Date().getTime() }
+
+    /** Save to local storage. */
+    setItem('bitcoinAverage', this.bitcoinAverage)
   }
 
   /**
@@ -84,10 +87,7 @@ class Rates {
    * @param {string} ticker - Ticker.
    */
   @action setPoloniex (ticker) {
-    this.poloniex = {
-      ...ticker['BTC_XVC'],
-      updated: new Date()
-    }
+    this.poloniex = { ...ticker['BTC_XVC'], updated: new Date() }
   }
 
   /**
@@ -96,10 +96,7 @@ class Rates {
    * @param {string} ticker - Ticker.
    */
   @action setBittrex (ticker) {
-    this.bittrex = {
-      ...ticker.result[0],
-      updated: new Date()
-    }
+    this.bittrex = { ...ticker.result[0], updated: new Date() }
   }
 
   /**
@@ -108,11 +105,14 @@ class Rates {
    * @function fetchBitcoinAverage
    */
   fetchBitcoinAverage () {
-    window.fetch('https://apiv2.bitcoinaverage.com/ticker/global/all')
-      .then((response) => { if (response.ok) return response.json() })
-      .then((priceIndex) => { this.setBitcoinAverage(priceIndex) })
-      .catch((error) => { console.error('BitcoinAverage:', error.message) })
-    setTimeout(() => { this.fetchBitcoinAverage() }, 900 * 1000)
+    if (new Date().getTime() - this.bitcoinAverage.updated > 15 * 59 * 1000) {
+      window.fetch('https://apiv2.bitcoinaverage.com/ticker/global/all')
+        .then((response) => { if (response.ok) return response.json() })
+        .then((priceIndex) => { this.setBitcoinAverage(priceIndex) })
+        .catch((error) => { console.error('BitcoinAverage:', error.message) })
+    }
+
+    setTimeout(() => { this.fetchBitcoinAverage() }, 15 * 60 * 1000)
   }
 
   /**
