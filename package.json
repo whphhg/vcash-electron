@@ -1,6 +1,6 @@
 {
   "name": "vcash-electron",
-  "version": "0.26.1",
+  "version": "0.26.2",
   "description": "Multi-platform and multi-node GUI for Vcash.",
   "main": "initialize.js",
   "scripts": {

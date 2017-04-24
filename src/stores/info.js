@@ -82,10 +82,15 @@ export default class Info {
    */
   @action setInfo (responses, options) {
     responses.forEach((response, index) => {
+      const overwrite = ['getnetworkinfo', 'getpeerinfo']
+
       /** Exclude ChainBlender response when the wallet is locked. */
       if (response.hasOwnProperty('result') === true) {
         /** Update previous response or set a new one. */
-        if (this.responses.has(options[index].method) === true) {
+        if (
+          this.responses.has(options[index].method) === true &&
+          overwrite.includes(options[index].method) === false
+        ) {
           let saved = this.responses.get(options[index].method)
 
           for (let i in response.result) {
