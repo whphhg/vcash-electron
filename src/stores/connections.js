@@ -7,7 +7,7 @@ import { shortUid } from '../utilities/common'
 import { getItem, setItem } from '../utilities/localStorage'
 import i18next from '../utilities/i18next'
 
-/** Required stores. */
+/** Required store instances. */
 import gui from './gui'
 import rates from './rates'
 
@@ -21,10 +21,12 @@ import Wallet from './wallet'
 class Connections {
   /**
    * Observable properties.
-   * @property {map} saved - Saved connections.
+   * @property {map} configs - Connections configs.
+   * @property {boolean} modal - Connection manager modal status.
    * @property {string} viewing - Viewing connection uid.
    */
-  @observable saved = observable.map(getItem('connections') || {})
+  @observable configs = observable.map(getItem('connections') || {})
+  @observable modal = true
   @observable viewing = ''
 
   /**
@@ -36,55 +38,119 @@ class Connections {
     this.stores = new Map()
     this.tunnels = new Map()
 
-    /** Always have the initial local remote available. */
-    reaction(() => this.saved.size, (size) => {
-      if (size === 0) this.add()
-    }, true)
-
     /**
-     * Save updated connections to local storage every 5s while changes
-     * are being made to the connection properties (excluding password,
-     * private key and connection status).
+     * Save updated connections to local storage every 3s while changes are
+     * made to the properties (excluding password, private key and status).
      */
     autorunAsync(() => {
-      let saved = {}
+      let connections = {}
 
-      this.saved.forEach((connection, uid) => {
-        saved[uid] = {
-          uid: connection.uid,
-          type: connection.type,
-          username: connection.username,
+      this.configs.forEach((conn, uid) => {
+        connections[uid] = {
+          uid: conn.uid,
+          type: conn.type,
+          username: conn.username,
           password: '',
           privateKey: '',
-          host: connection.host,
-          port: connection.port,
-          dstPort: connection.dstPort,
-          localPort: connection.localPort,
+          host: conn.host,
+          port: conn.port,
+          dstPort: conn.dstPort,
+          localPort: conn.localPort,
           status: { active: false, rpc: null, tunnel: null }
         }
       })
 
       /** Save updated connections to local storage. */
-      setItem('connections', saved)
-    }, 5 * 1000)
+      setItem('connections', connections)
+    }, 3 * 1000)
+
+    /** Always have one connection available and perform auto-start. */
+    reaction(() => this.configs.size, (size) => {
+      if (size === 0) this.add()
+
+      /**
+       * Auto-start the first connection if it's local or the viewing
+       * connection if it's first in this.uids.
+       */
+      if (size > 0 && (this.viewing === '' || this.viewing === this.uids[0])) {
+        const conn = this.configs.get(this.uids[0])
+
+        if (conn.status.active === false) {
+          /** Set viewing if none has been set so far. */
+          if (this.viewing === '') this.setViewing(this.uids[0])
+
+          /** Start the connection if it's local. */
+          if (conn.type === 'local') {
+            setTimeout(() => { this.start() }, 0.1 * 1000)
+          }
+        }
+      }
+    }, true)
+
+    /** React to Shift-asd key presses. */
+    document.onkeydown = (e) => {
+      if (e.shiftKey === true) {
+        /** Shift-ad: Switch between previous and next connection. */
+        if (e.keyCode === 65 || e.keyCode === 68) {
+          const length = this.uids.length
+
+          if (length > 1) {
+            const index = this.uids.indexOf(this.viewing)
+
+            /** Shift-a: Move to the left. */
+            if (e.keyCode === 65) {
+              /** Return to the end if we hit the beginning. */
+              if (index === 0) {
+                this.setViewing(this.uids[length - 1])
+              } else {
+                this.setViewing(this.uids[index - 1])
+              }
+            }
+
+            /** Shift-d: Move to the right. */
+            if (e.keyCode === 68) {
+              /** Return to the beginning if we hit the end. */
+              if (index + 1 === length) {
+                this.setViewing(this.uids[0])
+              } else {
+                this.setViewing(this.uids[index + 1])
+              }
+            }
+          }
+        }
+
+        /** Shift-s: Toggle connection manager. */
+        if (e.keyCode === 83) this.toggleModal()
+      }
+    }
   }
 
   /**
-   * Get active connections uids.
-   * @function active
-   * @return {array} Active connections uids.
+   * Get current connection's start button status.
+   * @function startStatus
+   * @return {boolean} Start button status.
    */
-  @computed get active () {
-    return this.saved.values().reduce((active, connection) => {
-      if (
-        connection.status.active === true &&
-        connection.status.rpc === true
-      ) {
-        active.push(connection.uid)
-      }
+  @computed get startStatus () {
+    if (this.configs.has(this.viewing) === true) {
+      const conn = this.configs.get(this.viewing)
 
-      return active
-    }, [])
+      switch (conn.type) {
+        case 'ssh':
+          if (conn.localPort === '') return false
+          if (conn.dstPort === '') return false
+          if (conn.host === '') return false
+          if (conn.port === '') return false
+          if (conn.username === '') return false
+          if (conn.password === '' && conn.privateKey === '') return false
+          return true
+
+        default:
+          if (conn.localPort === '') return false
+          return true
+      }
+    }
+
+    return false
   }
 
   /**
@@ -93,8 +159,8 @@ class Connections {
    * @return {array} Connections uids.
    */
   @computed get uids () {
-    return this.saved.values().reduce((uids, connection) => {
-      uids.push(connection.uid)
+    return this.configs.keys().reduce((uids, uid) => {
+      uids.push(uid)
       return uids
     }, [])
   }
@@ -105,11 +171,8 @@ class Connections {
    * @return {object|null} Stores or null if none.
    */
   @computed get viewingStores () {
-    if (this.stores.has(this.viewing) === true) {
-      return this.stores.get(this.viewing)
-    }
-
-    return null
+    if (this.stores.has(this.viewing) === false) return null
+    return this.stores.get(this.viewing)
   }
 
   /**
@@ -119,7 +182,7 @@ class Connections {
   @action add () {
     const uid = shortUid()
 
-    this.saved.set(uid, {
+    this.configs.set(uid, {
       uid,
       type: 'local',
       username: '',
@@ -128,34 +191,48 @@ class Connections {
       host: '',
       port: 22,
       dstPort: 9195,
-      localPort: 9195 + this.saved.size,
+      localPort: 9195 + this.configs.size,
       status: { active: false, rpc: null, tunnel: null }
     })
+
+    /** Switch to the added connection. */
+    this.setViewing(uid)
   }
 
   /**
-   * Remove connection.
+   * Remove the viewing connection.
    * @function remove
-   * @param {string} uid - Connection uid.
    */
-  @action remove (uid) {
+  @action remove () {
+    const index = this.uids.indexOf(this.viewing)
+    const length = this.uids.length
+
     /** Stop the connection before removing it. */
-    this.stop(uid)
+    this.stop(this.viewing)
 
     /** Remove the connection and its stores. */
-    this.saved.delete(uid)
-    this.stores.delete(uid)
+    this.configs.delete(this.viewing)
+    this.stores.delete(this.viewing)
+
+    /**
+     * Switch to the next last connection if removing the last, or switch
+     * to the next connection with the same index as the one we're removing.
+     */
+    if (index + 1 === length) {
+      this.setViewing(this.uids[index - 1])
+    } else {
+      this.setViewing(this.uids[index])
+    }
   }
 
   /**
-   * Set connection property.
+   * Set viewing connection property.
    * @function set
-   * @param {string} uid - Connection uid.
    * @param {string} key - Object key to alter.
    * @param {any} value - Value to assign.
    */
-  @action set (uid, key, value) {
-    const connection = this.saved.get(uid)
+  @action set (key, value) {
+    const conn = this.configs.get(this.viewing)
 
     /** Handle port inputs. Allow only numbers below 65536. */
     if (key === 'port' || key === 'dstPort' || key === 'localPort') {
@@ -164,7 +241,7 @@ class Connections {
       }
     }
 
-    connection[key] = value
+    conn[key] = value
   }
 
   /**
@@ -174,20 +251,8 @@ class Connections {
    * @param {object} status - Updated connection status.
    */
   @action.bound setStatus (uid, status) {
-    const connection = this.saved.get(uid)
-
-    connection.status = {
-      ...connection.status,
-      ...status
-    }
-
-    /**
-     * If the viewing connection goes down, reset this.viewing which will
-     * also trigger a redirect to the welcome screen.
-     */
-    if (connection.status.rpc === false) {
-      if (uid === this.viewing) this.setViewing()
-    }
+    const conn = this.configs.get(uid)
+    conn.status = { ...conn.status, ...status }
   }
 
   /**
@@ -195,19 +260,26 @@ class Connections {
    * @function setViewing
    * @param {string} uid - Connection uid.
    */
-  @action setViewing (uid = '') {
+  @action setViewing (uid) {
     this.viewing = uid
   }
 
   /**
-   * Start connection.
-   * @function start
-   * @param {string} uid - Connection uid.
+   * Toggle modal.
+   * @function toggleModal
    */
-  start (uid) {
-    const conn = this.saved.get(uid)
+  @action toggleModal = () => {
+    this.modal = !this.modal
+  }
 
-    /** Initialize and set new connection stores. */
+  /**
+   * Start the viewing connection.
+   * @function start
+   */
+  start (uid = this.viewing) {
+    const conn = this.configs.get(uid)
+
+    /** Initialize and set the new connection's stores. */
     if (this.stores.has(uid) === false) {
       const rpc = new RPC(conn, this.setStatus)
       const info = new Info(rpc)
@@ -284,19 +356,14 @@ class Connections {
   }
 
   /**
-   * Stop connection.
+   * Stop the viewing connection.
    * @function stop
-   * @param {string} uid - Connection uid.
    */
-  stop (uid) {
-    /** Redirect to the welcome screen if stopping the viewing connection. */
-    if (uid === this.viewing) this.setViewing()
-
-    /** Stop tunnel. */
-    this.stopTunnel(uid)
+  stop () {
+    this.stopTunnel(this.viewing)
 
     /** Reset connection status. */
-    this.setStatus(uid, { active: false, rpc: null, tunnel: null })
+    this.setStatus(this.viewing, { active: false, rpc: null, tunnel: null })
   }
 
   /**
@@ -307,8 +374,12 @@ class Connections {
   stopTunnel (uid) {
     if (this.tunnels.has(uid) === true) {
       const tunnel = this.tunnels.get(uid)
+
+      /** Close the server and end the SSH tunnel. */
       tunnel.server.close()
       tunnel.ssh.end()
+
+      /** Delete the tunnel. */
       this.tunnels.delete(uid)
     }
   }
