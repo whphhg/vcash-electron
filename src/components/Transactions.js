@@ -24,16 +24,6 @@ export default class Transactions extends React.Component {
   }
 
   /**
-   * View transaction details on row click.
-   * @function view
-   * @param {object} record - Table row data.
-   * @param {number} index - Table row index.
-   */
-  view = (record, index) => {
-    this.wallet.setViewing(record.txid)
-  }
-
-  /**
    * Set search string.
    * @function setSearch
    * @param {object} e - Input element event.
@@ -157,7 +147,7 @@ export default class Transactions extends React.Component {
                 filterConfirm: this.t('wallet:ok'),
                 filterReset: this.t('wallet:reset')
               }}
-              onRowClick={this.view}
+              onRowClick={(record) => this.wallet.setViewing(record.txid)}
               pagination={{
                 defaultPageSize: 15,
                 style: { display: 'inline-block' }

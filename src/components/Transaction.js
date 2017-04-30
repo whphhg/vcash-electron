@@ -229,23 +229,19 @@ export default class Transaction extends React.Component {
             </div>
           </div>
         </div>
-        <hr />
-        <div className='flex-sb'>
+        <div className='flex-sb' style={{margin: '10px 0 0 0'}}>
           <Table
             bordered
             columns={[
               {
                 dataIndex: 'address',
                 title: this.t('wallet:from'),
+                width: 290,
                 render: address => <p className='text-mono'>{address}</p>
               },
               {
                 dataIndex: 'amount',
-                title: (
-                  <p style={{textAlign: 'right'}}>
-                    {this.t('wallet:amount')}
-                  </p>
-                ),
+                title: this.t('wallet:amount'),
                 render: amount => (
                   <p style={{textAlign: 'right'}}>
                     {
@@ -272,13 +268,12 @@ export default class Transaction extends React.Component {
               {
                 dataIndex: 'address',
                 title: this.t('wallet:to'),
+                width: 290,
                 render: address => <p className='text-mono'>{address}</p>
               },
               {
                 dataIndex: 'amount',
-                title: (
-                  <p style={{textAlign: 'right'}}>{this.t('wallet:amount')}</p>
-                ),
+                title: this.t('wallet:amount'),
                 render: (amount, record) => (
                   <p className={record.color} style={{textAlign: 'right'}}>
                     {

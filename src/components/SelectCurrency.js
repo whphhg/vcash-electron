@@ -17,21 +17,12 @@ export default class SelectCurrency extends React.Component {
     this.rates = props.rates
   }
 
-  /**
-   * Set local currency.
-   * @function setLocalCurrency
-   * @param {string} currency - Local currency.
-   */
-  setLocalCurrency = (currency) => {
-    this.gui.setLocalCurrency(currency)
-  }
-
   render () {
     return (
       <Select
         defaultValue={this.gui.localCurrency}
         notFoundContent={this.t('wallet:notFound')}
-        onChange={this.setLocalCurrency}
+        onChange={(currency) => this.gui.setLocalCurrency(currency)}
         optionFilterProp='children'
         showSearch
         size='small'

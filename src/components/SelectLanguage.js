@@ -16,21 +16,12 @@ export default class SelectLanguage extends React.Component {
     this.gui = props.gui
   }
 
-  /**
-   * Set display language.
-   * @function setLanguage
-   * @param {string} language - Locale.
-   */
-  setLanguage = (language) => {
-    this.gui.setLanguage(language)
-  }
-
   render () {
     return (
       <Select
         defaultValue={this.gui.language}
         notFoundContent={this.t('wallet:notFound')}
-        onChange={this.setLanguage}
+        onChange={(language) => this.gui.setLanguage(language)}
         optionFilterProp='children'
         showSearch
         size='small'

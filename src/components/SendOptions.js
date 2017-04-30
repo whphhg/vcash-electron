@@ -18,42 +18,6 @@ export default class SendOptions extends React.Component {
     this.wallet = props.wallet
   }
 
-  /**
-   * Set account.
-   * @function setAccount
-   * @param {string} account - Account name.
-   */
-  setAccount = (account) => {
-    this.send.setAccount(account)
-  }
-
-  /**
-   * Set minimum confirmations.
-   * @function setMinConf
-   * @param {object} e - Input element event.
-   */
-  setMinConf = (e) => {
-    this.send.setMinConf(e.target.value)
-  }
-
-  /**
-   * Set transaction comment.
-   * @function setComment
-   * @param {object} e - Input element event.
-   */
-  setComment = (e) => {
-    this.send.setComment(e.target.value)
-  }
-
-  /**
-   * Set recipient comment.
-   * @function setCommentTo
-   * @param {object} e - Input element event.
-   */
-  setCommentTo = (e) => {
-    this.send.setCommentTo(e.target.value)
-  }
-
   render () {
     const { fromAccount, recipients, comment, commentTo, minConf } = this.send
 
@@ -89,7 +53,7 @@ export default class SendOptions extends React.Component {
           <div style={{flex: 1}}>
             <div className='flex'>
               <Select
-                onChange={this.setAccount}
+                onChange={(account) => this.send.setAccount(account)}
                 optionFilterProp='children'
                 size='small'
                 style={{flex: 1, margin: '0 10px 0 0'}}
@@ -127,7 +91,7 @@ export default class SendOptions extends React.Component {
               recipients.size === 1 && (
                 <div style={{flex: 1, margin: '5px 0 0 0'}}>
                   <Input
-                    onChange={this.setCommentTo}
+                    onChange={(e) => this.send.setCommentTo(e.target.value)}
                     placeholder={this.t('wallet:recipientLong')}
                     size='small'
                     value={commentTo}
@@ -137,7 +101,7 @@ export default class SendOptions extends React.Component {
             }
             <div style={{flex: 1, margin: '5px 0 0 0'}}>
               <Input
-                onChange={this.setComment}
+                onChange={(e) => this.send.setComment(e.target.value)}
                 placeholder={this.t('wallet:descriptionLong')}
                 size='small'
                 value={comment}
@@ -147,7 +111,7 @@ export default class SendOptions extends React.Component {
               fromAccount !== null && (
                 <div style={{width: '60px', margin: '5px 0 0 0'}}>
                   <Input
-                    onChange={this.setMinConf}
+                    onChange={(e) => this.send.setMinConf(e.target.value)}
                     size='small'
                     value={minConf}
                   />

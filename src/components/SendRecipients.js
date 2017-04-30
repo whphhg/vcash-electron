@@ -19,15 +19,6 @@ export default class SendRecipient extends React.Component {
   }
 
   /**
-   * Remove recipient.
-   * @function removeRecipient
-   * @param {string} uid - Uid.
-   */
-  removeRecipient = (uid) => {
-    this.send.removeRecipient(uid)
-  }
-
-  /**
    * Set recipient.
    * @function setRecipient
    * @param {object} e - Input element event.
@@ -43,21 +34,21 @@ export default class SendRecipient extends React.Component {
       <div>
         <div id='sendRecipients'>
           {
-            this.send.recipients.values().map((recipient) => (
+            this.send.recipients.values().map((rcpt) => (
               <div
                 className='flex-sb'
-                key={recipient.uid}
+                key={rcpt.uid}
                 style={{margin: '0 0 5px 0'}}
               >
                 <div style={{width: '55%'}}>
                   <Input
                     className={'text-mono ' + (
-                      recipient.addressValid !== null
-                        ? recipient.addressValid === true ? 'green' : 'red'
+                      rcpt.addressValid !== null
+                        ? rcpt.addressValid === true ? 'green' : 'red'
                         : ''
                       )
                     }
-                    id={recipient.uid}
+                    id={rcpt.uid}
                     name='address'
                     onChange={this.setRecipient}
                     placeholder={this.t('wallet:address')}
@@ -65,7 +56,7 @@ export default class SendRecipient extends React.Component {
                       <Popconfirm
                         cancelText={this.t('wallet:no')}
                         okText={this.t('wallet:yes')}
-                        onConfirm={() => this.removeRecipient(recipient.uid)}
+                        onConfirm={() => this.send.removeRecipient(rcpt.uid)}
                         placement='bottomLeft'
                         title={this.t('wallet:recipientRemove')}
                       >
@@ -75,18 +66,18 @@ export default class SendRecipient extends React.Component {
                       </Popconfirm>
                     }
                     size='small'
-                    value={recipient.address}
+                    value={rcpt.address}
                   />
                 </div>
                 <div style={{flex: 1, margin: '0 10px 0 10px'}}>
                   <Input
                     addonAfter='XVC'
-                    id={recipient.uid}
+                    id={rcpt.uid}
                     name='amount'
                     onChange={this.setRecipient}
                     placeholder={this.t('wallet:amount')}
                     size='small'
-                    value={recipient.amount}
+                    value={rcpt.amount}
                   />
                 </div>
                 <div style={{flex: 1}}>
@@ -98,7 +89,7 @@ export default class SendRecipient extends React.Component {
                       new Intl.NumberFormat(this.gui.language, {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2
-                      }).format(recipient.amount * average * local)
+                      }).format(rcpt.amount * average * local)
                     }
                   />
                 </div>
