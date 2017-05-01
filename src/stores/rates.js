@@ -8,12 +8,12 @@ class Rates {
   /**
    * Observable properties.
    * @property {object} bitcoinAverage - Bitcoin average price index.
-   * @property {object} poloniex - Poloniex ticker.
    * @property {object} bittrex - Bittrex ticker.
+   * @property {object} poloniex - Poloniex ticker.
    */
   @observable bitcoinAverage = getItem('bitcoinAverage') || { rates: {}, updated: 0 }
-  @observable poloniex = { last: 0 }
   @observable bittrex = { Last: 0 }
+  @observable poloniex = { last: 0 }
 
   /**
    * Start upate loops.
@@ -21,8 +21,8 @@ class Rates {
    */
   constructor () {
     this.fetchBitcoinAverage()
-    this.fetchPoloniex()
     this.fetchBittrex()
+    this.fetchPoloniex()
   }
 
   /**

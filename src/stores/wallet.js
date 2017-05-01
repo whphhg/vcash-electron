@@ -21,16 +21,16 @@ export default class Wallet {
 
   /**
    * @constructor
-   * @param {object} rpc - RPC store.
-   * @param {object} rates - Rates store.
    * @param {object} gui - GUI store.
+   * @param {object} rates - Rates store.
+   * @param {object} rpc - RPC store.
    * @property {number|null} updateTimeout - getWallet() timeout id.
    * @property {string} lastBlock - Last looked up block.
    */
-  constructor (gui, rpc, rates) {
+  constructor (gui, rates, rpc) {
     this.gui = gui
-    this.rpc = rpc
     this.rates = rates
+    this.rpc = rpc
     this.updateTimeout = null
     this.lastBlock = ''
 

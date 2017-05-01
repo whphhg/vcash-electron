@@ -6,21 +6,21 @@ import i18next from '../utilities/i18next'
 export default class Send {
   /**
    * Observable properties.
-   * @property {string|null} fromAccount - Spend from this account.
-   * @property {array} recipients - Addresses and amounts to pay.
-   * @property {number} minConf - Minimum number of confirmations.
+   * @property {boolean} blendedOnly - Use blended outputs only.
    * @property {string} comment - Comment about transaction.
    * @property {string} commentTo - Comment about recipient.
+   * @property {string|null} fromAccount - Spend from this account.
+   * @property {number} minConf - Minimum number of confirmations.
+   * @property {array} recipients - Addresses and amounts to pay.
    * @property {boolean} zeroTime - Use ZeroTime.
-   * @property {boolean} blendedOnly - Use blended outputs only.
    */
-  @observable fromAccount = null
-  @observable recipients = observable.map({})
-  @observable minConf = 1
+  @observable blendedOnly = false
   @observable comment = ''
   @observable commentTo = ''
+  @observable fromAccount = null
+  @observable minConf = 1
+  @observable recipients = observable.map({})
   @observable zeroTime = false
-  @observable blendedOnly = false
 
   /**
    * @constructor
@@ -33,8 +33,8 @@ export default class Send {
     this.rpc = rpc
     this.wallet = wallet
 
+    /** Always have one recipient available. */
     autorun(() => {
-      /** Always have one recipient available. */
       if (this.recipients.size === 0) this.addRecipient()
     })
   }
@@ -83,17 +83,6 @@ export default class Send {
     }, 0) / 1000000
   }
 
-  /** Clear recipients and options.
-   * @function clear
-   */
-  @action clear () {
-    this.recipients.clear()
-    this.setAccount()
-    this.setMinConf()
-    this.setComment()
-    this.setCommentTo()
-  }
-
   /**
    * Add new recipient.
    * @function addRecipient
@@ -109,6 +98,17 @@ export default class Send {
     })
   }
 
+  /** Clear recipients and options.
+   * @function clear
+   */
+  @action clear () {
+    this.setAccount()
+    this.setComment()
+    this.setCommentTo()
+    this.setMinConf()
+    this.recipients.clear()
+  }
+
   /**
    * Remove recipient.
    * @function removeRecipient
@@ -116,6 +116,62 @@ export default class Send {
    */
   @action removeRecipient (uid) {
     this.recipients.delete(uid)
+  }
+
+  /**
+   * Set the name of the account from which the coins should be spent.
+   * @function setAccount
+   * @param {string} account - Account name.
+   */
+  @action setAccount (account = null) {
+    this.fromAccount = account
+  }
+
+  /**
+   * Set blended only flag.
+   * @function setBlendedOnly
+   * @param {boolean} blendedOnly - Blended only.
+   */
+  @action setBlendedOnly (blendedOnly = false) {
+    this.blendedOnly = blendedOnly
+  }
+
+  /**
+   * Set a locally-stored (not broadcast) comment assigned to this transaction.
+   * @function setComment
+   * @param {string} comment - Comment assigned to this transaction.
+   */
+  @action setComment (comment = '') {
+    this.comment = comment
+  }
+
+  /**
+   * Set a locally-stored (not broadcast) comment describing the recipient.
+   * @function setCommentTo
+   * @param {string} commentTo - Comment describing the recipient.
+   */
+  @action setCommentTo (commentTo = '') {
+    this.commentTo = commentTo
+  }
+
+  /**
+   * Set the minimum number of confirmations a transaction must have
+   * for its outputs to be credited to the fromAccount’s balance.
+   * @function setMinConf
+   * @param {string} confirmations - Minimum confirmations.
+   */
+  @action setMinConf (confirmations = '1') {
+    if (confirmations.match(/^[0-9]{0,6}$/) !== null) {
+      /** Allow emptying input. */
+      if (confirmations !== '') {
+        confirmations = parseInt(confirmations)
+
+        if (confirmations > this.info.wallet.blocks) return
+        if (confirmations < 1) return
+      }
+
+      this.minConf = confirmations
+    }
   }
 
   /**
@@ -208,68 +264,12 @@ export default class Send {
   }
 
   /**
-   * Set the name of the account from which the coins should be spent.
-   * @function setAccount
-   * @param {string} account - Account name.
-   */
-  @action setAccount (account = null) {
-    this.fromAccount = account
-  }
-
-  /**
-   * Set the minimum number of confirmations a transaction must have
-   * for its outputs to be credited to the fromAccount’s balance.
-   * @function setMinConf
-   * @param {string} confirmations - Minimum confirmations.
-   */
-  @action setMinConf (confirmations = '1') {
-    if (confirmations.match(/^[0-9]{0,6}$/) !== null) {
-      /** Allow emptying input. */
-      if (confirmations !== '') {
-        confirmations = parseInt(confirmations)
-
-        if (confirmations > this.info.wallet.blocks) return
-        if (confirmations < 1) return
-      }
-
-      this.minConf = confirmations
-    }
-  }
-
-  /**
-   * Set a locally-stored (not broadcast) comment assigned to this transaction.
-   * @function setComment
-   * @param {string} comment - Comment assigned to this transaction.
-   */
-  @action setComment (comment = '') {
-    this.comment = comment
-  }
-
-  /**
-   * Set a locally-stored (not broadcast) comment describing the recipient.
-   * @function setCommentTo
-   * @param {string} commentTo - Comment describing the recipient.
-   */
-  @action setCommentTo (commentTo = '') {
-    this.commentTo = commentTo
-  }
-
-  /**
    * Set ZeroTime flag.
    * @function setZeroTime
    * @param {boolean} zeroTime - Use ZeroTime.
    */
   @action setZeroTime (zeroTime = false) {
     this.zeroTime = zeroTime
-  }
-
-  /**
-   * Set blended only flag.
-   * @function setBlendedOnly
-   * @param {boolean} blendedOnly - Blended only.
-   */
-  @action setBlendedOnly (blendedOnly = false) {
-    this.blendedOnly = blendedOnly
   }
 
   /**
@@ -336,10 +336,7 @@ export default class Send {
         console.error('Failed sending using sendtoaddress', response[0])
 
         switch (response[0].error.code) {
-          /**
-           * Insufficient funds,
-           * error_code_wallet_insufficient_funds = -4
-           */
+          /** Insufficient funds, error_code_wallet_insufficient_funds = -4. */
           case -4:
             return this.failed('insufficientFunds')
         }
@@ -359,9 +356,7 @@ export default class Send {
       {
         method: 'sendfrom',
         params: [
-          this.fromAccount === '*'
-            ? ''
-            : this.fromAccount,
+          this.fromAccount === '*' ? '' : this.fromAccount,
           recipient[0].address,
           recipient[0].amount,
           this.minConf,
@@ -385,10 +380,7 @@ export default class Send {
         console.error('Failed sending using sendfrom', response[0])
 
         switch (response[0].error.code) {
-          /**
-           * Insufficient funds,
-           * error_code_wallet_insufficient_funds = -6
-           */
+          /** Insufficient funds, error_code_wallet_insufficient_funds = -6. */
           case -6:
             return this.failed('insufficientFunds')
         }
@@ -411,9 +403,7 @@ export default class Send {
       {
         method: 'sendmany',
         params: [
-          this.fromAccount === '*'
-            ? ''
-            : this.fromAccount,
+          this.fromAccount === '*' ? '' : this.fromAccount,
           recipients,
           this.minConf,
           this.comment
@@ -435,17 +425,11 @@ export default class Send {
         console.error('Failed sending using sendmany', response[0])
 
         switch (response[0].error.code) {
-          /**
-           * Nonstandard transaction type,
-           * error_code = -4
-           */
+          /** Nonstandard transaction type, error_code = -4. */
           case -4:
             return this.failed('transactionNotStandard')
 
-          /**
-           * Insufficient funds,
-           * error_code_wallet_insufficient_funds = -6
-           */
+          /** Insufficient funds, error_code_wallet_insufficient_funds = -6. */
           case -6:
             return this.failed('insufficientFunds')
         }

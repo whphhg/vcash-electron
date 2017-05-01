@@ -21,8 +21,8 @@ export default class Stats {
     this.wallet = wallet
     this.updateTimeout = null
 
+    /** Begin updating when RPC becomes active. */
     reaction(() => this.rpc.ready, (ready) => {
-      /** Begin updating when RPC becomes active. */
       if (ready === true) {
         this.updateTimeout = setTimeout(() => {
           this.setNetworkByMinute()

@@ -4,15 +4,15 @@ import { shortUid } from '../utilities/common'
 export default class Info {
   /**
    * Observable properties.
-   * @property {map} responses - Saved RPC responses.
    * @property {boolean} isBlending - Blending status.
    * @property {boolean} isEncrypted - Encrypted status.
    * @property {boolean} isLocked - Locked status.
+   * @property {map} responses - Saved RPC responses.
    */
-  @observable responses = observable.map({})
   @observable isBlending = false
   @observable isEncrypted = false
   @observable isLocked = false
+  @observable responses = observable.map({})
 
   /**
    * @constructor
@@ -21,19 +21,14 @@ export default class Info {
    */
   constructor (rpc) {
     this.rpc = rpc
-    this.timeouts = {
-      getNetworkInfo: null,
-      getWalletInfo: null
-    }
+    this.timeouts = { getNetworkInfo: null, getWalletInfo: null }
 
+    /** Begin updating when RPC becomes active. */
     reaction(() => this.rpc.ready, (ready) => {
-      /** Begin updating when RPC becomes active. */
       if (ready === true) {
-        /** Start wallet info update loop. */
-        this.restart('getWalletInfo')
-
-        /** Start network info update loop. */
+        /** Start wallet and network info update loops. */
         this.restart('getNetworkInfo')
+        this.restart('getWalletInfo')
 
         /** Update lock status. */
         this.getLockStatus()
@@ -46,23 +41,23 @@ export default class Info {
       }
     })
 
-    /**
-     * Restart network info update loop 8s after
-     * the wallet gets unlocked for the first time.
-     */
+    /** Restart wallet info update loop when the wallet gets unlocked. */
     reaction(() => this.isLocked, (isLocked) => {
       if (isLocked === false) {
+        this.restart('getWalletInfo')
+
+        /**
+         * Restart network info update loop 5s after unlocking if
+         * the default wallet address is not yet set.
+         */
         if (this.responses.has('getincentiveinfo') === true) {
           const info = this.responses.get('getincentiveinfo')
 
-          if (info.walletaddress === '') this.restart('getNetworkInfo')
+          if (info.walletaddress === '') {
+            setTimeout(() => { this.restart('getNetworkInfo') }, 5 * 1000)
+          }
         }
       }
-    }, { delay: 8000 })
-
-    /** Restart wallet info update loop when the wallet gets unlocked. */
-    reaction(() => this.isLocked, (isLocked) => {
-      if (isLocked === false) this.restart('getWalletInfo')
     })
   }
 
@@ -97,10 +92,7 @@ export default class Info {
             saved[i] = response.result[i]
           }
         } else {
-          this.responses.set(
-            options[index].method,
-            response.result
-          )
+          this.responses.set(options[index].method, response.result)
         }
       }
     })
@@ -284,24 +276,15 @@ export default class Info {
       { method: 'walletpassphrase', params: [] }
     ], (response) => {
       switch (response[0].error.code) {
-        /**
-         * Unencrypted,
-         * error_code_wallet_wrong_enc_state = -15
-         */
+        /** Unencrypted, error_code_wallet_wrong_enc_state = -15. */
         case -15:
           return this.setLockStatus(false, false)
 
-        /**
-         * Encrypted and unlocked,
-         * error_code_wallet_already_unlocked = -17
-         */
+        /** Encrypted and unlocked, error_code_wallet_already_unlocked = -17. */
         case -17:
           return this.setLockStatus(true, false)
 
-        /**
-         * Encrypted and locked,
-         * error_code_invalid_params = -32602
-         */
+        /** Encrypted and locked, error_code_invalid_params = -32602. */
         case -32602:
           return this.setLockStatus(true, true)
       }

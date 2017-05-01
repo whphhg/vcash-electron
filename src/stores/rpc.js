@@ -60,9 +60,7 @@ export default class RPC {
         },
         body: JSON.stringify(options)
       })
-      .then((response) => {
-        if (response.ok === true) return response.json()
-      })
+      .then((response) => { if (response.ok === true) return response.json() })
       .then((data) => {
         /** Update connection status. */
         if (this.connection.status.rpc !== true) {
