@@ -118,6 +118,7 @@ class Header extends React.Component {
             onClick={(item) => {
               this.props.history.push('/' + this.connections.viewing + item.key)
             }}
+            style={{margin: '0 10px 0 0'}}
           >
             <Menu.Item key='/'>
               <i className='material-icons md-20'>account_balance_wallet</i>
@@ -132,10 +133,14 @@ class Header extends React.Component {
               <i className='material-icons md-20'>settings</i>
             </Menu.Item>
           </Menu>
-          <div style={{margin: '0 10px 0 14px'}}>
-            <WalletLock />
-            <WalletUnlock />
-          </div>
+          {
+            this.info.isEncrypted === true && (
+              <div style={{margin: '0 10px 0 0'}}>
+                <WalletLock />
+                <WalletUnlock />
+              </div>
+            )
+          }
         </div>
       </header>
     )
