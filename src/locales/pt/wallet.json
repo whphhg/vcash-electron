@@ -133,6 +133,7 @@
   "rpcLocal": "Porta RPC local",
   "rpcRemote": "Porta RPC remota",
   "saveInto": "Salvar em",
+  "searchAddresses": "Pesquisar endereços",
   "searchTransactions": "Pesquisar transações",
   "seed": "A semente",
   "seedDump": "Exportar a semente",

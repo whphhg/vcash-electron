@@ -8,14 +8,17 @@ export default class Wallet {
   /**
    * Observable properties.
    * @property {map} addresses - Wallet label and change addresses.
-   * @property {map} transactions - Wallet transactions.
-   * @property {array} search - Keywords to search txs by.
+   * @property {map} txs - Wallet transactions.
+   * @property {object} search - Addresses and txs search keywords.
    * @property {string|null} viewing - Transaction being viewed.
    * @property {string|null} viewingQueue - Just sent tx waiting to be viewed.
    */
   @observable addresses = observable.map({})
-  @observable transactions = observable.map({})
-  @observable search = observable.array([])
+  @observable txs = observable.map({})
+  @observable search = {
+    addresses: { value: '', keywords: [], timeoutId: null },
+    txs: { value: '', keywords: [], timeoutId: null }
+  }
   @observable viewing = null
   @observable viewingQueue = null
 
@@ -43,14 +46,10 @@ export default class Wallet {
     })
 
     /** Check if there's a sent transaction waiting to be viewed. */
-    reaction(() => this.transactions.size, (size) => {
-      if (this.viewingQueue !== null) {
-        this.setViewing(this.viewingQueue)
-      }
+    reaction(() => this.txs.size, (size) => {
+      if (this.viewingQueue !== null) this.setViewing(this.viewingQueue)
     })
   }
-
-  /** TODO: @computed get accountBalances () {} */
 
   /**
    * Get a list of account names in alphabetical order.
@@ -62,10 +61,7 @@ export default class Wallet {
 
     /** Add accounts to the set. */
     this.addresses.forEach((address) => {
-      if (
-        address.account !== '' &&
-        address.account !== null
-      ) {
+      if (address.account !== '' && address.account !== null) {
         accounts.add(address.account)
       }
     })
@@ -92,36 +88,54 @@ export default class Wallet {
 
   /**
    * Get addresses data.
-   * @function addressData
+   * @function addressesData
    * @return {array} Addresses data.
    */
-  @computed get addressData () {
+  @computed get addressesData () {
     let addresses = []
 
-    this.addresses.forEach((data) => {
-      let outputs = []
-      let spent = 0
+    this.addresses.forEach((address) => {
+      let keywordMatches = 0
 
-      if (data.outputs.length > 0) {
-        data.outputs.forEach((output) => {
-          if (output.spentTxid !== '') {
-            spent += 1
-          }
+      const balance = new Intl.NumberFormat(this.gui.language, {
+        minimumFractionDigits: 6,
+        maximumFractionDigits: 6
+      }).format(address.balance)
 
-          outputs.push({
-            ...output,
-            key: shortUid(),
-            color: output.spentTxid === '' ? 'green' : 'red'
+      /** Increment keywordMatches by 1 each time a keyword matches. */
+      this.search.addresses.keywords.forEach((keyword) => {
+        if (
+          balance.indexOf(keyword) > -1 ||
+          address.address.indexOf(keyword) > -1
+         ) {
+          keywordMatches += 1
+        }
+      })
+
+      /** Push txs with match count equal to the number of keywords. */
+      if (keywordMatches === this.search.addresses.keywords.length) {
+        let outputs = []
+        let spent = 0
+
+        if (address.outputs.length > 0) {
+          address.outputs.forEach((output) => {
+            if (output.spentTxid !== '') spent += 1
+
+            outputs.push({
+              ...output,
+              key: shortUid(),
+              color: output.spentTxid === '' ? 'green' : 'red'
+            })
           })
+        }
+
+        addresses.push({
+          ...address,
+          outputs,
+          received: outputs.length,
+          spent
         })
       }
-
-      addresses.push({
-        ...data,
-        outputs,
-        received: outputs.length,
-        spent
-      })
     })
 
     return addresses
@@ -135,10 +149,8 @@ export default class Wallet {
   @computed get generated () {
     let generated = []
 
-    this.transactions.forEach((data, txid) => {
-      if (data.hasOwnProperty('generated') === true) {
-        generated.push(data)
-      }
+    this.txs.forEach((data, txid) => {
+      if (data.hasOwnProperty('generated') === true) generated.push(data)
     })
 
     /** Return generated in ASC order. */
@@ -152,10 +164,7 @@ export default class Wallet {
    */
   @computed get generatedPending () {
     return this.generated.reduce((pending, tx) => {
-      if (
-        tx.confirmations > 0 &&
-        tx.confirmations <= 220
-      ) {
+      if (tx.confirmations > 0 && tx.confirmations <= 220) {
         pending.set(tx.txid, tx)
       }
 
@@ -171,7 +180,7 @@ export default class Wallet {
   @computed get pendingAmount () {
     let pending = 0
 
-    this.transactions.forEach((tx, txid) => {
+    this.txs.forEach((tx, txid) => {
       if (
         tx.confirmations === 0 && (
           tx.category === 'receiving' ||
@@ -189,13 +198,13 @@ export default class Wallet {
 
   /**
    * Get transactions data.
-   * @function transactionsData
+   * @function txsData
    * @return {array} Transactions data.
    */
-  @computed get transactionsData () {
+  @computed get txsData () {
     let txs = []
 
-    this.transactions.forEach((tx, txid) => {
+    this.txs.forEach((tx, txid) => {
       let keywordMatches = 0
 
       const amount = new Intl.NumberFormat(this.gui.language, {
@@ -209,7 +218,7 @@ export default class Wallet {
       }).format(tx.amount * this.rates.average * this.rates.local)
 
       /** Increment keywordMatches by 1 each time a keyword matches. */
-      this.search.forEach((keyword) => {
+      this.search.txs.keywords.forEach((keyword) => {
         if (
           amount.indexOf(keyword) > -1 ||
           amountLocal.indexOf(keyword) > -1 ||
@@ -224,7 +233,7 @@ export default class Wallet {
       })
 
       /** Push txs with match count equal to the number of keywords. */
-      if (keywordMatches === this.search.length) {
+      if (keywordMatches === this.search.txs.keywords.length) {
         txs.push({
           key: tx.txid,
           amount,
@@ -248,8 +257,8 @@ export default class Wallet {
    * @return {object|null} Transaction data or null.
    */
   @computed get viewingTx () {
-    if (this.transactions.has(this.viewing) === true) {
-      const saved = this.transactions.get(this.viewing)
+    if (this.txs.has(this.viewing) === true) {
+      const saved = this.txs.get(this.viewing)
 
       /** Assign a unique key to each input. */
       const inputs = saved.vin.reduce((inputs, input) => {
@@ -299,10 +308,19 @@ export default class Wallet {
   /**
    * Set searching keywords.
    * @function setSearch
-   * @param {string} keywords - Keywords to search transactions by.
+   * @param {string} key - Search object key.
+   * @param {string} value - Input element value.
    */
-  @action setSearch (keywords) {
-    this.search = keywords.match(/[^ ]+/g) || []
+  @action setSearch (key, value) {
+    clearTimeout(this.search[key].timeoutId)
+
+    /** Update input string. */
+    this.search[key].value = value
+
+    /** Update keywords in 1s, unless canceled before. */
+    this.search[key].timeoutId = setTimeout(action('setSearch', () => {
+      this.search[key].keywords = value.match(/[^ ]+/g) || []
+    }), 1 * 1000)
   }
 
   /**
@@ -322,30 +340,21 @@ export default class Wallet {
     let inputTxs = new Map()
 
     /** Grouped notifications for pending and spendable txs. */
-    let notifications = {
-      pending: new Map(),
-      spendable: new Map()
-    }
+    let notifications = { pending: new Map(), spendable: new Map() }
 
     /** Set wallet label addresses. */
     if (addresses !== null) {
       addresses.forEach((address) => {
-        const isSaved = this.addresses.has(address.address)
-
-        /** Update saved addresses account names. */
-        if (isSaved === true) {
-          let saved = this.addresses.get(address.address)
-          saved.account = address.account
-        }
-
-        /** Add unsaved addresses to the map. */
-        if (isSaved === false) {
+        if (this.addresses.has(address.address) === false) {
           this.addresses.set(address.address, {
             address: address.address,
             account: address.account,
             balance: 0,
             outputs: []
           })
+        } else {
+          const saved = this.addresses.get(address.address)
+          saved.account = address.account
         }
       })
     }
@@ -383,12 +392,12 @@ export default class Wallet {
         tx = tx.result
 
         /** Get saved status. */
-        const isSaved = this.transactions.has(tx.txid)
+        const isSaved = this.txs.has(tx.txid)
 
         /** Determine which tx to alter. */
         let save = isSaved === false
           ? tx
-          : this.transactions.get(tx.txid)
+          : this.txs.get(tx.txid)
 
         /** Update ztlock status. */
         if (tx.hasOwnProperty('ztlock') === true) {
@@ -396,9 +405,7 @@ export default class Wallet {
         }
 
         /** Skip updating if confirmations haven't changed. */
-        if (isSaved === true) {
-          if (save.confirmations === tx.confirmations) return
-        }
+        if (isSaved === true && save.confirmations === tx.confirmations) return
 
         /** Check inputs and outputs of new transactions. */
         if (isSaved === false) {
@@ -413,9 +420,9 @@ export default class Wallet {
                 vin.value = inputTx.vout[vin.vout].value
                 vin.address = inputTx.vout[vin.vout].scriptPubKey.addresses[0]
 
-                if (this.transactions.has(vin.txid) === true) {
+                if (this.txs.has(vin.txid) === true) {
                   if (this.addresses.has(vin.address) === true) {
-                    const savedTx = this.transactions.get(vin.txid)
+                    const savedTx = this.txs.get(vin.txid)
                     const address = this.addresses.get(vin.address)
 
                     /** Deduct the output's amount from address balance. */
@@ -647,7 +654,7 @@ export default class Wallet {
          * saved transactions update changed properties only.
          */
         if (isSaved === false) {
-          this.transactions.set(save.txid, save)
+          this.txs.set(save.txid, save)
         }
       })
 
@@ -697,7 +704,7 @@ export default class Wallet {
     /** Lookup transaction that was just sent. */
     if (
       txid !== null &&
-      this.transactions.has(txid) === false
+      this.txs.has(txid) === false
     ) {
       /** Save the txid in viewing queue. */
       this.viewingQueue = txid
@@ -817,7 +824,7 @@ export default class Wallet {
             }
 
             /** Lookup inputs and outputs of unsaved transactions. */
-            if (this.transactions.has(tx.txid) === false) {
+            if (this.txs.has(tx.txid) === false) {
               /** Lookup inputs, excluding coinbase. */
               tx.vin.forEach((input) => {
                 if (input.hasOwnProperty('coinbase') === false) {

@@ -20,27 +20,6 @@ export default class Transactions extends React.Component {
     this.t = props.t
     this.gui = props.gui
     this.wallet = props.wallet
-    this.searchUpdateTimer = null
-  }
-
-  /**
-   * Set search string.
-   * @function setSearch
-   * @param {object} e - Input element event.
-   */
-  setSearch = (e) => {
-    clearTimeout(this.searchUpdateTimer)
-
-    /** Save entered values. */
-    const keywords = e.target.value
-
-    /**
-     * Start a new update timer and update if there
-     * are no changes made in the last half second.
-     */
-    this.searchUpdateTimer = setTimeout(() => {
-      this.wallet.setSearch(keywords)
-    }, 0.5 * 1000)
   }
 
   render () {
@@ -60,11 +39,12 @@ export default class Transactions extends React.Component {
               </div>
               <div className='flex'>
                 <Input
-                  onChange={this.setSearch}
+                  onChange={(e) => this.wallet.setSearch('txs', e.target.value)}
                   placeholder={this.t('wallet:searchTransactions')}
                   prefix={<i className='material-icons md-14'>search</i>}
                   size='small'
                   style={{width: '268px'}}
+                  value={this.wallet.search.txs.value}
                 />
               </div>
             </div>
@@ -141,7 +121,7 @@ export default class Transactions extends React.Component {
                   )
                 }
               ]}
-              dataSource={this.wallet.transactionsData}
+              dataSource={this.wallet.txsData}
               locale={{
                 emptyText: this.t('wallet:notFound'),
                 filterConfirm: this.t('wallet:ok'),

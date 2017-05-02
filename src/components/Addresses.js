@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Table } from 'antd'
+import { Input, Table } from 'antd'
 
 /** Required components. */
 import Address from './Address'
@@ -75,6 +75,14 @@ export default class Addresses extends React.Component {
           }}
         >
           <div style={{margin: '10px'}}>
+            <Input
+              onChange={(e) => this.wallet.setSearch('addresses', e.target.value)}
+              placeholder={this.t('wallet:searchAddresses')}
+              prefix={<i className='material-icons md-14'>search</i>}
+              size='small'
+              style={{margin: '0 0 10px 0', width: '270px'}}
+              value={this.wallet.search.addresses.value}
+            />
             <Table
               bordered
               columns={[
@@ -113,7 +121,7 @@ export default class Addresses extends React.Component {
                   )
                 }
               ]}
-              dataSource={this.wallet.addressData}
+              dataSource={this.wallet.addressesData}
               expandedRowRender={data => <Address data={data} />}
               locale={{
                 emptyText: this.t('wallet:notFound'),
@@ -123,7 +131,7 @@ export default class Addresses extends React.Component {
               onChange={this.tableChange}
               pagination={false}
               rowKey='address'
-              scroll={{y: 536}}
+              scroll={{y: 504}}
               size='small'
             />
           </div>
