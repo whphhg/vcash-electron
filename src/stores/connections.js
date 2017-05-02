@@ -89,7 +89,7 @@ class Connections {
 
     /** React to Shift-asd key presses. */
     document.onkeydown = (e) => {
-      if (e.shiftKey === true) {
+      if (e.altKey === true) {
         /** Shift-ad: Switch between previous and next connection. */
         if (e.keyCode === 65 || e.keyCode === 68) {
           const length = this.uids.length
