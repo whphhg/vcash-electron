@@ -229,7 +229,10 @@ export default class Transaction extends React.Component {
             </div>
           </div>
         </div>
-        <div className='flex-sb' style={{margin: '10px 0 0 0'}}>
+        <div
+          className='flex-sb'
+          style={{alignItems: 'flex-start', margin: '10px 0 0 0'}}
+        >
           <Table
             bordered
             columns={[
@@ -261,7 +264,9 @@ export default class Transaction extends React.Component {
             size='small'
             style={{flex: 1, margin: '0 10px 0 0'}}
           />
-          <i className='material-icons md-18'>forward</i>
+          <div style={{margin: 'auto 0 auto 0'}}>
+            <i className='material-icons md-18'>forward</i>
+          </div>
           <Table
             bordered
             columns={[
