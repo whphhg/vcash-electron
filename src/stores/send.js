@@ -215,16 +215,14 @@ export default class Send {
       }
 
       /** Do not allow amounts below tx fee. */
-      if (
-        parseFloat(value) > 0 &&
-        parseFloat(value) < 0.0005
-      ) return
+      if (parseFloat(value) > 0 && parseFloat(value) < 0.0005) return
 
       /** Check if the new total amount is over wallet balance. */
-      if (
-        this.total - parseFloat(saved.amount) + parseFloat(value) >
-        this.info.wallet.balance
-      ) return
+      const difference = saved.amount === ''
+        ? 0 - parseFloat(value)
+        : parseFloat(saved.amount) - parseFloat(value)
+
+      if (this.total - difference > this.info.wallet.balance) return
 
       /** Set ammount that passed above checks. */
       saved.amount = value
