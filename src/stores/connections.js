@@ -87,17 +87,17 @@ class Connections {
       }
     }, true)
 
-    /** React to Shift-asd key presses. */
+    /** React to Alt-asd key presses. */
     document.onkeydown = (e) => {
       if (e.altKey === true) {
-        /** Shift-ad: Switch between previous and next connection. */
+        /** Alt-ad: Switch between previous and next connection. */
         if (e.keyCode === 65 || e.keyCode === 68) {
           const length = this.uids.length
 
           if (length > 1) {
             const index = this.uids.indexOf(this.viewing)
 
-            /** Shift-a: Move to the left. */
+            /** Alt-a: Move to the left. */
             if (e.keyCode === 65) {
               /** Return to the end if we hit the beginning. */
               if (index === 0) {
@@ -107,7 +107,7 @@ class Connections {
               }
             }
 
-            /** Shift-d: Move to the right. */
+            /** Alt-d: Move to the right. */
             if (e.keyCode === 68) {
               /** Return to the beginning if we hit the end. */
               if (index + 1 === length) {
@@ -119,7 +119,7 @@ class Connections {
           }
         }
 
-        /** Shift-s: Toggle connection manager. */
+        /** Alt-s: Toggle connection manager. */
         if (e.keyCode === 83) this.toggleModal()
       }
     }
