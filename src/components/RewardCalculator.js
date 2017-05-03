@@ -74,7 +74,7 @@ export default class RewardCalculator extends React.Component {
    * @param {object} e - Input element event.
    */
   @action setBlock = (e) => {
-    const block = e === undefined
+    const block = typeof e === 'undefined'
       ? ''
       : e.target.value
 

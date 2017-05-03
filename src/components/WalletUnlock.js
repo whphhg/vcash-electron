@@ -58,7 +58,7 @@ export default class WalletUnlock extends React.Component {
    * @param {object} e - Input element event.
    */
   @action setPassphrase = (e) => {
-    this.passphrase = e === undefined
+    this.passphrase = typeof e === 'undefined'
       ? ''
       : e.target.value
   }
