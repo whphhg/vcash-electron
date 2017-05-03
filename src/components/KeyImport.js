@@ -74,7 +74,7 @@ export default class KeyImport extends React.Component {
    * @param {object} e - Input element event.
    */
   @action setPrivateKey = (e) => {
-    if (e === undefined) {
+    if (typeof e === 'undefined') {
       this.privateKey = ''
     } else {
       if (e.target.value.match(/^[a-zA-Z0-9]{0,52}$/) !== null) {
@@ -203,7 +203,9 @@ export default class KeyImport extends React.Component {
         visible={this.popover}
       >
         <Button disabled={this.info.isLocked === true} size='small'>
-          {this.t('wallet:privateKeyImport')}
+          <div style={{margin: '2px 0 0 0'}}>
+            <i className='material-icons md-16'>arrow_downward</i>
+          </div>
         </Button>
       </Popover>
     )

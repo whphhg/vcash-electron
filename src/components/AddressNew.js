@@ -155,7 +155,11 @@ export default class AddressNew extends React.Component {
         trigger='click'
         visible={this.popover}
       >
-        <Button size='small'>{this.t('wallet:addressGenerate')}</Button>
+        <Button size='small'>
+          <div style={{margin: '2px 0 0 0'}}>
+            <i className='material-icons md-16'>plus_one</i>
+          </div>
+        </Button>
       </Popover>
     )
   }

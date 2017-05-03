@@ -71,20 +71,20 @@ export default class SendRecipient extends React.Component {
                 </div>
                 <div style={{flex: 1, margin: '0 10px 0 10px'}}>
                   <Input
-                    addonAfter='XVC'
                     id={rcpt.uid}
                     name='amount'
                     onChange={this.setRecipient}
                     placeholder={this.t('wallet:amount')}
                     size='small'
+                    suffix='XVC'
                     value={rcpt.amount}
                   />
                 </div>
                 <div style={{flex: 1}}>
                   <Input
-                    addonAfter={this.gui.localCurrency}
                     disabled
                     size='small'
+                    suffix={this.gui.localCurrency}
                     value={
                       new Intl.NumberFormat(this.gui.language, {
                         minimumFractionDigits: 2,
@@ -103,9 +103,9 @@ export default class SendRecipient extends React.Component {
               <div style={{width: '55%'}} />
               <div style={{flex: 1, margin: '0 10px 0 10px'}}>
                 <Input
-                  addonAfter='XVC'
                   disabled
                   size='small'
+                  suffix='XVC'
                   value={
                     new Intl.NumberFormat(this.gui.language, {
                       maximumFractionDigits: 6
@@ -115,9 +115,9 @@ export default class SendRecipient extends React.Component {
               </div>
               <div style={{flex: 1}}>
                 <Input
-                  addonAfter={this.gui.localCurrency}
                   disabled
                   size='small'
+                  suffix={this.gui.localCurrency}
                   value={
                     new Intl.NumberFormat(this.gui.language, {
                       maximumFractionDigits: 2

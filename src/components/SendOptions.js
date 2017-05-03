@@ -1,7 +1,7 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Input, Select } from 'antd'
+import { Input } from 'antd'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -25,10 +25,6 @@ export default class SendOptions extends React.Component {
       <div>
         <div className='flex-sb'>
           <div style={{lineHeight: '22px', margin: '0 36px 0 0'}}>
-            <div className='flex'>
-              <i className='material-icons md-16'>account_balance</i>
-              <p>{this.t('wallet:spendFrom')}</p>
-            </div>
             {
               recipients.size === 1 && (
                 <div className='flex' style={{margin: '5px 0 0 0'}}>
@@ -51,42 +47,6 @@ export default class SendOptions extends React.Component {
             }
           </div>
           <div style={{flex: 1}}>
-            <div className='flex'>
-              <Select
-                onChange={(account) => this.send.setAccount(account)}
-                optionFilterProp='children'
-                size='small'
-                style={{flex: 1, margin: '0 10px 0 0'}}
-                value={fromAccount}
-              >
-                <Select.Option disabled={recipients.size > 1} value={null}>
-                  {this.t('wallet:any')}
-                </Select.Option>
-                <Select.Option value='*'>
-                  {this.t('wallet:default')}
-                </Select.Option>
-                {
-                  this.wallet.accounts.map((account) => (
-                    <Select.Option key={account} value={account}>
-                      {account}
-                    </Select.Option>
-                  ))
-                }
-              </Select>
-              <div style={{width: '200px'}}>
-                <Input
-                  addonAfter='XVC'
-                  addonBefore={this.t('wallet:balance')}
-                  defaultValue={
-                    new Intl.NumberFormat(this.gui.language, {
-                      maximumFractionDigits: 6
-                    }).format(0)
-                  }
-                  disabled
-                  size='small'
-                />
-              </div>
-            </div>
             {
               recipients.size === 1 && (
                 <div style={{flex: 1, margin: '5px 0 0 0'}}>

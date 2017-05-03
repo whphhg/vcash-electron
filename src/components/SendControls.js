@@ -40,7 +40,7 @@ export default class Send extends React.Component {
             okText={this.t('wallet:yes')}
             onConfirm={() => this.send.confirm()}
             onVisibleChange={this.togglePopconfirm}
-            placement='bottomLeft'
+            placement='bottom'
             title={this.t('wallet:sendConfirm')}
             visible={this.popconfirm}
           >
@@ -84,6 +84,7 @@ export default class Send extends React.Component {
                   <i className='material-icons md-16'>done</i>
                 </div>
               }
+              disabled
               size='small'
               style={{margin: '0 20px 0 5px'}}
               unCheckedChildren={
@@ -101,6 +102,7 @@ export default class Send extends React.Component {
                   <i className='material-icons md-16'>done</i>
                 </div>
               }
+              disabled
               size='small'
               style={{margin: '0 0 0 5px'}}
               unCheckedChildren={

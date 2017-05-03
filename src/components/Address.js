@@ -77,7 +77,7 @@ export default class Address extends React.Component {
                 {
                   dataIndex: 'txid',
                   title: this.t('wallet:transactionId'),
-                  width: 290,
+                  width: 275,
                   render: (txid, record) => (
                     <p className='text-mono'>
                       {

@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Input, Table } from 'antd'
+import { Input, Select, Table } from 'antd'
 
 /** Required components. */
 import Address from './Address'
@@ -57,10 +57,20 @@ export default class Addresses extends React.Component {
               height: '100%'
             }}
           >
-            <div className='flex' style={{margin: '0 10px 0 10px'}}>
-              <AddressNew />
-              <div style={{margin: '0 5px 0 5px'}}><KeyImport /></div>
-              <KeyDump />
+            <div className='flex-sb'>
+              <div className='flex' style={{margin: '0 0 0 10px'}}>
+                <AddressNew />
+                <div style={{margin: '0 5px 0 5px'}}><KeyImport /></div>
+                <KeyDump />
+              </div>
+              <Input
+                onChange={(e) => this.wallet.setSearch('addresses', e.target.value)}
+                placeholder={this.t('wallet:searchAddresses')}
+                prefix={<i className='material-icons md-14'>search</i>}
+                size='small'
+                style={{margin: '0 10px 0 0', width: '290px'}}
+                value={this.wallet.search.addresses.value}
+              />
             </div>
             <div className='flex' style={{margin: '0 10px 0 10px'}}>
               <SendControls />
@@ -75,14 +85,54 @@ export default class Addresses extends React.Component {
           }}
         >
           <div style={{margin: '10px'}}>
-            <Input
-              onChange={(e) => this.wallet.setSearch('addresses', e.target.value)}
-              placeholder={this.t('wallet:searchAddresses')}
-              prefix={<i className='material-icons md-14'>search</i>}
-              size='small'
-              style={{margin: '0 0 10px 0', width: '270px'}}
-              value={this.wallet.search.addresses.value}
-            />
+            <div className='flex-sb' style={{margin: '0 0 10px 0'}}>
+              <div style={{lineHeight: '22px', margin: '0 36px 0 0'}}>
+                <div className='flex'>
+                  <i className='material-icons md-16'>account_balance</i>
+                  <p>{this.t('wallet:spendFrom')}</p>
+                </div>
+              </div>
+              <div style={{flex: 1}}>
+                <div className='flex'>
+                  <Select
+                    onChange={(account) => this.send.setAccount(account)}
+                    optionFilterProp='children'
+                    size='small'
+                    style={{flex: 1, margin: '0 5px 0 0'}}
+                    value={this.send.fromAccount}
+                  >
+                    <Select.Option
+                      disabled={this.send.recipients.size > 1}
+                      value={null}
+                    >
+                      {this.t('wallet:any')}
+                    </Select.Option>
+                    <Select.Option value='*'>
+                      {this.t('wallet:default')}
+                    </Select.Option>
+                    {
+                      this.wallet.accounts.map((account) => (
+                        <Select.Option key={account} value={account}>
+                          {account}
+                        </Select.Option>
+                      ))
+                    }
+                  </Select>
+                  <div style={{width: '140px'}}>
+                    <Input
+                      defaultValue={
+                        new Intl.NumberFormat(this.gui.language, {
+                          maximumFractionDigits: 6
+                        }).format(0)
+                      }
+                      disabled
+                      size='small'
+                      suffix='XVC'
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
             <Table
               bordered
               columns={[
@@ -140,7 +190,7 @@ export default class Addresses extends React.Component {
               style={{
                 display: 'grid',
                 gridGap: '10px',
-                gridTemplateRows: '1fr 175px',
+                gridTemplateRows: '1fr 145px',
                 height: '100%'
               }}
             >

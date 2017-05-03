@@ -173,7 +173,9 @@ export default class KeyDump extends React.Component {
         visible={this.popover}
       >
         <Button disabled={this.info.isLocked === true} size='small'>
-          {this.t('wallet:privateKeyDump')}
+          <div style={{margin: '2px 0 0 0'}}>
+            <i className='material-icons md-16'>arrow_upward</i>
+          </div>
         </Button>
       </Popover>
     )
