@@ -1,6 +1,7 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
+import { Progress } from 'antd'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
@@ -32,6 +33,27 @@ export default class Footer extends React.Component {
                   }
                 </span>
               </p>
+              {
+                this.info.syncPercent < 100 && (
+                  <div className='flex'>
+                    <div style={{width: '90px'}}>
+                      <Progress
+                        percent={this.info.syncPercent}
+                        showInfo={false}
+                        status='active'
+                        strokeWidth={5}
+                      />
+                    </div>
+                    <p style={{margin: '0 10px 0 10px'}}>
+                      {
+                        new Intl.NumberFormat(this.gui.language, {
+                          maximumFractionDigits: 2
+                        }).format(this.info.syncPercent)
+                      }%
+                    </p>
+                  </div>
+                )
+              }
               <i className='material-icons md-16'>settings_input_antenna</i>
               <p style={{margin: '0 10px 0 5px'}}>
                 <span style={{fontWeight: '500'}}>

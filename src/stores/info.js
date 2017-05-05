@@ -240,6 +240,20 @@ export default class Info {
   }
 
   /**
+   * Get blockchain sync percentage.
+   * @function syncPercent
+   * @return {number} Blockchain sync percentage.
+   */
+  @computed get syncPercent () {
+    const peersHeight = this.peers.reduce((height, peer) => {
+      if (peer.startingheight > height) height = peer.startingheight
+      return height
+    }, this.wallet.blocks)
+
+    return this.wallet.blocks / peersHeight * 100
+  }
+
+  /**
    * Get wallet info.
    * @function wallet
    * @return {object} Saved RPC response.
