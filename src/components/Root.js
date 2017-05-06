@@ -5,6 +5,7 @@ import { message, notification } from 'antd'
 
 /** Required components. */
 import Addresses from './Addresses'
+import Console from './Console'
 import Footer from './Footer'
 import Header from './Header'
 import Maintenance from './Maintenance'
@@ -38,6 +39,7 @@ class Root extends React.Component {
               }}
             >
               <Header />
+              <Console />
               <div>
                 <Route exact path='/:uid' component={Transactions} />
                 <Route path='/:uid/addresses' component={Addresses} />

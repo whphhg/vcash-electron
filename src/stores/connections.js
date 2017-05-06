@@ -88,7 +88,7 @@ class Connections {
     }, true)
 
     /** React to Alt-asd key presses. */
-    document.onkeydown = (e) => {
+    document.addEventListener('keydown', (e) => {
       if (e.altKey === true) {
         /** Alt-ad: Switch between previous and next connection. */
         if (e.keyCode === 65 || e.keyCode === 68) {
@@ -122,7 +122,7 @@ class Connections {
         /** Alt-s: Toggle connection manager. */
         if (e.keyCode === 83) this.toggleModal()
       }
-    }
+    }, false)
   }
 
   /**
