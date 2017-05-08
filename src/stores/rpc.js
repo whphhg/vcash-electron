@@ -19,12 +19,16 @@ export default class RPC {
       }
 
       /** Clear timeout on shut-down. */
-      if (active === false) clearTimeout(this.testTimeout)
+      if (active === false) {
+        clearTimeout(this.testTimeout)
+      }
     })
 
     /** Test execute() on SSH tunnel ready. */
     reaction(() => this.connection.status.tunnel, (tunnel) => {
-      if (tunnel === true) this.testExecute()
+      if (tunnel === true) {
+        this.testExecute()
+      }
     })
   }
 
@@ -70,6 +74,8 @@ export default class RPC {
         return callback(data, options)
       })
       .catch((error) => {
+        console.error('RPC:', error.message)
+
         /** Update connection status. */
         if (
           this.connection.status.rpc !== false ||
@@ -78,23 +84,17 @@ export default class RPC {
           this.setStatus(this.connection.uid, { rpc: false })
         }
 
-        /** Log error to the console. */
-        console.error('RPC:', error.message)
-
         /** Test execute every 5s until daemon is reachable. */
         this.testTimeout = setTimeout(() => { this.testExecute() }, 5 * 1000)
       })
   }
 
   /**
-   * Test execute() connectivity.
+   * Clear previous timeout id and test execute() using RPC getinfo.
    * @function testExecute
    */
   testExecute () {
-    /** Clear previous timeout id. */
     clearTimeout(this.testTimeout)
-
-    /** Try getinfo RPC method. */
     this.execute([{ method: 'getinfo', params: [] }], (response) => {})
   }
 }

@@ -41,6 +41,8 @@ export default class Addresses extends React.Component {
   }
 
   render () {
+    const { accountBalances, spendFrom } = this.wallet
+
     return (
       <div
         style={{
@@ -95,15 +97,15 @@ export default class Addresses extends React.Component {
               <div style={{flex: 1}}>
                 <div className='flex'>
                   <Select
-                    onChange={(account) => this.send.setAccount(account)}
+                    onChange={(account) => this.wallet.setSpendFrom(account)}
                     optionFilterProp='children'
                     size='small'
                     style={{flex: 1, margin: '0 5px 0 0'}}
-                    value={this.send.fromAccount}
+                    value={spendFrom}
                   >
                     <Select.Option
                       disabled={this.send.recipients.size > 1}
-                      value={null}
+                      value='#'
                     >
                       {this.t('wallet:any')}
                     </Select.Option>
@@ -120,14 +122,14 @@ export default class Addresses extends React.Component {
                   </Select>
                   <div style={{width: '140px'}}>
                     <Input
-                      defaultValue={
-                        new Intl.NumberFormat(this.gui.language, {
-                          maximumFractionDigits: 6
-                        }).format(0)
-                      }
                       disabled
                       size='small'
                       suffix='XVC'
+                      value={
+                        new Intl.NumberFormat(this.gui.language, {
+                          maximumFractionDigits: 6
+                        }).format(accountBalances[spendFrom])
+                      }
                     />
                   </div>
                 </div>

@@ -8,7 +8,7 @@ import { Button, Input } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('info', 'rpc') @observer
+@inject('rpc', 'wallet') @observer
 
 export default class WalletSeedDump extends React.Component {
   @observable error = false
@@ -17,13 +17,15 @@ export default class WalletSeedDump extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.info = props.info
     this.rpc = props.rpc
+    this.wallet = props.wallet
   }
 
   /** Clear seed when component unmounts. */
   componentWillUnmount () {
-    if (this.seed !== '') this.setSeed()
+    if (this.seed !== '') {
+      this.setSeed()
+    }
   }
 
   /**
@@ -62,19 +64,17 @@ export default class WalletSeedDump extends React.Component {
     this.rpc.execute([
       { method: 'dumpwalletseed', params: [] }
     ], (response) => {
-      /** Handle result. */
+      /** Set seed. */
       if (response[0].hasOwnProperty('result') === true) {
         this.setSeed(response[0].result)
       }
 
-      /** Handle error. */
+      /** Set error. */
       if (response[0].hasOwnProperty('error') === true) {
-        /** Convert error code to string. */
         switch (response[0].error.code) {
-          /** -4 = error_code_wallet_error */
+          /** error_code_wallet_error */
           case -4:
-            this.setError('notDeterministic')
-            break
+            return this.setError('notDeterministic')
         }
       }
     })
@@ -104,7 +104,10 @@ export default class WalletSeedDump extends React.Component {
             }
           </p>
           <Button
-            disabled={this.errorStatus !== false || this.info.isLocked === true}
+            disabled={
+              this.errorStatus !== false ||
+              this.wallet.isLocked === true
+            }
             onClick={this.dumpSeed}
           >
             {this.t('wallet:seedDump')}

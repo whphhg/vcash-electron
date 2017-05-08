@@ -13,7 +13,7 @@ import Connections from './components/Connections'
 import Root from './components/Root'
 import Welcome from './components/Welcome'
 
-/** MobX stores. */
+/** Required store instances. */
 import connections from './stores/connections'
 import gui from './stores/gui'
 import rates from './stores/rates'

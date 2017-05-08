@@ -10,13 +10,11 @@ export default class Stats {
 
   /**
    * @constructor
-   * @param {object} info - Info store.
    * @param {object} rpc - RPC store.
    * @param {object} wallet - Wallet store.
    * @property {number|null} updateTimeout - setNetworkByMinute timeout id.
    */
-  constructor (info, rpc, wallet) {
-    this.info = info
+  constructor (rpc, wallet) {
     this.rpc = rpc
     this.wallet = wallet
     this.updateTimeout = null
@@ -30,29 +28,10 @@ export default class Stats {
       }
 
       /** Clear timeout when RPC becomes inactive */
-      if (ready === false) clearTimeout(this.updateTimeout)
+      if (ready === false) {
+        clearTimeout(this.updateTimeout)
+      }
     })
-  }
-
-  /**
-   * Push current network hash rate, pow and pos difficulties
-   * to the network stats by minute array.
-   * @function setNetworkByMinute
-   */
-  @action setNetworkByMinute () {
-    this.networkByMinute.push({
-      date: new Date().getTime(),
-      posDifficulty: this.info.difficulty['proof-of-stake'],
-      powDifficulty: this.info.difficulty['proof-of-work'],
-      hashRate: this.info.mining.networkhashps
-    })
-
-    /** Set new timeout only while RPC is ready. */
-    if (this.rpc.ready === true) {
-      this.updateTimeout = setTimeout(() => {
-        this.setNetworkByMinute()
-      }, 60 * 1000)
-    }
   }
 
   /**
@@ -201,5 +180,26 @@ export default class Stats {
     }
 
     return rewardSpread
+  }
+
+  /**
+   * Push current network hash rate, PoW and PoS difficulties
+   * to the network stats by minute array.
+   * @function setNetworkByMinute
+   */
+  @action setNetworkByMinute () {
+    this.networkByMinute.push({
+      date: new Date().getTime(),
+      posDifficulty: this.wallet.info.getdifficulty['proof-of-stake'],
+      powDifficulty: this.wallet.info.getdifficulty['proof-of-work'],
+      hashRate: this.wallet.info.getmininginfo.networkhashps
+    })
+
+    /** Set new timeout only while RPC is ready. */
+    if (this.rpc.ready === true) {
+      this.updateTimeout = setTimeout(() => {
+        this.setNetworkByMinute()
+      }, 60 * 1000)
+    }
   }
 }

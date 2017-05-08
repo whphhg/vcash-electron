@@ -8,17 +8,27 @@ export default class Wallet {
   /**
    * Observable properties.
    * @property {map} addresses - Wallet label and change addresses.
-   * @property {map} txs - Wallet transactions.
+   * @property {boolean} isBlending - Blending status.
+   * @property {boolean} isEncrypted - Encrypted status.
+   * @property {boolean} isLocked - Locked status.
+   * @property {map} responses - Saved RPC info responses.
    * @property {object} search - Addresses and txs search keywords.
-   * @property {string|null} viewing - Transaction being viewed.
+   * @property {string} spendFrom - Spend funds from this account.
+   * @property {map} txs - Wallet txs.
+   * @property {string|null} viewing - Tx being viewed.
    * @property {string|null} viewingQueue - Just sent tx waiting to be viewed.
    */
   @observable addresses = observable.map({})
-  @observable txs = observable.map({})
+  @observable isBlending = false
+  @observable isEncrypted = false
+  @observable isLocked = false
+  @observable responses = observable.map({})
   @observable search = {
     addresses: { value: '', keywords: [], timeoutId: null },
     txs: { value: '', keywords: [], timeoutId: null }
   }
+  @observable spendFrom = '#'
+  @observable txs = observable.map({})
   @observable viewing = null
   @observable viewingQueue = null
 
@@ -27,32 +37,91 @@ export default class Wallet {
    * @param {object} gui - GUI store.
    * @param {object} rates - Rates store.
    * @param {object} rpc - RPC store.
-   * @property {number|null} updateTimeout - getWallet() timeout id.
    * @property {string} lastBlock - Last looked up block.
+   * @property {object} timeouts - Timeout ids.
    */
   constructor (gui, rates, rpc) {
     this.gui = gui
     this.rates = rates
     this.rpc = rpc
-    this.updateTimeout = null
     this.lastBlock = ''
+    this.timeouts = {
+      getNetworkInfo: null,
+      getWallet: null,
+      getWalletInfo: null
+    }
 
+    /** Begin updating when RPC becomes active. */
     reaction(() => this.rpc.ready, (ready) => {
-      /** Begin updating when RPC becomes active. */
-      if (ready === true) this.getWallet(true, true)
+      /** Start update loops & update lock status. */
+      if (ready === true) {
+        this.restart('getNetworkInfo')
+        this.restart('getWalletInfo')
+        this.getWallet(true, true)
+        this.getLockStatus()
+      }
 
-      /** Clear timeout when RPC becomes inactive */
-      if (ready === false) clearTimeout(this.updateTimeout)
+      /** Clear timeouts when RPC becomes inactive. */
+      if (ready === false) {
+        Object.keys(this.timeouts).forEach((id) => {
+          clearTimeout(this.timeouts[id])
+        })
+      }
+    })
+
+    /** Restart wallet info update loop when the wallet gets unlocked. */
+    reaction(() => this.isLocked, (isLocked) => {
+      if (isLocked === false) {
+        this.restart('getWalletInfo')
+
+        /**
+         * Restart network info update loop 5s after unlocking if
+         * the default wallet address is not yet set.
+         */
+        if (this.responses.has('getincentiveinfo') === true) {
+          const info = this.responses.get('getincentiveinfo')
+
+          if (info.walletaddress === '') {
+            setTimeout(() => { this.restart('getNetworkInfo') }, 5 * 1000)
+          }
+        }
+      }
     })
 
     /** Check if there's a sent transaction waiting to be viewed. */
     reaction(() => this.txs.size, (size) => {
-      if (this.viewingQueue !== null) this.setViewing(this.viewingQueue)
+      if (this.viewingQueue !== null) {
+        this.setViewing(this.viewingQueue)
+      }
     })
   }
 
   /**
-   * Get a list of account names in alphabetical order.
+   * Get a list of account balances.
+   * @function accountBalances
+   * @return {object} Account balances.
+   */
+  @computed get accountBalances () {
+    return this.addresses.values().reduce((balances, address) => {
+      /** Skip change addresses. */
+      if (address.account !== null) {
+        const account = address.account === ''
+          ? '*'
+          : address.account
+
+        if (balances.hasOwnProperty(account) === false) {
+          balances[account] = parseFloat(address.balance)
+        } else {
+          balances[account] += parseFloat(address.balance)
+        }
+      }
+
+      return balances
+    }, { '#': this.info.getinfo.balance })
+  }
+
+  /**
+   * Get a list of accounts in alphabetical order.
    * @function accounts
    * @return {array} Account list.
    */
@@ -97,44 +166,52 @@ export default class Wallet {
     this.addresses.forEach((address) => {
       let keywordMatches = 0
 
-      const balance = new Intl.NumberFormat(this.gui.language, {
-        minimumFractionDigits: 6,
-        maximumFractionDigits: 6
-      }).format(address.balance)
+      if (
+        this.spendFrom === '#' ||
+        this.spendFrom === address.account || (
+          this.spendFrom === '*' &&
+          address.account === ''
+        )
+      ) {
+        const balance = new Intl.NumberFormat(this.gui.language, {
+          minimumFractionDigits: 6,
+          maximumFractionDigits: 6
+        }).format(address.balance)
 
-      /** Increment keywordMatches by 1 each time a keyword matches. */
-      this.search.addresses.keywords.forEach((keyword) => {
-        if (
-          balance.indexOf(keyword) > -1 ||
-          address.address.indexOf(keyword) > -1
-         ) {
-          keywordMatches += 1
-        }
-      })
+        /** Increment keywordMatches by 1 each time a keyword matches. */
+        this.search.addresses.keywords.forEach((keyword) => {
+          if (
+            balance.indexOf(keyword) > -1 ||
+            address.address.indexOf(keyword) > -1
+           ) {
+            keywordMatches += 1
+          }
+        })
 
-      /** Push txs with match count equal to the number of keywords. */
-      if (keywordMatches === this.search.addresses.keywords.length) {
-        let outputs = []
-        let spent = 0
+        /** Push addresses with match count equal to the number of keywords. */
+        if (keywordMatches === this.search.addresses.keywords.length) {
+          let outputs = []
+          let spent = 0
 
-        if (address.outputs.length > 0) {
-          address.outputs.forEach((output) => {
-            if (output.spentTxid !== '') spent += 1
+          if (address.outputs.length > 0) {
+            address.outputs.forEach((output) => {
+              if (output.spentTxid !== '') spent += 1
 
-            outputs.push({
-              ...output,
-              key: shortUid(),
-              color: output.spentTxid === '' ? 'green' : 'red'
+              outputs.push({
+                ...output,
+                key: shortUid(),
+                color: output.spentTxid === '' ? 'green' : 'red'
+              })
             })
+          }
+
+          addresses.push({
+            ...address,
+            outputs,
+            received: outputs.length,
+            spent
           })
         }
-
-        addresses.push({
-          ...address,
-          outputs,
-          received: outputs.length,
-          spent
-        })
       }
     })
 
@@ -142,25 +219,27 @@ export default class Wallet {
   }
 
   /**
-   * Get generated transactions.
+   * Get generated txs.
    * @function generated
-   * @return {array} Generated transactions.
+   * @return {array} Generated txs.
    */
   @computed get generated () {
     let generated = []
 
     this.txs.forEach((data, txid) => {
-      if (data.hasOwnProperty('generated') === true) generated.push(data)
+      if (data.hasOwnProperty('generated') === true) {
+        generated.push(data)
+      }
     })
 
-    /** Return generated in ASC order. */
+    /** Return generated txs in ASC order. */
     return generated.reverse()
   }
 
   /**
-   * Get pending generated transactions.
+   * Get pending generated txs.
    * @function generatedPending
-   * @return {map} Generated pending transactions.
+   * @return {map} Generated pending txs.
    */
   @computed get generatedPending () {
     return this.generated.reduce((pending, tx) => {
@@ -170,6 +249,55 @@ export default class Wallet {
 
       return pending
     }, new Map())
+  }
+
+  /**
+   * Get RPC info responses.
+   * @function info
+   * @return {object} RPC response.
+   */
+  @computed get info () {
+    return this.responses.entries().reduce((responses, [key, value]) => {
+      responses[key] = value
+      return responses
+    }, {
+      'chainblender': {
+        blendstate: 'none',
+        balance: 0,
+        denominatedbalance: 0,
+        nondenominatedbalance: 0,
+        blendedbalance: 0,
+        blendedpercentage: 0
+      }
+    })
+  }
+
+  /**
+   * Get connected peers.
+   * @function peers
+   * @return {array} Saved RPC response.
+   */
+  @computed get peers () {
+    if (this.responses.has('getpeerinfo') === true) {
+      const peerInfo = this.responses.get('getpeerinfo')
+
+      return peerInfo.reduce((peers, peer) => {
+        if (peer.lastsend !== 0 && peer.startingheight !== -1) {
+          peers.push({
+            ...peer,
+            key: shortUid(),
+            version: peer.subver.match(/\/(.*)\(/).pop().split(':')[1],
+            os: peer.subver.split(' ')[1].replace(')/', ''),
+            ip: peer.addr.split(':')[0],
+            port: peer.addr.split(':')[1]
+          })
+        }
+
+        return peers
+      }, [])
+    }
+
+    return []
   }
 
   /**
@@ -197,9 +325,23 @@ export default class Wallet {
   }
 
   /**
-   * Get transactions data.
+   * Get blockchain sync percentage.
+   * @function syncPercent
+   * @return {number} Blockchain sync percentage.
+   */
+  @computed get syncPercent () {
+    const peersHeight = this.peers.reduce((height, peer) => {
+      if (peer.startingheight > height) return peer.startingheight
+      return height
+    }, this.info.getinfo.blocks)
+
+    return this.info.getinfo.blocks / peersHeight * 100
+  }
+
+  /**
+   * Get txs data.
    * @function txsData
-   * @return {array} Transactions data.
+   * @return {array} Txs data.
    */
   @computed get txsData () {
     let txs = []
@@ -247,7 +389,7 @@ export default class Wallet {
       }
     })
 
-    /** Return transactions in ASC order. */
+    /** Return txs in ASC order. */
     return txs.reverse()
   }
 
@@ -306,33 +448,90 @@ export default class Wallet {
   }
 
   /**
+   * Set blending status.
+   * @function setBlendingStatus
+   */
+  @action setBlendingStatus () {
+    this.isBlending = !this.isBlending
+  }
+
+  /**
+   * Set RPC info responses.
+   * @function setInfo
+   * @param {array} responses - RPC responses.
+   * @param {array} options - RPC options.
+   */
+  @action setInfo (responses, options) {
+    const overwrite = ['getnetworkinfo', 'getpeerinfo']
+
+    responses.forEach((response, index) => {
+      if (response.hasOwnProperty('result') === true) {
+        /** Update previous response or set a new one. */
+        if (
+          this.responses.has(options[index].method) === true &&
+          overwrite.includes(options[index].method) === false
+        ) {
+          let saved = this.responses.get(options[index].method)
+
+          for (let i in response.result) {
+            saved[i] = response.result[i]
+          }
+        } else {
+          this.responses.set(options[index].method, response.result)
+        }
+      }
+    })
+  }
+
+  /**
+   * Set wallet lock status.
+   * @function setLockStatus
+   * @param {boolean} isEncrypted - Encryption status.
+   * @param {boolean} isLocked - Lock status.
+   */
+  @action setLockStatus (isEncrypted, isLocked) {
+    this.isEncrypted = isEncrypted
+    this.isLocked = isLocked
+  }
+
+  /**
    * Set searching keywords.
    * @function setSearch
    * @param {string} key - Search object key.
    * @param {string} value - Input element value.
    */
   @action setSearch (key, value) {
+    /** Clear previous timeout id. */
     clearTimeout(this.search[key].timeoutId)
 
-    /** Update input string. */
+    /** Update search string. */
     this.search[key].value = value
 
-    /** Update keywords in 1s, unless canceled before. */
+    /** Update keywords array in 1s, unless canceled before. */
     this.search[key].timeoutId = setTimeout(action('setSearch', () => {
       this.search[key].keywords = value.match(/[^ ]+/g) || []
     }), 1 * 1000)
   }
 
   /**
-   * Set wallet transactions and addresses.
+   * Set the account from which the coins will be spent.
+   * @function setSpendFrom
+   * @param {string} account - Account name.
+   */
+  @action setSpendFrom (account = '#') {
+    this.spendFrom = account
+  }
+
+  /**
+   * Set wallet txs and addresses.
    * @function setWallet
-   * @param {array} transactions - Transactions lookups.
+   * @param {array} txs - Txs lookups.
    * @param {array} addresses - Addresses lookup.
    * @param {array} io - Inputs and outputs lookups.
    * @param {array} options - io RPC request options.
    */
   @action setWallet (
-    transactions = null,
+    txs = null,
     addresses = null,
     io = null,
     options = null
@@ -363,7 +562,7 @@ export default class Wallet {
     if (io !== null) {
       io.forEach((io, index) => {
         if (io.hasOwnProperty('result') === true) {
-          /** Create a map of transactions inputs. */
+          /** Create a map of txs inputs. */
           if (options[index].method === 'gettransaction') {
             inputTxs.set(io.result.txid, io.result)
           }
@@ -386,9 +585,9 @@ export default class Wallet {
       })
     }
 
-    /** Go through transactions and make adjustments. */
-    if (transactions !== null) {
-      transactions.forEach((tx) => {
+    /** Go through txs and make adjustments. */
+    if (txs !== null) {
+      txs.forEach((tx) => {
         tx = tx.result
 
         /** Get saved status. */
@@ -407,7 +606,7 @@ export default class Wallet {
         /** Skip updating if confirmations haven't changed. */
         if (isSaved === true && save.confirmations === tx.confirmations) return
 
-        /** Check inputs and outputs of new transactions. */
+        /** Check inputs and outputs of new txs. */
         if (isSaved === false) {
           /** Check inputs. */
           save.vin.forEach((vin) => {
@@ -517,9 +716,9 @@ export default class Wallet {
           }
         }
 
-        /** Process transactions with details property. */
+        /** Process txs with details property. */
         if (tx.hasOwnProperty('details') === true) {
-          /** Process PoW, PoS and Incentive reward transactions. */
+          /** Process PoW, PoS and Incentive reward txs. */
           if (tx.hasOwnProperty('generated') === true) {
             /** Proof-of-Stake reward. */
             if (tx.vout[0].scriptPubKey.type === 'nonstandard') {
@@ -528,12 +727,18 @@ export default class Wallet {
 
             if (tx.vin[0].hasOwnProperty('coinbase') === true) {
               /** Proof-of-Work reward. */
-              if (tx.details[0].address === tx.vout[0].scriptPubKey.addresses[0]) {
+              if (
+                tx.details[0].address ===
+                tx.vout[0].scriptPubKey.addresses[0]
+              ) {
                 save.category = 'miningReward'
               }
 
               /** Incentive reward. */
-              if (tx.details[0].address === tx.vout[1].scriptPubKey.addresses[0]) {
+              if (
+                tx.details[0].address ===
+                tx.vout[1].scriptPubKey.addresses[0]
+              ) {
                 save.category = 'incentiveReward'
               }
             }
@@ -554,7 +759,7 @@ export default class Wallet {
             }
           }
 
-          /** Process Received and Sent to self transactions. */
+          /** Process Received and Sent to self txs. */
           if (tx.hasOwnProperty('generated') === false) {
             /** Received. */
             if (tx.amount !== 0) {
@@ -650,15 +855,15 @@ export default class Wallet {
         save.confirmations = tx.confirmations
 
         /**
-         * Add unsaved transactions to the map,
-         * saved transactions update changed properties only.
+         * Add unsaved txs to the map,
+         * saved txs update changed properties only.
          */
         if (isSaved === false) {
           this.txs.set(save.txid, save)
         }
       })
 
-      /** Open notifications for pending transactions. */
+      /** Open notifications for pending txs. */
       notifications.pending.forEach((total, category) => {
         /** Convert the amount to local notation. */
         total = new Intl.NumberFormat(this.gui.language, {
@@ -722,14 +927,59 @@ export default class Wallet {
   }
 
   /**
-   * Get wallet transactions and addresses.
+   * Get wallet lock status.
+   * @function getLockStatus
+   */
+  getLockStatus () {
+    this.rpc.execute([
+      { method: 'walletpassphrase', params: [] }
+    ], (response) => {
+      switch (response[0].error.code) {
+        /** error_code_wallet_wrong_enc_state (unencrypted) */
+        case -15:
+          return this.setLockStatus(false, false)
+
+        /** error_code_wallet_already_unlocked (encrypted and unlocked) */
+        case -17:
+          return this.setLockStatus(true, false)
+
+        /** error_code_invalid_params (encrypted and locked) */
+        case -32602:
+          return this.setLockStatus(true, true)
+      }
+    })
+  }
+
+  /**
+   * Get network info.
+   * @function getNetworkInfo
+   */
+  getNetworkInfo () {
+    this.rpc.execute([
+      { method: 'getnetworkinfo', params: [] },
+      { method: 'getpeerinfo', params: [] },
+      { method: 'getincentiveinfo', params: [] },
+      { method: 'getmininginfo', params: [] },
+      { method: 'getdifficulty', params: [] }
+    ], (response, options) => {
+      this.setInfo(response, options)
+
+      /** Set a new timeout for 60 seconds. */
+      this.timeouts.getNetworkInfo = setTimeout(() => {
+        this.getNetworkInfo()
+      }, 60 * 1000)
+    })
+  }
+
+  /**
+   * Get wallet txs and addresses.
    * @param {boolean} fromGenesis - Get txs from genesis or last block.
    * @param {boolean} addresses - Get addresses.
    * @function getWallet
    */
   getWallet (fromGenesis = false, addresses = false) {
     /** Clear previous timeout id. */
-    clearTimeout(this.updateTimeout)
+    clearTimeout(this.timeouts.getWallet)
 
     /** Default RPC request options. */
     let options = [
@@ -765,7 +1015,7 @@ export default class Wallet {
       this.lastBlock = lsb.lastblock
 
       /** Set a new timeout for 10 seconds. */
-      this.updateTimeout = setTimeout(() => {
+      this.timeouts.getWallet = setTimeout(() => {
         this.getWallet()
       }, 10 * 1000)
 
@@ -777,7 +1027,7 @@ export default class Wallet {
         })
       }
 
-      /** Add pending generated transactions below 220 confirmations. */
+      /** Add pending generated txs below 220 confirmations. */
       if (this.generatedPending.size > 0) {
         this.generatedPending.forEach((tx) => {
           options.set(tx.txid, {
@@ -787,14 +1037,14 @@ export default class Wallet {
         })
       }
 
-      /** Sort transactions received from lsb by time ASC. */
+      /** Sort txs received from lsb by time ASC. */
       lsb.transactions.sort((a, b) => {
         if (a.time < b.time) return -1
         if (a.time > b.time) return 1
         return 0
       })
 
-      /** Add transactions received from lsb, excluding orphaned. */
+      /** Add txs received from lsb, excluding orphaned. */
       lsb.transactions.forEach((tx) => {
         if (tx.confirmations !== -1) {
           options.set(tx.txid, {
@@ -810,20 +1060,20 @@ export default class Wallet {
           this.setWallet(null, addresses)
         }
       } else {
-        this.rpc.execute([...options.values()], (transactions) => {
+        this.rpc.execute([...options.values()], (txs) => {
           let options = new Map()
 
-          transactions.forEach((tx) => {
+          txs.forEach((tx) => {
             tx = tx.result
 
-            /** Update ztlock status of transactions in mempool. */
+            /** Update ztlock status of txs in mempool. */
             if (Array.isArray(mempool) === false) {
               if (mempool.hasOwnProperty(tx.txid) === true) {
                 tx.ztlock = mempool[tx.txid].ztlock
               }
             }
 
-            /** Lookup inputs and outputs of unsaved transactions. */
+            /** Lookup inputs and outputs of unsaved txs. */
             if (this.txs.has(tx.txid) === false) {
               /** Lookup inputs, excluding coinbase. */
               tx.vin.forEach((input) => {
@@ -853,14 +1103,42 @@ export default class Wallet {
 
           /** Return txs and addresses if there are no further lookups. */
           if (options.size === 0) {
-            this.setWallet(transactions, addresses)
+            this.setWallet(txs, addresses)
           } else {
             this.rpc.execute([...options.values()], (io, options) => {
-              this.setWallet(transactions, addresses, io, options)
+              this.setWallet(txs, addresses, io, options)
             })
           }
         })
       }
     })
+  }
+
+  /**
+   * Get wallet info.
+   * @function getWalletInfo
+   */
+  getWalletInfo () {
+    this.rpc.execute([
+      { method: 'getinfo', params: [] },
+      { method: 'chainblender', params: ['info'] }
+    ], (response, options) => {
+      this.setInfo(response, options)
+
+      /** Set a new timeout for 10 seconds. */
+      this.timeouts.getWalletInfo = setTimeout(() => {
+        this.getWalletInfo()
+      }, 10 * 1000)
+    })
+  }
+
+  /**
+   * Clear previous timeout id and restart the provided update loop.
+   * @function restart
+   * @param {string} timeout - Timeout key.
+   */
+  restart (timeout) {
+    clearTimeout(this.timeouts[timeout])
+    this[timeout]()
   }
 }

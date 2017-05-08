@@ -18,9 +18,7 @@ i18next
     },
     load: 'current',
     languages: ['en', 'sl'],
-    interpolation: {
-      escapeValue: false
-    }
+    interpolation: { escapeValue: false }
   })
 
 export default i18next

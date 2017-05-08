@@ -24,7 +24,9 @@ export default class Console extends React.Component {
 
     /** React to Alt-c key press and toggle console. */
     document.onkeydown = (e) => {
-      if (e.altKey === true && e.keyCode === 67) this.toggleModal()
+      if (e.altKey === true && e.keyCode === 67) {
+        this.toggleModal()
+      }
     }
   }
 
@@ -50,7 +52,7 @@ export default class Console extends React.Component {
       try {
         return command.length > 1
           ? JSON.parse(command[1])
-          : ['']
+          : []
       } catch (e) {
         return null
       }
@@ -133,9 +135,7 @@ export default class Console extends React.Component {
           >
             {
               this.responses.map((response) => (
-                <pre key={shortUid()}>
-                  {JSON.stringify(response, null, 2)}
-                </pre>
+                <pre key={shortUid()}>{JSON.stringify(response, null, 2)}</pre>
               ))
             }
           </div>

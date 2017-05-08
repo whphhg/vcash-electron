@@ -42,14 +42,18 @@ class Connections extends React.Component {
           }
 
           if (viewing.rpc === true) {
-            if (this.connections.modal === true) this.connections.toggleModal()
+            if (this.connections.modal === true) {
+              this.connections.toggleModal()
+            }
 
             /** Redirect to /:uid in 100ms. */
             setTimeout(() => {
               this.props.history.push(viewing.uid)
             }, 0.1 * 1000)
           } else {
-            if (this.connections.modal === false) this.connections.toggleModal()
+            if (this.connections.modal === false) {
+              this.connections.toggleModal()
+            }
           }
         }
       }

@@ -28,7 +28,7 @@ export default class SendRecipient extends React.Component {
   }
 
   render () {
-    const { local, average } = this.rates
+    const { average, local } = this.rates
 
     return (
       <div>

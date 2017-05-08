@@ -8,7 +8,7 @@ import { AutoComplete, Button, Input, Popover, message } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('info', 'rpc', 'wallet') @observer
+@inject('rpc', 'wallet') @observer
 
 export default class KeyImport extends React.Component {
   @observable account = ''
@@ -20,18 +20,21 @@ export default class KeyImport extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.info = props.info
     this.rpc = props.rpc
     this.wallet = props.wallet
 
     /** Clear previous error on private key change. */
     reaction(() => this.privateKey, (privateKey) => {
-      if (privateKey !== '') this.setError()
+      if (privateKey !== '') {
+        this.setError()
+      }
     })
 
     /** Clear private key when popover closes. */
     reaction(() => this.popover, (popover) => {
-      if (popover === false && this.privateKey !== '') this.setPrivateKey()
+      if (popover === false && this.privateKey !== '') {
+        this.setPrivateKey()
+      }
     })
   }
 
@@ -41,9 +44,9 @@ export default class KeyImport extends React.Component {
    * @return {string|false} Current error or false if none.
    */
   @computed get errorStatus () {
-    if (this.account.match(/^[a-zA-Z0-9 -]{0,100}$/) === null) {
-      return 'invalidCharacters'
-    }
+    if (
+      this.account.match(/^[a-zA-Z0-9 -]{0,100}$/) === null
+    ) return 'invalidCharacters'
 
     if (this.privateKey.length < 51) return 'incompleteKey'
     if (this.error !== false) return this.error
@@ -96,7 +99,7 @@ export default class KeyImport extends React.Component {
    * @function togglePopover
    */
   @action togglePopover = () => {
-    if (this.info.isLocked === false) {
+    if (this.wallet.isLocked === false) {
       this.popover = !this.popover
     }
   }
@@ -115,31 +118,26 @@ export default class KeyImport extends React.Component {
       /** Re-enable the button and hide the loading indicator. */
       this.toggleLoading()
 
-      /** Handle result. */
+      /** Close popover, update wallet & display a success message. */
       if (response[0].hasOwnProperty('result') === true) {
-        /** Close popover if still open. */
-        if (this.popover === true) this.togglePopover()
+        if (this.popover === true) {
+          this.togglePopover()
+        }
 
-        /** Get txs that use the imported address and update address list. */
         this.wallet.getWallet(true, true)
-
-        /** Display a success message. */
         message.success(this.t('wallet:privateKeyImported'), 6)
       }
 
-      /** Handle error. */
+      /** Set error. */
       if (response[0].hasOwnProperty('error') === true) {
-        /** Convert error code to string. */
         switch (response[0].error.code) {
-          /** -4 = error_code_wallet_error */
+          /** error_code_wallet_error */
           case -4:
-            this.setError('isMine')
-            break
+            return this.setError('isMine')
 
-          /** -5 = error_code_invalid_address_or_key */
+          /** error_code_invalid_address_or_key */
           case -5:
-            this.setError('invalidKey')
-            break
+            return this.setError('invalidKey')
         }
       }
     })
@@ -202,7 +200,7 @@ export default class KeyImport extends React.Component {
         trigger='click'
         visible={this.popover}
       >
-        <Button disabled={this.info.isLocked === true} size='small'>
+        <Button disabled={this.wallet.isLocked === true} size='small'>
           <div style={{margin: '2px 0 0 0'}}>
             <i className='material-icons md-16'>arrow_downward</i>
           </div>

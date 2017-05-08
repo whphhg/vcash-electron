@@ -28,19 +28,16 @@ export default class Transaction extends React.Component {
     this.rpc.execute([
       { method: 'ztlock', params: [this.wallet.viewing] }
     ], (response) => {
-      /** Handle result. */
+      /** Update txs ztlock status & display a success message. */
       if (response[0].hasOwnProperty('result') === true) {
-        /** Update txs ztlock status. */
         this.wallet.getWallet()
-
-        /** Display a success message. */
         message.success(this.t('wallet:transactionLocked'), 6)
       }
     })
   }
 
   render () {
-    const { local, average } = this.rates
+    const { average, local } = this.rates
     const { viewing, viewingTx } = this.wallet
 
     if (viewing === null) return null

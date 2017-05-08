@@ -7,14 +7,14 @@ import { Button, Tooltip, message } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('info', 'rpc') @observer
+@inject('rpc', 'wallet') @observer
 
 export default class WalletLock extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.info = props.info
     this.rpc = props.rpc
+    this.wallet = props.wallet
   }
 
   /**
@@ -25,21 +25,19 @@ export default class WalletLock extends React.Component {
     this.rpc.execute([
       { method: 'walletlock', params: [] }
     ], (response) => {
-      /** Handle result. */
+      /** Update lock status and display a success message. */
       if (response[0].hasOwnProperty('result') === true) {
-        /** Update lock status. */
-        this.info.getLockStatus()
-
-        /** Display a success message. */
+        this.wallet.getLockStatus()
         message.success(this.t('wallet:locked'), 6)
       }
     })
   }
 
   render () {
-    const { isEncrypted, isLocked } = this.info
-
-    if (isEncrypted === false || isLocked === true) return null
+    if (
+      this.wallet.isEncrypted === false ||
+      this.wallet.isLocked === true
+    ) return null
     return (
       <Tooltip placement='bottomRight' title={this.t('wallet:unlocked')}>
         <Button onClick={this.lock} size='small' type='primary'>

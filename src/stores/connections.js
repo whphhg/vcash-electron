@@ -12,7 +12,6 @@ import gui from './gui'
 import rates from './rates'
 
 /** Store classes. */
-import Info from './info'
 import RPC from './rpc'
 import Send from './send'
 import Stats from './stats'
@@ -66,18 +65,27 @@ class Connections {
 
     /** Always have one connection available and perform auto-start. */
     reaction(() => this.configs.size, (size) => {
-      if (size === 0) this.add()
+      if (size === 0) {
+        this.add()
+      }
 
       /**
        * Auto-start the first connection if it's local or the viewing
        * connection if it's first in this.uids.
        */
-      if (size > 0 && (this.viewing === '' || this.viewing === this.uids[0])) {
+      if (
+        size > 0 && (
+          this.viewing === '' ||
+          this.viewing === this.uids[0]
+        )
+      ) {
         const conn = this.configs.get(this.uids[0])
 
         if (conn.status.active === false) {
           /** Set viewing if none has been set so far. */
-          if (this.viewing === '') this.setViewing(this.uids[0])
+          if (this.viewing === '') {
+            this.setViewing(this.uids[0])
+          }
 
           /** Start the connection if it's local. */
           if (conn.type === 'local') {
@@ -120,7 +128,9 @@ class Connections {
         }
 
         /** Alt-s: Toggle connection manager. */
-        if (e.keyCode === 83) this.toggleModal()
+        if (e.keyCode === 83) {
+          this.toggleModal()
+        }
       }
     }, false)
   }
@@ -159,10 +169,7 @@ class Connections {
    * @return {array} Connections uids.
    */
   @computed get uids () {
-    return this.configs.keys().reduce((uids, uid) => {
-      uids.push(uid)
-      return uids
-    }, [])
+    return [...this.configs.keys()]
   }
 
   /**
@@ -207,10 +214,8 @@ class Connections {
     const index = this.uids.indexOf(this.viewing)
     const length = this.uids.length
 
-    /** Stop the connection before removing it. */
+    /** Stop the connection and remove it's stores. */
     this.stop(this.viewing)
-
-    /** Remove the connection and its stores. */
     this.configs.delete(this.viewing)
     this.stores.delete(this.viewing)
 
@@ -235,10 +240,13 @@ class Connections {
     const conn = this.configs.get(this.viewing)
 
     /** Handle port inputs. Allow only numbers below 65536. */
-    if (key === 'port' || key === 'dstPort' || key === 'localPort') {
-      if (value !== '') {
-        if (value.match(/^\d+$/) === null || parseInt(value) > 65535) return
-      }
+    const ports = ['dstPort', 'localPort', 'port']
+
+    if (ports.includes(key) === true && value !== '') {
+      if (
+        value.match(/^\d+$/) === null ||
+        parseInt(value) > 65535
+      ) return
     }
 
     conn[key] = value
@@ -282,12 +290,11 @@ class Connections {
     /** Initialize and set the new connection's stores. */
     if (this.stores.has(uid) === false) {
       const rpc = new RPC(conn, this.setStatus)
-      const info = new Info(rpc)
       const wallet = new Wallet(gui, rates, rpc)
-      const send = new Send(info, rpc, wallet)
-      const stats = new Stats(info, rpc, wallet)
+      const send = new Send(rpc, wallet)
+      const stats = new Stats(rpc, wallet)
 
-      this.stores.set(uid, { info, rpc, send, stats, wallet })
+      this.stores.set(uid, { rpc, send, stats, wallet })
     }
 
     /** Set connection active. */
@@ -356,13 +363,11 @@ class Connections {
   }
 
   /**
-   * Stop the viewing connection.
+   * Stop the viewing connection and reset it's status.
    * @function stop
    */
   stop () {
     this.stopTunnel(this.viewing)
-
-    /** Reset connection status. */
     this.setStatus(this.viewing, { active: false, rpc: null, tunnel: null })
   }
 
@@ -375,11 +380,9 @@ class Connections {
     if (this.tunnels.has(uid) === true) {
       const tunnel = this.tunnels.get(uid)
 
-      /** Close the server and end the SSH tunnel. */
+      /** Close the server & stop and delete the SSH tunnel. */
       tunnel.server.close()
       tunnel.ssh.end()
-
-      /** Delete the tunnel. */
       this.tunnels.delete(uid)
     }
   }

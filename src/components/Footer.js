@@ -7,7 +7,7 @@ import { Progress } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('connections', 'gui', 'info') @observer
+@inject('connections', 'gui', 'wallet') @observer
 
 export default class Footer extends React.Component {
   constructor (props) {
@@ -15,7 +15,7 @@ export default class Footer extends React.Component {
     this.t = props.t
     this.connections = props.connections
     this.gui = props.gui
-    this.info = props.info
+    this.wallet = props.wallet
   }
 
   render () {
@@ -29,16 +29,16 @@ export default class Footer extends React.Component {
                 {this.t('wallet:onBlock')} <span style={{fontWeight: '500'}}>
                   {
                     new Intl.NumberFormat(this.gui.language)
-                      .format(this.info.wallet.blocks)
+                      .format(this.wallet.info.getinfo.blocks)
                   }
                 </span>
               </p>
               {
-                this.info.syncPercent < 100 && (
+                this.wallet.syncPercent < 100 && (
                   <div className='flex'>
                     <div style={{width: '90px'}}>
                       <Progress
-                        percent={this.info.syncPercent}
+                        percent={this.wallet.syncPercent}
                         showInfo={false}
                         status='active'
                         strokeWidth={5}
@@ -48,7 +48,7 @@ export default class Footer extends React.Component {
                       {
                         new Intl.NumberFormat(this.gui.language, {
                           maximumFractionDigits: 2
-                        }).format(this.info.syncPercent)
+                        }).format(this.wallet.syncPercent)
                       }%
                     </p>
                   </div>
@@ -57,9 +57,9 @@ export default class Footer extends React.Component {
               <i className='material-icons md-16'>settings_input_antenna</i>
               <p style={{margin: '0 10px 0 5px'}}>
                 <span style={{fontWeight: '500'}}>
-                  {this.info.network.tcp}
+                  {this.wallet.info.getnetworkinfo.tcp.connections}
                 </span> TCP &bull; <span style={{fontWeight: '500'}}>
-                  {this.info.network.udp}
+                  {this.wallet.info.getnetworkinfo.udp.connections}
                 </span> UDP
               </p>
               <i className='material-icons md-16'>cast_connected</i>
@@ -76,13 +76,13 @@ export default class Footer extends React.Component {
               />
               <p style={{margin: '0 10px 0 5px'}}>
                 Vcash <span style={{fontWeight: '500'}}>
-                  {this.info.wallet.version.split(':')[1]}
+                  {this.wallet.info.getinfo.version.split(':')[1]}
                 </span>
               </p>
               <i className='material-icons md-16'>account_balance_wallet</i>
               <p style={{margin: '0 10px 0 5px'}}>
                 {this.t('wallet:wallet')} <span style={{fontWeight: '500'}}>
-                  {this.info.wallet.walletversion}
+                  {this.wallet.info.getinfo.walletversion}
                 </span>
               </p>
               <i className='material-icons md-16'>computer</i>

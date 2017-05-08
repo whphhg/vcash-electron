@@ -21,7 +21,9 @@ export default class WalletBackup extends React.Component {
     super(props)
     this.t = props.t
     this.rpc = props.rpc
-    this.path = this.rpc.connection.status.tunnel === true ? '' : dataPath()
+    this.path = this.rpc.connection.status.tunnel === true
+      ? ''
+      : dataPath()
   }
 
   /**
@@ -54,7 +56,9 @@ export default class WalletBackup extends React.Component {
     })
 
     /** Set selected path. */
-    if (typeof selected !== 'undefined') this.path = selected[0] + sep
+    if (typeof selected !== 'undefined') {
+      this.path = selected[0] + sep
+    }
   }
 
   /**
@@ -65,20 +69,17 @@ export default class WalletBackup extends React.Component {
     this.rpc.execute([
       { method: 'backupwallet', params: [this.path] }
     ], (response) => {
-      /** Handle result. */
+      /** Display a success message. */
       if (response[0].hasOwnProperty('result') === true) {
-        /** Display a success message. */
         message.success(this.t('wallet:backedUp'), 6)
       }
 
-      /** Handle error. */
+      /** Set error. */
       if (response[0].hasOwnProperty('error') === true) {
-        /** Convert error code to string. */
         switch (response[0].error.code) {
-          /** -4 = error_code_wallet_error */
+          /** error_code_wallet_error */
           case -4:
-            this.setError('backupFailed')
-            break
+            return this.setError('backupFailed')
         }
       }
     })

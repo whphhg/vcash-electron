@@ -8,7 +8,7 @@ import { Button, Input, notification } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('info', 'rpc') @observer
+@inject('rpc', 'wallet') @observer
 
 export default class WalletEncrypt extends React.Component {
   @observable passphrase = ''
@@ -17,8 +17,8 @@ export default class WalletEncrypt extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.info = props.info
     this.rpc = props.rpc
+    this.wallet = props.wallet
   }
 
   /**
@@ -27,7 +27,6 @@ export default class WalletEncrypt extends React.Component {
    * @return {string|false} Current error or false if none.
    */
   @computed get errorStatus () {
-    /** Get lengths only once. */
     const len = {
       pass: this.passphrase.length,
       repeat: this.repeat.length
@@ -65,15 +64,10 @@ export default class WalletEncrypt extends React.Component {
     this.rpc.execute([
       { method: 'encryptwallet', params: [this.passphrase] }
     ], (response) => {
-      /** Handle result. */
+      /** Update lock status, clear passphrases & display a restart warning. */
       if (response[0].hasOwnProperty('result') === true) {
-        /** Update lock status. */
-        this.info.getLockStatus()
-
-        /** Clear entered passphrases. */
+        this.wallet.getLockStatus()
         this.clear()
-
-        /** Display a restart warning that can not be closed. */
         notification.success({
           message: this.t('wallet:encrypted'),
           description: this.t('wallet:encryptedLong'),
@@ -84,7 +78,7 @@ export default class WalletEncrypt extends React.Component {
   }
 
   render () {
-    if (this.info.isEncrypted === true) return null
+    if (this.wallet.isEncrypted === true) return null
     return (
       <div>
         <div className='flex'>

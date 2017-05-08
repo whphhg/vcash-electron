@@ -19,7 +19,7 @@ export default class SendOptions extends React.Component {
   }
 
   render () {
-    const { fromAccount, recipients, comment, commentTo, minConf } = this.send
+    const { comment, commentTo, minConf, recipients } = this.send
 
     return (
       <div>
@@ -38,7 +38,7 @@ export default class SendOptions extends React.Component {
               <p>{this.t('wallet:description')}</p>
             </div>
             {
-              fromAccount !== null && (
+              this.wallet.spendFrom !== '#' && (
                 <div className='flex' style={{margin: '5px 0 0 0'}}>
                   <i className='material-icons md-16'>done_all</i>
                   <p>{this.t('wallet:minimumConfirmations')}</p>
@@ -68,7 +68,7 @@ export default class SendOptions extends React.Component {
               />
             </div>
             {
-              fromAccount !== null && (
+              this.wallet.spendFrom !== '#' && (
                 <div style={{width: '60px', margin: '5px 0 0 0'}}>
                   <Input
                     onChange={(e) => this.send.setMinConf(e.target.value)}

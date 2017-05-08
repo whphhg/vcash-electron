@@ -24,7 +24,9 @@ export default class AddressNew extends React.Component {
 
     /** Clear address when the popover closes. */
     reaction(() => this.popover, (popover) => {
-      if (popover === false && this.address !== '') this.setAddress()
+      if (popover === false && this.address !== '') {
+        this.setAddress()
+      }
     })
   }
 
@@ -34,9 +36,9 @@ export default class AddressNew extends React.Component {
    * @return {string|false} Current error or false if none.
    */
   @computed get errorStatus () {
-    if (this.account.match(/^[a-zA-Z0-9 -]{0,100}$/) === null) {
-      return 'invalidCharacters'
-    }
+    if (
+      this.account.match(/^[a-zA-Z0-9 -]{0,100}$/) === null
+    ) return 'invalidCharacters'
 
     if (this.error !== false) return this.error
     return false
@@ -85,22 +87,18 @@ export default class AddressNew extends React.Component {
     this.rpc.execute([
       { method: 'getnewaddress', params: [this.account] }
     ], (response) => {
-      /** Handle result. */
+      /** Set address & update addresses. */
       if (response[0].hasOwnProperty('result') === true) {
         this.setAddress(response[0].result)
-
-        /** Update address list. */
         this.wallet.getWallet(false, true)
       }
 
-      /** Handle error. */
+      /** Set error. */
       if (response[0].hasOwnProperty('error') === true) {
-        /** Convert error code to string. */
         switch (response[0].error.code) {
-          /** - 12 = error_code_wallet_keypool_ran_out */
+          /** error_code_wallet_keypool_ran_out */
           case -12:
-            this.setError('keypoolRanOut')
-            break
+            return this.setError('keypoolRanOut')
         }
       }
     })

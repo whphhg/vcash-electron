@@ -3,39 +3,42 @@ import { decimalSeparator, shortUid } from '../utilities/common'
 import { notification } from 'antd'
 import i18next from '../utilities/i18next'
 
+/**
+ * NOTE: Enforce account balances after the two issues below are fixed.
+ *       - https://github.com/openvcash/vcash/issues/7
+ *       - https://github.com/openvcash/vcash/issues/11
+ */
 export default class Send {
   /**
    * Observable properties.
    * @property {boolean} blendedOnly - Use blended outputs only.
    * @property {string} comment - Comment about transaction.
    * @property {string} commentTo - Comment about recipient.
-   * @property {string|null} fromAccount - Spend from this account.
    * @property {number} minConf - Minimum number of confirmations.
-   * @property {array} recipients - Addresses and amounts to pay.
+   * @property {map} recipients - Addresses and amounts to pay.
    * @property {boolean} zeroTime - Use ZeroTime.
    */
   @observable blendedOnly = false
   @observable comment = ''
   @observable commentTo = ''
-  @observable fromAccount = null
   @observable minConf = 1
   @observable recipients = observable.map({})
   @observable zeroTime = false
 
   /**
    * @constructor
-   * @param {object} info - Info store.
    * @param {object} rpc - RPC store.
    * @param {object} wallet - Wallet store.
    */
-  constructor (info, rpc, wallet) {
-    this.info = info
+  constructor (rpc, wallet) {
     this.rpc = rpc
     this.wallet = wallet
 
     /** Always have one recipient available. */
     autorun(() => {
-      if (this.recipients.size === 0) this.addRecipient()
+      if (this.recipients.size === 0) {
+        this.addRecipient()
+      }
     })
   }
 
@@ -56,17 +59,13 @@ export default class Send {
       if (
         recipients[i].addressValid === false ||
         recipients[i].addressValid === null
-      ) {
-        return 'invalidRecipient'
-      }
+      ) return 'invalidRecipient'
 
       /** Check if amounts are entered and above tx fee. */
       if (
         recipients[i].amount.length === 0 ||
         parseFloat(recipients[i].amount) < 0.0005
-      ) {
-        return 'amountBelowTxFee'
-      }
+      ) return 'amountBelowTxFee'
     }
 
     return false
@@ -102,7 +101,7 @@ export default class Send {
    * @function clear
    */
   @action clear () {
-    this.setAccount()
+    this.wallet.setSpendFrom()
     this.setComment()
     this.setCommentTo()
     this.setMinConf()
@@ -116,15 +115,6 @@ export default class Send {
    */
   @action removeRecipient (uid) {
     this.recipients.delete(uid)
-  }
-
-  /**
-   * Set the name of the account from which the coins should be spent.
-   * @function setAccount
-   * @param {string} account - Account name.
-   */
-  @action setAccount (account = null) {
-    this.fromAccount = account
   }
 
   /**
@@ -156,7 +146,7 @@ export default class Send {
 
   /**
    * Set the minimum number of confirmations a transaction must have
-   * for its outputs to be credited to the fromAccount’s balance.
+   * for its outputs to be credited to the wallet.spendFrom balance.
    * @function setMinConf
    * @param {string} confirmations - Minimum confirmations.
    */
@@ -166,7 +156,7 @@ export default class Send {
       if (confirmations !== '') {
         confirmations = parseInt(confirmations)
 
-        if (confirmations > this.info.wallet.blocks) return
+        if (confirmations > this.wallet.info.getinfo.blocks) return
         if (confirmations < 1) return
       }
 
@@ -222,7 +212,10 @@ export default class Send {
         ? 0 - parseFloat(value)
         : parseFloat(saved.amount) - parseFloat(value)
 
-      if (this.total - difference > this.info.wallet.balance) return
+      if (
+        this.total - difference >
+        this.wallet.info.getinfo.balance
+      ) return
 
       /** Set ammount that passed above checks. */
       saved.amount = value
@@ -235,9 +228,7 @@ export default class Send {
 
       /** Check if the address is a duplicate. */
       const duplicate = this.recipients.values().some((recipient) => {
-        if (recipient.address !== '') {
-          return recipient.address === value
-        }
+        if (recipient.address !== '') return recipient.address === value
       })
 
       /** Do not allow entering duplicate addresses. */
@@ -277,7 +268,7 @@ export default class Send {
   confirm () {
     /** Determine which sending method to use. */
     if (this.recipients.size === 1) {
-      if (this.fromAccount === null) {
+      if (this.wallet.spendFrom === '#') {
         this.sendtoaddress()
       } else {
         this.sendfrom()
@@ -319,22 +310,18 @@ export default class Send {
         ]
       }
     ], (response) => {
-      /** Sending succeded. */
+      /** Clear sending form and open tx details. */
       if (response[0].hasOwnProperty('result') === true) {
-        /** Clear sending form. */
         this.clear()
-
-        /** Open transaction details. */
         this.wallet.setViewing(response[0].result)
       }
 
-      /** Sending failed. */
+      /** Set error. */
       if (response[0].hasOwnProperty('error') === true) {
-        /** In case of an unknown error, print details to assist fixing. */
         console.error('Failed sending using sendtoaddress', response[0])
 
         switch (response[0].error.code) {
-          /** Insufficient funds, error_code_wallet_insufficient_funds = -4. */
+          /** error_code_wallet_insufficient_funds */
           case -4:
             return this.failed('insufficientFunds')
         }
@@ -354,7 +341,9 @@ export default class Send {
       {
         method: 'sendfrom',
         params: [
-          this.fromAccount === '*' ? '' : this.fromAccount,
+          this.wallet.spendFrom === '*'
+            ? ''
+            : this.wallet.spendFrom,
           recipient[0].address,
           recipient[0].amount,
           this.minConf,
@@ -363,22 +352,18 @@ export default class Send {
         ]
       }
     ], (response) => {
-      /** Sending succeded. */
+      /** Clear sending form and open tx details. */
       if (response[0].hasOwnProperty('result') === true) {
-        /** Clear sending form. */
         this.clear()
-
-        /** Open transaction details. */
         this.wallet.setViewing(response[0].result)
       }
 
-      /** Sending failed. */
+      /** Set error. */
       if (response[0].hasOwnProperty('error') === true) {
-        /** In case of an unknown error, print details to assist fixing. */
         console.error('Failed sending using sendfrom', response[0])
 
         switch (response[0].error.code) {
-          /** Insufficient funds, error_code_wallet_insufficient_funds = -6. */
+          /** error_code_wallet_insufficient_funds */
           case -6:
             return this.failed('insufficientFunds')
         }
@@ -401,33 +386,31 @@ export default class Send {
       {
         method: 'sendmany',
         params: [
-          this.fromAccount === '*' ? '' : this.fromAccount,
+          this.wallet.spendFrom === '*'
+            ? ''
+            : this.wallet.spendFrom,
           recipients,
           this.minConf,
           this.comment
         ]
       }
     ], (response) => {
-      /** Sending succeded. */
+      /** Clear sending form and open tx details. */
       if (response[0].hasOwnProperty('result') === true) {
-        /** Clear sending form. */
         this.clear()
-
-        /** Open transaction details. */
         this.wallet.setViewing(response[0].result)
       }
 
-      /** Sending failed. */
+      /** Set error. */
       if (response[0].hasOwnProperty('error') === true) {
-        /** In case of an unknown error, print details to assist fixing. */
         console.error('Failed sending using sendmany', response[0])
 
         switch (response[0].error.code) {
-          /** Nonstandard transaction type, error_code = -4. */
+          /** error_code (nonstandard transaction type) */
           case -4:
             return this.failed('transactionNotStandard')
 
-          /** Insufficient funds, error_code_wallet_insufficient_funds = -6. */
+          /** error_code_wallet_insufficient_funds */
           case -6:
             return this.failed('insufficientFunds')
         }

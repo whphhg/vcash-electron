@@ -18,12 +18,12 @@ class GUI {
    */
   constructor () {
     this.languages = [
-      { name: 'English', language: 'en' },
-      { name: 'Portuguese', language: 'pt' },
-      { name: 'Slovenian', language: 'sl' }
+      { language: 'en', name: 'English' },
+      { language: 'pt', name: 'Portuguese' },
+      { language: 'sl', name: 'Slovenian' }
     ]
 
-    /** Change moment and i18next on locale change. */
+    /** Update i18next and moment on locale change. */
     reaction(() => this.language, (language) => {
       i18next.changeLanguage(language)
       moment.locale(language)
@@ -31,26 +31,22 @@ class GUI {
   }
 
   /**
-   * Set display language.
+   * Set display language and save it to local storage.
    * @action setLanguage
    * @param {string} language - Display language.
    */
   @action setLanguage (language) {
     this.language = language
-
-    /** Save to local storage. */
     setItem('language', language)
   }
 
   /**
-   * Set local currency.
+   * Set local currency and save it to local storage.
    * @function setLocalCurrency
    * @param {string} localCurrency - Local currency.
    */
   @action setLocalCurrency (localCurrency) {
     this.localCurrency = localCurrency
-
-    /** Save to local storage. */
     setItem('localCurrency', localCurrency)
   }
 }

@@ -17,14 +17,14 @@ import WalletSeedDump from './WalletSeedDump'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('gui', 'info') @observer
+@inject('gui', 'wallet') @observer
 
 export default class Maintenance extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
-    this.info = props.info
+    this.wallet = props.wallet
   }
 
   render () {
@@ -135,9 +135,9 @@ export default class Maintenance extends React.Component {
               render: text => text + '/100'
             }
           ]}
-          dataSource={this.info.peers}
+          dataSource={this.wallet.peers}
           pagination={false}
-          scroll={this.info.peers.length > 8 ? {y: 183} : {}}
+          scroll={this.wallet.peers.length > 8 ? {y: 183} : {}}
           size='small'
           style={{margin: '10px 10px 0 10px'}}
         />

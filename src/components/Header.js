@@ -12,7 +12,7 @@ import WalletUnlock from './WalletUnlock'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('connections', 'gui', 'info', 'rates', 'wallet') @observer
+@inject('connections', 'gui', 'rates', 'wallet') @observer
 
 class Header extends React.Component {
   constructor (props) {
@@ -20,14 +20,13 @@ class Header extends React.Component {
     this.t = props.t
     this.connections = props.connections
     this.gui = props.gui
-    this.info = props.info
     this.rates = props.rates
     this.wallet = props.wallet
   }
 
   render () {
-    const { local, average } = this.rates
-    const { balance, newmint, stake } = this.info.wallet
+    const { average, local } = this.rates
+    const { balance, newmint, stake } = this.wallet.info.getinfo
 
     return (
       <header className='flex-sb shadow' style={{height: '55px'}}>
@@ -134,7 +133,7 @@ class Header extends React.Component {
             </Menu.Item>
           </Menu>
           {
-            this.info.isEncrypted === true && (
+            this.wallet.isEncrypted === true && (
               <div style={{margin: '0 10px 0 0'}}>
                 <WalletLock />
                 <WalletUnlock />

@@ -8,7 +8,7 @@ import { Button, Popconfirm, Switch, Tooltip } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('info', 'rates', 'send') @observer
+@inject('rates', 'send', 'wallet') @observer
 
 export default class Send extends React.Component {
   @observable popconfirm = false
@@ -16,9 +16,9 @@ export default class Send extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.info = props.info
     this.rates = props.rates
     this.send = props.send
+    this.wallet = props.wallet
   }
 
   /**
@@ -26,7 +26,10 @@ export default class Send extends React.Component {
    * @function togglePopconfirm
    */
   @action togglePopconfirm = () => {
-    if (this.info.isLocked === false && this.send.errorStatus === false) {
+    if (
+      this.wallet.isLocked === false &&
+      this.send.errorStatus === false
+    ) {
       this.popconfirm = !this.popconfirm
     }
   }
@@ -46,8 +49,8 @@ export default class Send extends React.Component {
           >
             <Button
               disabled={
-                this.info.isLocked === true ||
-                this.info.wallet.balance < 0.0005 ||
+                this.wallet.isLocked === true ||
+                this.wallet.info.getinfo.balance < 0.0005 ||
                 this.send.errorStatus !== false
               }
               size='small'
@@ -56,7 +59,7 @@ export default class Send extends React.Component {
             </Button>
           </Popconfirm>
           <Button
-            disabled={this.send.fromAccount === null}
+            disabled={this.wallet.spendFrom === '#'}
             onClick={() => this.send.addRecipient()}
             size='small'
             style={{margin: '0 5px 0 5px'}}

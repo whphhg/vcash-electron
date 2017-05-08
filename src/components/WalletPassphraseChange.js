@@ -8,7 +8,7 @@ import { Button, Input, message } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('info', 'rpc') @observer
+@inject('rpc', 'wallet') @observer
 
 export default class WalletPassphraseChange extends React.Component {
   @observable current = ''
@@ -19,12 +19,14 @@ export default class WalletPassphraseChange extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.info = props.info
     this.rpc = props.rpc
+    this.wallet = props.wallet
 
     /** Clear previous error on current passphrase change. */
     reaction(() => this.current, (current) => {
-      if (this.error !== false) this.setError()
+      if (this.error !== false) {
+        this.setError()
+      }
     })
   }
 
@@ -34,7 +36,6 @@ export default class WalletPassphraseChange extends React.Component {
    * @return {string|false} Current error or false if none.
    */
   @computed get errorStatus () {
-    /** Get lengths only once. */
     const len = {
       old: this.current.length,
       next: this.next.length,
@@ -85,33 +86,26 @@ export default class WalletPassphraseChange extends React.Component {
     this.rpc.execute([
       { method: 'walletpassphrasechange', params: [this.current, this.next] }
     ], (response) => {
-      /** Handle result. */
+      /** Update lock status, clear passphrases & display a success message. */
       if (response[0].hasOwnProperty('result') === true) {
-        /** Update lock status. */
-        this.info.getLockStatus()
-
-        /** Clear entered passphrases. */
+        this.wallet.getLockStatus()
         this.clear()
-
-        /** Display a success message. */
         message.success(this.t('wallet:passphraseChanged'), 6)
       }
 
-      /** Handle error. */
+      /** Set error. */
       if (response[0].hasOwnProperty('error') === true) {
-        /** Convert error code to string. */
         switch (response[0].error.code) {
-          /** -14 = error_code_wallet_passphrase_incorrect */
+          /** error_code_wallet_passphrase_incorrect */
           case -14:
-            this.setError('incorrectPassphrase')
-            break
+            return this.setError('incorrectPassphrase')
         }
       }
     })
   }
 
   render () {
-    if (this.info.isEncrypted === false) return null
+    if (this.wallet.isEncrypted === false) return null
     return (
       <div>
         <div className='flex'>

@@ -8,7 +8,7 @@ import { AutoComplete, Button, Input, Popover } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('info', 'rpc', 'wallet') @observer
+@inject('rpc', 'wallet') @observer
 
 export default class KeyDump extends React.Component {
   @observable address = ''
@@ -19,21 +19,28 @@ export default class KeyDump extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.info = props.info
     this.rpc = props.rpc
     this.wallet = props.wallet
 
     /** Clear private key and previous error on address change. */
     reaction(() => this.address, (address) => {
-      if (this.privateKey !== '') this.setPrivateKey()
+      if (this.privateKey !== '') {
+        this.setPrivateKey()
+      }
+
       this.setError()
     })
 
     /** Clear address and private key when popover closes. */
     reaction(() => this.popover, (popover) => {
       if (popover === false) {
-        if (this.address !== '') this.setAddress()
-        if (this.privateKey !== '') this.setPrivateKey()
+        if (this.address !== '') {
+          this.setAddress()
+        }
+
+        if (this.privateKey !== '') {
+          this.setPrivateKey()
+        }
       }
     })
   }
@@ -44,9 +51,9 @@ export default class KeyDump extends React.Component {
    * @return {string|false} Current error or false if none.
    */
   @computed get errorStatus () {
-    if (this.address.match(/^[a-zA-Z0-9]{0,34}$/) === null) {
-      return 'invalidCharacters'
-    }
+    if (
+      this.address.match(/^[a-zA-Z0-9]{0,34}$/) === null
+    ) return 'invalidCharacters'
 
     if (this.address.length < 34) return 'incompleteAddress'
     if (this.error !== false) return this.error
@@ -85,7 +92,9 @@ export default class KeyDump extends React.Component {
    * @function togglePopover
    */
   @action togglePopover = () => {
-    if (this.info.isLocked === false) this.popover = !this.popover
+    if (this.wallet.isLocked === false) {
+      this.popover = !this.popover
+    }
   }
 
   /**
@@ -96,24 +105,21 @@ export default class KeyDump extends React.Component {
     this.rpc.execute([
       { method: 'dumpprivkey', params: [this.address] }
     ], (response) => {
-      /** Handle result. */
+      /** Set private key. */
       if (response[0].hasOwnProperty('result') === true) {
         this.setPrivateKey(response[0].result)
       }
 
-      /** Handle error. */
+      /** Set error. */
       if (response[0].hasOwnProperty('error') === true) {
-        /** Convert error code to string. */
         switch (response[0].error.code) {
-          /** -4 = error_code_wallet_error */
+          /** error_code_wallet_error */
           case -4:
-            this.setError('unknownAddress')
-            break
+            return this.setError('unknownAddress')
 
-          /** -5 = error_code_invalid_address_or_key */
+          /** error_code_invalid_address_or_key */
           case -5:
-            this.setError('invalidAddress')
-            break
+            return this.setError('invalidAddress')
         }
       }
     })
@@ -172,7 +178,7 @@ export default class KeyDump extends React.Component {
         trigger='click'
         visible={this.popover}
       >
-        <Button disabled={this.info.isLocked === true} size='small'>
+        <Button disabled={this.wallet.isLocked === true} size='small'>
           <div style={{margin: '2px 0 0 0'}}>
             <i className='material-icons md-16'>arrow_upward</i>
           </div>

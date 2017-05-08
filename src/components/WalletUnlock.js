@@ -8,7 +8,7 @@ import { Button, Input, Modal, Tooltip, message } from 'antd'
 @translate(['wallet'], { wait: true })
 
 /** Make the component reactive and inject MobX stores. */
-@inject('info', 'rpc') @observer
+@inject('rpc', 'wallet') @observer
 
 export default class WalletUnlock extends React.Component {
   @observable error = false
@@ -18,17 +18,21 @@ export default class WalletUnlock extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.info = props.info
     this.rpc = props.rpc
+    this.wallet = props.wallet
 
     /** Clear previous error on passphrase change. */
     reaction(() => this.passphrase, (passphrase) => {
-      if (this.error !== false) this.setError()
+      if (this.error !== false) {
+        this.setError()
+      }
     })
 
     /** Clear passphrase when modal closes. */
     reaction(() => this.modal, (modal) => {
-      if (modal === false && this.passphrase !== '') this.setPassphrase()
+      if (modal === false && this.passphrase !== '') {
+        this.setPassphrase()
+      }
     })
   }
 
@@ -79,33 +83,26 @@ export default class WalletUnlock extends React.Component {
     this.rpc.execute([
       { method: 'walletpassphrase', params: [this.passphrase] }
     ], (response) => {
-      /** Handle result. */
+      /** Update lock status, hide modal & display a success message. */
       if (response[0].hasOwnProperty('result') === true) {
-        /** Update lock status. */
-        this.info.getLockStatus()
-
-        /** Hide modal. */
+        this.wallet.getLockStatus()
         this.toggleModal()
-
-        /** Display a success message. */
         message.success(this.t('wallet:unlocked'), 6)
       }
 
-      /** Handle error. */
+      /** Set error. */
       if (response[0].hasOwnProperty('error') === true) {
-        /** Convert error code to string. */
         switch (response[0].error.code) {
-          /** -14 = error_code_wallet_passphrase_incorrect */
+          /** error_code_wallet_passphrase_incorrect */
           case -14:
-            this.setError('incorrectPassphrase')
-            break
+            return this.setError('incorrectPassphrase')
         }
       }
     })
   }
 
   render () {
-    if (this.info.isLocked === false) return null
+    if (this.wallet.isLocked === false) return null
     return (
       <div>
         <Modal

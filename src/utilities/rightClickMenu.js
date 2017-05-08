@@ -11,7 +11,7 @@ const Menu = remote.Menu.buildFromTemplate([
 ])
 
 /** Add event listener for context (right click) menu. */
-document.body.addEventListener('contextmenu', (e) => {
+document.addEventListener('contextmenu', (e) => {
   e.preventDefault()
   e.stopPropagation()
 

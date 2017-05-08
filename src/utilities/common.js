@@ -64,12 +64,9 @@ export const humanReadable = (num = 0, dec = true, suffix = 'B') => {
     ? ['k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
     : ['Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi', 'Yi']
 
-  if (Math.abs(num) < threshold) {
-    return num + ' ' + suffix
-  }
+  if (Math.abs(num) < threshold) return num + ' ' + suffix
 
   let unit = -1
-
   do {
     num /= threshold
     unit++
