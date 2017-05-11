@@ -1,12 +1,36 @@
 {
   "name": "vcash-electron",
-  "version": "0.29.0",
+  "version": "0.30.0",
   "description": "Multi-platform and multi-node GUI for Vcash.",
-  "main": "initialize.js",
+  "main": "src/main.js",
   "scripts": {
     "gui": "electron .",
     "dev": "NODE_ENV=dev electron .",
-    "dev-win": "set NODE_ENV=dev&&electron ."
+    "dev-win": "set NODE_ENV=dev&&electron .",
+    "pack": "build --dir",
+    "dist": "build"
+  },
+  "build": {
+    "appId": "vcash.electron.gui",
+    "linux": {
+      "category": "Network",
+      "target": [
+        "deb",
+        "pacman",
+        "rpm",
+        "tar.gz"
+      ]
+    },
+    "mac": {
+      "category": "public.app-category.finance",
+      "target": "dmg"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    }
   },
   "repository": {
     "type": "git",
@@ -28,14 +52,16 @@
   },
   "dependencies": {
     "antd": "2.10.0",
-    "i18next": "8.1.0",
+    "electron-compile": "6.4.1",
+    "i18next": "8.2.1",
     "i18next-node-fs-backend": "1.0.0",
     "mobx": "3.1.9",
+    "mobx-logger": "0.5.0",
     "mobx-react": "4.1.8",
     "moment": "2.18.1",
     "react": "15.5.4",
     "react-dom": "15.5.4",
-    "react-i18next": "3.1.0",
+    "react-i18next": "4.0.0",
     "react-router-dom": "4.1.1",
     "recharts": "0.22.4",
     "ssh2": "0.5.4"
@@ -49,11 +75,8 @@
     "babel-preset-react": "6.24.1",
     "babel-preset-stage-0": "6.24.1",
     "babel-runtime": "6.23.0",
-    "electron": "1.6.6",
-    "electron-compile": "6.4.1",
-    "electron-compilers": "5.9.0",
-    "mobx-logger": "0.5.0",
-    "regenerator-runtime": "0.10.5",
+    "electron-builder": "17.5.0",
+    "electron-prebuilt-compile": "1.7.0",
     "standard": "10.0.2"
   }
 }

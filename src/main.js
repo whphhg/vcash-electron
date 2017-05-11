@@ -1,4 +1,6 @@
 import { app, BrowserWindow, shell } from 'electron'
+import { format } from 'url'
+import { join } from 'path'
 
 /**
  * Keep a global reference of the window object, else the window will
@@ -9,7 +11,7 @@ let mainWindow = null
 /** All the windows are closed. */
 app.on('window-all-closed', () => {
   /**
-   * On OS X it is common for applications and their menu bar
+   * On macOS it is common for applications and their menu bar
    * to stay active until the user quits explicitly with Cmd + Q.
    */
   if (process.platform !== 'darwin') {
@@ -21,7 +23,7 @@ app.on('window-all-closed', () => {
 app.on('ready', () => {
   mainWindow = new BrowserWindow({
     height: 700,
-    icon: __dirname + '/src/assets/images/logoRed.png',
+    icon: join(__dirname, 'assets', 'images', 'logoRed.png'),
     webPreferences: { experimentalFeatures: true },
     width: 1152
   })
@@ -30,7 +32,11 @@ app.on('ready', () => {
   mainWindow.setMenu(null)
 
   /** Load the UI starting point. */
-  mainWindow.loadURL('file://' + __dirname + '/src/index.html')
+  mainWindow.loadURL(format({
+    pathname: join(__dirname, 'index.html'),
+    protocol: 'file:',
+    slashes: true
+  }))
 
   /** Open Chromium DevTools if in dev mode. */
   process.env.NODE_ENV === 'dev' && mainWindow.webContents.openDevTools()
