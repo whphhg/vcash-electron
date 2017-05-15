@@ -20,7 +20,10 @@ const start = () => {
   }
 
   /** Prepare daemon path. */
-  const path = join(__dirname, '..', 'bin', executable)
+  let path = join(__dirname, '..', 'bin', executable)
+
+  /** Execute from unpacked asar directory when running packaged. */
+  path = path.replace('app.asar', 'app.asar.unpacked')
 
   /** Check if daemon exists and spawn it. */
   const daemon = existsSync(path) === true

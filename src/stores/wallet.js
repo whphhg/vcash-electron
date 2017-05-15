@@ -281,20 +281,22 @@ export default class Wallet {
     if (this.responses.has('getpeerinfo') === true) {
       const peerInfo = this.responses.get('getpeerinfo')
 
-      return peerInfo.reduce((peers, peer) => {
-        if (peer.lastsend !== 0 && peer.startingheight !== -1) {
-          peers.push({
-            ...peer,
-            key: shortUid(),
-            version: peer.subver.match(/\/(.*)\(/).pop().split(':')[1],
-            os: peer.subver.split(' ')[1].replace(')/', ''),
-            ip: peer.addr.split(':')[0],
-            port: peer.addr.split(':')[1]
-          })
-        }
+      if (peerInfo !== null) {
+        return peerInfo.reduce((peers, peer) => {
+          if (peer.lastsend !== 0 && peer.startingheight !== -1) {
+            peers.push({
+              ...peer,
+              key: shortUid(),
+              version: peer.subver.match(/\/(.*)\(/).pop().split(':')[1],
+              os: peer.subver.split(' ')[1].replace(')/', ''),
+              ip: peer.addr.split(':')[0],
+              port: peer.addr.split(':')[1]
+            })
+          }
 
-        return peers
-      }, [])
+          return peers
+        }, [])
+      }
     }
 
     return []

@@ -1,6 +1,7 @@
 {
   "name": "vcash-electron",
-  "version": "0.31.0",
+  "productName": "Vcash Electron GUI",
+  "version": "0.31.1",
   "description": "Multi-platform and multi-node GUI for Vcash.",
   "main": "src/electron.js",
   "scripts": {
@@ -12,12 +13,13 @@
   },
   "build": {
     "appId": "vcash.electron.gui",
+    "asarUnpack": [
+      "bin"
+    ],
     "linux": {
       "category": "Network",
       "target": [
         "deb",
-        "pacman",
-        "rpm",
         "tar.gz"
       ]
     },
@@ -41,7 +43,7 @@
     "electron",
     "gui"
   ],
-  "author": "whphhg",
+  "author": "whphhg <whphhg@protonmail.ch>",
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/whphhg/vcash-electron/issues"
@@ -75,7 +77,7 @@
     "babel-preset-react": "6.24.1",
     "babel-preset-stage-0": "6.24.1",
     "babel-runtime": "6.23.0",
-    "electron-builder": "17.5.0",
+    "electron-builder": "17.8.0",
     "electron-prebuilt-compile": "1.7.0",
     "standard": "10.0.2"
   }
