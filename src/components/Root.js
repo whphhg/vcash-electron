@@ -39,7 +39,6 @@ class Root extends React.Component {
               }}
             >
               <Header />
-              <Console />
               <div>
                 <Route exact path='/:uid' component={Transactions} />
                 <Route path='/:uid/addresses' component={Addresses} />
@@ -48,6 +47,7 @@ class Root extends React.Component {
               </div>
               <Footer />
             </div>
+            <Console />
             <Transaction />
           </div>
         </HashRouter>

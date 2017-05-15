@@ -1,6 +1,6 @@
 # Vcash Electron GUI
-Multi-platform and multi-node GUI for [Vcash](https://vcash.info/). Latest
-releases can be found [here](https://github.com/whphhg/vcash-electron/releases).
+:honeybee: Multi-platform and multi-node GUI for [Vcash](https://vcash.info/).
+Latest releases can be found [here](https://github.com/whphhg/vcash-electron/releases).
 
 ![Screenshots](http://i.imgur.com/OBt1iOA.gif)
 
@@ -29,9 +29,10 @@ using `npm run dev`, or `npm run dev-win` if you are on Windows.
     $ npm run dev-win (Windows)
 
 ## Package and build
-`electron-builder` is used to package and build the application, you can
-read all about it [here](https://github.com/electron-userland/electron-builder).
-
+`electron-builder` is used to package and build the GUI, you can read
+all about it [here](https://github.com/electron-userland/electron-builder).
+If you want to package the daemon as well, put the executable named `vcashd`
+in the `bin` folder.
 
 ## License
 This program is free software: you can redistribute it and/or modify

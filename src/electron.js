@@ -1,25 +1,12 @@
 import { app, BrowserWindow, shell } from 'electron'
-import { format } from 'url'
 import { join } from 'path'
+import { format } from 'url'
+import daemon from './daemon'
 
-/**
- * Keep a global reference of the window object, else the window will
- * be closed automatically when the object is garbage collected.
- */
+/** Keep a global reference of the window object. */
 let mainWindow = null
 
-/** All the windows are closed. */
-app.on('window-all-closed', () => {
-  /**
-   * On macOS it is common for applications and their menu bar
-   * to stay active until the user quits explicitly with Cmd + Q.
-   */
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
-
-/** Ready to load the UI. */
+/** Ready to load the GUI. */
 app.on('ready', () => {
   mainWindow = new BrowserWindow({
     height: 700,
@@ -28,17 +15,17 @@ app.on('ready', () => {
     width: 1152
   })
 
-  /** Hide browsers menu bar. */
+  /** Hide browser's menu bar. */
   mainWindow.setMenu(null)
 
-  /** Load the UI starting point. */
+  /** Load the GUI starting point. */
   mainWindow.loadURL(format({
     pathname: join(__dirname, 'index.html'),
     protocol: 'file:',
     slashes: true
   }))
 
-  /** Open Chromium DevTools if in dev mode. */
+  /** Open Chromium DevTools in dev mode. */
   process.env.NODE_ENV === 'dev' && mainWindow.webContents.openDevTools()
 
   /** Open external links using OS default browser. */
@@ -51,6 +38,10 @@ app.on('ready', () => {
 
   /** Main window closed. */
   mainWindow.on('closed', () => {
+    if (daemon !== null) {
+      daemon.kill('SIGINT')
+    }
+
     /**
      * Dereference the window object, usually you would store windows
      * in an array if your app supports multi windows, this is the time
@@ -58,4 +49,15 @@ app.on('ready', () => {
      */
     mainWindow = null
   })
+})
+
+/** All of the windows are closed. */
+app.on('window-all-closed', () => {
+  /**
+   * On macOS it is common for applications and their menu bar
+   * to stay active until the user quits explicitly with Cmd + Q.
+   */
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
 })

@@ -1,8 +1,8 @@
 {
   "name": "vcash-electron",
-  "version": "0.30.0",
+  "version": "0.31.0",
   "description": "Multi-platform and multi-node GUI for Vcash.",
-  "main": "src/main.js",
+  "main": "src/electron.js",
   "scripts": {
     "gui": "electron .",
     "dev": "NODE_ENV=dev electron .",
@@ -51,7 +51,7 @@
     "parser": "babel-eslint"
   },
   "dependencies": {
-    "antd": "2.10.0",
+    "antd": "2.10.1",
     "electron-compile": "6.4.1",
     "i18next": "8.2.1",
     "i18next-node-fs-backend": "1.0.0",

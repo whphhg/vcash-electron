@@ -35,7 +35,7 @@ export default class Stats {
   }
 
   /**
-   * Get saved network stats since UI launch.
+   * Get saved network stats since GUI launch.
    * @function stats
    * @return {array} Stats.
    */
