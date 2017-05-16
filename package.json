@@ -20,7 +20,7 @@
       "category": "Network",
       "target": [
         "deb",
-        "tar.gz"
+        "zip"
       ]
     },
     "mac": {

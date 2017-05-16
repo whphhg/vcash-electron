@@ -23,16 +23,34 @@ using `npm run gui`.
     $ npm run gui
 
 Alternatively, if you want to use development tools, run the GUI
-using `npm run dev`, or `npm run dev-win` if you are on Windows.
+using `npm run dev`, or `npm run dev-win` on Windows.
 
     $ npm run dev (Linux and macOS)
     $ npm run dev-win (Windows)
 
 ## Package and build
-`electron-builder` is used to package and build the GUI, you can read
-all about it [here](https://github.com/electron-userland/electron-builder).
-If you want to package the daemon as well, put the executable named `vcashd`
-in the `bin` folder.
+To bundle the daemon with the GUI, name it `vcashd` and
+place it into the `bin` directory. This directory is checked for
+the current platform daemon executable on start-up by
+[daemon.js](https://github.com/whphhg/vcash-electron/blob/master/src/daemon.js)
+and is not included in the asar archive, but gets unpacked into
+the `dist/platform-unpacked/app.asar.unpacked` directory due to this
+[asar limitation](https://electron.atom.io/docs/tutorial/application-packaging/#executing-binaries-inside-asar-archive).
+
+To only generate the `dist/platform-unpacked` package directory without
+actually packaging the GUI, which is useful for testing, run `npm run pack`.
+
+    $ npm run pack
+
+To package in a distributable format run `npm run dist`, which will create
+the packages for your current platform and save them into the `dist` directory.
+Packages will be created according to the `build` options in
+[package.json](https://github.com/whphhg/vcash-electron/blob/master/package.json#L14-L36).
+
+    $ npm run dist
+
+You can read more about the `electron-builder` options
+[here](https://github.com/electron-userland/electron-builder/wiki/Options).
 
 ## License
 This program is free software: you can redistribute it and/or modify
