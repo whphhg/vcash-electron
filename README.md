@@ -2,7 +2,7 @@
 :honeybee: Multi-platform and multi-node GUI for [Vcash](https://vcash.info/).
 Latest releases can be found [here](https://github.com/whphhg/vcash-electron/releases).
 
-![Screenshots](http://i.imgur.com/OBt1iOA.gif)
+![Screenshots](http://i.imgur.com/i3Dxol0.gif)
 
 ## Install from source
 The following dependencies are required to be installed:
@@ -48,7 +48,7 @@ actually packaging the GUI run `npm run pack`.
 
 Run the docker container.
 
-    docker run --rm -ti -v ${PWD}:/project -v ${PWD##*/}-node-modules:/project/node_modules -v ~/.electron:/root/.electron electronuserland/electron-builder:wine
+    $ docker run --rm -ti -v ${PWD}:/project -v ${PWD##*/}-node-modules:/project/node_modules -v ~/.electron:/root/.electron electronuserland/electron-builder:wine
 
 To package in a distributable format run one of the scripts from the table
 below, which will create the packages and save them into the `dist` directory.
