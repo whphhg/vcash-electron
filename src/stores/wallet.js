@@ -268,6 +268,9 @@ export default class Wallet {
         nondenominatedbalance: 0,
         blendedbalance: 0,
         blendedpercentage: 0
+      },
+      'getinfo': {
+        balance: 0
       }
     })
   }

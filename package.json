@@ -1,7 +1,7 @@
 {
   "name": "vcash-electron",
   "productName": "Vcash Electron GUI",
-  "version": "0.31.1",
+  "version": "0.31.2",
   "description": "Multi-platform and multi-node GUI for Vcash.",
   "main": "src/electron.js",
   "scripts": {
@@ -9,7 +9,10 @@
     "dev": "NODE_ENV=dev electron .",
     "dev-win": "set NODE_ENV=dev&&electron .",
     "pack": "build --dir",
-    "dist": "build"
+    "dist-linux": "build --linux --x64",
+    "dist-nsis": "build --win nsis --ia32 --x64",
+    "dist-win32-x64": "build --win portable --x64",
+    "dist-win32-ia32": "build --win portable --ia32"
   },
   "build": {
     "appId": "vcash.electron.gui",
@@ -26,12 +29,6 @@
     "mac": {
       "category": "public.app-category.finance",
       "target": "dmg"
-    },
-    "win": {
-      "target": [
-        "nsis",
-        "portable"
-      ]
     }
   },
   "repository": {
@@ -63,7 +60,7 @@
     "moment": "2.18.1",
     "react": "15.5.4",
     "react-dom": "15.5.4",
-    "react-i18next": "4.0.0",
+    "react-i18next": "4.1.0",
     "react-router-dom": "4.1.1",
     "recharts": "0.22.4",
     "ssh2": "0.5.4"

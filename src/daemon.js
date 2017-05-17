@@ -3,24 +3,17 @@ import { existsSync } from 'fs'
 import { join } from 'path'
 
 /**
- * Start OS specific daemon executable.
+ * Start daemon.
  * @function start
  * @return {object|null} Child process or null.
  */
 const start = () => {
-  let executable = null
-
-  switch (process.platform) {
-    case 'win32':
-      executable = 'vcashd.exe'
-      break
-
-    default:
-      executable = 'vcashd'
-  }
+  const ext = process.platform === 'win32'
+    ? '.exe'
+    : ''
 
   /** Prepare daemon path. */
-  let path = join(__dirname, '..', 'bin', executable)
+  let path = join(__dirname, '..', 'bin', 'vcashd-' + process.arch + ext)
 
   /** Execute from unpacked asar directory when running packaged. */
   path = path.replace('app.asar', 'app.asar.unpacked')
@@ -45,7 +38,7 @@ const start = () => {
   return daemon
 }
 
-/** Start daemon executable. */
+/** Start daemon. */
 const daemon = start()
 
 /** Export child process. */
