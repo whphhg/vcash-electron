@@ -1,4 +1,4 @@
-import { action, computed, observable, reaction } from 'mobx'
+import { action, autorunAsync, computed, observable, reaction } from 'mobx'
 import { notification } from 'antd'
 import { shortUid } from '../utilities/common'
 import i18next from '../utilities/i18next'
@@ -50,6 +50,13 @@ export default class Wallet {
       getWallet: null,
       getWalletInfo: null
     }
+
+    /** Refresh network info every 3s until there are at least 3 peers. */
+    autorunAsync(() => {
+      if (this.peers.length < 3) {
+        this.restart('getNetworkInfo')
+      }
+    }, 3 * 1000)
 
     /** Begin updating when RPC becomes active. */
     reaction(() => this.rpc.ready, (ready) => {
@@ -270,7 +277,12 @@ export default class Wallet {
         blendedpercentage: 0
       },
       'getinfo': {
-        balance: 0
+        balance: 0,
+        version: ':'
+      },
+      'getnetworkinfo': {
+        tcp: { connections: 0 },
+        udp: { connections: 0 }
       }
     })
   }

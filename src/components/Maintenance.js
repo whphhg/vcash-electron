@@ -136,6 +136,7 @@ export default class Maintenance extends React.Component {
             }
           ]}
           dataSource={this.wallet.peers}
+          locale={{emptyText: this.t('wallet:notFound')}}
           pagination={false}
           scroll={this.wallet.peers.length > 8 ? {y: 183} : {}}
           size='small'
