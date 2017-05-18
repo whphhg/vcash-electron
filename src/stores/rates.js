@@ -75,8 +75,11 @@ class Rates {
    * @param {string} rates - Price index.
    */
   @action setBitcoinAverage (rates) {
-    this.bitcoinAverage = { rates, updated: new Date().getTime() }
-    setItem('bitcoinAverage', this.bitcoinAverage)
+    /** Set only if rates is an object. */
+    if (rates === Object(rates)) {
+      this.bitcoinAverage = { rates, updated: new Date().getTime() }
+      setItem('bitcoinAverage', this.bitcoinAverage)
+    }
   }
 
   /**
@@ -85,7 +88,13 @@ class Rates {
    * @param {string} ticker - Ticker.
    */
   @action setBittrex (ticker) {
-    this.bittrex = { ...ticker.result[0], updated: new Date() }
+    /** Set only if ticker is an object and result exists. */
+    if (
+      ticker === Object(ticker) &&
+      ticker.hasOwnProperty('result') === true
+    ) {
+      this.bittrex = { ...ticker.result[0], updated: new Date() }
+    }
   }
 
   /**
@@ -94,7 +103,13 @@ class Rates {
    * @param {string} ticker - Ticker.
    */
   @action setPoloniex (ticker) {
-    this.poloniex = { ...ticker['BTC_XVC'], updated: new Date() }
+    /** Set only if ticker is an object and BTC_XVC pair exists. */
+    if (
+      ticker === Object(ticker) &&
+      ticker.hasOwnProperty('BTC_XVC') === true
+    ) {
+      this.poloniex = { ...ticker['BTC_XVC'], updated: new Date() }
+    }
   }
 
   /**
