@@ -10,6 +10,7 @@
     "dev-win": "set NODE_ENV=dev&&electron .",
     "pack": "build --dir",
     "dist-linux": "build --linux --x64",
+    "dist-mac": "build --mac --x64",
     "dist-nsis": "build --win nsis --ia32 --x64",
     "dist-win32-x64": "build --win portable --x64",
     "dist-win32-ia32": "build --win portable --ia32"
@@ -52,7 +53,7 @@
   "dependencies": {
     "antd": "2.10.1",
     "electron-compile": "6.4.1",
-    "i18next": "8.2.1",
+    "i18next": "8.3.0",
     "i18next-node-fs-backend": "1.0.0",
     "mobx": "3.1.9",
     "mobx-logger": "0.5.0",
@@ -74,7 +75,7 @@
     "babel-preset-react": "6.24.1",
     "babel-preset-stage-0": "6.24.1",
     "babel-runtime": "6.23.0",
-    "electron-builder": "17.8.0",
+    "electron-builder": "17.10.0",
     "electron-prebuilt-compile": "1.7.0",
     "standard": "10.0.2"
   }

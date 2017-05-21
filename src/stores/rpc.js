@@ -65,13 +65,7 @@ export default class RPC {
         body: JSON.stringify(options)
       })
       .then((response) => {
-        if (response.ok === true) {
-          try {
-            return response.json()
-          } catch (e) {
-            console.error('Received RPC response with invalid characters.', e)
-          }
-        }
+        if (response.ok === true) return response.json()
       })
       .then((data) => {
         /** Update connection status. */
