@@ -21,13 +21,6 @@ export default class WalletSeedDump extends React.Component {
     this.wallet = props.wallet
   }
 
-  /** Clear seed when component unmounts. */
-  componentWillUnmount () {
-    if (this.seed !== '') {
-      this.setSeed()
-    }
-  }
-
   /**
    * Get error status.
    * @function errorStatus
@@ -52,7 +45,7 @@ export default class WalletSeedDump extends React.Component {
    * @function setSeed
    * @param {string} seed - Wallet seed.
    */
-  @action setSeed = (seed = '') => {
+  @action setSeed = (seed) => {
     this.seed = seed
   }
 
