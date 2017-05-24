@@ -1,7 +1,7 @@
 {
   "name": "vcash-electron",
   "productName": "Vcash Electron GUI",
-  "version": "0.31.3",
+  "version": "0.31.4",
   "description": "Multi-platform and multi-node GUI for Vcash.",
   "main": "src/electron.js",
   "scripts": {
@@ -55,7 +55,7 @@
     "electron-compile": "6.4.1",
     "i18next": "8.3.0",
     "i18next-node-fs-backend": "1.0.0",
-    "mobx": "3.1.9",
+    "mobx": "3.1.10",
     "mobx-logger": "0.6.0",
     "mobx-react": "4.1.8",
     "moment": "2.18.1",

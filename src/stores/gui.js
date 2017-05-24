@@ -9,7 +9,7 @@ class GUI {
    * @property {string} language - Display language.
    * @property {string} localCurrency - Local currency.
    */
-  @observable language = getItem('language') || 'en'
+  @observable language = getItem('language') || 'en-US'
   @observable localCurrency = getItem('localCurrency') || 'EUR'
 
   /**
@@ -18,9 +18,9 @@ class GUI {
    */
   constructor () {
     this.languages = [
-      { language: 'en', name: 'English' },
-      { language: 'pt', name: 'Portuguese' },
-      { language: 'sl', name: 'Slovenian' }
+      { language: 'en-US', name: 'English' },
+      { language: 'pt-PT', name: 'Portuguese' },
+      { language: 'sl-SI', name: 'Slovenian' }
     ]
 
     /** Update i18next and moment on locale change. */

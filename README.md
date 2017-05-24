@@ -28,6 +28,27 @@ using `npm run dev` or `npm run dev-win` on Windows.
     $ npm run dev (Linux and macOS)
     $ npm run dev-win (Windows)
 
+## Contributing translations
+First follow the `Install from source` guide above. Then create a copy of the
+`en-US` directory in `src/locales` and construct the first part of the directory
+name by using the `ISO 639-1 Code`
+[language code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
+and the second part by using the `ISO 3166 Alpha-2 code`
+[country code](https://en.wikipedia.org/wiki/ISO_3166-1#Current_codes). Delimit
+the two with a dash `-`.
+
+After you've created the correctly named translation directory, open
+`src/stores/gui.js` and add the new translation to the `languages` array (in
+alphabetical order).
+
+    { language: 'languageCode-countryCode', name: 'New language' },
+
+You can now select your new translation in the GUI and start translating the
+strings in the `wallet.json`.
+
+**Note:** Please use an editor that will open and save `wallet.json` in UTF-8
+(e.g. [Atom](https://atom.io/)).
+
 ## Package and build
 To bundle the daemon with the GUI, name it `vcashd-arch`, where `arch` can
 be either `ia32` or `x64` and place it into the `bin` directory. This directory
@@ -42,6 +63,9 @@ To only generate the `dist/platform-unpacked` package directory without
 actually packaging the GUI run `npm run pack`.
 
     $ npm run pack
+
+You can read more about the `electron-builder` options
+[here](https://github.com/electron-userland/electron-builder/wiki/Options).
 
 ### Linux and Windows (using Docker)
 The following dependencies are required to be installed:
@@ -82,9 +106,6 @@ Script | Target arch | Description
 ------ | ------ | ------
 dist-linux | x64 | Create 64-bit Linux .deb and .zip packages
 dist-mac | x64 | Create 64-bit macOS .dmg package
-
-You can read more about the `electron-builder` options
-[here](https://github.com/electron-userland/electron-builder/wiki/Options).
 
 ## License
 This program is free software: you can redistribute it and/or modify
