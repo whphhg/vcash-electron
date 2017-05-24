@@ -28,7 +28,7 @@ using `npm run dev` or `npm run dev-win` on Windows.
     $ npm run dev (Linux and macOS)
     $ npm run dev-win (Windows)
 
-## Contributing translations
+## Contribute translations
 First follow the `Install from source` guide above. Then create a copy of the
 `en-US` directory in `src/locales` and construct the first part of the directory
 name by using the `ISO 639-1 Code`
