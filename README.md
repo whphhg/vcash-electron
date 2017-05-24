@@ -38,8 +38,9 @@ and the second part by using the `ISO 3166 Alpha-2 code`
 the two with a dash `-`.
 
 After you've created the correctly named translation directory, open
-`src/stores/gui.js` and add the new translation to the `languages` array (in
-alphabetical order).
+`src/stores/gui.js` and add the new translation to the
+[languages](https://github.com/whphhg/vcash-electron/blob/master/src/stores/gui.js#L20-L24)
+array (in alphabetical order).
 
     { language: 'languageCode-countryCode', name: 'New language' },
 

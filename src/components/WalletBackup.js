@@ -4,7 +4,7 @@ import { action, computed, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button, Input, message } from 'antd'
 import { remote } from 'electron'
-import { sep } from 'path'
+import { join, sep } from 'path'
 import { dataPath } from '../utilities/common'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
@@ -23,7 +23,7 @@ export default class WalletBackup extends React.Component {
     this.rpc = props.rpc
     this.path = this.rpc.connection.status.tunnel === true
       ? ''
-      : dataPath()
+      : join(dataPath(), 'backups', sep)
   }
 
   /**
@@ -57,7 +57,7 @@ export default class WalletBackup extends React.Component {
 
     /** Set selected path. */
     if (typeof selected !== 'undefined') {
-      this.path = selected[0] + sep
+      this.path = join(selected[0], sep)
     }
   }
 

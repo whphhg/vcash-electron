@@ -1,5 +1,5 @@
 import { homedir } from 'os'
-import { sep } from 'path'
+import { join, sep } from 'path'
 
 /** Required store instances. */
 import gui from '../stores/gui'
@@ -22,13 +22,13 @@ export const decimalSeparator = () => {
 export const dataPath = () => {
   switch (process.platform) {
     case 'darwin':
-      return homedir() + '/Library/Application Support/Vcash/data' + sep
+      return join(homedir(), 'Library', 'Application Support', 'Vcash', sep)
 
     case 'win32':
-      return homedir() + '/%APPDATA%/Vcash/data' + sep
+      return join(homedir(), 'AppData', 'Roaming', 'Vcash', sep)
 
     default:
-      return homedir() + '/.Vcash/data' + sep
+      return join(homedir(), '.Vcash', 'data', sep)
   }
 }
 
