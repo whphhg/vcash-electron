@@ -78,27 +78,27 @@ export default class Maintenance extends React.Component {
             {
               dataIndex: 'ip',
               title: this.t('wallet:peers'),
-              width: 120
+              width: 110
             },
             {
               dataIndex: 'port',
               title: this.t('wallet:port'),
-              width: 80
+              width: 60
             },
             {
               dataIndex: 'version',
               title: this.t('wallet:version'),
-              width: 80
+              width: 60
             },
             {
               dataIndex: 'os',
               title: this.t('wallet:os'),
-              width: 120
+              width: 80
             },
             {
               dataIndex: 'inbound',
               title: this.t('wallet:inbound'),
-              width: 100,
+              width: 110,
               render: (text, record) =>
                 record.inbound === true
                   ? this.t('wallet:yes')
@@ -107,25 +107,25 @@ export default class Maintenance extends React.Component {
             {
               dataIndex: 'conntime',
               title: this.t('wallet:connected'),
-              width: 140,
+              width: 160,
               render: text => moment(text * 1000).fromNow()
             },
             {
               dataIndex: 'lastsend',
               title: this.t('wallet:lastSend'),
-              width: 140,
+              width: 160,
               render: text => moment(text * 1000).fromNow()
             },
             {
               dataIndex: 'lastrecv',
               title: this.t('wallet:lastReceived'),
-              width: 140,
+              width: 160,
               render: text => moment(text * 1000).fromNow()
             },
             {
               dataIndex: 'startingheight',
               title: this.t('wallet:startingHeight'),
-              width: 110,
+              width: 130,
               render: text =>
                 new Intl.NumberFormat(this.gui.language).format(text)
             },
