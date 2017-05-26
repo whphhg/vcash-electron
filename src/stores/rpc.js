@@ -76,7 +76,10 @@ export default class RPC {
         return callback(data, options)
       })
       .catch((error) => {
-        console.error('RPC:', error.message)
+        console.error('RPC:', options, error.message)
+
+        /** Reject invalid responses, but don't alter connection status. */
+        if (error.message.indexOf('Unexpected token') !== -1) return
 
         /** Update connection status. */
         if (
