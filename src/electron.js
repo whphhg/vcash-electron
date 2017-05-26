@@ -8,8 +8,22 @@ let mainWindow = null
 
 /** Ready to load the GUI. */
 app.on('ready', () => {
+  /** Provide default window height depending on the platform. */
+  const height = () => {
+    switch (process.platform) {
+      case 'win32':
+        return 738
+
+      case 'darwin':
+        return 722
+
+      default:
+        return 700
+    }
+  }
+
   mainWindow = new BrowserWindow({
-    height: 700,
+    height: height(),
     icon: join(__dirname, 'assets', 'images', 'logoRed.png'),
     webPreferences: { experimentalFeatures: true },
     width: 1152
