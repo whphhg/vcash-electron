@@ -11,6 +11,7 @@ import WalletBackup from './WalletBackup'
 import WalletDump from './WalletDump'
 import WalletEncrypt from './WalletEncrypt'
 import WalletPassphraseChange from './WalletPassphraseChange'
+import WalletRepair from './WalletRepair'
 import WalletSeedDump from './WalletSeedDump'
 
 /** Load translation namespaces and delay rendering until they are loaded. */
@@ -68,7 +69,8 @@ export default class Maintenance extends React.Component {
             <div style={{flex: 1, margin: '0 0 0 10px'}}>
               <WalletEncrypt />
               <WalletPassphraseChange />
-              {/** TODO: Implement wallet check and repair. */}
+              <hr />
+              <WalletRepair />
             </div>
           </div>
         </div>
