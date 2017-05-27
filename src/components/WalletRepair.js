@@ -20,6 +20,9 @@ export default class WalletRepair extends React.Component {
     this.t = props.t
     this.gui = props.gui
     this.rpc = props.rpc
+
+    /** Check the wallet as soon as component loads. */
+    this.repair()
   }
 
   /**
@@ -34,7 +37,7 @@ export default class WalletRepair extends React.Component {
       response.hasOwnProperty('wallet check passed') === false
     ) return this.repair()
 
-    /** Updated check passed status. */
+    /** Update check passed status. */
     this.checkPassed = response.hasOwnProperty('wallet check passed')
 
     /** Set or reset amount affected by repair. */
