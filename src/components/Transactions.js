@@ -98,7 +98,19 @@ export default class Transactions extends React.Component {
                 {
                   dataIndex: 'comment',
                   title: this.t('wallet:description'),
-                  width: 360
+                  width: 360,
+                  render: (comment) => (
+                    <div
+                      style={{
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        width: '360px',
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      {comment}
+                    </div>
+                  )
                 },
                 {
                   dataIndex: 'amount',

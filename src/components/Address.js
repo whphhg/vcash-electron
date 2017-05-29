@@ -71,50 +71,52 @@ export default class Address extends React.Component {
         </div>
         {
           this.data.outputs.length > 0 && (
-            <Table
-              bordered
-              columns={[
-                {
-                  dataIndex: 'txid',
-                  title: this.t('wallet:transactionId'),
-                  width: 275,
-                  render: (txid, record) => (
-                    <p className='text-mono'>
-                      {
-                        (
-                          record.spentTxid === '' &&
-                          txid.slice(0, 15) + '...' + txid.slice(49, 64)
-                        ) || (
-                          record.spentTxid !== '' &&
+            <div style={{textAlign: 'center'}}>
+              <Table
+                bordered
+                columns={[
+                  {
+                    dataIndex: 'txid',
+                    title: this.t('wallet:transactionId'),
+                    width: 275,
+                    render: (txid, record) => (
+                      <p className='text-mono'>
+                        {
                           (
-                            record.spentTxid.slice(0, 15) + '...' +
-                            record.spentTxid.slice(49, 64)
+                            record.spentTxid === '' &&
+                            txid.slice(0, 15) + '...' + txid.slice(49, 64)
+                          ) || (
+                            record.spentTxid !== '' &&
+                            (
+                              record.spentTxid.slice(0, 15) + '...' +
+                              record.spentTxid.slice(49, 64)
+                            )
                           )
-                        )
-                      }
-                    </p>
-                  )
-                },
-                {
-                  dataIndex: 'amount',
-                  title: this.t('wallet:amount'),
-                  render: (amount, record) => (
-                    <p className={record.color} style={{textAlign: 'right'}}>
-                      {
-                        new Intl.NumberFormat(this.gui.language, {
-                          minimumFractionDigits: 6,
-                          maximumFractionDigits: 6
-                        }).format(amount)
-                      } XVC
-                    </p>
-                  )
-                }
-              ]}
-              dataSource={this.data.outputs}
-              onRowClick={this.viewTransaction}
-              pagination={false}
-              size='small'
-            />
+                        }
+                      </p>
+                    )
+                  },
+                  {
+                    dataIndex: 'amount',
+                    title: this.t('wallet:amount'),
+                    render: (amount, record) => (
+                      <p className={record.color} style={{textAlign: 'right'}}>
+                        {
+                          new Intl.NumberFormat(this.gui.language, {
+                            minimumFractionDigits: 6,
+                            maximumFractionDigits: 6
+                          }).format(amount)
+                        } XVC
+                      </p>
+                    )
+                  }
+                ]}
+                dataSource={this.data.outputs}
+                onRowClick={this.viewTransaction}
+                pagination={this.data.outputs.length > 10}
+                size='small'
+              />
+            </div>
           )
         }
       </div>

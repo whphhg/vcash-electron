@@ -50,7 +50,7 @@ export default class Transaction extends React.Component {
         width={1000}
       >
         <div className='flex-sb' style={{alignItems: 'flex-start'}}>
-          <div style={{margin: '0 36px 0 0'}}>
+          <div style={{lineHeight: '20px', margin: '0 36px 0 0'}}>
             <div className='flex'>
               <i className='material-icons md-16'>label</i>
               <p>{this.t('wallet:transactionId')}</p>
@@ -76,11 +76,11 @@ export default class Transaction extends React.Component {
                 </div>
               )
             }
-            <div className='flex' style={{margin: '10px 0 0 0'}}>
+            <div className='flex'>
               <i className='material-icons md-16'>folder</i>
               <p>{this.t('wallet:category')}</p>
             </div>
-            <div className='flex'>
+            <div className='flex' style={{margin: '10px 0 0 0'}}>
               <i className='material-icons md-16'>monetization_on</i>
               <p>{this.t('wallet:amount')}</p>
             </div>
@@ -97,76 +97,74 @@ export default class Transaction extends React.Component {
               <p>{this.t('wallet:confirmations')}</p>
             </div>
           </div>
-          <div style={{flex: 1}}>
-            <div style={{margin: '0 0 10px 0'}}>
-              <div className='flex-sb' style={{alignItems: 'flex-start'}}>
-                <div>
-                  <p style={{fontWeight: '500'}}>{viewingTx.txid}</p>
-                  {
-                    viewingTx.hasOwnProperty('blockhash') === true && (
-                      <p style={{fontWeight: '500'}}>{viewingTx.blockhash}</p>
-                    )
-                  }
-                  <p>
-                    {moment(viewingTx.time).format('L - LTS')} (
-                    {moment().to(viewingTx.time)})
-                  </p>
-                  {
-                    viewingTx.hasOwnProperty('blocktime') === true &&
-                    viewingTx.blocktime > 0 && (
-                      <p>{moment(viewingTx.blocktime).format('L - LTS')}</p>
-                    )
-                  }
-                </div>
-                <div style={{textAlign: 'right'}}>
-                  <p>
-                    <a
-                      target='_blank'
-                      href={'https://explorer.vchain.info/tx/' + viewingTx.txid}
-                    >
-                      {this.t('wallet:transactionOnExplorer')}
-                    </a>
-                  </p>
-                  <p>
-                    <a
-                      target='_blank'
-                      href={'https://explorer.vchain.info/block/' + viewingTx.blockhash}
-                      disabled={
-                        viewingTx.hasOwnProperty('blockhash') === false ||
-                        viewingTx.blockhash === '0'.repeat(64)
-                      }
-                    >
-                      {this.t('wallet:blockOnExplorer')}
-                    </a>
-                  </p>
-                  {
-                    viewingTx.hasOwnProperty('ztlock') === true &&
-                    viewingTx.confirmations === 0 &&
-                    viewingTx.hasOwnProperty('generated') === false &&
-                    viewingTx.hasOwnProperty('blended') === false &&
-                    (
-                      <p>
-                        <a
-                          onClick={this.ztlock}
-                          disabled={viewingTx.ztlock === true}
-                        >
-                          {
-                            viewingTx.ztlock === true
-                              ? this.t('wallet:transactionLocked')
-                              : this.t('wallet:transactionLock')
-                          }
-                        </a>
-                      </p>
-                    )
-                  }
-                </div>
-              </div>
-            </div>
+          <div style={{flex: 1, lineHeight: '20px'}}>
             <div className='flex-sb' style={{alignItems: 'flex-start'}}>
-              <div style={{margin: '0 36px 0 0'}}>
+              <div style={{margin: '0 0 10px 0'}}>
+                <p style={{fontWeight: '500'}}>{viewingTx.txid}</p>
+                {
+                  viewingTx.hasOwnProperty('blockhash') === true && (
+                    <p style={{fontWeight: '500'}}>{viewingTx.blockhash}</p>
+                  )
+                }
+                <p>
+                  {moment(viewingTx.time).format('L - LTS')} (
+                  {moment().to(viewingTx.time)})
+                </p>
+                {
+                  viewingTx.hasOwnProperty('blocktime') === true &&
+                  viewingTx.blocktime > 0 && (
+                    <p>{moment(viewingTx.blocktime).format('L - LTS')}</p>
+                  )
+                }
                 <p style={{fontWeight: '500'}}>
                   {this.t('wallet:' + viewingTx.category)}
                 </p>
+              </div>
+              <div style={{textAlign: 'right'}}>
+                <p>
+                  <a
+                    target='_blank'
+                    href={'https://explorer.vchain.info/tx/' + viewingTx.txid}
+                  >
+                    {this.t('wallet:transactionOnExplorer')}
+                  </a>
+                </p>
+                <p>
+                  <a
+                    target='_blank'
+                    href={'https://explorer.vchain.info/block/' + viewingTx.blockhash}
+                    disabled={
+                      viewingTx.hasOwnProperty('blockhash') === false ||
+                      viewingTx.blockhash === '0'.repeat(64)
+                    }
+                  >
+                    {this.t('wallet:blockOnExplorer')}
+                  </a>
+                </p>
+                {
+                  viewingTx.hasOwnProperty('ztlock') === true &&
+                  viewingTx.confirmations === 0 &&
+                  viewingTx.hasOwnProperty('generated') === false &&
+                  viewingTx.hasOwnProperty('blended') === false &&
+                  (
+                    <p>
+                      <a
+                        onClick={this.ztlock}
+                        disabled={viewingTx.ztlock === true}
+                      >
+                        {
+                          viewingTx.ztlock === true
+                            ? this.t('wallet:transactionLocked')
+                            : this.t('wallet:transactionLock')
+                        }
+                      </a>
+                    </p>
+                  )
+                }
+              </div>
+            </div>
+            <div className='flex-sb' style={{alignItems: 'flex-start'}}>
+              <div>
                 <p className={viewingTx.color}>
                   {
                     new Intl.NumberFormat(this.gui.language, {
@@ -193,35 +191,37 @@ export default class Transaction extends React.Component {
                 }
                 <p className={viewingTx.color}>{viewingTx.confirmations}</p>
               </div>
-              <div style={{margin: '0 36px 0 36px'}}>
-                {
-                  viewingTx.hasOwnProperty('to') === true && (
-                    <div className='flex'>
-                      <i className='material-icons md-16'>perm_identity</i>
-                      <p>{this.t('wallet:recipient')}</p>
-                    </div>
-                  )
-                }
-                {
-                  viewingTx.hasOwnProperty('comment') === true && (
-                    <div className='flex'>
-                      <i className='material-icons md-16'>create</i>
-                      <p>{this.t('wallet:comment')}</p>
-                    </div>
-                  )
-                }
-              </div>
-              <div style={{flex: 1}}>
-                {
-                  viewingTx.hasOwnProperty('to') === true && (
-                    <p style={{fontWeight: '500'}}>{viewingTx.to}</p>
-                  )
-                }
-                {
-                  viewingTx.hasOwnProperty('comment') === true && (
-                    <p style={{textAlign: 'justify'}}>{viewingTx.comment}</p>
-                  )
-                }
+              <div className='flex-sb' style={{alignItems: 'flex-start', width: '467px'}}>
+                <div style={{margin: '0 36px 0 0'}}>
+                  {
+                    viewingTx.hasOwnProperty('to') === true && (
+                      <div className='flex'>
+                        <i className='material-icons md-16'>perm_identity</i>
+                        <p>{this.t('wallet:recipient')}</p>
+                      </div>
+                    )
+                  }
+                  {
+                    viewingTx.hasOwnProperty('comment') === true && (
+                      <div className='flex'>
+                        <i className='material-icons md-16'>create</i>
+                        <p>{this.t('wallet:comment')}</p>
+                      </div>
+                    )
+                  }
+                </div>
+                <div style={{flex: 1}}>
+                  {
+                    viewingTx.hasOwnProperty('to') === true && (
+                      <p style={{fontWeight: '500'}}>{viewingTx.to}</p>
+                    )
+                  }
+                  {
+                    viewingTx.hasOwnProperty('comment') === true && (
+                      <p style={{textAlign: 'justify'}}>{viewingTx.comment}</p>
+                    )
+                  }
+                </div>
               </div>
             </div>
           </div>

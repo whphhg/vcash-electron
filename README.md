@@ -40,7 +40,7 @@ the two with a dash `-`.
 After you've created the correctly named translation directory, open
 `src/stores/gui.js` and add the new translation to the
 [languages](https://github.com/whphhg/vcash-electron/blob/master/src/stores/gui.js#L20-L24)
-array (in alphabetical order).
+array (in alphabetical order). Please use 6 spaces to indent the line below.
 
     { language: 'languageCode-countryCode', name: 'New language' },
 

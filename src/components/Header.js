@@ -69,7 +69,7 @@ class Header extends React.Component {
           </div>
           {
             this.wallet.pendingAmount > 0 && (
-              <div>
+              <div style={{margin: '0 10px 0 0'}}>
                 <p>{this.t('wallet:pending')}</p>
                 <p><span style={{fontWeight: '600'}}>
                   {
@@ -83,7 +83,7 @@ class Header extends React.Component {
           }
           {
             newmint > 0 && (
-              <div style={{margin: '0 10px 0 10px'}}>
+              <div style={{margin: '0 10px 0 0'}}>
                 <p>{this.t('wallet:immature')}</p>
                 <p><span style={{fontWeight: '600'}}>
                   {
