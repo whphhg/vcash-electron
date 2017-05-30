@@ -19,7 +19,8 @@ class GUI {
   constructor () {
     this.languages = [
       { language: 'en-US', name: 'English' },
-      { language: 'pt-PT', name: 'Portuguese' },
+      { language: 'es-ES', name: 'Spanish' },
+      { language: 'pt-BR', name: 'Portuguese' },
       { language: 'ru-RU', name: 'Russian' },
       { language: 'sl-SI', name: 'Slovenian' }
     ]
