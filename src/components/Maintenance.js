@@ -80,22 +80,22 @@ export default class Maintenance extends React.Component {
             {
               dataIndex: 'ip',
               title: this.t('wallet:peers'),
-              width: 110
+              width: 120
             },
             {
               dataIndex: 'port',
               title: this.t('wallet:port'),
-              width: 60
+              width: 90
             },
             {
               dataIndex: 'version',
               title: this.t('wallet:version'),
-              width: 60
+              width: 90
             },
             {
               dataIndex: 'os',
               title: this.t('wallet:os'),
-              width: 80
+              width: 110
             },
             {
               dataIndex: 'inbound',
@@ -109,19 +109,13 @@ export default class Maintenance extends React.Component {
             {
               dataIndex: 'conntime',
               title: this.t('wallet:connected'),
-              width: 160,
-              render: text => moment(text * 1000).fromNow()
-            },
-            {
-              dataIndex: 'lastsend',
-              title: this.t('wallet:lastSend'),
-              width: 160,
+              width: 170,
               render: text => moment(text * 1000).fromNow()
             },
             {
               dataIndex: 'lastrecv',
               title: this.t('wallet:lastReceived'),
-              width: 160,
+              width: 170,
               render: text => moment(text * 1000).fromNow()
             },
             {

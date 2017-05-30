@@ -1,7 +1,7 @@
 {
   "name": "vcash-electron",
   "productName": "Vcash Electron GUI",
-  "version": "0.32.0",
+  "version": "0.32.1",
   "description": "Multi-platform and multi-node GUI for Vcash.",
   "main": "src/electron.js",
   "scripts": {
@@ -75,7 +75,7 @@
     "babel-preset-react": "6.24.1",
     "babel-preset-stage-0": "6.24.1",
     "babel-runtime": "6.23.0",
-    "electron-builder": "18.1.0",
+    "electron-builder": "18.2.2",
     "electron-prebuilt-compile": "1.7.0",
     "standard": "10.0.2"
   }
