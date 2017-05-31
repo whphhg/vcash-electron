@@ -20,6 +20,7 @@ class GUI {
     this.languages = [
       { language: 'en-US', name: 'English' },
       { language: 'es-ES', name: 'Spanish' },
+      { language: 'fr-FR', name: 'French' },
       { language: 'pt-BR', name: 'Portuguese' },
       { language: 'ru-RU', name: 'Russian' },
       { language: 'sl-SI', name: 'Slovenian' }
