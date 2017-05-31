@@ -11,14 +11,14 @@ The following dependencies are required to be installed:
 * git
 
 Clone this repository using `git clone`, move to the cloned directory
-using `cd vcash-electron` and install Node.js dependencies using `npm install`.
+using `cd vcash-electron/` and install Node.js dependencies using `npm install`.
 
     $ git clone https://github.com/whphhg/vcash-electron.git
-    $ cd vcash-electron
+    $ cd vcash-electron/
     $ npm install
 
-After it is done installing dependencies, you can run the GUI
-using `npm run gui`.
+You can run the GUI using `npm run gui` after the dependency installation
+is completed.
 
     $ npm run gui
 
@@ -28,40 +28,42 @@ using `npm run dev` or `npm run dev-win` on Windows.
     $ npm run dev (Linux and macOS)
     $ npm run dev-win (Windows)
 
+## Launch the Vcash daemon on GUI start-up
+Placing a daemon named `vcashd-ia32` or `vcashd-x64` into the `bin/` directory
+will launch it on GUI start-up if it matches the correct platform and arch. It
+will also get bundled with the GUI if you run any of the `npm run dist-*` scripts.
+
 ## Contribute translations
-First follow the `Install from source` guide above. Then create a copy of the
-`en-US` directory in `src/locales` and construct the first part of the directory
-name by using the `ISO 639-1 Code`
+Follow the `Install from source` guide above and download the Vcash daemon
+instead of the GUI. It's easier to have the daemon running separately while
+you restart the GUI to look at the changes you've made to the translation file.
+
+Once you are done with the installation and have the daemon running, create a
+copy of the `en-US` directory in `src/locales/` and construct the first part of
+the copied directory name by using the `ISO 639-1 Code`
 [language code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
 and the second part by using the `ISO 3166 Alpha-2 code`
 [country code](https://en.wikipedia.org/wiki/ISO_3166-1#Current_codes). Delimit
-the two with a dash `-`.
-
-After you've created the correctly named translation directory, open
-`src/stores/gui.js` and add the new translation to the
+the two parts with a dash `-`. The final step is to open `src/stores/gui.js`
+and add your translation to the
 [languages](https://github.com/whphhg/vcash-electron/blob/master/src/stores/gui.js#L20-L24)
-array (in alphabetical order). Please use 6 spaces to indent the line below.
+array. Please add it in alphabetical order (by name) and use 6 spaces to indent
+the line.
 
-    { language: 'languageCode-countryCode', name: 'New language' },
+    { language: 'languageCode-countryCode', name: 'Language' },
 
-You can now select your new translation in the GUI and start translating the
-strings in the `wallet.json`.
+You can now select your translation in the GUI and start translating the strings
+in `wallet.json`.
 
 **Note:** Please use an editor that will open and save `wallet.json` in UTF-8
 (e.g. [Atom](https://atom.io/)).
 
 ## Package and build
-To bundle the daemon with the GUI, name it `vcashd-arch`, where `arch` can
-be either `ia32` or `x64` and place it into the `bin` directory. This directory
-is checked for the current platform & arch daemon executable on start-up by
-[daemon.js](https://github.com/whphhg/vcash-electron/blob/master/src/daemon.js)
-and is not included in the asar archive, but gets unpacked into
-the `dist/platform-unpacked/app.asar.unpacked` directory due to
-[this](https://electron.atom.io/docs/tutorial/application-packaging/#executing-binaries-inside-asar-archive)
-asar limitation.
+To bundle the daemon with the GUI follow the `Launch the Vcash daemon on GUI
+start-up` guide above.
 
-To only generate the `dist/platform-unpacked` package directory without
-actually packaging the GUI run `npm run pack`.
+If you want to only generate the `dist/platform-unpacked/` package directory
+without actually packaging the GUI run `npm run pack`.
 
     $ npm run pack
 
@@ -77,7 +79,7 @@ Run the docker container.
     $ docker run --rm -ti -v ${PWD}:/project -v ${PWD##*/}-node-modules:/project/node_modules -v ~/.electron:/root/.electron electronuserland/electron-builder:wine
 
 To package in a distributable format run one of the scripts from the table
-below, which will create the packages and save them into the `dist` directory.
+below, which will create the packages and save them into the `dist/` directory.
 Packages will be created according to the `build` and `scripts` options in
 [package.json](https://github.com/whphhg/vcash-electron/blob/master/package.json#L11-L33).
 
@@ -91,13 +93,13 @@ dist-win32-ia32 | ia32 | Create a 32-bit Windows portable executable
 dist-win32-x64 | x64 | Create a 64-bit Windows portable executable
 
 **Note:** If you are bundling daemons, `dist-nsis` script requires both
-`vcashd-ia32.exe` and `vcashd-x64.exe` in the `bin` directory. Other scripts
+`vcashd-ia32.exe` and `vcashd-x64.exe` in the `bin/` directory. Other scripts
 require only the daemon for the target arch of the platform they're packaging for.
 
 ## Linux and macOS
 To package in a distributable format run one of the scripts from the table
 below, which will create the packages for your current platform and save
-them into the `dist` directory. Packages will be created according to the
+them into the `dist/` directory. Packages will be created according to the
 `build` and `scripts` options in
 [package.json](https://github.com/whphhg/vcash-electron/blob/master/package.json#L11-L33).
 

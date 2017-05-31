@@ -19,11 +19,11 @@ class GUI {
   constructor () {
     this.languages = [
       { language: 'en-US', name: 'English' },
-      { language: 'es-ES', name: 'Spanish' },
       { language: 'fr-FR', name: 'French' },
       { language: 'pt-BR', name: 'Portuguese' },
       { language: 'ru-RU', name: 'Russian' },
-      { language: 'sl-SI', name: 'Slovenian' }
+      { language: 'sl-SI', name: 'Slovenian' },
+      { language: 'es-ES', name: 'Spanish' }
     ]
 
     /** Update i18next and moment on locale change. */
