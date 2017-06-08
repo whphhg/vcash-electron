@@ -1,6 +1,7 @@
 # Vcash Electron GUI
-:honeybee: Multi-platform and multi-node GUI for [Vcash](https://vcash.info/).
-Latest releases can be found [here](https://github.com/whphhg/vcash-electron/releases).
+:honeybee: Multi-platform and multi-node GUI for [Vcash](https://vcash.info/),
+a decentralized currency for the internet. Latest releases can be found
+[here](https://github.com/whphhg/vcash-electron/releases).
 
 ![Screenshots](http://i.imgur.com/i3Dxol0.gif)
 
@@ -29,8 +30,8 @@ using `npm run dev` or `npm run dev-win` on Windows.
     $ npm run dev-win (Windows)
 
 ## Launch the Vcash daemon on GUI start-up
-Placing a daemon named `vcashd-ia32` or `vcashd-x64` into the `bin/` directory
-will launch it on GUI start-up if it matches the correct platform and arch. It
+Place a daemon named `vcashd-ia32` or `vcashd-x64` into the `bin/` directory and
+it will launch on GUI start-up if it matches the correct platform and arch. It
 will also get bundled with the GUI if you run any of the `npm run dist-*` scripts.
 
 ## Contribute translations
@@ -44,8 +45,9 @@ the copied directory name by using the `ISO 639-1 Code`
 [language code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
 and the second part by using the `ISO 3166 Alpha-2 code`
 [country code](https://en.wikipedia.org/wiki/ISO_3166-1#Current_codes). Delimit
-the two parts with a dash `-`. The final step is to open `src/stores/gui.js`
-and add your translation to the
+the two parts with a dash `-`.
+
+The final step is to open `src/stores/gui.js` and add your translation to the
 [languages](https://github.com/whphhg/vcash-electron/blob/master/src/stores/gui.js#L20-L24)
 array. Please add it in alphabetical order (by name) and use 6 spaces to indent
 the line.
