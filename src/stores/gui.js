@@ -8,9 +8,14 @@ class GUI {
    * Observable properties.
    * @property {string} language - Display language.
    * @property {string} localCurrency - Local currency.
+   * @property {object} soundAlerts - Sound alerts.
    */
   @observable language = getItem('language') || 'en-US'
   @observable localCurrency = getItem('localCurrency') || 'EUR'
+  @observable soundAlerts = getItem('soundAlerts') || {
+    incoming: false,
+    spendable: false
+  }
 
   /**
    * @constructor
@@ -35,12 +40,12 @@ class GUI {
 
   /**
    * Set display language and save it to local storage.
-   * @action setLanguage
+   * @function setLanguage
    * @param {string} language - Display language.
    */
   @action setLanguage (language) {
     this.language = language
-    setItem('language', language)
+    setItem('language', this.language)
   }
 
   /**
@@ -50,7 +55,17 @@ class GUI {
    */
   @action setLocalCurrency (localCurrency) {
     this.localCurrency = localCurrency
-    setItem('localCurrency', localCurrency)
+    setItem('localCurrency', this.localCurrency)
+  }
+
+  /**
+   * Set sound alert and save it to local storage.
+   * @function setSoundAlert
+   * @param {string} alert - Alert to toggle.
+   */
+  @action setSoundAlert (alert) {
+    this.soundAlerts[alert] = !this.soundAlerts[alert]
+    setItem('soundAlerts', this.soundAlerts)
   }
 }
 

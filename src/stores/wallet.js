@@ -1,5 +1,6 @@
 import { action, autorunAsync, computed, observable, reaction } from 'mobx'
 import { notification } from 'antd'
+import { join } from 'path'
 import { shortUid } from '../utilities/common'
 import i18next from '../utilities/i18next'
 import moment from 'moment'
@@ -903,6 +904,14 @@ export default class Wallet {
         })
       })
 
+      /** Play a incoming notification sound if enabled. */
+      if (
+        notifications.pending.size > 0 &&
+        this.gui.soundAlerts.incoming === true
+      ) {
+        new Audio(join(__dirname, '..', 'assets', 'sounds', 'incoming.mp3')).play()
+      }
+
       /**
        * Open notification on confirmation change,
        * from 0 -> 1 and 219 -> 220 for generated.
@@ -921,6 +930,14 @@ export default class Wallet {
           duration: 6
         })
       })
+
+      /** Play a spendable notification sound if enabled. */
+      if (
+        notifications.spendable.size > 0 &&
+        this.gui.soundAlerts.spendable === true
+      ) {
+        new Audio(join(__dirname, '..', 'assets', 'sounds', 'spendable.mp3')).play()
+      }
     }
   }
 

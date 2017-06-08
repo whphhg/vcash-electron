@@ -7,6 +7,7 @@ import moment from 'moment'
 /** Required components. */
 import SelectCurrency from './SelectCurrency'
 import SelectLanguage from './SelectLanguage'
+import SelectSoundAlerts from './SelectSoundAlerts'
 import WalletBackup from './WalletBackup'
 import WalletDump from './WalletDump'
 import WalletEncrypt from './WalletEncrypt'
@@ -71,6 +72,8 @@ export default class Maintenance extends React.Component {
               <WalletPassphraseChange />
               <hr />
               <WalletRepair />
+              <hr />
+              <SelectSoundAlerts />
             </div>
           </div>
         </div>
