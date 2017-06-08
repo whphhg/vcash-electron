@@ -276,6 +276,13 @@ export default class Wallet {
         blendedbalance: 0,
         blendedpercentage: 0
       },
+      'getdifficulty': {
+        'proof-of-work': 0,
+        'proof-of-stake': 0
+      },
+      'getincentiveinfo': {
+        collateralbalance: 0
+      },
       'getinfo': {
         balance: 0,
         version: ':'
