@@ -54,7 +54,10 @@ export default class Wallet {
 
     /** Refresh network info every 3s until there are at least 3 peers. */
     autorunAsync(() => {
-      if (this.peers.length < 3) {
+      if (
+        this.peers.length < 3 ||
+        this.info.getnetworkinfo.endpoints.length === 0
+      ) {
         this.restart('getNetworkInfo')
       }
     }, 3 * 1000)
@@ -266,6 +269,11 @@ export default class Wallet {
    */
   @computed get info () {
     return this.responses.entries().reduce((responses, [key, value]) => {
+      /** RPC getnetworkinfo returns null if endpoints array is empty. */
+      if (key === 'getnetworkinfo' && value.endpoints === null) {
+        value.endpoints = []
+      }
+
       responses[key] = value
       return responses
     }, {
@@ -281,14 +289,48 @@ export default class Wallet {
         'proof-of-work': 0,
         'proof-of-stake': 0
       },
+      'getmininginfo': {
+        blocks: 0,
+        currentblocksize: 0,
+        currentblocktx: 0,
+        difficulty: 0,
+        errors: '',
+        generate: null,
+        genproclimit: 0,
+        hashespersec: 0,
+        networkhashps: 0,
+        pooledtx: 0,
+        testnet: null
+      },
       'getincentiveinfo': {
-        collateralbalance: 0
+        walletaddress: '',
+        collateralrequired: 0,
+        collateralbalance: 0,
+        networkstatus: '',
+        votecandidate: false,
+        votescore: 0
       },
       'getinfo': {
+        version: ':',
+        protocolversion: 0,
+        walletversion: 0,
         balance: 0,
-        version: ':'
+        newmint: 0,
+        stake: 0,
+        blocks: 0,
+        moneysupply: 0,
+        connections: 0,
+        ip: '',
+        port: 0,
+        difficulty: 0,
+        testnet: false,
+        keypoolsize: 0,
+        paytxfee: 0,
+        relayfee: 0
       },
       'getnetworkinfo': {
+        collateralized: 0,
+        endpoints: [],
         tcp: { connections: 0 },
         udp: { connections: 0 }
       }
