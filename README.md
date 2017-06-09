@@ -1,7 +1,7 @@
 # Vcash Electron GUI
 :honeybee: Multi-platform and multi-node GUI for [Vcash](https://vcash.info/),
 a decentralized currency for the internet. Latest releases can be found
-[here](https://github.com/whphhg/vcash-electron/releases).
+[here](https://github.com/openvcash/vcash-electron/releases).
 
 ![Screenshots](http://i.imgur.com/i3Dxol0.gif)
 
@@ -14,7 +14,7 @@ The following dependencies are required to be installed:
 Clone this repository using `git clone`, move to the cloned directory
 using `cd vcash-electron/` and install Node.js dependencies using `npm install`.
 
-    $ git clone https://github.com/whphhg/vcash-electron.git
+    $ git clone https://github.com/openvcash/vcash-electron.git
     $ cd vcash-electron/
     $ npm install
 
@@ -48,7 +48,7 @@ and the second part by using the `ISO 3166 Alpha-2 code`
 the two parts with a dash `-`.
 
 The final step is to open `src/stores/gui.js` and add your translation to the
-[languages](https://github.com/whphhg/vcash-electron/blob/master/src/stores/gui.js#L20-L24)
+[languages](https://github.com/openvcash/vcash-electron/blob/master/src/stores/gui.js#L25-L32)
 array. Please add it in alphabetical order (by name) and use 6 spaces to indent
 the line.
 
@@ -83,7 +83,7 @@ Run the docker container.
 To package in a distributable format run one of the scripts from the table
 below, which will create the packages and save them into the `dist/` directory.
 Packages will be created according to the `build` and `scripts` options in
-[package.json](https://github.com/whphhg/vcash-electron/blob/master/package.json#L11-L33).
+[package.json](https://github.com/openvcash/vcash-electron/blob/master/package.json#L11-L34).
 
     $ npm install && npm prune && npm run <script>
 
@@ -103,7 +103,7 @@ To package in a distributable format run one of the scripts from the table
 below, which will create the packages for your current platform and save
 them into the `dist/` directory. Packages will be created according to the
 `build` and `scripts` options in
-[package.json](https://github.com/whphhg/vcash-electron/blob/master/package.json#L11-L33).
+[package.json](https://github.com/openvcash/vcash-electron/blob/master/package.json#L11-L34).
 
     $ npm run <script>
 
