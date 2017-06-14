@@ -8,9 +8,7 @@ import { join } from 'path'
  * @return {object|null} Child process or null.
  */
 const start = () => {
-  const ext = process.platform === 'win32'
-    ? '.exe'
-    : ''
+  const ext = process.platform === 'win32' ? '.exe' : ''
 
   /** Prepare daemon path. */
   let path = join(__dirname, '..', 'bin', 'vcashd-' + process.arch + ext)
@@ -19,13 +17,11 @@ const start = () => {
   path = path.replace('app.asar', 'app.asar.unpacked')
 
   /** Check if daemon exists and spawn it. */
-  const daemon = existsSync(path) === true
-    ? spawn(path)
-    : null
+  const daemon = existsSync(path) === true ? spawn(path) : null
 
   if (daemon !== null) {
     /** Log daemon stderr in dev mode. */
-    daemon.stderr.on('data', (data) => {
+    daemon.stderr.on('data', data => {
       process.env.NODE_ENV === 'dev' && console.log(data.toString().trim())
     })
 

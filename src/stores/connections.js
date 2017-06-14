@@ -33,7 +33,7 @@ class Connections {
    * @property {map} stores - Active connections stores.
    * @property {map} tunnels - SSH tunnels instances.
    */
-  constructor () {
+  constructor() {
     this.stores = new Map()
     this.tunnels = new Map()
 
@@ -64,75 +64,81 @@ class Connections {
     }, 3 * 1000)
 
     /** Always have one connection available and perform auto-start. */
-    reaction(() => this.configs.size, (size) => {
-      if (size === 0) {
-        this.add()
-      }
+    reaction(
+      () => this.configs.size,
+      size => {
+        if (size === 0) {
+          this.add()
+        }
 
-      /**
-       * Auto-start the first connection if it's local or the viewing
-       * connection if it's first in this.uids.
-       */
-      if (
-        size > 0 && (
-          this.viewing === '' ||
-          this.viewing === this.uids[0]
-        )
-      ) {
-        const conn = this.configs.get(this.uids[0])
+        /**
+         * Auto-start the first connection if it's local or the viewing
+         * connection if it's first in this.uids.
+         */
+        if (
+          size > 0 &&
+          (this.viewing === '' || this.viewing === this.uids[0])
+        ) {
+          const conn = this.configs.get(this.uids[0])
 
-        if (conn.status.active === false) {
-          /** Set viewing if none has been set so far. */
-          if (this.viewing === '') {
-            this.setViewing(this.uids[0])
-          }
+          if (conn.status.active === false) {
+            /** Set viewing if none has been set so far. */
+            if (this.viewing === '') {
+              this.setViewing(this.uids[0])
+            }
 
-          /** Start the connection if it's local. */
-          if (conn.type === 'local') {
-            setTimeout(() => { this.start() }, 0.1 * 1000)
+            /** Start the connection if it's local. */
+            if (conn.type === 'local') {
+              setTimeout(() => this.start(), 0.1 * 1000)
+            }
           }
         }
-      }
-    }, true)
+      },
+      true
+    )
 
     /** React to Alt-asd key presses. */
-    document.addEventListener('keydown', (e) => {
-      if (e.altKey === true) {
-        /** Alt-ad: Switch between previous and next connection. */
-        if (e.keyCode === 65 || e.keyCode === 68) {
-          const length = this.uids.length
+    document.addEventListener(
+      'keydown',
+      e => {
+        if (e.altKey === true) {
+          /** Alt-ad: Switch between previous and next connection. */
+          if (e.keyCode === 65 || e.keyCode === 68) {
+            const length = this.uids.length
 
-          if (length > 1) {
-            const index = this.uids.indexOf(this.viewing)
+            if (length > 1) {
+              const index = this.uids.indexOf(this.viewing)
 
-            /** Alt-a: Move to the left. */
-            if (e.keyCode === 65) {
-              /** Return to the end if we hit the beginning. */
-              if (index === 0) {
-                this.setViewing(this.uids[length - 1])
-              } else {
-                this.setViewing(this.uids[index - 1])
+              /** Alt-a: Move to the left. */
+              if (e.keyCode === 65) {
+                /** Return to the end if we hit the beginning. */
+                if (index === 0) {
+                  this.setViewing(this.uids[length - 1])
+                } else {
+                  this.setViewing(this.uids[index - 1])
+                }
               }
-            }
 
-            /** Alt-d: Move to the right. */
-            if (e.keyCode === 68) {
-              /** Return to the beginning if we hit the end. */
-              if (index + 1 === length) {
-                this.setViewing(this.uids[0])
-              } else {
-                this.setViewing(this.uids[index + 1])
+              /** Alt-d: Move to the right. */
+              if (e.keyCode === 68) {
+                /** Return to the beginning if we hit the end. */
+                if (index + 1 === length) {
+                  this.setViewing(this.uids[0])
+                } else {
+                  this.setViewing(this.uids[index + 1])
+                }
               }
             }
           }
-        }
 
-        /** Alt-s: Toggle connection manager. */
-        if (e.keyCode === 83) {
-          this.toggleModal()
+          /** Alt-s: Toggle connection manager. */
+          if (e.keyCode === 83) {
+            this.toggleModal()
+          }
         }
-      }
-    }, false)
+      },
+      false
+    )
   }
 
   /**
@@ -140,7 +146,8 @@ class Connections {
    * @function startStatus
    * @return {boolean} Start button status.
    */
-  @computed get startStatus () {
+  @computed
+  get startStatus() {
     if (this.configs.has(this.viewing) === true) {
       const conn = this.configs.get(this.viewing)
 
@@ -168,7 +175,8 @@ class Connections {
    * @function uids
    * @return {array} Connections uids.
    */
-  @computed get uids () {
+  @computed
+  get uids() {
     return [...this.configs.keys()]
   }
 
@@ -177,7 +185,8 @@ class Connections {
    * @function viewingStores
    * @return {object|null} Stores or null if none.
    */
-  @computed get viewingStores () {
+  @computed
+  get viewingStores() {
     if (this.stores.has(this.viewing) === false) return null
     return this.stores.get(this.viewing)
   }
@@ -186,7 +195,8 @@ class Connections {
    * Add new connection.
    * @function add
    */
-  @action add () {
+  @action
+  add() {
     const uid = shortUid()
 
     this.configs.set(uid, {
@@ -210,7 +220,8 @@ class Connections {
    * Remove the viewing connection.
    * @function remove
    */
-  @action remove () {
+  @action
+  remove() {
     const index = this.uids.indexOf(this.viewing)
     const length = this.uids.length
 
@@ -232,21 +243,19 @@ class Connections {
 
   /**
    * Set viewing connection property.
-   * @function set
+   * @function setConfig
    * @param {string} key - Object key to alter.
    * @param {any} value - Value to assign.
    */
-  @action set (key, value) {
+  @action
+  setConfig(key, value) {
     const conn = this.configs.get(this.viewing)
 
     /** Handle port inputs. Allow only numbers below 65536. */
     const ports = ['dstPort', 'localPort', 'port']
 
     if (ports.includes(key) === true && value !== '') {
-      if (
-        value.match(/^\d+$/) === null ||
-        parseInt(value) > 65535
-      ) return
+      if (value.match(/^\d+$/) === null || parseInt(value) > 65535) return
     }
 
     conn[key] = value
@@ -258,7 +267,8 @@ class Connections {
    * @param {string} uid - Connection uid.
    * @param {object} status - Updated connection status.
    */
-  @action.bound setStatus (uid, status) {
+  @action.bound
+  setStatus(uid, status) {
     const conn = this.configs.get(uid)
     conn.status = { ...conn.status, ...status }
   }
@@ -268,7 +278,8 @@ class Connections {
    * @function setViewing
    * @param {string} uid - Connection uid.
    */
-  @action setViewing (uid) {
+  @action
+  setViewing(uid) {
     this.viewing = uid
   }
 
@@ -276,7 +287,8 @@ class Connections {
    * Toggle modal.
    * @function toggleModal
    */
-  @action toggleModal = () => {
+  @action
+  toggleModal() {
     this.modal = !this.modal
   }
 
@@ -284,7 +296,7 @@ class Connections {
    * Start the viewing connection.
    * @function start
    */
-  start (uid = this.viewing) {
+  start(uid = this.viewing) {
     const conn = this.configs.get(uid)
 
     /** Initialize and set the new connection's stores. */
@@ -312,31 +324,33 @@ class Connections {
         username: conn.username,
         password: conn.password,
         passphrase: conn.password,
-        privateKey: conn.privateKey === ''
-          ? ''
-          : readFileSync(conn.privateKey)
+        privateKey: conn.privateKey === '' ? '' : readFileSync(conn.privateKey)
       })
 
       /** Emit SSH errors to the server. */
-      ssh.on('error', (error) => server.emit('error', error))
+      ssh.on('error', error => server.emit('error', error))
 
       /** Set tunnel active on SSH connection ready. */
       ssh.on('ready', () => this.setStatus(uid, { tunnel: true }))
 
       /** Create a new server. */
-      const server = createServer((socket) => {
+      const server = createServer(socket => {
         /** End sockets as they close or error out. */
-        socket.on('close', () => { socket.end() })
-        socket.on('error', () => { socket.end() })
+        socket.on('close', () => socket.end())
+        socket.on('error', () => socket.end())
 
         /** Forward HTTP requests over SSH connection to the remote node. */
-        ssh.forwardOut('127.0.0.1', conn.localPort, '127.0.0.1', conn.dstPort,
+        ssh.forwardOut(
+          '127.0.0.1',
+          conn.localPort,
+          '127.0.0.1',
+          conn.dstPort,
           (error, stream) => {
             /** Return and emit forwarding errors to the server. */
             if (typeof error !== 'undefined') return server.emit('error', error)
 
             /** Emit stream errors to the server. */
-            stream.on('error', (error) => server.emit('error', error))
+            stream.on('error', error => server.emit('error', error))
 
             /** Pipe SSH stream to the socket. */
             socket.pipe(stream).pipe(socket)
@@ -345,10 +359,10 @@ class Connections {
       }).listen(conn.localPort, '127.0.0.1')
 
       /** Stop tunnel on error. */
-      server.on('error', (error) => {
+      server.on('error', error => {
         /** Display a notification with the error message. */
         notification.error({
-          message: i18next.t('wallet:connection') + ' ' + conn.host + ':' + conn.port,
+          message: ''.concat(i18next.t('wallet:connection'), ' ', conn.host),
           description: error.message,
           duration: 0
         })
@@ -366,7 +380,7 @@ class Connections {
    * Stop the viewing connection and reset it's status.
    * @function stop
    */
-  stop () {
+  stop() {
     this.stopTunnel(this.viewing)
     this.setStatus(this.viewing, { active: false, rpc: null, tunnel: null })
   }
@@ -376,7 +390,7 @@ class Connections {
    * @function stopTunnel
    * @param {string} uid - Connection uid.
    */
-  stopTunnel (uid) {
+  stopTunnel(uid) {
     if (this.tunnels.has(uid) === true) {
       const tunnel = this.tunnels.get(uid)
 

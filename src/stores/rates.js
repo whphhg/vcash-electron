@@ -11,7 +11,11 @@ class Rates {
    * @property {object} bittrex - Bittrex ticker.
    * @property {object} poloniex - Poloniex ticker.
    */
-  @observable bitcoinAverage = getItem('bitcoinAverage') || { rates: {}, updated: 0 }
+  @observable
+  bitcoinAverage = getItem('bitcoinAverage') || {
+    rates: {},
+    updated: 0
+  }
   @observable bittrex = { Last: 0 }
   @observable poloniex = { last: 0 }
 
@@ -19,7 +23,7 @@ class Rates {
    * Start upate loops.
    * @constructor
    */
-  constructor () {
+  constructor() {
     this.fetchBitcoinAverage()
     this.fetchBittrex()
     this.fetchPoloniex()
@@ -30,19 +34,23 @@ class Rates {
    * @function average
    * @return {number} Vcash price average.
    */
-  @computed get average () {
+  @computed
+  get average() {
     const rates = [this.bittrex.Last, this.poloniex.last]
 
-    const result = rates.reduce((result, rate) => {
-      rate = parseFloat(rate)
+    const result = rates.reduce(
+      (result, rate) => {
+        rate = parseFloat(rate)
 
-      if (rate > 0) {
-        result.divideBy += 1
-        result.total += rate
-      }
+        if (rate > 0) {
+          result.divideBy += 1
+          result.total += rate
+        }
 
-      return result
-    }, { divideBy: 0, total: 0 })
+        return result
+      },
+      { divideBy: 0, total: 0 }
+    )
 
     if (result.total > 0) return result.total / result.divideBy
     return 0
@@ -53,10 +61,10 @@ class Rates {
    * @function local
    * @return {number} Local bitcoin price.
    */
-  @computed get local () {
-    if (
-      this.bitcoinAverage.rates.hasOwnProperty(gui.localCurrency) === true
-    ) return this.bitcoinAverage.rates[gui.localCurrency].last
+  @computed
+  get local() {
+    if (this.bitcoinAverage.rates.hasOwnProperty(gui.localCurrency) === true)
+      return this.bitcoinAverage.rates[gui.localCurrency].last
     return 0
   }
 
@@ -65,7 +73,8 @@ class Rates {
    * @function localCurrencies
    * @return {array} Local currencies.
    */
-  @computed get localCurrencies () {
+  @computed
+  get localCurrencies() {
     return Object.keys(this.bitcoinAverage.rates)
   }
 
@@ -74,7 +83,8 @@ class Rates {
    * @function setBitcoinAverage
    * @param {string} rates - Price index.
    */
-  @action setBitcoinAverage (rates) {
+  @action
+  setBitcoinAverage(rates) {
     /** Set only if rates is an object. */
     if (rates === Object(rates)) {
       this.bitcoinAverage = { rates, updated: new Date().getTime() }
@@ -87,12 +97,10 @@ class Rates {
    * @function setBittrex
    * @param {string} ticker - Ticker.
    */
-  @action setBittrex (ticker) {
+  @action
+  setBittrex(ticker) {
     /** Set only if ticker is an object and result exists. */
-    if (
-      ticker === Object(ticker) &&
-      ticker.hasOwnProperty('result') === true
-    ) {
+    if (ticker === Object(ticker) && ticker.hasOwnProperty('result') === true) {
       this.bittrex = { ...ticker.result[0], updated: new Date() }
     }
   }
@@ -102,7 +110,8 @@ class Rates {
    * @function setPoloniex
    * @param {string} ticker - Ticker.
    */
-  @action setPoloniex (ticker) {
+  @action
+  setPoloniex(ticker) {
     /** Set only if ticker is an object and BTC_XVC pair exists. */
     if (
       ticker === Object(ticker) &&
@@ -117,47 +126,52 @@ class Rates {
    * to obey the 100 requests per day limit.
    * @function fetchBitcoinAverage
    */
-  fetchBitcoinAverage () {
-    if (
-      new Date().getTime() - this.bitcoinAverage.updated >
-      15 * 59 * 1000
-    ) {
+  fetchBitcoinAverage() {
+    if (new Date().getTime() - this.bitcoinAverage.updated > 15 * 59 * 1000) {
       window
         .fetch('https://apiv2.bitcoinaverage.com/ticker/global/all')
-        .then((response) => { if (response.ok) return response.json() })
-        .then((priceIndex) => { this.setBitcoinAverage(priceIndex) })
-        .catch((error) => { console.error('BitcoinAverage:', error.message) })
+        .then(response => {
+          if (response.ok === true) return response.json()
+        })
+        .then(priceIndex => this.setBitcoinAverage(priceIndex))
+        .catch(error => console.error('BitcoinAverage:', error.message))
     }
 
-    setTimeout(() => { this.fetchBitcoinAverage() }, 15 * 60 * 1000)
+    setTimeout(() => this.fetchBitcoinAverage(), 15 * 60 * 1000)
   }
 
   /**
    * Fetch Bittrex ticker.
    * @function fetchBittrex
    */
-  fetchBittrex () {
+  fetchBittrex() {
     window
-      .fetch('https://bittrex.com/api/v1.1/public/getmarketsummary?market=btc-xvc')
-      .then((response) => { if (response.ok) return response.json() })
-      .then((ticker) => { this.setBittrex(ticker) })
-      .catch((error) => { console.error('Bittrex:', error.message) })
+      .fetch(
+        'https://bittrex.com/api/v1.1/public/getmarketsummary?market=btc-xvc'
+      )
+      .then(response => {
+        if (response.ok === true) return response.json()
+      })
+      .then(ticker => this.setBittrex(ticker))
+      .catch(error => console.error('Bittrex:', error.message))
 
-    setTimeout(() => { this.fetchBittrex() }, 60 * 1000)
+    setTimeout(() => this.fetchBittrex(), 60 * 1000)
   }
 
   /**
    * Fetch Poloniex ticker.
    * @function fetchPoloniex
    */
-  fetchPoloniex () {
+  fetchPoloniex() {
     window
       .fetch('https://poloniex.com/public?command=returnTicker')
-      .then((response) => { if (response.ok) return response.json() })
-      .then((ticker) => { this.setPoloniex(ticker) })
-      .catch((error) => { console.error('Poloniex:', error.message) })
+      .then(response => {
+        if (response.ok === true) return response.json()
+      })
+      .then(ticker => this.setPoloniex(ticker))
+      .catch(error => console.error('Poloniex:', error.message))
 
-    setTimeout(() => { this.fetchPoloniex() }, 30 * 1000)
+    setTimeout(() => this.fetchPoloniex(), 30 * 1000)
   }
 }
 

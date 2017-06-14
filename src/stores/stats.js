@@ -14,24 +14,28 @@ export default class Stats {
    * @param {object} wallet - Wallet store.
    * @property {number|null} updateTimeout - setNetworkByMinute timeout id.
    */
-  constructor (rpc, wallet) {
+  constructor(rpc, wallet) {
     this.rpc = rpc
     this.wallet = wallet
     this.updateTimeout = null
 
     /** Begin updating when RPC becomes active. */
-    reaction(() => this.rpc.ready, (ready) => {
-      if (ready === true) {
-        this.updateTimeout = setTimeout(() => {
-          this.setNetworkByMinute()
-        }, 3 * 1000)
-      }
+    reaction(
+      () => this.rpc.ready,
+      ready => {
+        if (ready === true) {
+          this.updateTimeout = setTimeout(
+            () => this.setNetworkByMinute(),
+            3 * 1000
+          )
+        }
 
-      /** Clear timeout when RPC becomes inactive */
-      if (ready === false) {
-        clearTimeout(this.updateTimeout)
+        /** Clear timeout when RPC becomes inactive */
+        if (ready === false) {
+          clearTimeout(this.updateTimeout)
+        }
       }
-    })
+    )
   }
 
   /**
@@ -39,7 +43,8 @@ export default class Stats {
    * @function stats
    * @return {array} Stats.
    */
-  @computed get network () {
+  @computed
+  get network() {
     return this.networkByMinute.length > 1
       ? [...this.networkByMinute]
       : [...this.networkByMinute, ...this.networkByMinute]
@@ -50,9 +55,10 @@ export default class Stats {
    * @function dailyTotals
    * @return {array} Daily totals by category.
    */
-  @computed get dailyTotals () {
+  @computed
+  get dailyTotals() {
     /** Threshold for including transactions, today - 31 days. */
-    const threshold = new Date().getTime() - (31 * 24 * 60 * 60 * 1000)
+    const threshold = new Date().getTime() - 31 * 24 * 60 * 60 * 1000
 
     /** Map with dates as keys. */
     let dailyTotals = new Map()
@@ -93,9 +99,10 @@ export default class Stats {
    * @function rewardsPerDay
    * @return {array} Rewards.
    */
-  @computed get rewardsPerDay () {
+  @computed
+  get rewardsPerDay() {
     /** Threshold for including transactions, today - 31 days. */
-    const threshold = new Date().getTime() - (31 * 24 * 60 * 60 * 1000)
+    const threshold = new Date().getTime() - 31 * 24 * 60 * 60 * 1000
 
     /** Map with dates as keys. */
     let rewardsPerDay = new Map()
@@ -142,9 +149,10 @@ export default class Stats {
    * @function rewardSpread
    * @return {object} Rewards.
    */
-  @computed get rewardSpread () {
+  @computed
+  get rewardSpread() {
     /** Threshold for including transactions, today - 31 days. */
-    const threshold = new Date().getTime() - (31 * 24 * 60 * 60 * 1000)
+    const threshold = new Date().getTime() - 31 * 24 * 60 * 60 * 1000
 
     let rewardSpread = {
       stakingReward: [],
@@ -160,11 +168,12 @@ export default class Stats {
         const time = new Date(tx.time)
 
         rewardSpread[tx.category].push({
-          y: Math.round(
-            (time.getHours() * 60 * 60) +
-            (time.getMinutes() * 60) +
-            time.getSeconds()
-          ) * 1000,
+          y:
+            Math.round(
+              time.getHours() * 60 * 60 +
+                time.getMinutes() * 60 +
+                time.getSeconds()
+            ) * 1000,
           date: tx.time,
           amount: tx.amount,
           category: tx.category,
@@ -187,7 +196,8 @@ export default class Stats {
    * to the network stats by minute array.
    * @function setNetworkByMinute
    */
-  @action setNetworkByMinute () {
+  @action
+  setNetworkByMinute() {
     this.networkByMinute.push({
       date: new Date().getTime(),
       posDifficulty: this.wallet.info.getdifficulty['proof-of-stake'],
@@ -197,9 +207,10 @@ export default class Stats {
 
     /** Set new timeout only while RPC is ready. */
     if (this.rpc.ready === true) {
-      this.updateTimeout = setTimeout(() => {
-        this.setNetworkByMinute()
-      }, 60 * 1000)
+      this.updateTimeout = setTimeout(
+        () => this.setNetworkByMinute(),
+        60 * 1000
+      )
     }
   }
 }

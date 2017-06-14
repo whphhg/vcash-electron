@@ -4,7 +4,7 @@
  * @param {string} key - Retrieve the value of this key.
  * @return {any} Stored value or undefined if the key doesn't exist.
  */
-export const getItem = (key) => {
+export const getItem = key => {
   const item = window.localStorage.getItem(key)
 
   if (item === null) {

@@ -17,27 +17,23 @@ const start = () => {
   let fallbackLng = getItem('language')
 
   /** Check if the language exists or revert to default. */
-  fallbackLng = languages.includes(fallbackLng) === true
-    ? fallbackLng
-    : 'en-US'
+  fallbackLng = languages.includes(fallbackLng) === true ? fallbackLng : 'en-US'
 
   /** Initialize a i18next instance. */
-  return i18next
-    .use(backend)
-    .init({
-      fallbackLng,
-      ns: ['wallet'],
-      defaultNS: 'wallet',
-      debug: process.env.NODE_ENV === 'dev',
-      backend: {
-        loadPath: join(__dirname, '..', 'locales', '{{lng}}', '{{ns}}.json'),
-        addPath: join(__dirname, '..', 'locales', '{{lng}}', '{{ns}}.missing.json'),
-        jsonIndent: 2
-      },
-      load: 'currentOnly',
-      languages,
-      interpolation: { escapeValue: false }
-    })
+  return i18next.use(backend).init({
+    backend: {
+      loadPath: join(__dirname, '..', 'locales', '{{lng}}', '{{ns}}.json'),
+      addPath: join(__dirname, '..', 'locales', '{{lng}}', '{{ns}}.miss.json'),
+      jsonIndent: 2
+    },
+    debug: process.env.NODE_ENV === 'dev',
+    defaultNS: 'wallet',
+    fallbackLng,
+    interpolation: { escapeValue: false },
+    languages,
+    load: 'currentOnly',
+    ns: ['wallet']
+  })
 }
 
 /** Export i18next instance. */

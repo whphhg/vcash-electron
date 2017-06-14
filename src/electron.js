@@ -33,11 +33,13 @@ app.on('ready', () => {
   mainWindow.setMenu(null)
 
   /** Load the GUI starting point. */
-  mainWindow.loadURL(format({
-    pathname: join(__dirname, 'index.html'),
-    protocol: 'file:',
-    slashes: true
-  }))
+  mainWindow.loadURL(
+    format({
+      pathname: join(__dirname, 'index.html'),
+      protocol: 'file:',
+      slashes: true
+    })
+  )
 
   /** Open Chromium DevTools in dev mode. */
   process.env.NODE_ENV === 'dev' && mainWindow.webContents.openDevTools()

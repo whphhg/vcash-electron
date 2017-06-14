@@ -41,9 +41,7 @@ export const dataPath = () => {
  * @see {@link http://stackoverflow.com/a/6248722|StackOverflow}
  */
 export const shortUid = () => {
-  return (
-    '0000' + (Math.random() * Math.pow(36, 4) << 0).toString(36)
-  ).slice(-4)
+  return ('0000' + ((Math.random() * 1679616) | 0).toString(36)).slice(-4)
 }
 
 /**
@@ -56,26 +54,24 @@ export const shortUid = () => {
  * @see {@link http://stackoverflow.com/a/14919494|StackOverflow}
  */
 export const humanReadable = (num = 0, dec = true, suffix = 'B') => {
-  const threshold = dec === true
-    ? 1000
-    : 1024
+  const threshold = dec === true ? 1000 : 1024
 
+  /** Return the number with suffix if below threshold. */
+  if (Math.abs(num) < threshold) return ''.concat(num, ' ', suffix)
+
+  let unit = -1
   const units = dec === true
     ? ['k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
     : ['Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi', 'Yi']
 
-  if (Math.abs(num) < threshold) return num + ' ' + suffix
-
-  let unit = -1
   do {
     num /= threshold
     unit++
-  } while (
-    Math.abs(num) >= threshold &&
-    unit < units.length - 1
-  )
+  } while (Math.abs(num) >= threshold && unit < units.length - 1)
 
-  return new Intl.NumberFormat(gui.language, {
+  num = new Intl.NumberFormat(gui.language, {
     maximumFractionDigits: 2
-  }).format(num) + ' ' + units[unit] + suffix
+  }).format(num)
+
+  return ''.concat(num, ' ', units[unit], suffix)
 }

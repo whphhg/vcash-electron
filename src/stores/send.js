@@ -30,7 +30,7 @@ export default class Send {
    * @param {object} rpc - RPC store.
    * @param {object} wallet - Wallet store.
    */
-  constructor (rpc, wallet) {
+  constructor(rpc, wallet) {
     this.rpc = rpc
     this.wallet = wallet
 
@@ -47,7 +47,8 @@ export default class Send {
    * @function errorStatus
    * @return {string|boolean} Current error or false if none.
    */
-  @computed get errorStatus () {
+  @computed
+  get errorStatus() {
     if (this.minConf === '') return 'missingMinConf'
 
     /** Get recipients. */
@@ -59,13 +60,15 @@ export default class Send {
       if (
         recipients[i].addressValid === false ||
         recipients[i].addressValid === null
-      ) return 'invalidRecipient'
+      )
+        return 'invalidRecipient'
 
       /** Check if amounts are entered and above tx fee. */
       if (
         recipients[i].amount.length === 0 ||
         parseFloat(recipients[i].amount) < 0.0005
-      ) return 'amountBelowTxFee'
+      )
+        return 'amountBelowTxFee'
     }
 
     return false
@@ -76,17 +79,21 @@ export default class Send {
    * @function total
    * @return {number} Total amount to send.
    */
-  @computed get total () {
-    return this.recipients.values().reduce((total, recipient) => {
-      return total + (recipient.amount * 1000000)
-    }, 0) / 1000000
+  @computed
+  get total() {
+    return (
+      this.recipients.values().reduce((total, recipient) => {
+        return total + recipient.amount * 1000000
+      }, 0) / 1000000
+    )
   }
 
   /**
    * Add new recipient.
    * @function addRecipient
    */
-  @action addRecipient () {
+  @action
+  addRecipient() {
     const uid = shortUid()
 
     this.recipients.set(uid, {
@@ -100,7 +107,8 @@ export default class Send {
   /** Clear recipients and options.
    * @function clear
    */
-  @action clear () {
+  @action
+  clear() {
     this.wallet.setSpendFrom()
     this.setComment()
     this.setCommentTo()
@@ -113,7 +121,8 @@ export default class Send {
    * @function removeRecipient
    * @param {string} uid - Recipient uid.
    */
-  @action removeRecipient (uid) {
+  @action
+  removeRecipient(uid) {
     this.recipients.delete(uid)
   }
 
@@ -122,7 +131,8 @@ export default class Send {
    * @function setBlendedOnly
    * @param {boolean} blendedOnly - Blended only.
    */
-  @action setBlendedOnly (blendedOnly = false) {
+  @action
+  setBlendedOnly(blendedOnly = false) {
     this.blendedOnly = blendedOnly
   }
 
@@ -131,7 +141,8 @@ export default class Send {
    * @function setComment
    * @param {string} comment - Comment assigned to this transaction.
    */
-  @action setComment (comment = '') {
+  @action
+  setComment(comment = '') {
     this.comment = comment
   }
 
@@ -140,7 +151,8 @@ export default class Send {
    * @function setCommentTo
    * @param {string} commentTo - Comment describing the recipient.
    */
-  @action setCommentTo (commentTo = '') {
+  @action
+  setCommentTo(commentTo = '') {
     this.commentTo = commentTo
   }
 
@@ -150,7 +162,8 @@ export default class Send {
    * @function setMinConf
    * @param {string} confirmations - Minimum confirmations.
    */
-  @action setMinConf (confirmations = '1') {
+  @action
+  setMinConf(confirmations = '1') {
     if (confirmations.match(/^[0-9]{0,6}$/) !== null) {
       /** Allow emptying input. */
       if (confirmations !== '') {
@@ -171,7 +184,8 @@ export default class Send {
    * @param {string} name - Input field name.
    * @param {string} value - Entered value.
    */
-  @action setRecipient (uid, name, value) {
+  @action
+  setRecipient(uid, name, value) {
     let saved = this.recipients.has(uid) === true
       ? this.recipients.get(uid)
       : false
@@ -212,10 +226,7 @@ export default class Send {
         ? 0 - parseFloat(value)
         : parseFloat(saved.amount) - parseFloat(value)
 
-      if (
-        this.total - difference >
-        this.wallet.info.getinfo.balance
-      ) return
+      if (this.total - difference > this.wallet.info.getinfo.balance) return
 
       /** Set ammount that passed above checks. */
       saved.amount = value
@@ -227,7 +238,7 @@ export default class Send {
       if (value.match(/^[a-zA-Z0-9]{0,34}$/) === null) return
 
       /** Check if the address is a duplicate. */
-      const duplicate = this.recipients.values().some((recipient) => {
+      const duplicate = this.recipients.values().some(recipient => {
         if (recipient.address !== '') return recipient.address === value
       })
 
@@ -239,10 +250,9 @@ export default class Send {
 
       /** Validate address when it reaches 34 characters. */
       if (value.length === 34) {
-        this.rpc.execute([
-          { method: 'validateaddress', params: [value] }
-        ],
-          action('Validate recipient', (response) => {
+        this.rpc.execute(
+          [{ method: 'validateaddress', params: [value] }],
+          action('Validate recipient', response => {
             saved.addressValid = response[0].result.isvalid
           })
         )
@@ -257,7 +267,8 @@ export default class Send {
    * @function setZeroTime
    * @param {boolean} zeroTime - Use ZeroTime.
    */
-  @action setZeroTime (zeroTime = false) {
+  @action
+  setZeroTime(zeroTime = false) {
     this.zeroTime = zeroTime
   }
 
@@ -265,7 +276,7 @@ export default class Send {
    * Confirm sending.
    * @function confirm
    */
-  confirm () {
+  confirm() {
     /** Determine which sending method to use. */
     if (this.recipients.size === 1) {
       if (this.wallet.spendFrom === '#') {
@@ -283,7 +294,7 @@ export default class Send {
    * @function failed
    * @param {string} type - Error type.
    */
-  failed (type) {
+  failed(type) {
     notification.error({
       message: i18next.t('wallet:sendingFailed'),
       description: i18next.t('wallet:' + type),
@@ -295,126 +306,131 @@ export default class Send {
    * Send using sendtoaddress RPC.
    * @function sendtoaddress
    */
-  sendtoaddress () {
+  sendtoaddress() {
     /** Get the recipient data. */
     const recipient = this.recipients.values()
 
-    this.rpc.execute([
-      {
-        method: 'sendtoaddress',
-        params: [
-          recipient[0].address,
-          recipient[0].amount,
-          this.comment,
-          this.commentTo
-        ]
-      }
-    ], (response) => {
-      /** Clear sending form and open tx details. */
-      if (response[0].hasOwnProperty('result') === true) {
-        this.clear()
-        this.wallet.setViewing(response[0].result)
-      }
+    this.rpc.execute(
+      [
+        {
+          method: 'sendtoaddress',
+          params: [
+            recipient[0].address,
+            recipient[0].amount,
+            this.comment,
+            this.commentTo
+          ]
+        }
+      ],
+      response => {
+        /** Clear sending form and open tx details. */
+        if (response[0].hasOwnProperty('result') === true) {
+          this.clear()
+          this.wallet.setViewing(response[0].result)
+        }
 
-      /** Set error. */
-      if (response[0].hasOwnProperty('error') === true) {
-        console.error('Failed sending using sendtoaddress', response[0])
+        /** Set error. */
+        if (response[0].hasOwnProperty('error') === true) {
+          console.error('Failed sending using sendtoaddress', response[0])
 
-        switch (response[0].error.code) {
-          /** error_code_wallet_insufficient_funds */
-          case -4:
-            return this.failed('insufficientFunds')
+          switch (response[0].error.code) {
+            /** error_code_wallet_insufficient_funds */
+            case -4:
+              return this.failed('insufficientFunds')
+          }
         }
       }
-    })
+    )
   }
 
   /**
    * Send using sendfrom RPC.
    * @function sendfrom
    */
-  sendfrom () {
+  sendfrom() {
     /** Get the recipient data. */
     const recipient = this.recipients.values()
 
-    this.rpc.execute([
-      {
-        method: 'sendfrom',
-        params: [
-          this.wallet.spendFrom === '*'
-            ? ''
-            : this.wallet.spendFrom,
-          recipient[0].address,
-          recipient[0].amount,
-          this.minConf,
-          this.comment,
-          this.commentTo
-        ]
-      }
-    ], (response) => {
-      /** Clear sending form and open tx details. */
-      if (response[0].hasOwnProperty('result') === true) {
-        this.clear()
-        this.wallet.setViewing(response[0].result)
-      }
+    this.rpc.execute(
+      [
+        {
+          method: 'sendfrom',
+          params: [
+            this.wallet.spendFrom === '*' ? '' : this.wallet.spendFrom,
+            recipient[0].address,
+            recipient[0].amount,
+            this.minConf,
+            this.comment,
+            this.commentTo
+          ]
+        }
+      ],
+      response => {
+        /** Clear sending form and open tx details. */
+        if (response[0].hasOwnProperty('result') === true) {
+          this.clear()
+          this.wallet.setViewing(response[0].result)
+        }
 
-      /** Set error. */
-      if (response[0].hasOwnProperty('error') === true) {
-        console.error('Failed sending using sendfrom', response[0])
+        /** Set error. */
+        if (response[0].hasOwnProperty('error') === true) {
+          console.error('Failed sending using sendfrom', response[0])
 
-        switch (response[0].error.code) {
-          /** error_code_wallet_insufficient_funds */
-          case -6:
-            return this.failed('insufficientFunds')
+          switch (response[0].error.code) {
+            /** error_code_wallet_insufficient_funds */
+            case -6:
+              return this.failed('insufficientFunds')
+          }
         }
       }
-    })
+    )
   }
 
   /**
    * Send using sendmany RPC.
    * @function sendmany
    */
-  sendmany () {
+  sendmany() {
     /** Get recipients data. */
-    const recipients = this.recipients.values().reduce((recipients, recipient) => {
-      recipients[recipient.address] = recipient.amount
-      return recipients
+    const recipients = this.recipients.values().reduce((list, recipient) => {
+      list[recipient.address] = recipient.amount
+      return list
     }, {})
 
-    this.rpc.execute([
-      {
-        method: 'sendmany',
-        params: [
-          this.wallet.spendFrom === '*'
-            ? ''
-            : this.wallet.spendFrom,
-          recipients,
-          this.minConf,
-          this.comment
-        ]
-      }
-    ], (response) => {
-      /** Clear sending form and open tx details. */
-      if (response[0].hasOwnProperty('result') === true) {
-        this.clear()
-        this.wallet.setViewing(response[0].result)
-      }
+    this.rpc.execute(
+      [
+        {
+          method: 'sendmany',
+          params: [
+            this.wallet.spendFrom === '*' ? '' : this.wallet.spendFrom,
+            recipients,
+            this.minConf,
+            this.comment
+          ]
+        }
+      ],
+      response => {
+        /** Clear sending form and open tx details. */
+        if (response[0].hasOwnProperty('result') === true) {
+          this.clear()
+          this.wallet.setViewing(response[0].result)
+        }
 
-      /** Set error. */
-      if (response[0].hasOwnProperty('error') === true) {
-        console.error('Failed sending using sendmany', response[0])
+        /** Set error. */
+        if (response[0].hasOwnProperty('error') === true) {
+          console.error('Failed sending using sendmany', response[0])
 
-        switch (response[0].error.code) {
-          /** error_code (nonstandard transaction type) */
-          case -4:
-            return this.failed('transactionNotStandard')
+          switch (response[0].error.code) {
+            /** error_code (nonstandard transaction type) */
+            case -4:
+              return this.failed('transactionNotStandard')
 
-          /** error_code_wallet_insufficient_funds */
-          case -6:
-            return this.failed('insufficientFunds')
+            /** error_code_wallet_insufficient_funds */
+            case -6:
+              return this.failed('insufficientFunds')
+          }
         }
       }
-    })
+    )
   }
 }

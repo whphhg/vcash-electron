@@ -12,7 +12,8 @@ class GUI {
    */
   @observable language = getItem('language') || 'en-US'
   @observable localCurrency = getItem('localCurrency') || 'EUR'
-  @observable soundAlerts = getItem('soundAlerts') || {
+  @observable
+  soundAlerts = getItem('soundAlerts') || {
     incoming: false,
     spendable: false
   }
@@ -21,7 +22,7 @@ class GUI {
    * @constructor
    * @property {array} languages - Available languages.
    */
-  constructor () {
+  constructor() {
     this.languages = [
       { language: 'en-US', name: 'English' },
       { language: 'fr-FR', name: 'French' },
@@ -32,10 +33,14 @@ class GUI {
     ]
 
     /** Update i18next and moment on locale change. */
-    reaction(() => this.language, (language) => {
-      i18next.changeLanguage(language)
-      moment.locale(language)
-    }, true)
+    reaction(
+      () => this.language,
+      language => {
+        i18next.changeLanguage(language)
+        moment.locale(language)
+      },
+      true
+    )
   }
 
   /**
@@ -43,7 +48,8 @@ class GUI {
    * @function setLanguage
    * @param {string} language - Display language.
    */
-  @action setLanguage (language) {
+  @action
+  setLanguage(language) {
     this.language = language
     setItem('language', this.language)
   }
@@ -53,7 +59,8 @@ class GUI {
    * @function setLocalCurrency
    * @param {string} localCurrency - Local currency.
    */
-  @action setLocalCurrency (localCurrency) {
+  @action
+  setLocalCurrency(localCurrency) {
     this.localCurrency = localCurrency
     setItem('localCurrency', this.localCurrency)
   }
@@ -63,7 +70,8 @@ class GUI {
    * @function setSoundAlert
    * @param {string} alert - Alert to toggle.
    */
-  @action setSoundAlert (alert) {
+  @action
+  setSoundAlert(alert) {
     this.soundAlerts[alert] = !this.soundAlerts[alert]
     setItem('soundAlerts', this.soundAlerts)
   }

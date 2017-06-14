@@ -4,13 +4,11 @@
  * @param {number} block - Block to retrieve the reward percent of.
  * @return {number} Incentive percent of PoW reward.
  */
-export const calculateIncentive = (block) => {
+export const calculateIncentive = block => {
   const percents = incentivePercents()
   const percentsLen = percents.length - 1
 
-  if (
-    block >= percents[percentsLen].block
-  ) return percents[percentsLen].percent
+  if (block >= percents[percentsLen].block) return percents[percentsLen].percent
 
   for (let i in percents) {
     if (block < percents[i].block) return percents[i].percent - 1
@@ -23,7 +21,7 @@ export const calculateIncentive = (block) => {
  * @param {number} block - Block to calculate the PoW reward of.
  * @return {number} PoW reward.
  */
-export const calculatePoW = (block) => {
+export const calculatePoW = block => {
   let subsidy = 0
 
   if (block >= 136400 && block <= 136400 + 1000) {
@@ -39,19 +37,19 @@ export const calculatePoW = (block) => {
       for (let i = 10000; i <= block; i += 10000) {
         subsidy -= subsidy / 28
         subsidy = Math.ceil(subsidy)
-        subsidy -= (subsidy / 28 * 4) / 28
+        subsidy -= subsidy / 28 * 4 / 28
         subsidy = Math.ceil(subsidy)
       }
     } else {
       for (let i = 7000; i <= block; i += 7000) {
         subsidy -= subsidy / 28
         subsidy = Math.ceil(subsidy)
-        subsidy -= (subsidy / 28 * 4) / 28
+        subsidy -= subsidy / 28 * 4 / 28
         subsidy = Math.ceil(subsidy)
       }
     }
 
-    if ((subsidy / 1000000) < 1) {
+    if (subsidy / 1000000 < 1) {
       subsidy = 1
       subsidy *= 1000000
     }
