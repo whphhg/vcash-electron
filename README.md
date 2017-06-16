@@ -1,4 +1,10 @@
 # Vcash Electron GUI
+
+[![Downloads](https://img.shields.io/github/downloads/openvcash/vcash-electron/latest/total.svg)](https://github.com/openvcash/vcash-electron/releases/latest)
+[![Release](https://img.shields.io/github/release/openvcash/vcash-electron.svg)](https://github.com/openvcash/vcash-electron/releases)
+[![Styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![Standard style guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
 :honeybee: Multi-platform and multi-node GUI for [Vcash](https://vcash.info/),
 a decentralized currency for the internet. Latest release can be found
 [here](https://github.com/openvcash/vcash-electron/releases).
