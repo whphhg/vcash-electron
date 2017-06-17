@@ -3,13 +3,10 @@ import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Select } from 'antd'
 
-/** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
-
-/** Make the component reactive and inject MobX stores. */
-@inject('gui') @observer
-
-export default class SelectLanguage extends React.Component {
+@inject('gui')
+@observer
+class SelectLanguage extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
@@ -21,20 +18,20 @@ export default class SelectLanguage extends React.Component {
       <Select
         defaultValue={this.gui.language}
         notFoundContent={this.t('wallet:notFound')}
-        onChange={(language) => this.gui.setLanguage(language)}
+        onChange={language => this.gui.setLanguage(language)}
         optionFilterProp='children'
         showSearch
         size='small'
-        style={{width: '120px'}}
+        style={{ width: '120px' }}
       >
-        {
-          this.gui.languages.map((entry) => (
-            <Select.Option key={entry.language} value={entry.language}>
-              {entry.name}
-            </Select.Option>
-          ))
-        }
+        {this.gui.languages.map(entry =>
+          <Select.Option key={entry.language} value={entry.language}>
+            {entry.name}
+          </Select.Option>
+        )}
       </Select>
     )
   }
 }
+
+export default SelectLanguage

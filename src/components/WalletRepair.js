@@ -4,13 +4,10 @@ import { action, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button } from 'antd'
 
-/** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
-
-/** Make the component reactive and inject MobX stores. */
-@inject('gui', 'rpc') @observer
-
-export default class WalletRepair extends React.Component {
+@inject('gui', 'rpc')
+@observer
+class WalletRepair extends React.Component {
   @observable amountAffected = 0
   @observable checkPassed = null
   @observable mismatchedSpent = 0
@@ -30,12 +27,15 @@ export default class WalletRepair extends React.Component {
    * @function setResponse
    * @param {object} response - RPC response.
    */
-  @action setResponse = (response) => {
+  @action
+  setResponse = response => {
     /** Re-check after repairing. */
     if (
       this.checkPassed === false &&
       response.hasOwnProperty('wallet check passed') === false
-    ) return this.repair()
+    ) {
+      return this.repair()
+    }
 
     /** Update check passed status. */
     this.checkPassed = response.hasOwnProperty('wallet check passed')
@@ -57,13 +57,9 @@ export default class WalletRepair extends React.Component {
    * @param {boolean} checkOnly - Check for inconsistencies without repairing.
    */
   repair = (checkOnly = true) => {
-    const method = checkOnly === true
-      ? 'checkwallet'
-      : 'repairwallet'
+    const method = checkOnly === true ? 'checkwallet' : 'repairwallet'
 
-    this.rpc.execute([
-      { method, params: [] }
-    ], (response) => {
+    this.rpc.execute([{ method, params: [] }], response => {
       /** Set checkPassed and potential mismatched & amount affected. */
       if (response[0].hasOwnProperty('result') === true) {
         this.setResponse(response[0].result)
@@ -78,58 +74,49 @@ export default class WalletRepair extends React.Component {
           <i className='material-icons md-16'>build</i>
           <p>{this.t('wallet:repairLong')}</p>
         </div>
-        <div style={{margin: '10px 0 0 0'}}>
-          {
-            this.checkPassed !== false && (
-              <div className='flex-sb'>
-                <div>
-                  {
-                    this.checkPassed !== null && (
-                      <p>{this.t('wallet:checkPassed')}</p>
-                    )
-                  }
-                </div>
-                <Button onClick={() => this.repair()}>
-                  {this.t('wallet:check')}
-                </Button>
+        <div style={{ margin: '10px 0 0 0' }}>
+          {this.checkPassed !== false &&
+            <div className='flex-sb'>
+              <div>
+                {this.checkPassed !== null &&
+                  <p>{this.t('wallet:checkPassed')}</p>}
               </div>
-            )
-          }
-          {
-            this.checkPassed === false && (
-              <div className='flex-sb'>
-                <div>
-                  <div className='flex-sb'>
-                    <p style={{margin: '0 36px 0 0'}}>
-                      {this.t('wallet:mismatched')}:&nbsp;
-                      <span style={{fontWeight: '500'}}>
-                        {
-                          new Intl.NumberFormat(this.gui.language, {
-                            maximumFractionDigits: 6
-                          }).format(this.mismatchedSpent)
-                        } XVC
-                      </span>
-                    </p>
-                    <p>
-                      {this.t('wallet:amountAffected')}:&nbsp;
-                      <span style={{fontWeight: '500'}}>
-                        {
-                          new Intl.NumberFormat(this.gui.language, {
-                            maximumFractionDigits: 6
-                          }).format(this.amountAffected)
-                        } XVC
-                      </span>
-                    </p>
-                  </div>
+              <Button onClick={() => this.repair()}>
+                {this.t('wallet:check')}
+              </Button>
+            </div>}
+          {this.checkPassed === false &&
+            <div className='flex-sb'>
+              <div>
+                <div className='flex-sb'>
+                  <p style={{ margin: '0 36px 0 0' }}>
+                    {this.t('wallet:mismatched')}:{' '}
+                    <span style={{ fontWeight: '500' }}>
+                      {new Intl.NumberFormat(this.gui.language, {
+                        maximumFractionDigits: 6
+                      }).format(this.mismatchedSpent)}{' '}
+                      XVC
+                    </span>
+                  </p>
+                  <p>
+                    {this.t('wallet:amountAffected')}:{' '}
+                    <span style={{ fontWeight: '500' }}>
+                      {new Intl.NumberFormat(this.gui.language, {
+                        maximumFractionDigits: 6
+                      }).format(this.amountAffected)}{' '}
+                      XVC
+                    </span>
+                  </p>
                 </div>
-                <Button onClick={() => this.repair(false)}>
-                  {this.t('wallet:repair')}
-                </Button>
               </div>
-            )
-          }
+              <Button onClick={() => this.repair(false)}>
+                {this.t('wallet:repair')}
+              </Button>
+            </div>}
         </div>
       </div>
     )
   }
 }
+
+export default WalletRepair

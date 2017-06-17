@@ -3,13 +3,10 @@ import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Select } from 'antd'
 
-/** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
-
-/** Make the component reactive and inject MobX stores. */
-@inject('gui', 'rates') @observer
-
-export default class SelectCurrency extends React.Component {
+@inject('gui', 'rates')
+@observer
+class SelectCurrency extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
@@ -22,20 +19,20 @@ export default class SelectCurrency extends React.Component {
       <Select
         defaultValue={this.gui.localCurrency}
         notFoundContent={this.t('wallet:notFound')}
-        onChange={(currency) => this.gui.setLocalCurrency(currency)}
+        onChange={currency => this.gui.setLocalCurrency(currency)}
         optionFilterProp='children'
         showSearch
         size='small'
-        style={{width: '80px'}}
+        style={{ width: '80px' }}
       >
-        {
-          this.rates.localCurrencies.map((currency) => (
-            <Select.Option key={currency} value={currency}>
-              {currency}
-            </Select.Option>
-          ))
-        }
+        {this.rates.localCurrencies.map(currency =>
+          <Select.Option key={currency} value={currency}>
+            {currency}
+          </Select.Option>
+        )}
       </Select>
     )
   }
 }
+
+export default SelectCurrency

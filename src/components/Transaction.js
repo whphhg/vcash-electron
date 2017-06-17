@@ -4,13 +4,10 @@ import { inject, observer } from 'mobx-react'
 import { Modal, Table, message } from 'antd'
 import moment from 'moment'
 
-/** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
-
-/** Make the component reactive and inject MobX stores. */
-@inject('gui', 'rates', 'rpc', 'wallet') @observer
-
-export default class Transaction extends React.Component {
+@inject('gui', 'rates', 'rpc', 'wallet')
+@observer
+class Transaction extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
@@ -25,15 +22,16 @@ export default class Transaction extends React.Component {
    * @function ztlock
    */
   ztlock = () => {
-    this.rpc.execute([
-      { method: 'ztlock', params: [this.wallet.viewing] }
-    ], (response) => {
-      /** Update txs ztlock status & display a success message. */
-      if (response[0].hasOwnProperty('result') === true) {
-        this.wallet.getWallet()
-        message.success(this.t('wallet:transactionLocked'), 6)
+    this.rpc.execute(
+      [{ method: 'ztlock', params: [this.wallet.viewing] }],
+      response => {
+        /** Update txs ztlock status & display a success message. */
+        if (response[0].hasOwnProperty('result') === true) {
+          this.wallet.getWallet()
+          message.success(this.t('wallet:transactionLocked'), 6)
+        }
       }
-    })
+    )
   }
 
   render () {
@@ -49,78 +47,63 @@ export default class Transaction extends React.Component {
         visible={viewing !== ''}
         width={1000}
       >
-        <div className='flex-sb' style={{alignItems: 'flex-start'}}>
-          <div style={{lineHeight: '20px', margin: '0 36px 0 0'}}>
+        <div className='flex-sb' style={{ alignItems: 'flex-start' }}>
+          <div style={{ lineHeight: '20px', margin: '0 36px 0 0' }}>
             <div className='flex'>
               <i className='material-icons md-16'>label</i>
               <p>{this.t('wallet:transactionId')}</p>
             </div>
-            {
-              viewingTx.hasOwnProperty('blockhash') === true && (
-                <div className='flex'>
-                  <i className='material-icons md-16'>extension</i>
-                  <p>{this.t('wallet:includedInBlock')}</p>
-                </div>
-              )
-            }
+            {viewingTx.hasOwnProperty('blockhash') === true &&
+              <div className='flex'>
+                <i className='material-icons md-16'>extension</i>
+                <p>{this.t('wallet:includedInBlock')}</p>
+              </div>}
             <div className='flex'>
               <i className='material-icons md-16'>access_time</i>
               <p>{this.t('wallet:relayedOn')}</p>
             </div>
-            {
-              viewingTx.hasOwnProperty('blocktime') === true &&
-              viewingTx.blocktime > 0 && (
-                <div className='flex'>
-                  <i className='material-icons md-16'>access_time</i>
-                  <p>{this.t('wallet:blockFound')}</p>
-                </div>
-              )
-            }
+            {viewingTx.hasOwnProperty('blocktime') === true &&
+              viewingTx.blocktime > 0 &&
+              <div className='flex'>
+                <i className='material-icons md-16'>access_time</i>
+                <p>{this.t('wallet:blockFound')}</p>
+              </div>}
             <div className='flex'>
               <i className='material-icons md-16'>folder</i>
               <p>{this.t('wallet:category')}</p>
             </div>
-            <div className='flex' style={{margin: '10px 0 0 0'}}>
+            <div className='flex' style={{ margin: '10px 0 0 0' }}>
               <i className='material-icons md-16'>monetization_on</i>
               <p>{this.t('wallet:amount')}</p>
             </div>
-            {
-              viewingTx.hasOwnProperty('fee') === true && (
-                <div className='flex'>
-                  <i className='material-icons md-16'>card_giftcard</i>
-                  <p>{this.t('wallet:fee')}</p>
-                </div>
-              )
-            }
+            {viewingTx.hasOwnProperty('fee') === true &&
+              <div className='flex'>
+                <i className='material-icons md-16'>card_giftcard</i>
+                <p>{this.t('wallet:fee')}</p>
+              </div>}
             <div className='flex'>
               <i className='material-icons md-16'>done_all</i>
               <p>{this.t('wallet:confirmations')}</p>
             </div>
           </div>
-          <div style={{flex: 1, lineHeight: '20px'}}>
-            <div className='flex-sb' style={{alignItems: 'flex-start'}}>
-              <div style={{margin: '0 0 10px 0'}}>
-                <p style={{fontWeight: '500'}}>{viewingTx.txid}</p>
-                {
-                  viewingTx.hasOwnProperty('blockhash') === true && (
-                    <p style={{fontWeight: '500'}}>{viewingTx.blockhash}</p>
-                  )
-                }
+          <div style={{ flex: 1, lineHeight: '20px' }}>
+            <div className='flex-sb' style={{ alignItems: 'flex-start' }}>
+              <div style={{ margin: '0 0 10px 0' }}>
+                <p style={{ fontWeight: '500' }}>{viewingTx.txid}</p>
+                {viewingTx.hasOwnProperty('blockhash') === true &&
+                  <p style={{ fontWeight: '500' }}>{viewingTx.blockhash}</p>}
                 <p>
                   {moment(viewingTx.time).format('L - LTS')} (
                   {moment().to(viewingTx.time)})
                 </p>
-                {
-                  viewingTx.hasOwnProperty('blocktime') === true &&
-                  viewingTx.blocktime > 0 && (
-                    <p>{moment(viewingTx.blocktime).format('L - LTS')}</p>
-                  )
-                }
-                <p style={{fontWeight: '500'}}>
+                {viewingTx.hasOwnProperty('blocktime') === true &&
+                  viewingTx.blocktime > 0 &&
+                  <p>{moment(viewingTx.blocktime).format('L - LTS')}</p>}
+                <p style={{ fontWeight: '500' }}>
                   {this.t('wallet:' + viewingTx.category)}
                 </p>
               </div>
-              <div style={{textAlign: 'right'}}>
+              <div style={{ textAlign: 'right' }}>
                 <p>
                   <a
                     target='_blank'
@@ -132,7 +115,10 @@ export default class Transaction extends React.Component {
                 <p>
                   <a
                     target='_blank'
-                    href={'https://explorer.vchain.info/block/' + viewingTx.blockhash}
+                    href={
+                      'https://explorer.vchain.info/block/' +
+                      viewingTx.blockhash
+                    }
                     disabled={
                       viewingTx.hasOwnProperty('blockhash') === false ||
                       viewingTx.blockhash === '0'.repeat(64)
@@ -141,86 +127,65 @@ export default class Transaction extends React.Component {
                     {this.t('wallet:blockOnExplorer')}
                   </a>
                 </p>
-                {
-                  viewingTx.hasOwnProperty('ztlock') === true &&
+                {viewingTx.hasOwnProperty('ztlock') === true &&
                   viewingTx.confirmations === 0 &&
                   viewingTx.hasOwnProperty('generated') === false &&
                   viewingTx.hasOwnProperty('blended') === false &&
-                  (
-                    <p>
-                      <a
-                        onClick={this.ztlock}
-                        disabled={viewingTx.ztlock === true}
-                      >
-                        {
-                          viewingTx.ztlock === true
-                            ? this.t('wallet:transactionLocked')
-                            : this.t('wallet:transactionLock')
-                        }
-                      </a>
-                    </p>
-                  )
-                }
+                  <p>
+                    <a
+                      onClick={this.ztlock}
+                      disabled={viewingTx.ztlock === true}
+                    >
+                      {viewingTx.ztlock === true
+                        ? this.t('wallet:transactionLocked')
+                        : this.t('wallet:transactionLock')}
+                    </a>
+                  </p>}
               </div>
             </div>
-            <div className='flex-sb' style={{alignItems: 'flex-start'}}>
+            <div className='flex-sb' style={{ alignItems: 'flex-start' }}>
               <div>
                 <p className={viewingTx.color}>
-                  {
-                    new Intl.NumberFormat(this.gui.language, {
-                      maximumFractionDigits: 6
-                    }).format(viewingTx.amount)
-                  } XVC (
-                  {
-                    new Intl.NumberFormat(this.gui.language, {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2
-                    }).format(viewingTx.amount * local * average)
-                  } {this.gui.localCurrency})
+                  {new Intl.NumberFormat(this.gui.language, {
+                    maximumFractionDigits: 6
+                  }).format(viewingTx.amount)}{' '}
+                  XVC (
+                  {new Intl.NumberFormat(this.gui.language, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  }).format(viewingTx.amount * local * average)}{' '}
+                  {this.gui.localCurrency})
                 </p>
-                {
-                  viewingTx.hasOwnProperty('fee') === true && (
-                    <p className='red'>
-                      {
-                        new Intl.NumberFormat(this.gui.language, {
-                          maximumFractionDigits: 6
-                        }).format(viewingTx.fee)
-                      } XVC
-                    </p>
-                  )
-                }
+                {viewingTx.hasOwnProperty('fee') === true &&
+                  <p className='red'>
+                    {new Intl.NumberFormat(this.gui.language, {
+                      maximumFractionDigits: 6
+                    }).format(viewingTx.fee)}{' '}
+                    XVC
+                  </p>}
                 <p className={viewingTx.color}>{viewingTx.confirmations}</p>
               </div>
-              <div className='flex-sb' style={{alignItems: 'flex-start', width: '467px'}}>
-                <div style={{margin: '0 36px 0 0'}}>
-                  {
-                    viewingTx.hasOwnProperty('to') === true && (
-                      <div className='flex'>
-                        <i className='material-icons md-16'>perm_identity</i>
-                        <p>{this.t('wallet:recipient')}</p>
-                      </div>
-                    )
-                  }
-                  {
-                    viewingTx.hasOwnProperty('comment') === true && (
-                      <div className='flex'>
-                        <i className='material-icons md-16'>create</i>
-                        <p>{this.t('wallet:comment')}</p>
-                      </div>
-                    )
-                  }
+              <div
+                className='flex-sb'
+                style={{ alignItems: 'flex-start', width: '467px' }}
+              >
+                <div style={{ margin: '0 36px 0 0' }}>
+                  {viewingTx.hasOwnProperty('to') === true &&
+                    <div className='flex'>
+                      <i className='material-icons md-16'>perm_identity</i>
+                      <p>{this.t('wallet:recipient')}</p>
+                    </div>}
+                  {viewingTx.hasOwnProperty('comment') === true &&
+                    <div className='flex'>
+                      <i className='material-icons md-16'>create</i>
+                      <p>{this.t('wallet:comment')}</p>
+                    </div>}
                 </div>
-                <div style={{flex: 1}}>
-                  {
-                    viewingTx.hasOwnProperty('to') === true && (
-                      <p style={{fontWeight: '500'}}>{viewingTx.to}</p>
-                    )
-                  }
-                  {
-                    viewingTx.hasOwnProperty('comment') === true && (
-                      <p style={{textAlign: 'justify'}}>{viewingTx.comment}</p>
-                    )
-                  }
+                <div style={{ flex: 1 }}>
+                  {viewingTx.hasOwnProperty('to') === true &&
+                    <p style={{ fontWeight: '500' }}>{viewingTx.to}</p>}
+                  {viewingTx.hasOwnProperty('comment') === true &&
+                    <p style={{ textAlign: 'justify' }}>{viewingTx.comment}</p>}
                 </div>
               </div>
             </div>
@@ -228,7 +193,7 @@ export default class Transaction extends React.Component {
         </div>
         <div
           className='flex-sb'
-          style={{alignItems: 'flex-start', margin: '10px 0 0 0'}}
+          style={{ alignItems: 'flex-start', margin: '10px 0 0 0' }}
         >
           <Table
             bordered
@@ -242,26 +207,24 @@ export default class Transaction extends React.Component {
               {
                 dataIndex: 'amount',
                 title: this.t('wallet:amount'),
-                render: amount => (
-                  <p style={{textAlign: 'right'}}>
-                    {
-                      new Intl.NumberFormat(this.gui.language, {
-                        minimumFractionDigits: 6,
-                        maximumFractionDigits: 6
-                      }).format(amount)
-                    } XVC
+                render: amount =>
+                  <p style={{ textAlign: 'right' }}>
+                    {new Intl.NumberFormat(this.gui.language, {
+                      minimumFractionDigits: 6,
+                      maximumFractionDigits: 6
+                    }).format(amount)}{' '}
+                    XVC
                   </p>
-                )
               }
             ]}
             dataSource={[...viewingTx.inputs]}
-            locale={{emptyText: this.t('wallet:coinbase')}}
+            locale={{ emptyText: this.t('wallet:coinbase') }}
             pagination={false}
-            scroll={viewingTx.inputs.length > 8 ? {y: 190} : {}}
+            scroll={viewingTx.inputs.length > 8 ? { y: 190 } : {}}
             size='small'
-            style={{flex: 1, margin: '0 10px 0 0'}}
+            style={{ flex: 1, margin: '0 10px 0 0' }}
           />
-          <div style={{margin: 'auto 0 auto 0'}}>
+          <div style={{ margin: 'auto 0 auto 0' }}>
             <i className='material-icons md-18'>forward</i>
           </div>
           <Table
@@ -276,26 +239,26 @@ export default class Transaction extends React.Component {
               {
                 dataIndex: 'amount',
                 title: this.t('wallet:amount'),
-                render: (amount, record) => (
-                  <p className={record.color} style={{textAlign: 'right'}}>
-                    {
-                      new Intl.NumberFormat(this.gui.language, {
-                        minimumFractionDigits: 6,
-                        maximumFractionDigits: 6
-                      }).format(amount)
-                    } XVC
+                render: (amount, record) =>
+                  <p className={record.color} style={{ textAlign: 'right' }}>
+                    {new Intl.NumberFormat(this.gui.language, {
+                      minimumFractionDigits: 6,
+                      maximumFractionDigits: 6
+                    }).format(amount)}{' '}
+                    XVC
                   </p>
-                )
               }
             ]}
             dataSource={[...viewingTx.outputs]}
             pagination={false}
-            scroll={viewingTx.outputs.length > 8 ? {y: 190} : {}}
+            scroll={viewingTx.outputs.length > 8 ? { y: 190 } : {}}
             size='small'
-            style={{flex: 1, margin: '0 0 0 10px'}}
+            style={{ flex: 1, margin: '0 0 0 10px' }}
           />
         </div>
       </Modal>
     )
   }
 }
+
+export default Transaction

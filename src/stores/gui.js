@@ -22,7 +22,7 @@ class GUI {
    * @constructor
    * @property {array} languages - Available languages.
    */
-  constructor() {
+  constructor () {
     this.languages = [
       { language: 'en-US', name: 'English' },
       { language: 'fr-FR', name: 'French' },
@@ -49,7 +49,7 @@ class GUI {
    * @param {string} language - Display language.
    */
   @action
-  setLanguage(language) {
+  setLanguage (language) {
     this.language = language
     setItem('language', this.language)
   }
@@ -60,7 +60,7 @@ class GUI {
    * @param {string} localCurrency - Local currency.
    */
   @action
-  setLocalCurrency(localCurrency) {
+  setLocalCurrency (localCurrency) {
     this.localCurrency = localCurrency
     setItem('localCurrency', this.localCurrency)
   }
@@ -71,7 +71,7 @@ class GUI {
    * @param {string} alert - Alert to toggle.
    */
   @action
-  setSoundAlert(alert) {
+  setSoundAlert (alert) {
     this.soundAlerts[alert] = !this.soundAlerts[alert]
     setItem('soundAlerts', this.soundAlerts)
   }

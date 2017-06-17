@@ -4,13 +4,10 @@ import { action, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button, Popconfirm, Switch, Tooltip } from 'antd'
 
-/** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
-
-/** Make the component reactive and inject MobX stores. */
-@inject('rates', 'send', 'wallet') @observer
-
-export default class Send extends React.Component {
+@inject('rates', 'send', 'wallet')
+@observer
+class Send extends React.Component {
   @observable popconfirm = false
 
   constructor (props) {
@@ -25,11 +22,9 @@ export default class Send extends React.Component {
    * Toggle visibility of popconfirm.
    * @function togglePopconfirm
    */
-  @action togglePopconfirm = () => {
-    if (
-      this.wallet.isLocked === false &&
-      this.send.errorStatus === false
-    ) {
+  @action
+  togglePopconfirm = () => {
+    if (this.wallet.isLocked === false && this.send.errorStatus === false) {
       this.popconfirm = !this.popconfirm
     }
   }
@@ -62,9 +57,9 @@ export default class Send extends React.Component {
             disabled={this.wallet.spendFrom === '#'}
             onClick={() => this.send.addRecipient()}
             size='small'
-            style={{margin: '0 5px 0 5px'}}
+            style={{ margin: '0 5px 0 5px' }}
           >
-            <div style={{margin: '2px 0 0 0'}}>
+            <div style={{ margin: '2px 0 0 0' }}>
               <i className='material-icons md-16'>person_add</i>
             </div>
           </Button>
@@ -83,15 +78,15 @@ export default class Send extends React.Component {
           <Tooltip placement='bottomLeft' title={this.t('wallet:zeroTime')}>
             <Switch
               checkedChildren={
-                <div style={{margin: '-2px 0 0 0'}}>
+                <div style={{ margin: '-2px 0 0 0' }}>
                   <i className='material-icons md-16'>done</i>
                 </div>
               }
               disabled
               size='small'
-              style={{margin: '0 20px 0 5px'}}
+              style={{ margin: '0 20px 0 5px' }}
               unCheckedChildren={
-                <div style={{margin: '-2px 0 0 0'}}>
+                <div style={{ margin: '-2px 0 0 0' }}>
                   <i className='material-icons md-16'>clear</i>
                 </div>
               }
@@ -101,15 +96,15 @@ export default class Send extends React.Component {
           <Tooltip placement='bottomLeft' title={this.t('wallet:blendedOnly')}>
             <Switch
               checkedChildren={
-                <div style={{margin: '-2px 0 0 0'}}>
+                <div style={{ margin: '-2px 0 0 0' }}>
                   <i className='material-icons md-16'>done</i>
                 </div>
               }
               disabled
               size='small'
-              style={{margin: '0 0 0 5px'}}
+              style={{ margin: '0 0 0 5px' }}
               unCheckedChildren={
-                <div style={{margin: '-2px 0 0 0'}}>
+                <div style={{ margin: '-2px 0 0 0' }}>
                   <i className='material-icons md-16'>clear</i>
                 </div>
               }
@@ -120,3 +115,5 @@ export default class Send extends React.Component {
     )
   }
 }
+
+export default Send

@@ -15,13 +15,10 @@ import moment from 'moment'
 /** Required components. */
 import { CustomTick, CustomTooltip } from './RechartsCustom'
 
-/** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
-
-/** Make the component reactive and inject MobX stores. */
-@inject('stats') @observer
-
-export default class RewardSpread extends React.Component {
+@inject('stats')
+@observer
+class RewardSpread extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
@@ -29,11 +26,11 @@ export default class RewardSpread extends React.Component {
   }
 
   render () {
-    const beginning = new Date().getTime() - (30 * 24 * 60 * 60 * 1000)
+    const beginning = new Date().getTime() - 30 * 24 * 60 * 60 * 1000
 
     return (
       <ResponsiveContainer height={215} width='100%'>
-        <ScatterChart margin={{top: 15, right: 20, bottom: 5, left: 20}}>
+        <ScatterChart margin={{ top: 15, right: 20, bottom: 5, left: 20 }}>
           <CartesianGrid strokeDasharray='3 3' />
           <Scatter
             data={this.stats.rewardSpread.stakingReward}
@@ -78,3 +75,5 @@ export default class RewardSpread extends React.Component {
     )
   }
 }
+
+export default RewardSpread

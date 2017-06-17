@@ -14,12 +14,11 @@ import Transaction from './Transaction'
 import Transactions from './Transactions'
 
 /** Set notification and message top margin. */
-notification.config({top: 65})
-message.config({top: 11})
+notification.config({ top: 65 })
+message.config({ top: 11 })
 
-/** Make the component reactive and inject MobX stores. */
-@inject('connections') @observer
-
+@inject('connections')
+@observer
 class Root extends React.Component {
   constructor (props) {
     super(props)

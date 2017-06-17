@@ -14,13 +14,10 @@ import {
 /** Required components. */
 import { CustomTick, CustomTooltip } from './RechartsCustom'
 
-/** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
-
-/** Make the component reactive and inject MobX stores. */
-@inject('stats') @observer
-
-export default class Difficulties extends React.Component {
+@inject('stats')
+@observer
+class Difficulties extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
@@ -32,7 +29,7 @@ export default class Difficulties extends React.Component {
       <ResponsiveContainer height={215} width='100%'>
         <LineChart
           data={this.stats.network}
-          margin={{top: 15, right: 0, bottom: 5, left: 30}}
+          margin={{ top: 15, right: 0, bottom: 5, left: 30 }}
           syncId='0'
         >
           <CartesianGrid strokeDasharray='3 3' />
@@ -78,3 +75,5 @@ export default class Difficulties extends React.Component {
     )
   }
 }
+
+export default Difficulties

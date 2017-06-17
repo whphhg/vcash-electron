@@ -14,13 +14,10 @@ import SendControls from './SendControls'
 import SendOptions from './SendOptions'
 import SendRecipients from './SendRecipients'
 
-/** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
-
-/** Make the component reactive and inject MobX stores. */
-@inject('gui', 'rates', 'send', 'wallet') @observer
-
-export default class Addresses extends React.Component {
+@inject('gui', 'rates', 'send', 'wallet')
+@observer
+class Addresses extends React.Component {
   @observable filters = { address: ['spendable', 'new'] }
 
   constructor (props) {
@@ -36,7 +33,8 @@ export default class Addresses extends React.Component {
    * Handle table change.
    * @function tableChange
    */
-  @action tableChange = (pagination, filters, sorter) => {
+  @action
+  tableChange = (pagination, filters, sorter) => {
     this.filters = filters
   }
 
@@ -51,7 +49,7 @@ export default class Addresses extends React.Component {
           height: '100%'
         }}
       >
-        <div className='shadow' style={{minHeight: '35px'}}>
+        <div className='shadow' style={{ minHeight: '35px' }}>
           <div
             style={{
               display: 'grid',
@@ -60,21 +58,22 @@ export default class Addresses extends React.Component {
             }}
           >
             <div className='flex-sb'>
-              <div className='flex' style={{margin: '0 0 0 10px'}}>
+              <div className='flex' style={{ margin: '0 0 0 10px' }}>
                 <AddressNew />
-                <div style={{margin: '0 5px 0 5px'}}><KeyImport /></div>
+                <div style={{ margin: '0 5px 0 5px' }}><KeyImport /></div>
                 <KeyDump />
               </div>
               <Input
-                onChange={(e) => this.wallet.setSearch('addresses', e.target.value)}
+                onChange={e =>
+                  this.wallet.setSearch('addresses', e.target.value)}
                 placeholder={this.t('wallet:searchAddresses')}
                 prefix={<i className='material-icons md-14'>search</i>}
                 size='small'
-                style={{margin: '0 10px 0 0', width: '290px'}}
+                style={{ margin: '0 10px 0 0', width: '290px' }}
                 value={this.wallet.search.addresses.value}
               />
             </div>
-            <div className='flex' style={{margin: '0 10px 0 10px'}}>
+            <div className='flex' style={{ margin: '0 10px 0 10px' }}>
               <SendControls />
             </div>
           </div>
@@ -86,21 +85,21 @@ export default class Addresses extends React.Component {
             height: '100%'
           }}
         >
-          <div style={{margin: '10px'}}>
-            <div className='flex-sb' style={{margin: '0 0 10px 0'}}>
-              <div style={{lineHeight: '22px', margin: '0 36px 0 0'}}>
+          <div style={{ margin: '10px' }}>
+            <div className='flex-sb' style={{ margin: '0 0 10px 0' }}>
+              <div style={{ lineHeight: '22px', margin: '0 36px 0 0' }}>
                 <div className='flex'>
                   <i className='material-icons md-16'>account_balance</i>
                   <p>{this.t('wallet:spendFrom')}</p>
                 </div>
               </div>
-              <div style={{flex: 1}}>
+              <div style={{ flex: 1 }}>
                 <div className='flex'>
                   <Select
-                    onChange={(account) => this.wallet.setSpendFrom(account)}
+                    onChange={account => this.wallet.setSpendFrom(account)}
                     optionFilterProp='children'
                     size='small'
-                    style={{flex: 1, margin: '0 5px 0 0'}}
+                    style={{ flex: 1, margin: '0 5px 0 0' }}
                     value={spendFrom}
                   >
                     <Select.Option
@@ -112,24 +111,20 @@ export default class Addresses extends React.Component {
                     <Select.Option value='*'>
                       {this.t('wallet:default')}
                     </Select.Option>
-                    {
-                      this.wallet.accounts.map((account) => (
-                        <Select.Option key={account} value={account}>
-                          {account}
-                        </Select.Option>
-                      ))
-                    }
+                    {this.wallet.accounts.map(account =>
+                      <Select.Option key={account} value={account}>
+                        {account}
+                      </Select.Option>
+                    )}
                   </Select>
-                  <div style={{width: '140px'}}>
+                  <div style={{ width: '140px' }}>
                     <Input
                       disabled
                       size='small'
                       suffix='XVC'
-                      value={
-                        new Intl.NumberFormat(this.gui.language, {
-                          maximumFractionDigits: 6
-                        }).format(accountBalances[spendFrom])
-                      }
+                      value={new Intl.NumberFormat(this.gui.language, {
+                        maximumFractionDigits: 6
+                      }).format(accountBalances[spendFrom])}
                     />
                   </div>
                 </div>
@@ -148,9 +143,12 @@ export default class Addresses extends React.Component {
                   ],
                   onFilter: (value, { received, spent }) => {
                     switch (value) {
-                      case 'spent': return received - spent === 0 && received > 0
-                      case 'spendable': return received - spent !== 0
-                      case 'new': return received === 0
+                      case 'spent':
+                        return received - spent === 0 && received > 0
+                      case 'spendable':
+                        return received - spent !== 0
+                      case 'new':
+                        return received === 0
                     }
                   },
                   title: this.t('wallet:addresses'),
@@ -161,16 +159,14 @@ export default class Addresses extends React.Component {
                   dataIndex: 'balance',
                   sorter: (a, b) => a.balance - b.balance,
                   title: this.t('wallet:balance'),
-                  render: balance => (
-                    <p style={{textAlign: 'right'}}>
-                      {
-                        new Intl.NumberFormat(this.gui.language, {
-                          minimumFractionDigits: 6,
-                          maximumFractionDigits: 6
-                        }).format(balance)
-                      } XVC
+                  render: balance =>
+                    <p style={{ textAlign: 'right' }}>
+                      {new Intl.NumberFormat(this.gui.language, {
+                        minimumFractionDigits: 6,
+                        maximumFractionDigits: 6
+                      }).format(balance)}{' '}
+                      XVC
                     </p>
-                  )
                 }
               ]}
               dataSource={this.wallet.addressesData}
@@ -183,11 +179,11 @@ export default class Addresses extends React.Component {
               onChange={this.tableChange}
               pagination={false}
               rowKey='address'
-              scroll={{y: 504}}
+              scroll={{ y: 504 }}
               size='small'
             />
           </div>
-          <div style={{margin: '10px'}}>
+          <div style={{ margin: '10px' }}>
             <div
               style={{
                 display: 'grid',
@@ -197,7 +193,7 @@ export default class Addresses extends React.Component {
               }}
             >
               <SendRecipients />
-              <div style={{alignSelf: 'end'}}>
+              <div style={{ alignSelf: 'end' }}>
                 <SendOptions />
                 <hr />
                 <CurrencyConverter />
@@ -209,3 +205,5 @@ export default class Addresses extends React.Component {
     )
   }
 }
+
+export default Addresses

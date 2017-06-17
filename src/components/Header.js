@@ -8,12 +8,9 @@ import { Menu } from 'antd'
 import WalletLock from './WalletLock'
 import WalletUnlock from './WalletUnlock'
 
-/** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
-
-/** Make the component reactive and inject MobX stores. */
-@inject('connections', 'gui', 'rates', 'wallet') @observer
-
+@inject('connections', 'gui', 'rates', 'wallet')
+@observer
 class Header extends React.Component {
   constructor (props) {
     super(props)
@@ -29,95 +26,92 @@ class Header extends React.Component {
     const { balance, newmint, stake } = this.wallet.info.getinfo
 
     return (
-      <header className='flex-sb shadow' style={{height: '55px'}}>
+      <header className='flex-sb shadow' style={{ height: '55px' }}>
         <div
           className='flex'
-          style={{alignItems: 'flex-end', justifyContent: 'flex-start'}}
+          style={{ alignItems: 'flex-end', justifyContent: 'flex-start' }}
         >
           <img
             src='./assets/images/logoGrey.png'
-            style={{height: '36px', margin: '0 10px 0 10px', width: '36px'}}
+            style={{ height: '36px', margin: '0 10px 0 10px', width: '36px' }}
           />
-          <div style={{margin: '0 10px 0 5px'}}>
+          <div style={{ margin: '0 10px 0 5px' }}>
             <p>{this.t('wallet:balance')}</p>
-            <p><span style={{fontWeight: '600'}}>
-              {
-                new Intl.NumberFormat(this.gui.language, {
+            <p>
+              <span style={{ fontWeight: '600' }}>
+                {new Intl.NumberFormat(this.gui.language, {
                   maximumFractionDigits: 6
-                }).format(balance)
-              }
-            </span> XVC</p>
+                }).format(balance)}
+              </span>{' '}
+              XVC
+            </p>
           </div>
-          <div style={{margin: '0 10px 0 0'}}>
-            <p>~<span style={{fontWeight: '600'}}>
-              {
-                new Intl.NumberFormat(this.gui.language, {
+          <div style={{ margin: '0 10px 0 0' }}>
+            <p>
+              ~<span style={{ fontWeight: '600' }}>
+                {new Intl.NumberFormat(this.gui.language, {
                   maximumFractionDigits: 8
-                }).format(balance * average)
-              }
-            </span> BTC</p>
+                }).format(balance * average)}
+              </span>{' '}
+              BTC
+            </p>
           </div>
-          <div style={{margin: '0 20px 0 0'}}>
-            <p>~<span style={{fontWeight: '600'}}>
-              {
-                new Intl.NumberFormat(this.gui.language, {
+          <div style={{ margin: '0 20px 0 0' }}>
+            <p>
+              ~<span style={{ fontWeight: '600' }}>
+                {new Intl.NumberFormat(this.gui.language, {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
-                }).format(balance * average * local)
-              }
-            </span> {this.gui.localCurrency}</p>
+                }).format(balance * average * local)}
+              </span>{' '}
+              {this.gui.localCurrency}
+            </p>
           </div>
-          {
-            this.wallet.pendingAmount > 0 && (
-              <div style={{margin: '0 10px 0 0'}}>
-                <p>{this.t('wallet:pending')}</p>
-                <p><span style={{fontWeight: '600'}}>
-                  {
-                    new Intl.NumberFormat(this.gui.language, {
-                      maximumFractionDigits: 6
-                    }).format(this.wallet.pendingAmount)
-                  }
-                </span> XVC</p>
-              </div>
-            )
-          }
-          {
-            newmint > 0 && (
-              <div style={{margin: '0 10px 0 0'}}>
-                <p>{this.t('wallet:immature')}</p>
-                <p><span style={{fontWeight: '600'}}>
-                  {
-                    new Intl.NumberFormat(this.gui.language, {
-                      maximumFractionDigits: 6
-                    }).format(newmint)
-                  }
-                </span> XVC</p>
-              </div>
-            )
-          }
-          {
-            stake > 0 && (
-              <div>
-                <p>{this.t('wallet:staking')}</p>
-                <p><span style={{fontWeight: '600'}}>
-                  {
-                    new Intl.NumberFormat(this.gui.language, {
-                      maximumFractionDigits: 6
-                    }).format(stake)
-                  }
-                </span> XVC</p>
-              </div>
-            )
-          }
+          {this.wallet.pendingAmount > 0 &&
+            <div style={{ margin: '0 10px 0 0' }}>
+              <p>{this.t('wallet:pending')}</p>
+              <p>
+                <span style={{ fontWeight: '600' }}>
+                  {new Intl.NumberFormat(this.gui.language, {
+                    maximumFractionDigits: 6
+                  }).format(this.wallet.pendingAmount)}
+                </span>{' '}
+                XVC
+              </p>
+            </div>}
+          {newmint > 0 &&
+            <div style={{ margin: '0 10px 0 0' }}>
+              <p>{this.t('wallet:immature')}</p>
+              <p>
+                <span style={{ fontWeight: '600' }}>
+                  {new Intl.NumberFormat(this.gui.language, {
+                    maximumFractionDigits: 6
+                  }).format(newmint)}
+                </span>{' '}
+                XVC
+              </p>
+            </div>}
+          {stake > 0 &&
+            <div>
+              <p>{this.t('wallet:staking')}</p>
+              <p>
+                <span style={{ fontWeight: '600' }}>
+                  {new Intl.NumberFormat(this.gui.language, {
+                    maximumFractionDigits: 6
+                  }).format(stake)}
+                </span>{' '}
+                XVC
+              </p>
+            </div>}
         </div>
-        <div className='flex' style={{justifyContent: 'flex-end'}}>
+        <div className='flex' style={{ justifyContent: 'flex-end' }}>
           <Menu
             defaultSelectedKeys={['/']}
             mode='horizontal'
-            onClick={(item) => {
+            onClick={item => {
               this.props.history.push('/' + this.connections.viewing + item.key)
             }}
-            style={{margin: '0 10px 0 0'}}
+            style={{ margin: '0 10px 0 0' }}
           >
             <Menu.Item key='/'>
               <i className='material-icons md-20'>account_balance_wallet</i>
@@ -132,14 +126,11 @@ class Header extends React.Component {
               <i className='material-icons md-20'>settings</i>
             </Menu.Item>
           </Menu>
-          {
-            this.wallet.isEncrypted === true && (
-              <div style={{margin: '0 10px 0 0'}}>
-                <WalletLock />
-                <WalletUnlock />
-              </div>
-            )
-          }
+          {this.wallet.isEncrypted === true &&
+            <div style={{ margin: '0 10px 0 0' }}>
+              <WalletLock />
+              <WalletUnlock />
+            </div>}
         </div>
       </header>
     )

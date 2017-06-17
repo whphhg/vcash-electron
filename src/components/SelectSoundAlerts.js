@@ -3,13 +3,10 @@ import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Switch } from 'antd'
 
-/** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
-
-/** Make the component reactive and inject MobX stores. */
-@inject('gui') @observer
-
-export default class SelectSoundAlerts extends React.Component {
+@inject('gui')
+@observer
+class SelectSoundAlerts extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
@@ -28,38 +25,38 @@ export default class SelectSoundAlerts extends React.Component {
             <Switch
               checked={this.gui.soundAlerts.incoming === true}
               checkedChildren={
-                <div style={{margin: '-2px 0 0 0'}}>
+                <div style={{ margin: '-2px 0 0 0' }}>
                   <i className='material-icons md-16'>done</i>
                 </div>
               }
               onChange={() => this.gui.setSoundAlert('incoming')}
               size='small'
               unCheckedChildren={
-                <div style={{margin: '-2px 0 0 0'}}>
+                <div style={{ margin: '-2px 0 0 0' }}>
                   <i className='material-icons md-16'>clear</i>
                 </div>
               }
             />
-            <div className='flex' style={{margin: '0 20px 0 8px'}}>
+            <div className='flex' style={{ margin: '0 20px 0 8px' }}>
               <i className='material-icons md-16'>call_received</i>
               <p>{this.t('wallet:incoming')}</p>
             </div>
             <Switch
               checked={this.gui.soundAlerts.spendable === true}
               checkedChildren={
-                <div style={{margin: '-2px 0 0 0'}}>
+                <div style={{ margin: '-2px 0 0 0' }}>
                   <i className='material-icons md-16'>done</i>
                 </div>
               }
               onChange={() => this.gui.setSoundAlert('spendable')}
               size='small'
               unCheckedChildren={
-                <div style={{margin: '-2px 0 0 0'}}>
+                <div style={{ margin: '-2px 0 0 0' }}>
                   <i className='material-icons md-16'>clear</i>
                 </div>
               }
             />
-            <div className='flex' style={{margin: '0 0 0 8px'}}>
+            <div className='flex' style={{ margin: '0 0 0 8px' }}>
               <i className='material-icons md-16'>done_all</i>
               <p>{this.t('wallet:spendable')}</p>
             </div>
@@ -69,3 +66,5 @@ export default class SelectSoundAlerts extends React.Component {
     )
   }
 }
+
+export default SelectSoundAlerts

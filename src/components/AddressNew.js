@@ -4,13 +4,10 @@ import { action, computed, observable, reaction } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { AutoComplete, Button, Input, Popover } from 'antd'
 
-/** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
-
-/** Make the component reactive and inject MobX stores. */
-@inject('rpc', 'wallet') @observer
-
-export default class AddressNew extends React.Component {
+@inject('rpc', 'wallet')
+@observer
+class AddressNew extends React.Component {
   @observable account = ''
   @observable address = ''
   @observable error = false
@@ -23,11 +20,14 @@ export default class AddressNew extends React.Component {
     this.wallet = props.wallet
 
     /** Clear address when the popover closes. */
-    reaction(() => this.popover, (popover) => {
-      if (popover === false && this.address !== '') {
-        this.setAddress()
+    reaction(
+      () => this.popover,
+      popover => {
+        if (popover === false && this.address !== '') {
+          this.setAddress()
+        }
       }
-    })
+    )
   }
 
   /**
@@ -35,10 +35,11 @@ export default class AddressNew extends React.Component {
    * @function errorStatus
    * @return {string|false} Current error or false if none.
    */
-  @computed get errorStatus () {
-    if (
-      this.account.match(/^[a-zA-Z0-9 -]{0,100}$/) === null
-    ) return 'invalidCharacters'
+  @computed
+  get errorStatus () {
+    if (this.account.match(/^[a-zA-Z0-9 -]{0,100}$/) === null) {
+      return 'invalidCharacters'
+    }
 
     if (this.error !== false) return this.error
     return false
@@ -49,7 +50,8 @@ export default class AddressNew extends React.Component {
    * @function setError
    * @param {string} error - RPC error.
    */
-  @action setError = (error = false) => {
+  @action
+  setError = (error = false) => {
     this.error = error
   }
 
@@ -58,7 +60,8 @@ export default class AddressNew extends React.Component {
    * @function setAccount
    * @param {string} account - Account name.
    */
-  @action setAccount = (account) => {
+  @action
+  setAccount = account => {
     this.account = account
   }
 
@@ -67,7 +70,8 @@ export default class AddressNew extends React.Component {
    * @function setAddress
    * @param {object} address - New address.
    */
-  @action setAddress = (address = '') => {
+  @action
+  setAddress = (address = '') => {
     this.address = address
   }
 
@@ -75,7 +79,8 @@ export default class AddressNew extends React.Component {
    * Toggle popover.
    * @function togglePopover
    */
-  @action togglePopover = () => {
+  @action
+  togglePopover = () => {
     this.popover = !this.popover
   }
 
@@ -84,56 +89,53 @@ export default class AddressNew extends React.Component {
    * @function getNew
    */
   getNew = () => {
-    this.rpc.execute([
-      { method: 'getnewaddress', params: [this.account] }
-    ], (response) => {
-      /** Set address & update addresses. */
-      if (response[0].hasOwnProperty('result') === true) {
-        this.setAddress(response[0].result)
-        this.wallet.getWallet(false, true)
-      }
+    this.rpc.execute(
+      [{ method: 'getnewaddress', params: [this.account] }],
+      response => {
+        /** Set address & update addresses. */
+        if (response[0].hasOwnProperty('result') === true) {
+          this.setAddress(response[0].result)
+          this.wallet.getWallet(false, true)
+        }
 
-      /** Set error. */
-      if (response[0].hasOwnProperty('error') === true) {
-        switch (response[0].error.code) {
-          /** error_code_wallet_keypool_ran_out */
-          case -12:
-            return this.setError('keypoolRanOut')
+        /** Set error. */
+        if (response[0].hasOwnProperty('error') === true) {
+          switch (response[0].error.code) {
+            /** error_code_wallet_keypool_ran_out */
+            case -12:
+              return this.setError('keypoolRanOut')
+          }
         }
       }
-    })
+    )
   }
 
   popoverContent () {
     return (
-      <div style={{width: '400px'}}>
+      <div style={{ width: '400px' }}>
         <AutoComplete
           dataSource={this.wallet.accounts}
           getPopupContainer={triggerNode => triggerNode.parentNode}
           onChange={this.setAccount}
           placeholder={this.t('wallet:accountName')}
-          style={{width: '100%'}}
+          style={{ width: '100%' }}
           value={this.account}
         />
-        {
-          this.address !== '' && (
-            <Input readOnly style={{margin: '5px 0 0 0'}} value={this.address} />
-          )
-        }
+        {this.address !== '' &&
+          <Input
+            readOnly
+            style={{ margin: '5px 0 0 0' }}
+            value={this.address}
+          />}
         <div
           className='flex-sb'
-          style={{alignItems: 'flex-start', margin: '5px 0 0 0'}}
+          style={{ alignItems: 'flex-start', margin: '5px 0 0 0' }}
         >
           <p className='red'>
-            {
-              (
-                this.errorStatus === 'invalidCharacters' &&
-                this.t('wallet:accountInvalidCharacters')
-              ) || (
-                this.errorStatus === 'keypoolRanOut' &&
-                this.t('wallet:keypoolRanOut')
-              )
-            }
+            {(this.errorStatus === 'invalidCharacters' &&
+              this.t('wallet:accountInvalidCharacters')) ||
+              (this.errorStatus === 'keypoolRanOut' &&
+                this.t('wallet:keypoolRanOut'))}
           </p>
           <Button disabled={this.errorStatus !== false} onClick={this.getNew}>
             {this.t('wallet:addressGenerate')}
@@ -154,7 +156,7 @@ export default class AddressNew extends React.Component {
         visible={this.popover}
       >
         <Button size='small'>
-          <div style={{margin: '2px 0 0 0'}}>
+          <div style={{ margin: '2px 0 0 0' }}>
             <i className='material-icons md-16'>plus_one</i>
           </div>
         </Button>
@@ -162,3 +164,5 @@ export default class AddressNew extends React.Component {
     )
   }
 }
+
+export default AddressNew

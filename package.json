@@ -1,16 +1,18 @@
 {
   "name": "vcash-electron",
   "productName": "Vcash Electron GUI",
-  "version": "0.33.1",
+  "version": "0.33.2",
   "description": "Multi-platform and multi-node GUI for Vcash.",
   "main": "src/electron.js",
   "scripts": {
     "gui": "electron .",
     "dev": "NODE_ENV=dev electron .",
     "dev-win": "set NODE_ENV=dev&&electron .",
+    "lint": "standard",
+    "format": "prettier --no-semi --single-quote --write \"src/**/*.js\" && standard --fix",
     "pack": "build --dir",
     "dist-linux": "build --linux --x64",
-    "dist-mac": "build --mac --x64",
+    "dist-macos": "build --mac --x64",
     "dist-nsis": "build --win nsis --ia32 --x64",
     "dist-win32-x64": "build --win portable --x64",
     "dist-win32-ia32": "build --win portable --ia32"
@@ -48,20 +50,23 @@
   },
   "homepage": "https://github.com/openvcash/vcash-electron#readme",
   "standard": {
-    "parser": "babel-eslint"
+    "parser": "babel-eslint",
+    "globals": [
+      "Audio"
+    ]
   },
   "dependencies": {
     "antd": "2.11.0",
     "electron-compile": "6.4.1",
-    "i18next": "8.4.1",
+    "i18next": "8.4.2",
     "i18next-node-fs-backend": "1.0.0",
-    "mobx": "3.1.14",
+    "mobx": "3.1.15",
     "mobx-logger": "0.6.0",
     "mobx-react": "4.2.1",
     "moment": "2.18.1",
-    "react": "15.5.4",
-    "react-dom": "15.5.4",
-    "react-i18next": "4.1.1",
+    "react": "15.6.1",
+    "react-dom": "15.6.1",
+    "react-i18next": "4.1.2",
     "react-router-dom": "4.1.1",
     "recharts": "0.22.4",
     "ssh2": "0.5.5"
@@ -77,6 +82,7 @@
     "babel-runtime": "6.23.0",
     "electron-builder": "18.3.0",
     "electron-prebuilt-compile": "1.7.0",
+    "prettier": "1.4.4",
     "standard": "10.0.2"
   }
 }

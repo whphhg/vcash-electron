@@ -33,7 +33,7 @@ class Connections {
    * @property {map} stores - Active connections stores.
    * @property {map} tunnels - SSH tunnels instances.
    */
-  constructor() {
+  constructor () {
     this.stores = new Map()
     this.tunnels = new Map()
 
@@ -147,7 +147,7 @@ class Connections {
    * @return {boolean} Start button status.
    */
   @computed
-  get startStatus() {
+  get startStatus () {
     if (this.configs.has(this.viewing) === true) {
       const conn = this.configs.get(this.viewing)
 
@@ -176,7 +176,7 @@ class Connections {
    * @return {array} Connections uids.
    */
   @computed
-  get uids() {
+  get uids () {
     return [...this.configs.keys()]
   }
 
@@ -186,7 +186,7 @@ class Connections {
    * @return {object|null} Stores or null if none.
    */
   @computed
-  get viewingStores() {
+  get viewingStores () {
     if (this.stores.has(this.viewing) === false) return null
     return this.stores.get(this.viewing)
   }
@@ -196,7 +196,7 @@ class Connections {
    * @function add
    */
   @action
-  add() {
+  add () {
     const uid = shortUid()
 
     this.configs.set(uid, {
@@ -221,7 +221,7 @@ class Connections {
    * @function remove
    */
   @action
-  remove() {
+  remove () {
     const index = this.uids.indexOf(this.viewing)
     const length = this.uids.length
 
@@ -248,7 +248,7 @@ class Connections {
    * @param {any} value - Value to assign.
    */
   @action
-  setConfig(key, value) {
+  setConfig (key, value) {
     const conn = this.configs.get(this.viewing)
 
     /** Handle port inputs. Allow only numbers below 65536. */
@@ -268,7 +268,7 @@ class Connections {
    * @param {object} status - Updated connection status.
    */
   @action.bound
-  setStatus(uid, status) {
+  setStatus (uid, status) {
     const conn = this.configs.get(uid)
     conn.status = { ...conn.status, ...status }
   }
@@ -279,7 +279,7 @@ class Connections {
    * @param {string} uid - Connection uid.
    */
   @action
-  setViewing(uid) {
+  setViewing (uid) {
     this.viewing = uid
   }
 
@@ -288,7 +288,7 @@ class Connections {
    * @function toggleModal
    */
   @action
-  toggleModal() {
+  toggleModal () {
     this.modal = !this.modal
   }
 
@@ -296,7 +296,7 @@ class Connections {
    * Start the viewing connection.
    * @function start
    */
-  start(uid = this.viewing) {
+  start (uid = this.viewing) {
     const conn = this.configs.get(uid)
 
     /** Initialize and set the new connection's stores. */
@@ -380,7 +380,7 @@ class Connections {
    * Stop the viewing connection and reset it's status.
    * @function stop
    */
-  stop() {
+  stop () {
     this.stopTunnel(this.viewing)
     this.setStatus(this.viewing, { active: false, rpc: null, tunnel: null })
   }
@@ -390,7 +390,7 @@ class Connections {
    * @function stopTunnel
    * @param {string} uid - Connection uid.
    */
-  stopTunnel(uid) {
+  stopTunnel (uid) {
     if (this.tunnels.has(uid) === true) {
       const tunnel = this.tunnels.get(uid)
 

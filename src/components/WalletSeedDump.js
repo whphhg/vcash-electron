@@ -4,13 +4,10 @@ import { action, computed, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button, Input } from 'antd'
 
-/** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
-
-/** Make the component reactive and inject MobX stores. */
-@inject('rpc', 'wallet') @observer
-
-export default class WalletSeedDump extends React.Component {
+@inject('rpc', 'wallet')
+@observer
+class WalletSeedDump extends React.Component {
   @observable error = false
   @observable seed = ''
 
@@ -26,7 +23,8 @@ export default class WalletSeedDump extends React.Component {
    * @function errorStatus
    * @return {string|false} Current error or false if none.
    */
-  @computed get errorStatus () {
+  @computed
+  get errorStatus () {
     if (this.error !== false) return this.error
     return false
   }
@@ -36,7 +34,8 @@ export default class WalletSeedDump extends React.Component {
    * @function setError
    * @param {string} error - RPC error.
    */
-  @action setError = (error = false) => {
+  @action
+  setError = (error = false) => {
     this.error = error
   }
 
@@ -45,7 +44,8 @@ export default class WalletSeedDump extends React.Component {
    * @function setSeed
    * @param {string} seed - Wallet seed.
    */
-  @action setSeed = (seed) => {
+  @action
+  setSeed = seed => {
     this.seed = seed
   }
 
@@ -54,9 +54,7 @@ export default class WalletSeedDump extends React.Component {
    * @function dumpSeed
    */
   dumpSeed = () => {
-    this.rpc.execute([
-      { method: 'dumpwalletseed', params: [] }
-    ], (response) => {
+    this.rpc.execute([{ method: 'dumpwalletseed', params: [] }], response => {
       /** Set seed. */
       if (response[0].hasOwnProperty('result') === true) {
         this.setSeed(response[0].result)
@@ -80,26 +78,23 @@ export default class WalletSeedDump extends React.Component {
           <i className='material-icons md-16'>fingerprint</i>
           <p>{this.t('wallet:seedDumpLong')}</p>
         </div>
-        <div className='flex-sb' style={{margin: '10px 0 0 0'}}>
-          <p style={{width: '120px'}}>{this.t('wallet:seed')}</p>
+        <div className='flex-sb' style={{ margin: '10px 0 0 0' }}>
+          <p style={{ width: '120px' }}>{this.t('wallet:seed')}</p>
           <Input
             disabled={this.seed === ''}
             readOnly
-            style={{flex: 1}}
+            style={{ flex: 1 }}
             value={this.seed}
           />
         </div>
-        <div className='flex-sb' style={{margin: '5px 0 0 0'}}>
-          <p className='red' style={{margin: '0 0 0 120px'}}>
-            {
-              this.errorStatus === 'notDeterministic' &&
-              this.t('wallet:notDeterministic')
-            }
+        <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
+          <p className='red' style={{ margin: '0 0 0 120px' }}>
+            {this.errorStatus === 'notDeterministic' &&
+              this.t('wallet:notDeterministic')}
           </p>
           <Button
             disabled={
-              this.errorStatus !== false ||
-              this.wallet.isLocked === true
+              this.errorStatus !== false || this.wallet.isLocked === true
             }
             onClick={this.dumpSeed}
           >
@@ -110,3 +105,5 @@ export default class WalletSeedDump extends React.Component {
     )
   }
 }
+
+export default WalletSeedDump

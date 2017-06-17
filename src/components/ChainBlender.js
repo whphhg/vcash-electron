@@ -3,13 +3,10 @@ import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Switch, Tooltip, message } from 'antd'
 
-/** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
-
-/** Make the component reactive and inject MobX stores. */
-@inject('gui', 'rpc', 'wallet') @observer
-
-export default class ChainBlender extends React.Component {
+@inject('gui', 'rpc', 'wallet')
+@observer
+class ChainBlender extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
@@ -23,22 +20,26 @@ export default class ChainBlender extends React.Component {
    * @function toggle
    */
   toggle = () => {
-    this.rpc.execute([
-      {
-        method: 'chainblender',
-        params: [this.wallet.isBlending === true ? 'stop' : 'start']
+    this.rpc.execute(
+      [
+        {
+          method: 'chainblender',
+          params: [this.wallet.isBlending === true ? 'stop' : 'start']
+        }
+      ],
+      response => {
+        /** Update blending status & display a success message. */
+        if (response[0].hasOwnProperty('result') === true) {
+          this.wallet.setBlendingStatus()
+          message.success(
+            this.t('wallet:chainBlender', {
+              context: this.wallet.isBlending === true ? 'start' : 'stop'
+            }),
+            6
+          )
+        }
       }
-    ], (response) => {
-      /** Update blending status & display a success message. */
-      if (response[0].hasOwnProperty('result') === true) {
-        this.wallet.setBlendingStatus()
-        message.success(
-          this.t('wallet:chainBlender',
-            { context: this.wallet.isBlending === true ? 'start' : 'stop' }
-          ), 6
-        )
-      }
-    })
+    )
   }
 
   render () {
@@ -50,7 +51,7 @@ export default class ChainBlender extends React.Component {
 
     return (
       <div className='flex'>
-        <div style={{margin: '0 10px 3px 0'}}>
+        <div style={{ margin: '0 10px 3px 0' }}>
           <Tooltip
             placement='bottomLeft'
             title={this.t('wallet:toggleChainBlender')}
@@ -58,7 +59,7 @@ export default class ChainBlender extends React.Component {
             <Switch
               checked={this.wallet.isBlending === true}
               checkedChildren={
-                <div style={{margin: '-2px 0 0 0'}}>
+                <div style={{ margin: '-2px 0 0 0' }}>
                   <i className='material-icons md-16'>done</i>
                 </div>
               }
@@ -66,7 +67,7 @@ export default class ChainBlender extends React.Component {
               onChange={this.toggle}
               size='small'
               unCheckedChildren={
-                <div style={{margin: '-2px 0 0 0'}}>
+                <div style={{ margin: '-2px 0 0 0' }}>
                   <i className='material-icons md-16'>clear</i>
                 </div>
               }
@@ -75,37 +76,34 @@ export default class ChainBlender extends React.Component {
         </div>
         <i className='material-icons md-16'>shuffle</i>
         <p>
-          {this.t('wallet:blended')} <span style={{fontWeight: 600}}>
-            {
-              new Intl.NumberFormat(this.gui.language, {
-                maximumFractionDigits: 6
-              }).format(blendedbalance)
-            }
-          </span> XVC (<span style={{fontWeight: 600}}>
-            {
-              new Intl.NumberFormat(this.gui.language, {
-                maximumFractionDigits: 2
-              }).format(blendedpercentage)
-            }
+          {this.t('wallet:blended')}{' '}
+          <span style={{ fontWeight: 600 }}>
+            {new Intl.NumberFormat(this.gui.language, {
+              maximumFractionDigits: 6
+            }).format(blendedbalance)}
+          </span>{' '}
+          XVC (<span style={{ fontWeight: 600 }}>
+            {new Intl.NumberFormat(this.gui.language, {
+              maximumFractionDigits: 2
+            }).format(blendedpercentage)}
           </span>%)
         </p>
-        {
-          this.wallet.isLocked === false && (
-            <div className='flex' style={{margin: '0 0 0 10px'}}>
-              <i className='material-icons md-16'>grain</i>
-              <p>
-                {this.t('wallet:denominated')} <span style={{fontWeight: 600}}>
-                  {
-                    new Intl.NumberFormat(this.gui.language, {
-                      maximumFractionDigits: 6
-                    }).format(denominatedbalance)
-                  }
-                </span> XVC
-              </p>
-            </div>
-          )
-        }
+        {this.wallet.isLocked === false &&
+          <div className='flex' style={{ margin: '0 0 0 10px' }}>
+            <i className='material-icons md-16'>grain</i>
+            <p>
+              {this.t('wallet:denominated')}{' '}
+              <span style={{ fontWeight: 600 }}>
+                {new Intl.NumberFormat(this.gui.language, {
+                  maximumFractionDigits: 6
+                }).format(denominatedbalance)}
+              </span>{' '}
+              XVC
+            </p>
+          </div>}
       </div>
     )
   }
 }
+
+export default ChainBlender

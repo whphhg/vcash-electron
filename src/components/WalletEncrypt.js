@@ -4,13 +4,10 @@ import { action, computed, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button, Input, notification } from 'antd'
 
-/** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
-
-/** Make the component reactive and inject MobX stores. */
-@inject('rpc', 'wallet') @observer
-
-export default class WalletEncrypt extends React.Component {
+@inject('rpc', 'wallet')
+@observer
+class WalletEncrypt extends React.Component {
   @observable passphrase = ''
   @observable repeat = ''
 
@@ -26,7 +23,8 @@ export default class WalletEncrypt extends React.Component {
    * @function errorStatus
    * @return {string|false} Current error or false if none.
    */
-  @computed get errorStatus () {
+  @computed
+  get errorStatus () {
     const len = {
       pass: this.passphrase.length,
       repeat: this.repeat.length
@@ -42,7 +40,8 @@ export default class WalletEncrypt extends React.Component {
    * Clear entered passphrases.
    * @function clear
    */
-  @action clear = () => {
+  @action
+  clear = () => {
     this.passphrase = ''
     this.repeat = ''
   }
@@ -52,7 +51,8 @@ export default class WalletEncrypt extends React.Component {
    * @function setPassphrase
    * @param {object} e - Input element event.
    */
-  @action setPassphrase = (e) => {
+  @action
+  setPassphrase = e => {
     this[e.target.name] = e.target.value
   }
 
@@ -61,20 +61,21 @@ export default class WalletEncrypt extends React.Component {
    * @function encrypt
    */
   encrypt = () => {
-    this.rpc.execute([
-      { method: 'encryptwallet', params: [this.passphrase] }
-    ], (response) => {
-      /** Update lock status, clear passphrases & display a restart warning. */
-      if (response[0].hasOwnProperty('result') === true) {
-        this.wallet.getLockStatus()
-        this.clear()
-        notification.success({
-          message: this.t('wallet:encrypted'),
-          description: this.t('wallet:encryptedLong'),
-          duration: 0
-        })
+    this.rpc.execute(
+      [{ method: 'encryptwallet', params: [this.passphrase] }],
+      response => {
+        /** Update lock status, clear passes & display a restart warning. */
+        if (response[0].hasOwnProperty('result') === true) {
+          this.wallet.getLockStatus()
+          this.clear()
+          notification.success({
+            message: this.t('wallet:encrypted'),
+            description: this.t('wallet:encryptedLong'),
+            duration: 0
+          })
+        }
       }
-    })
+    )
   }
 
   render () {
@@ -85,32 +86,30 @@ export default class WalletEncrypt extends React.Component {
           <i className='material-icons md-16'>vpn_key</i>
           <p>{this.t('wallet:encryptLong')}</p>
         </div>
-        <div className='flex-sb' style={{margin: '10px 0 0 0'}}>
-          <p style={{width: '120px'}}>{this.t('wallet:passphrase')}</p>
+        <div className='flex-sb' style={{ margin: '10px 0 0 0' }}>
+          <p style={{ width: '120px' }}>{this.t('wallet:passphrase')}</p>
           <Input
             name='passphrase'
             onChange={this.setPassphrase}
             placeholder={this.t('wallet:passphraseLong')}
-            style={{flex: 1}}
+            style={{ flex: 1 }}
             value={this.passphrase}
           />
         </div>
-        <div className='flex-sb' style={{margin: '5px 0 0 0'}}>
-          <p style={{width: '120px'}}>{this.t('wallet:passphraseRepeat')}</p>
+        <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
+          <p style={{ width: '120px' }}>{this.t('wallet:passphraseRepeat')}</p>
           <Input
             name='repeat'
             onChange={this.setPassphrase}
             placeholder={this.t('wallet:passphraseRepeatLong')}
-            style={{flex: 1}}
+            style={{ flex: 1 }}
             value={this.repeat}
           />
         </div>
-        <div className='flex-sb' style={{margin: '5px 0 0 0'}}>
-          <p className='red' style={{margin: '0 0 0 120px'}}>
-            {
-              this.errorStatus === 'notMatching' &&
-              this.t('wallet:passphrasesNotMatching')
-            }
+        <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
+          <p className='red' style={{ margin: '0 0 0 120px' }}>
+            {this.errorStatus === 'notMatching' &&
+              this.t('wallet:passphrasesNotMatching')}
           </p>
           <Button disabled={this.errorStatus !== false} onClick={this.encrypt}>
             {this.t('wallet:encrypt')}
@@ -120,3 +119,5 @@ export default class WalletEncrypt extends React.Component {
     )
   }
 }
+
+export default WalletEncrypt

@@ -15,13 +15,10 @@ import moment from 'moment'
 /** Required components. */
 import { CustomTick, CustomTooltip } from './RechartsCustom'
 
-/** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
-
-/** Make the component reactive and inject MobX stores. */
-@inject('stats') @observer
-
-export default class RewardsPerDay extends React.Component {
+@inject('stats')
+@observer
+class RewardsPerDay extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
@@ -29,13 +26,13 @@ export default class RewardsPerDay extends React.Component {
   }
 
   render () {
-    const beginning = new Date().getTime() - (30 * 24 * 60 * 60 * 1000)
+    const beginning = new Date().getTime() - 30 * 24 * 60 * 60 * 1000
 
     return (
       <ResponsiveContainer height={215} width='100%'>
         <BarChart
           data={this.stats.rewardsPerDay}
-          margin={{top: 15, right: 20, bottom: 5, left: 20}}
+          margin={{ top: 15, right: 20, bottom: 5, left: 20 }}
         >
           <Bar dataKey='stakingReward' fill='#FE9950' stackId='a' />
           <Bar dataKey='miningReward' fill='#EC5E44' stackId='a' />
@@ -54,3 +51,5 @@ export default class RewardsPerDay extends React.Component {
     )
   }
 }
+
+export default RewardsPerDay

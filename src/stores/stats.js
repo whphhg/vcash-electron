@@ -14,7 +14,7 @@ export default class Stats {
    * @param {object} wallet - Wallet store.
    * @property {number|null} updateTimeout - setNetworkByMinute timeout id.
    */
-  constructor(rpc, wallet) {
+  constructor (rpc, wallet) {
     this.rpc = rpc
     this.wallet = wallet
     this.updateTimeout = null
@@ -44,7 +44,7 @@ export default class Stats {
    * @return {array} Stats.
    */
   @computed
-  get network() {
+  get network () {
     return this.networkByMinute.length > 1
       ? [...this.networkByMinute]
       : [...this.networkByMinute, ...this.networkByMinute]
@@ -56,7 +56,7 @@ export default class Stats {
    * @return {array} Daily totals by category.
    */
   @computed
-  get dailyTotals() {
+  get dailyTotals () {
     /** Threshold for including transactions, today - 31 days. */
     const threshold = new Date().getTime() - 31 * 24 * 60 * 60 * 1000
 
@@ -100,7 +100,7 @@ export default class Stats {
    * @return {array} Rewards.
    */
   @computed
-  get rewardsPerDay() {
+  get rewardsPerDay () {
     /** Threshold for including transactions, today - 31 days. */
     const threshold = new Date().getTime() - 31 * 24 * 60 * 60 * 1000
 
@@ -150,7 +150,7 @@ export default class Stats {
    * @return {object} Rewards.
    */
   @computed
-  get rewardSpread() {
+  get rewardSpread () {
     /** Threshold for including transactions, today - 31 days. */
     const threshold = new Date().getTime() - 31 * 24 * 60 * 60 * 1000
 
@@ -197,7 +197,7 @@ export default class Stats {
    * @function setNetworkByMinute
    */
   @action
-  setNetworkByMinute() {
+  setNetworkByMinute () {
     this.networkByMinute.push({
       date: new Date().getTime(),
       posDifficulty: this.wallet.info.getdifficulty['proof-of-stake'],

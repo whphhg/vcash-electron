@@ -8,13 +8,10 @@ import moment from 'moment'
 import ChainBlender from './ChainBlender'
 import { TransactionsStatistics } from './charts'
 
-/** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
-
-/** Make the component reactive and inject MobX stores. */
-@inject('gui', 'wallet') @observer
-
-export default class Transactions extends React.Component {
+@inject('gui', 'wallet')
+@observer
+class Transactions extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
@@ -32,18 +29,18 @@ export default class Transactions extends React.Component {
         }}
       >
         <div className='shadow'>
-          <div style={{margin: '0 10px 0 10px'}}>
-            <div className='flex-sb' style={{height: '35px'}}>
+          <div style={{ margin: '0 10px 0 10px' }}>
+            <div className='flex-sb' style={{ height: '35px' }}>
               <div>
                 <ChainBlender />
               </div>
               <div className='flex'>
                 <Input
-                  onChange={(e) => this.wallet.setSearch('txs', e.target.value)}
+                  onChange={e => this.wallet.setSearch('txs', e.target.value)}
                   placeholder={this.t('wallet:searchTransactions')}
                   prefix={<i className='material-icons md-14'>search</i>}
                   size='small'
-                  style={{width: '268px'}}
+                  style={{ width: '268px' }}
                   value={this.wallet.search.txs.value}
                 />
               </div>
@@ -51,7 +48,7 @@ export default class Transactions extends React.Component {
           </div>
         </div>
         <div className='shadow'>
-          <div style={{margin: '10px 10px 0 10px', textAlign: 'center'}}>
+          <div style={{ margin: '10px 10px 0 10px', textAlign: 'center' }}>
             <Table
               bordered
               columns={[
@@ -99,7 +96,7 @@ export default class Transactions extends React.Component {
                   dataIndex: 'comment',
                   title: this.t('wallet:description'),
                   width: 360,
-                  render: (comment) => (
+                  render: comment =>
                     <div
                       style={{
                         overflow: 'hidden',
@@ -110,27 +107,24 @@ export default class Transactions extends React.Component {
                     >
                       {comment}
                     </div>
-                  )
                 },
                 {
                   dataIndex: 'amount',
                   title: this.t('wallet:amount'),
                   width: 150,
-                  render: (text, record) => (
-                    <p className={record.color} style={{textAlign: 'right'}}>
+                  render: (text, record) =>
+                    <p className={record.color} style={{ textAlign: 'right' }}>
                       {text} XVC
                     </p>
-                  )
                 },
                 {
                   dataIndex: 'amountLocal',
                   title: this.gui.localCurrency,
                   width: 150,
-                  render: (text, record) => (
-                    <p className={record.color} style={{textAlign: 'right'}}>
+                  render: (text, record) =>
+                    <p className={record.color} style={{ textAlign: 'right' }}>
                       {text} {this.gui.localCurrency}
                     </p>
-                  )
                 }
               ]}
               dataSource={this.wallet.txsData}
@@ -139,7 +133,7 @@ export default class Transactions extends React.Component {
                 filterConfirm: this.t('wallet:ok'),
                 filterReset: this.t('wallet:reset')
               }}
-              onRowClick={(record) => this.wallet.setViewing(record.txid)}
+              onRowClick={record => this.wallet.setViewing(record.txid)}
               pagination={{
                 defaultPageSize: 15,
                 style: { display: 'inline-block' }
@@ -148,8 +142,12 @@ export default class Transactions extends React.Component {
             />
           </div>
         </div>
-        <div style={{minWidth: '100%'}}><TransactionsStatistics /></div>
+        <div style={{ minWidth: '100%' }}>
+          <TransactionsStatistics />
+        </div>
       </div>
     )
   }
 }
+
+export default Transactions

@@ -17,13 +17,10 @@ import moment from 'moment'
 /** Required components. */
 import { CustomTick, CustomTooltip } from './RechartsCustom'
 
-/** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
-
-/** Make the component reactive and inject MobX stores. */
-@inject('stats') @observer
-
-export default class TransactionsStatistics extends React.Component {
+@inject('stats')
+@observer
+class TransactionsStatistics extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
@@ -31,13 +28,13 @@ export default class TransactionsStatistics extends React.Component {
   }
 
   render () {
-    const beginning = new Date().getTime() - (31 * 24 * 60 * 60 * 1000)
+    const beginning = new Date().getTime() - 31 * 24 * 60 * 60 * 1000
 
     return (
       <ResponsiveContainer height={160} width='100%'>
         <AreaChart
           data={this.stats.dailyTotals}
-          margin={{top: 10, right: 37, bottom: 0, left: 37}}
+          margin={{ top: 10, right: 37, bottom: 0, left: 37 }}
         >
           <defs>
             <linearGradient id='colorSent' x1='0' y1='0' x2='0' y2='1'>
@@ -109,3 +106,5 @@ export default class TransactionsStatistics extends React.Component {
     )
   }
 }
+
+export default TransactionsStatistics

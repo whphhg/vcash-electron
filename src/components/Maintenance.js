@@ -15,13 +15,10 @@ import WalletPassphraseChange from './WalletPassphraseChange'
 import WalletRepair from './WalletRepair'
 import WalletSeedDump from './WalletSeedDump'
 
-/** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
-
-/** Make the component reactive and inject MobX stores. */
-@inject('gui', 'wallet') @observer
-
-export default class Maintenance extends React.Component {
+@inject('gui', 'wallet')
+@observer
+class Maintenance extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
@@ -39,18 +36,18 @@ export default class Maintenance extends React.Component {
         }}
       >
         <div className='shadow'>
-          <div style={{margin: '0 10px 0 10px'}}>
-            <div className='flex-sb' style={{minHeight: '35px'}}>
+          <div style={{ margin: '0 10px 0 10px' }}>
+            <div className='flex-sb' style={{ minHeight: '35px' }}>
               <div className='flex'>
                 <i className='material-icons md-16'>language</i>
-                <p style={{margin: '0 10px 0 5px'}}>
+                <p style={{ margin: '0 10px 0 5px' }}>
                   {this.t('wallet:selectLanguage')}
                 </p>
                 <SelectLanguage />
               </div>
               <div className='flex'>
                 <i className='material-icons md-16'>monetization_on</i>
-                <p style={{margin: '0 10px 0 5px'}}>
+                <p style={{ margin: '0 10px 0 5px' }}>
                   {this.t('wallet:selectCurrency')}
                 </p>
                 <SelectCurrency />
@@ -59,15 +56,15 @@ export default class Maintenance extends React.Component {
           </div>
         </div>
         <div className='shadow'>
-          <div style={{display: 'flex', margin: '10px'}}>
-            <div style={{flex: 1, margin: '0 10px 0 0'}}>
+          <div style={{ display: 'flex', margin: '10px' }}>
+            <div style={{ flex: 1, margin: '0 10px 0 0' }}>
               <WalletBackup />
               <hr />
               <WalletDump />
               <hr />
               <WalletSeedDump />
             </div>
-            <div style={{flex: 1, margin: '0 0 0 10px'}}>
+            <div style={{ flex: 1, margin: '0 0 0 10px' }}>
               <WalletEncrypt />
               <WalletPassphraseChange />
               <hr />
@@ -135,13 +132,15 @@ export default class Maintenance extends React.Component {
             }
           ]}
           dataSource={this.wallet.peers}
-          locale={{emptyText: this.t('wallet:notFound')}}
+          locale={{ emptyText: this.t('wallet:notFound') }}
           pagination={false}
-          scroll={this.wallet.peers.length > 8 ? {y: 183} : {}}
+          scroll={this.wallet.peers.length > 8 ? { y: 183 } : {}}
           size='small'
-          style={{margin: '10px 10px 0 10px'}}
+          style={{ margin: '10px 10px 0 10px' }}
         />
       </div>
     )
   }
 }
+
+export default Maintenance

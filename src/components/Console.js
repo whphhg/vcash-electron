@@ -5,13 +5,10 @@ import { inject, observer } from 'mobx-react'
 import { Button, Input, Modal } from 'antd'
 import { shortUid } from '../utilities/common'
 
-/** Load translation namespaces and delay rendering until they are loaded. */
 @translate(['wallet'], { wait: true })
-
-/** Make the component reactive and inject MobX stores. */
-@inject('gui', 'rpc') @observer
-
-export default class Console extends React.Component {
+@inject('gui', 'rpc')
+@observer
+class Console extends React.Component {
   @observable command = ''
   @observable modal = false
   @observable responses = observable.array([])
@@ -23,7 +20,7 @@ export default class Console extends React.Component {
     this.rpc = props.rpc
 
     /** React to Alt-c key press and toggle console. */
-    document.onkeydown = (e) => {
+    document.onkeydown = e => {
       if (e.altKey === true && e.keyCode === 67) {
         this.toggleModal()
       }
@@ -35,7 +32,8 @@ export default class Console extends React.Component {
    * @function executeStatus
    * @return {boolean} Execute button status.
    */
-  @computed get executeStatus () {
+  @computed
+  get executeStatus () {
     if (this.command.length < 4) return false
     if (this.options.params === null) return false
     return true
@@ -46,13 +44,12 @@ export default class Console extends React.Component {
    * @function options
    * @return {object} RPC options.
    */
-  @computed get options () {
+  @computed
+  get options () {
     const command = this.command.split(/ (.+)/)
     const params = () => {
       try {
-        return command.length > 1
-          ? JSON.parse(command[1])
-          : []
+        return command.length > 1 ? JSON.parse(command[1]) : []
       } catch (e) {
         return null
       }
@@ -65,7 +62,8 @@ export default class Console extends React.Component {
    * Clear entered command and previous response(s).
    * @function reset
    */
-  @action reset = () => {
+  @action
+  reset = () => {
     this.command = ''
     this.responses.clear()
   }
@@ -75,7 +73,8 @@ export default class Console extends React.Component {
    * @function setCommand
    * @param {object} e - Input element event.
    */
-  @action setCommand = (e) => {
+  @action
+  setCommand = e => {
     this.command = e.target.value
   }
 
@@ -84,7 +83,8 @@ export default class Console extends React.Component {
    * @function setResponse
    * @param {object} response - RPC response.
    */
-  @action setResponse = (response) => {
+  @action
+  setResponse = response => {
     this.responses.unshift(response)
   }
 
@@ -92,7 +92,8 @@ export default class Console extends React.Component {
    * Toggle modal.
    * @function toggleModal
    */
-  @action toggleModal = () => {
+  @action
+  toggleModal = () => {
     this.modal = !this.modal
   }
 
@@ -101,11 +102,12 @@ export default class Console extends React.Component {
    * @function execute
    */
   execute () {
-    this.rpc.execute([
-      { method: this.options.method, params: this.options.params }
-    ], (response) => {
-      this.setResponse(response[0])
-    })
+    this.rpc.execute(
+      [{ method: this.options.method, params: this.options.params }],
+      response => {
+        this.setResponse(response[0])
+      }
+    )
   }
 
   render () {
@@ -114,7 +116,7 @@ export default class Console extends React.Component {
         footer={null}
         maskClosable={false}
         onCancel={this.toggleModal}
-        style={{minWidth: '800px'}}
+        style={{ minWidth: '800px' }}
         title={this.t('wallet:rpcConsole')}
         visible={this.modal === true}
       >
@@ -133,11 +135,9 @@ export default class Console extends React.Component {
               overflowY: 'scroll'
             }}
           >
-            {
-              this.responses.map((response) => (
-                <pre key={shortUid()}>{JSON.stringify(response, null, 2)}</pre>
-              ))
-            }
+            {this.responses.map(response =>
+              <pre key={shortUid()}>{JSON.stringify(response, null, 2)}</pre>
+            )}
           </div>
           <hr />
           <div className='flex'>
@@ -148,7 +148,7 @@ export default class Console extends React.Component {
             >
               {this.t('wallet:execute')}
             </Button>
-            <div style={{flex: 1, margin: '0 5px 0 5px'}}>
+            <div style={{ flex: 1, margin: '0 5px 0 5px' }}>
               <Input
                 onChange={this.setCommand}
                 onPressEnter={() => {
@@ -168,3 +168,5 @@ export default class Console extends React.Component {
     )
   }
 }
+
+export default Console

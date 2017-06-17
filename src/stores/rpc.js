@@ -7,7 +7,7 @@ export default class RPC {
    * @param {function} setStatus - Set connection status.
    * @property {number|null} testTimeout - testExecute() timeout id.
    */
-  constructor(connection, setStatus) {
+  constructor (connection, setStatus) {
     this.connection = connection
     this.setStatus = setStatus
     this.testTimeout = null
@@ -44,7 +44,7 @@ export default class RPC {
    * @return {boolean} RPC status.
    */
   @computed
-  get ready() {
+  get ready () {
     if (this.connection.status.active === false) return false
     return this.connection.status.rpc
   }
@@ -55,7 +55,7 @@ export default class RPC {
    * @param {array} options - RPC request objects.
    * @param {function} callback - Callback for RPC response.
    */
-  execute(options, callback) {
+  execute (options, callback) {
     /** Add jsonrpc version and random id to each option. */
     options.map(option => {
       option.jsonrpc = '2.0'
@@ -102,7 +102,7 @@ export default class RPC {
    * Clear previous timeout id and test execute() using RPC getinfo.
    * @function testExecute
    */
-  testExecute() {
+  testExecute () {
     clearTimeout(this.testTimeout)
     this.execute([{ method: 'getinfo', params: [] }], response => {})
   }
