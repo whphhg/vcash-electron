@@ -13,9 +13,9 @@
     "pack": "build --dir",
     "dist-linux": "build --linux --x64",
     "dist-macos": "build --mac --x64",
-    "dist-nsis": "build --win nsis --ia32 --x64",
-    "dist-win32-x64": "build --win portable --x64",
-    "dist-win32-ia32": "build --win portable --ia32"
+    "dist-win-nsis": "build --win nsis --ia32 --x64",
+    "dist-win-ia32": "build --win portable --ia32",
+    "dist-win-x64": "build --win portable --x64"
   },
   "build": {
     "appId": "vcash.electron.gui",
@@ -81,7 +81,7 @@
     "babel-preset-stage-0": "6.24.1",
     "babel-runtime": "6.23.0",
     "electron-builder": "18.3.0",
-    "electron-prebuilt-compile": "1.7.0",
+    "electron-prebuilt-compile": "1.6.11",
     "prettier": "1.4.4",
     "standard": "10.0.2"
   }

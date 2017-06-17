@@ -52,7 +52,7 @@ run any of the `npm run dist-*` scripts and is checked on start-up by
 which launches the daemon if it matches the correct platform and arch.
 
 Packages are created according to the `build` and `scripts` options in
-[package.json](https://github.com/openvcash/vcash-electron/blob/master/package.json#L11-L34),
+[package.json](https://github.com/openvcash/vcash-electron/blob/master/package.json#L13-L36),
 about which you can read more
 [here](https://github.com/electron-userland/electron-builder/wiki/Options).
 
@@ -87,13 +87,13 @@ Next, run any of the scripts from the table below to create and save 64-bit and
 
 Script | Description
 ------ | ------
-dist-nsis | Create a Windows NSIS installer for both architectures
-dist-win32-ia32 | Create a 32-bit Windows portable executable
-dist-win32-x64 | Create a 64-bit Windows portable executable
+dist-win-nsis | Create a Windows NSIS installer for both architectures
+dist-win-ia32 | Create a 32-bit Windows portable executable
+dist-win-x64 | Create a 64-bit Windows portable executable
 
     npm install && npm prune && npm run <script>
 
-**Note:** `dist-nsis` script requires both `vcashd-ia32.exe` and
+**Note:** `dist-win-nsis` script requires both `vcashd-ia32.exe` and
 `vcashd-x64.exe` in the `bin/` directory.
 
 ## Contribute translations
