@@ -8,10 +8,14 @@ import { join } from 'path'
  * @return {object|null} Child process or null.
  */
 const start = () => {
-  const ext = process.platform === 'win32' ? '.exe' : ''
+  const daemonName = ''.concat(
+    'vcashd-',
+    process.arch,
+    process.platform === 'win32' ? '.exe' : ''
+  )
 
   /** Prepare daemon path. */
-  let path = join(__dirname, '..', 'bin', 'vcashd-' + process.arch + ext)
+  let path = join(__dirname, '..', 'bin', daemonName)
 
   /** Execute from unpacked asar directory when running packaged. */
   path = path.replace('app.asar', 'app.asar.unpacked')
@@ -22,7 +26,9 @@ const start = () => {
   if (daemon !== null) {
     /** Log daemon stderr in dev mode. */
     daemon.stderr.on('data', data => {
-      process.env.NODE_ENV === 'dev' && console.log(data.toString().trim())
+      if (process.env.NODE_ENV === 'dev') {
+        console.log(data.toString().trim())
+      }
     })
 
     /** Log daemon exit. */

@@ -6,6 +6,18 @@ import daemon from './daemon'
 /** Keep a global reference of the window object. */
 let mainWindow = null
 
+/** Set the application name. */
+app.setName('Vcash Electron GUI')
+
+/** Keep separate userData directories for development and production modes. */
+app.setPath(
+  'userData',
+  join(
+    app.getPath('appData'),
+    ''.concat(app.getName(), process.env.NODE_ENV === 'dev' ? ' dev' : '')
+  )
+)
+
 /** Ready to load the GUI. */
 app.on('ready', () => {
   /** Provide default window height depending on the platform. */
@@ -41,8 +53,10 @@ app.on('ready', () => {
     })
   )
 
-  /** Open Chromium DevTools in dev mode. */
-  process.env.NODE_ENV === 'dev' && mainWindow.webContents.openDevTools()
+  /** Open Chromium DevTools in development mode. */
+  if (process.env.NODE_ENV === 'dev') {
+    mainWindow.webContents.openDevTools()
+  }
 
   /** Open external links using OS default browser. */
   mainWindow.webContents.on('new-window', (event, url) => {
