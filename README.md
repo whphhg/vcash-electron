@@ -97,7 +97,7 @@ dist-win-x64 | Create a 64-bit Windows portable executable
 
 ## Contributing
 Thank you for taking the time to help and improve the GUI! Please read the
-[contributing guide](https://github.com/openvcash/vcash-electron/.github/CONTRIBUTING.md).
+[contributing guide](https://github.com/openvcash/vcash-electron/blob/master/.github/CONTRIBUTING.md).
 
 ## License
 This program is free software: you can redistribute it and/or modify
