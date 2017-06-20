@@ -1,6 +1,5 @@
 # Vcash Electron GUI
 
-[![Downloads](https://img.shields.io/github/downloads/openvcash/vcash-electron/latest/total.svg)](https://github.com/openvcash/vcash-electron/releases/latest)
 [![Release](https://img.shields.io/github/release/openvcash/vcash-electron.svg)](https://github.com/openvcash/vcash-electron/releases)
 [![Styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![Standard style guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
@@ -17,13 +16,13 @@ a decentralized currency for the internet. Latest release can be found
   * [Package for Linux](#package-for-linux)
   * [Package for macOS](#package-for-macos)
   * [Package for Windows (using Docker)](#package-for-windows-using-docker)
-- [Contribute translations](#contribute-translations)
+- [Contributing](#contributing)
 - [License](#license)
 
 --------------------------------------------------------------------------------
 
 ## Install from source
-Before beginning make sure you have installed `git` and the latest version of
+Make sure you have installed `git` and the latest version of
 [Node.js](https://nodejs.org/en/download/current/). Then clone this repository
 using `git clone`, move to the cloned directory using `cd vcash-electron/` and
 install Node.js dependencies using `npm install`.
@@ -75,8 +74,8 @@ package into the `dist/` directory.
     npm install && npm prune && npm run dist-macos
 
 ### Package for Windows (using Docker)
-Before beginning make sure you have installed `docker` and that your user is in
-the docker group. You can run the docker container either on Linux or Windows.
+Make sure you have installed `docker` and that your user is in the docker
+group. You can run the docker container either on Linux or Windows.
 
 ```
 docker run --rm -ti -v ${PWD}:/project -v ${PWD##*/}-node-modules:/project/node_modules -v ~/.electron:/root/.electron electronuserland/electron-builder:wine
@@ -96,32 +95,9 @@ dist-win-x64 | Create a 64-bit Windows portable executable
 **Note:** `dist-win-nsis` script requires both `vcashd-ia32.exe` and
 `vcashd-x64.exe` in the `bin/` directory.
 
-## Contribute translations
-Follow the [Install from source](#install-from-source) section above. Then
-[download](https://vcash.info/wallets.php) and launch the latest daemon, or
-skip this part if you've already got a daemon or GUI bundled with a daemon
-running. This ensures the wallet will keep running while you restart the GUI
-to check the changes you've made to the translation file.
-
-Next, create a copy of the `en-US/` directory in `src/locales/` and construct
-the first part of the copied directory name by using the `ISO 639-1 Code`
-[language code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
-and the second part by using the `ISO 3166 Alpha-2 code`
-[country code](https://en.wikipedia.org/wiki/ISO_3166-1#Current_codes).
-Delimit the two parts with a dash `-`.
-
-The final step is to open `src/stores/gui.js` and add your translation to the
-[languages](https://github.com/openvcash/vcash-electron/blob/master/src/stores/gui.js#L25-L32)
-array. Please add it in alphabetical order (by name) and use 6 spaces to indent
-the line.
-
-    { language: 'languageCode-countryCode', name: 'Language' },
-
-You can now select your translation in the GUI and begin translating the
-strings in `wallet.json`.
-
-**Note:** Please use an editor that will open and save files in UTF-8
-(e.g. [Atom](https://atom.io/)).
+## Contributing
+Thank you for taking the time to help and improve the GUI! Please read the
+[contributing guide](https://github.com/openvcash/vcash-electron/.github/CONTRIBUTING.md).
 
 ## License
 This program is free software: you can redistribute it and/or modify
