@@ -293,7 +293,9 @@ class Connections extends React.Component {
         <hr />
         <div className='flex-sb'>
           <div className='flex'>
-            <div style={{ margin: '0 5px 0 0' }}><SelectLanguage /></div>
+            <div style={{ margin: '0 5px 0 0' }}>
+              <SelectLanguage />
+            </div>
             <SelectCurrency />
           </div>
           <div>
@@ -304,7 +306,9 @@ class Connections extends React.Component {
               placement='bottom'
               title={this.t('wallet:connectionRemoveConfirm')}
             >
-              <Button size='small'>{this.t('wallet:connectionRemove')}</Button>
+              <Button size='small'>
+                {this.t('wallet:connectionRemove')}
+              </Button>
             </Popconfirm>
           </div>
         </div>

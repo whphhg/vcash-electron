@@ -76,10 +76,14 @@ class WalletSeedDump extends React.Component {
       <div>
         <div className='flex'>
           <i className='material-icons md-16'>fingerprint</i>
-          <p>{this.t('wallet:seedDumpLong')}</p>
+          <p>
+            {this.t('wallet:seedDumpLong')}
+          </p>
         </div>
         <div className='flex-sb' style={{ margin: '10px 0 0 0' }}>
-          <p style={{ width: '120px' }}>{this.t('wallet:seed')}</p>
+          <p style={{ width: '120px' }}>
+            {this.t('wallet:seed')}
+          </p>
           <Input
             disabled={this.seed === ''}
             readOnly

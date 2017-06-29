@@ -33,10 +33,14 @@ class WalletDump extends React.Component {
       <div>
         <div className='flex'>
           <i className='material-icons md-16'>assignment</i>
-          <p>{this.t('wallet:dumpLong')}</p>
+          <p>
+            {this.t('wallet:dumpLong')}
+          </p>
         </div>
         <div className='flex-sb' style={{ margin: '10px 0 5px 0' }}>
-          <p style={{ width: '120px' }}>{this.t('wallet:saveInto')}</p>
+          <p style={{ width: '120px' }}>
+            {this.t('wallet:saveInto')}
+          </p>
           <Input
             disabled
             style={{ flex: 1 }}

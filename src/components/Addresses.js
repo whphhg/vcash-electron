@@ -60,7 +60,9 @@ class Addresses extends React.Component {
             <div className='flex-sb'>
               <div className='flex' style={{ margin: '0 0 0 10px' }}>
                 <AddressNew />
-                <div style={{ margin: '0 5px 0 5px' }}><KeyImport /></div>
+                <div style={{ margin: '0 5px 0 5px' }}>
+                  <KeyImport />
+                </div>
                 <KeyDump />
               </div>
               <Input
@@ -90,7 +92,9 @@ class Addresses extends React.Component {
               <div style={{ lineHeight: '22px', margin: '0 36px 0 0' }}>
                 <div className='flex'>
                   <i className='material-icons md-16'>account_balance</i>
-                  <p>{this.t('wallet:spendFrom')}</p>
+                  <p>
+                    {this.t('wallet:spendFrom')}
+                  </p>
                 </div>
               </div>
               <div style={{ flex: 1 }}>
@@ -153,7 +157,10 @@ class Addresses extends React.Component {
                   },
                   title: this.t('wallet:addresses'),
                   width: 290,
-                  render: address => <p className='text-mono'>{address}</p>
+                  render: address =>
+                    <p className='text-mono'>
+                      {address}
+                    </p>
                 },
                 {
                   dataIndex: 'balance',

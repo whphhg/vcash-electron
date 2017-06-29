@@ -25,16 +25,22 @@ class SendOptions extends React.Component {
             {recipients.size === 1 &&
               <div className='flex' style={{ margin: '5px 0 0 0' }}>
                 <i className='material-icons md-16'>perm_identity</i>
-                <p>{this.t('wallet:recipient')}</p>
+                <p>
+                  {this.t('wallet:recipient')}
+                </p>
               </div>}
             <div className='flex' style={{ margin: '5px 0 0 0' }}>
               <i className='material-icons md-16'>create</i>
-              <p>{this.t('wallet:description')}</p>
+              <p>
+                {this.t('wallet:description')}
+              </p>
             </div>
             {this.wallet.spendFrom !== '#' &&
               <div className='flex' style={{ margin: '5px 0 0 0' }}>
                 <i className='material-icons md-16'>done_all</i>
-                <p>{this.t('wallet:minimumConfirmations')}</p>
+                <p>
+                  {this.t('wallet:minimumConfirmations')}
+                </p>
               </div>}
           </div>
           <div style={{ flex: 1 }}>

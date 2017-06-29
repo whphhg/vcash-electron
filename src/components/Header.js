@@ -36,7 +36,9 @@ class Header extends React.Component {
             style={{ height: '36px', margin: '0 10px 0 10px', width: '36px' }}
           />
           <div style={{ margin: '0 10px 0 5px' }}>
-            <p>{this.t('wallet:balance')}</p>
+            <p>
+              {this.t('wallet:balance')}
+            </p>
             <p>
               <span style={{ fontWeight: '600' }}>
                 {new Intl.NumberFormat(this.gui.language, {
@@ -69,7 +71,9 @@ class Header extends React.Component {
           </div>
           {this.wallet.pendingAmount > 0 &&
             <div style={{ margin: '0 10px 0 0' }}>
-              <p>{this.t('wallet:pending')}</p>
+              <p>
+                {this.t('wallet:pending')}
+              </p>
               <p>
                 <span style={{ fontWeight: '600' }}>
                   {new Intl.NumberFormat(this.gui.language, {
@@ -81,7 +85,9 @@ class Header extends React.Component {
             </div>}
           {newmint > 0 &&
             <div style={{ margin: '0 10px 0 0' }}>
-              <p>{this.t('wallet:immature')}</p>
+              <p>
+                {this.t('wallet:immature')}
+              </p>
               <p>
                 <span style={{ fontWeight: '600' }}>
                   {new Intl.NumberFormat(this.gui.language, {
@@ -93,7 +99,9 @@ class Header extends React.Component {
             </div>}
           {stake > 0 &&
             <div>
-              <p>{this.t('wallet:staking')}</p>
+              <p>
+                {this.t('wallet:staking')}
+              </p>
               <p>
                 <span style={{ fontWeight: '600' }}>
                   {new Intl.NumberFormat(this.gui.language, {

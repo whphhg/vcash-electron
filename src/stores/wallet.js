@@ -762,9 +762,12 @@ export default class Wallet {
         }
 
         /** Determine amount color. */
-        save.color = tx.hasOwnProperty('generated') === true
-          ? tx.confirmations < 220 ? 'orange' : 'green'
-          : tx.confirmations === 0 ? 'orange' : tx.amount > 0 ? 'green' : 'red'
+        save.color =
+          tx.hasOwnProperty('generated') === true
+            ? tx.confirmations < 220 ? 'orange' : 'green'
+            : tx.confirmations === 0
+              ? 'orange'
+              : tx.amount > 0 ? 'green' : 'red'
 
         /** Convert time to miliseconds. */
         if (tx.hasOwnProperty('time') === true) {
@@ -892,9 +895,10 @@ export default class Wallet {
         /** Add pending amounts to notifications. */
         if (tx.confirmations === 0 && tx.category !== 'sending') {
           /** Get total amount or return 0. */
-          let total = notifications.pending.has(save.category) === true
-            ? notifications.pending.get(save.category)
-            : 0
+          let total =
+            notifications.pending.has(save.category) === true
+              ? notifications.pending.get(save.category)
+              : 0
 
           /** Add tx amount to the total. */
           notifications.pending.set(save.category, total + save.amount)
@@ -908,9 +912,10 @@ export default class Wallet {
               tx.hasOwnProperty('generated') === true)
           ) {
             /** Get total amount or return 0. */
-            let total = notifications.spendable.has(save.category) === true
-              ? notifications.spendable.get(save.category)
-              : 0
+            let total =
+              notifications.spendable.has(save.category) === true
+                ? notifications.spendable.get(save.category)
+                : 0
 
             /** Add tx amount to the total. */
             notifications.spendable.set(save.category, total + save.amount)

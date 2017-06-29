@@ -70,7 +70,9 @@ class Send extends React.Component {
             placement='bottom'
             title={this.t('wallet:sendReset')}
           >
-            <Button size='small'>{this.t('wallet:reset')}</Button>
+            <Button size='small'>
+              {this.t('wallet:reset')}
+            </Button>
           </Popconfirm>
         </div>
         <div className='flex'>

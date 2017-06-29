@@ -41,14 +41,12 @@ class WalletRepair extends React.Component {
     this.checkPassed = response.hasOwnProperty('wallet check passed')
 
     /** Set or reset amount affected by repair. */
-    this.amountAffected = this.checkPassed === true
-      ? 0
-      : response['amount affected by repair']
+    this.amountAffected =
+      this.checkPassed === true ? 0 : response['amount affected by repair']
 
     /** Set or reset mismatched spent amount. */
-    this.mismatchedSpent = this.checkPassed === true
-      ? 0
-      : response['mismatched spent coins']
+    this.mismatchedSpent =
+      this.checkPassed === true ? 0 : response['mismatched spent coins']
   }
 
   /**
@@ -72,14 +70,18 @@ class WalletRepair extends React.Component {
       <div>
         <div className='flex'>
           <i className='material-icons md-16'>build</i>
-          <p>{this.t('wallet:repairLong')}</p>
+          <p>
+            {this.t('wallet:repairLong')}
+          </p>
         </div>
         <div style={{ margin: '10px 0 0 0' }}>
           {this.checkPassed !== false &&
             <div className='flex-sb'>
               <div>
                 {this.checkPassed !== null &&
-                  <p>{this.t('wallet:checkPassed')}</p>}
+                  <p>
+                    {this.t('wallet:checkPassed')}
+                  </p>}
               </div>
               <Button onClick={() => this.repair()}>
                 {this.t('wallet:check')}

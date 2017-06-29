@@ -33,7 +33,10 @@ class Address extends React.Component {
         <div className='flex-sb' style={{ margin: '0 0 10px 0' }}>
           <div className='flex'>
             <i className='material-icons md-16'>account_balance</i>
-            {(this.data.account === null && <p>{this.t('wallet:change')}</p>) ||
+            {(this.data.account === null &&
+              <p>
+                {this.t('wallet:change')}
+              </p>) ||
               (this.data.account !== null &&
                 <p>
                   {this.t('wallet:account')}:{' '}
@@ -48,16 +51,12 @@ class Address extends React.Component {
             <i className='material-icons md-16'>call_received</i>
             <p style={{ margin: '0 10px 0 5px' }}>
               {this.t('wallet:received')}:{' '}
-              <span style={{ fontWeight: '500' }}>
-                {this.data.received}
-              </span>
+              <span style={{ fontWeight: '500' }}>{this.data.received}</span>
             </p>
             <i className='material-icons md-16'>call_made</i>
             <p>
               {this.t('wallet:spent')}:{' '}
-              <span style={{ fontWeight: '500' }}>
-                {this.data.spent}
-              </span>
+              <span style={{ fontWeight: '500' }}>{this.data.spent}</span>
             </p>
           </div>
         </div>

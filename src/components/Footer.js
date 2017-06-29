@@ -84,7 +84,9 @@ class Footer extends React.Component {
                 </span>
               </p>
               <i className='material-icons md-16'>computer</i>
-              <p>GUI <span style={{ fontWeight: '500' }}>{version}</span></p>
+              <p>
+                GUI <span style={{ fontWeight: '500' }}>{version}</span>
+              </p>
             </div>
           </div>
         </div>

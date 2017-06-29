@@ -25,15 +25,21 @@ class Welcome extends React.Component {
         >
           <div style={{ width: '300px' }}>
             <i className='material-icons md-16'>arrow_back</i>
-            <p><b>Alt-a</b> &nbsp; {this.t('wallet:connectionPrevious')}</p>
+            <p>
+              <b>Alt-a</b> &nbsp; {this.t('wallet:connectionPrevious')}
+            </p>
           </div>
           <div style={{ width: '300px' }}>
             <i className='material-icons md-16'>cast_connected</i>
-            <p><b>Alt-s</b> &nbsp; {this.t('wallet:connectionManager')}</p>
+            <p>
+              <b>Alt-s</b> &nbsp; {this.t('wallet:connectionManager')}
+            </p>
           </div>
           <div style={{ width: '300px' }}>
             <i className='material-icons md-16'>arrow_forward</i>
-            <p><b>Alt-d</b> &nbsp; {this.t('wallet:connectionNext')}</p>
+            <p>
+              <b>Alt-d</b> &nbsp; {this.t('wallet:connectionNext')}
+            </p>
           </div>
         </div>
       </div>

@@ -84,10 +84,14 @@ class WalletEncrypt extends React.Component {
       <div>
         <div className='flex'>
           <i className='material-icons md-16'>vpn_key</i>
-          <p>{this.t('wallet:encryptLong')}</p>
+          <p>
+            {this.t('wallet:encryptLong')}
+          </p>
         </div>
         <div className='flex-sb' style={{ margin: '10px 0 0 0' }}>
-          <p style={{ width: '120px' }}>{this.t('wallet:passphrase')}</p>
+          <p style={{ width: '120px' }}>
+            {this.t('wallet:passphrase')}
+          </p>
           <Input
             name='passphrase'
             onChange={this.setPassphrase}
@@ -97,7 +101,9 @@ class WalletEncrypt extends React.Component {
           />
         </div>
         <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
-          <p style={{ width: '120px' }}>{this.t('wallet:passphraseRepeat')}</p>
+          <p style={{ width: '120px' }}>
+            {this.t('wallet:passphraseRepeat')}
+          </p>
           <Input
             name='repeat'
             onChange={this.setPassphrase}

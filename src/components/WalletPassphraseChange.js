@@ -115,10 +115,14 @@ class WalletPassphraseChange extends React.Component {
       <div>
         <div className='flex'>
           <i className='material-icons md-16'>vpn_key</i>
-          <p>{this.t('wallet:passphraseChangeLong')}</p>
+          <p>
+            {this.t('wallet:passphraseChangeLong')}
+          </p>
         </div>
         <div className='flex-sb' style={{ margin: '10px 0 0 0' }}>
-          <p style={{ width: '120px' }}>{this.t('wallet:passphrase')}</p>
+          <p style={{ width: '120px' }}>
+            {this.t('wallet:passphrase')}
+          </p>
           <Input
             name='current'
             onChange={this.setPassphrase}
@@ -128,7 +132,9 @@ class WalletPassphraseChange extends React.Component {
           />
         </div>
         <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
-          <p style={{ width: '120px' }}>{this.t('wallet:passphraseNew')}</p>
+          <p style={{ width: '120px' }}>
+            {this.t('wallet:passphraseNew')}
+          </p>
           <Input
             name='next'
             onChange={this.setPassphrase}
@@ -138,7 +144,9 @@ class WalletPassphraseChange extends React.Component {
           />
         </div>
         <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
-          <p style={{ width: '120px' }}>{this.t('wallet:passphraseRepeat')}</p>
+          <p style={{ width: '120px' }}>
+            {this.t('wallet:passphraseRepeat')}
+          </p>
           <Input
             name='repeat'
             onChange={this.setPassphrase}

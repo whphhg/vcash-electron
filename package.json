@@ -1,7 +1,7 @@
 {
   "name": "vcash-electron",
   "productName": "Vcash Electron GUI",
-  "version": "0.33.3",
+  "version": "0.33.4",
   "description": "Multi-platform and multi-node GUI for Vcash.",
   "main": "src/electron.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "dev": "NODE_ENV=dev electron .",
     "dev-win": "set NODE_ENV=dev&&electron .",
     "lint": "standard",
-    "format": "prettier --no-semi --single-quote --write \"src/**/*.js\" && standard --fix",
+    "format": "prettier-standard 'src/**/*.js' && standard",
     "pack": "build --dir",
     "dist-linux": "build --linux --x64",
     "dist-macos": "build --mac --x64",
@@ -56,17 +56,17 @@
     ]
   },
   "dependencies": {
-    "antd": "2.11.0",
+    "antd": "2.11.2",
     "electron-compile": "6.4.1",
     "i18next": "8.4.2",
     "i18next-node-fs-backend": "1.0.0",
-    "mobx": "3.1.15",
+    "mobx": "3.1.16",
     "mobx-logger": "0.6.0",
     "mobx-react": "4.2.1",
     "moment": "2.18.1",
     "react": "15.6.1",
     "react-dom": "15.6.1",
-    "react-i18next": "4.1.2",
+    "react-i18next": "4.5.0",
     "react-router-dom": "4.1.1",
     "recharts": "0.22.4",
     "ssh2": "0.5.5"
@@ -82,7 +82,7 @@
     "babel-runtime": "6.23.0",
     "electron-builder": "18.3.0",
     "electron-prebuilt-compile": "1.6.11",
-    "prettier": "1.4.4",
+    "prettier-standard": "6.0.0",
     "standard": "10.0.2"
   }
 }

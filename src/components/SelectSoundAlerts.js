@@ -19,7 +19,9 @@ class SelectSoundAlerts extends React.Component {
         <div className='flex-sb'>
           <div className='flex'>
             <i className='material-icons md-16'>notifications_active</i>
-            <p>{this.t('wallet:notificationSounds')}</p>
+            <p>
+              {this.t('wallet:notificationSounds')}
+            </p>
           </div>
           <div className='flex'>
             <Switch
@@ -39,7 +41,9 @@ class SelectSoundAlerts extends React.Component {
             />
             <div className='flex' style={{ margin: '0 20px 0 8px' }}>
               <i className='material-icons md-16'>call_received</i>
-              <p>{this.t('wallet:incoming')}</p>
+              <p>
+                {this.t('wallet:incoming')}
+              </p>
             </div>
             <Switch
               checked={this.gui.soundAlerts.spendable === true}
@@ -58,7 +62,9 @@ class SelectSoundAlerts extends React.Component {
             />
             <div className='flex' style={{ margin: '0 0 0 8px' }}>
               <i className='material-icons md-16'>done_all</i>
-              <p>{this.t('wallet:spendable')}</p>
+              <p>
+                {this.t('wallet:spendable')}
+              </p>
             </div>
           </div>
         </div>

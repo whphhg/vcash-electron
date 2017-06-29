@@ -136,7 +136,9 @@ class Console extends React.Component {
             }}
           >
             {this.responses.map(response =>
-              <pre key={shortUid()}>{JSON.stringify(response, null, 2)}</pre>
+              <pre key={shortUid()}>
+                {JSON.stringify(response, null, 2)}
+              </pre>
             )}
           </div>
           <hr />

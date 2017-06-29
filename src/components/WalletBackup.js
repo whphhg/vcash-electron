@@ -18,9 +18,10 @@ class WalletBackup extends React.Component {
     super(props)
     this.t = props.t
     this.rpc = props.rpc
-    this.path = this.rpc.connection.status.tunnel === true
-      ? ''
-      : join(dataPath(), 'backups', sep)
+    this.path =
+      this.rpc.connection.status.tunnel === true
+        ? ''
+        : join(dataPath(), 'backups', sep)
   }
 
   /**
@@ -91,10 +92,14 @@ class WalletBackup extends React.Component {
       <div>
         <div className='flex'>
           <i className='material-icons md-16'>save</i>
-          <p>{this.t('wallet:backupLong')}</p>
+          <p>
+            {this.t('wallet:backupLong')}
+          </p>
         </div>
         <div className='flex-sb' style={{ margin: '10px 0 0 0' }}>
-          <p style={{ width: '120px' }}>{this.t('wallet:saveInto')}</p>
+          <p style={{ width: '120px' }}>
+            {this.t('wallet:saveInto')}
+          </p>
           <Input
             disabled
             style={{ flex: 1 }}
@@ -121,7 +126,9 @@ class WalletBackup extends React.Component {
             >
               {this.t('wallet:browse')}
             </Button>
-            <Button onClick={this.backup}>{this.t('wallet:backup')}</Button>
+            <Button onClick={this.backup}>
+              {this.t('wallet:backup')}
+            </Button>
           </div>
         </div>
       </div>

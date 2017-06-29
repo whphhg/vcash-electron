@@ -60,9 +60,10 @@ export const humanReadable = (num = 0, dec = true, suffix = 'B') => {
   if (Math.abs(num) < threshold) return ''.concat(num, ' ', suffix)
 
   let unit = -1
-  const units = dec === true
-    ? ['k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
-    : ['Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi', 'Yi']
+  const units =
+    dec === true
+      ? ['k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
+      : ['Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi', 'Yi']
 
   do {
     num /= threshold

@@ -188,9 +188,8 @@ export default class Send {
    */
   @action
   setRecipient (uid, name, value) {
-    let saved = this.recipients.has(uid) === true
-      ? this.recipients.get(uid)
-      : false
+    let saved =
+      this.recipients.has(uid) === true ? this.recipients.get(uid) : false
 
     /** Exit in a "highly" unprobable situation of no recipient. */
     if (saved === false) return
@@ -224,9 +223,10 @@ export default class Send {
       if (parseFloat(value) > 0 && parseFloat(value) < 0.0005) return
 
       /** Check if the new total amount is over wallet balance. */
-      const difference = saved.amount === ''
-        ? 0 - parseFloat(value)
-        : parseFloat(saved.amount) - parseFloat(value)
+      const difference =
+        saved.amount === ''
+          ? 0 - parseFloat(value)
+          : parseFloat(saved.amount) - parseFloat(value)
 
       if (this.total - difference > this.wallet.info.getinfo.balance) return
 
