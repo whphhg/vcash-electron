@@ -64,7 +64,7 @@ class Rates {
   @computed
   get local () {
     if (this.bitcoinAverage.rates.hasOwnProperty(gui.localCurrency) === true) {
-      return this.bitcoinAverage.rates[gui.localCurrency].last
+      return this.bitcoinAverage.rates[gui.localCurrency]
     }
 
     return 0
@@ -83,13 +83,20 @@ class Rates {
   /**
    * Set bitcoin average price index and save it to local storage.
    * @function setBitcoinAverage
-   * @param {string} rates - Price index.
+   * @param {object} priceIndex - Bitcoin average price index.
    */
   @action
-  setBitcoinAverage (rates) {
+  setBitcoinAverage (priceIndex) {
     /** Set only if rates is an object. */
-    if (rates === Object(rates)) {
-      this.bitcoinAverage = { rates, updated: new Date().getTime() }
+    if (priceIndex === Object(priceIndex)) {
+      this.bitcoinAverage = {
+        rates: Object.keys(priceIndex).reduce((rates, ticker) => {
+          rates[ticker.substr(3)] = priceIndex[ticker].last
+          return rates
+        }, {}),
+        updated: new Date().getTime()
+      }
+
       setItem('bitcoinAverage', this.bitcoinAverage)
     }
   }
@@ -131,7 +138,9 @@ class Rates {
   fetchBitcoinAverage () {
     if (new Date().getTime() - this.bitcoinAverage.updated > 15 * 59 * 1000) {
       window
-        .fetch('https://apiv2.bitcoinaverage.com/ticker/global/all')
+        .fetch(
+          'https://apiv2.bitcoinaverage.com/indices/global/ticker/short?crypto=BTC'
+        )
         .then(response => {
           if (response.ok === true) return response.json()
         })
