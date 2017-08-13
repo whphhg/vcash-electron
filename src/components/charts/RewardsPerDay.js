@@ -1,5 +1,4 @@
 import React from 'react'
-import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import {
   Bar,
@@ -15,13 +14,11 @@ import moment from 'moment'
 /** Required components. */
 import { CustomTick, CustomTooltip } from './RechartsCustom'
 
-@translate(['wallet'], { wait: true })
 @inject('stats')
 @observer
 class RewardsPerDay extends React.Component {
   constructor (props) {
     super(props)
-    this.t = props.t
     this.stats = props.stats
   }
 
