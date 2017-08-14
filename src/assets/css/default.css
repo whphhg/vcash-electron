@@ -57,7 +57,7 @@ hr { border: 0; border-top: 1px solid #e9e9e9; margin: 10px 0 10px 0; }
 .ant-select-focused .ant-select-selection,
 .ant-select-selection:focus,
 .ant-select-selection:active { border-color: #b60127; }
-.ant-select-open .ant-select-selection { border-color: #b60127; }
+.ant-select-open .ant-select-selection { border-color: #b60127; box-shadow: 0 0 0 2px rgba(183, 28, 28, 0.2); }
 .ant-select-dropdown.ant-select-dropdown--multiple .ant-select-dropdown-menu-item-selected:hover:after { color: #b60127; }
 .ant-input-search-wrapper .ant-input-search-icon:hover { color: #b60127; }
 .ant-input-search-wrapper:hover .ant-input-search:not([disabled]) { border: 1px solid #b60127; }
@@ -136,8 +136,7 @@ hr { border: 0; border-top: 1px solid #e9e9e9; margin: 10px 0 10px 0; }
 .ant-btn-dashed:active, .ant-btn-dashed.active { color: #b60127; border-color: #b60127; }
 .ant-btn-clicked:after { border: 0 solid #b60127; }
 .ant-input:focus { border-color: #b60127; outline: 0; box-shadow: 0 0 0 2px rgba(183, 28, 28, 0.2); }
-.ant-input:hover { border-color: #b60127; outline: 0; }
-.ant-input-affix-wrapper:hover .ant-input { border-color: #b60127; }
+.ant-input-affix-wrapper:hover .ant-input:not(.ant-input-disabled) { border-color: #b60127; }
 .ant-radio-button-wrapper:hover, .ant-radio-button-wrapper-focused { color: #b60127; }
 .ant-radio-button-wrapper-checked:first-child { border-color: #b60127; }
 .ant-radio-button-wrapper-checked { background: #FFFFFF; border-color: #b60127; color: #b60127; box-shadow: -1px 0 0 0 #b60127; }
@@ -158,7 +157,7 @@ hr { border: 0; border-top: 1px solid #e9e9e9; margin: 10px 0 10px 0; }
 .ant-pagination-simple .ant-pagination-simple-pager input:hover { border-color: #b60127; }
 .ant-pagination-item:hover { -webkit-transition: all 0.3s ease; transition: all 0.3s ease; border-color: #b60127; }
 .ant-pagination-item:hover a { color: #b60127; }
-.ant-pagination-item-active { background-color: #b60127; border-color: #b60127; }
+.ant-pagination-item-active, .ant-pagination-item-active:focus, .ant-pagination-item-active:hover { background-color: #b60127; border-color: #b60127; }
 .ant-pagination-jump-prev:hover:after,
 .ant-pagination-jump-next:hover:after { color: #b60127; }
 .ant-table-thead > tr > th.ant-table-selection-column,
