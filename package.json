@@ -56,9 +56,9 @@
     ]
   },
   "dependencies": {
-    "antd": "2.12.6",
+    "antd": "2.12.8",
     "electron-compile": "6.4.1",
-    "i18next": "8.4.3",
+    "i18next": "9.0.0",
     "i18next-node-fs-backend": "1.0.0",
     "mobx": "3.2.2",
     "mobx-logger": "0.6.0",
@@ -66,8 +66,8 @@
     "moment": "2.18.1",
     "react": "15.6.1",
     "react-dom": "15.6.1",
-    "react-i18next": "5.0.0",
-    "react-router-dom": "4.1.2",
+    "react-i18next": "5.2.0",
+    "react-router-dom": "4.2.2",
     "recharts": "0.22.4",
     "ssh2": "0.5.5"
   },
@@ -80,7 +80,7 @@
     "babel-preset-react": "6.24.1",
     "babel-preset-stage-0": "6.24.1",
     "babel-runtime": "6.26.0",
-    "electron-builder": "19.22.1",
+    "electron-builder": "19.26.3",
     "electron-prebuilt-compile": "1.7.5",
     "prettier-standard": "6.0.0",
     "standard": "10.0.3"
