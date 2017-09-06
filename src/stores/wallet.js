@@ -282,11 +282,6 @@ export default class Wallet {
   @computed
   get info () {
     return this.responses.entries().reduce((responses, [key, value]) => {
-      /** RPC getnetworkinfo returns null if endpoints array is empty. */
-      if (key === 'getnetworkinfo' && value.endpoints === null) {
-        value.endpoints = []
-      }
-
       responses[key] = value
       return responses
     }, {
