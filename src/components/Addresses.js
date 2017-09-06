@@ -10,6 +10,7 @@ import AddressNew from './AddressNew'
 import CurrencyConverter from './CurrencyConverter'
 import KeyDump from './KeyDump'
 import KeyImport from './KeyImport'
+import Message from './Message'
 import SendControls from './SendControls'
 import SendOptions from './SendOptions'
 import SendRecipients from './SendRecipients'
@@ -63,7 +64,10 @@ class Addresses extends React.Component {
                 <div style={{ margin: '0 5px 0 5px' }}>
                   <KeyImport />
                 </div>
-                <KeyDump />
+                <div style={{ margin: '0 5px 0 0' }}>
+                  <KeyDump />
+                </div>
+                <Message />
               </div>
               <Input
                 onChange={e =>
