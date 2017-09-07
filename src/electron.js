@@ -1,12 +1,14 @@
 import { app, BrowserWindow, shell } from 'electron'
 import { join } from 'path'
 import { format } from 'url'
+
+/** Vcash daemon child process (if started). */
 import daemon from './daemon'
 
-/** Keep a global reference of the window object. */
+/** Global reference of the window object. */
 let mainWindow = null
 
-/** Set the application name. */
+/** Set the application's name. */
 app.setName('Vcash Electron GUI')
 
 /** Keep separate userData directories for development and production modes. */
@@ -18,33 +20,26 @@ app.setPath(
   )
 )
 
-/** Ready to load the GUI. */
+/** Electron initialization finished. */
 app.on('ready', () => {
-  /** Provide default window height depending on the platform. */
+  /** Return default window height depending on the platform. */
   const height = () => {
-    switch (process.platform) {
-      case 'win32':
-        return 738
-
-      case 'darwin':
-        return 722
-
-      default:
-        return 700
-    }
+    if (process.platform === 'win32') return 738
+    if (process.platform === 'darwin') return 722
+    return 700
   }
 
+  /** Create the application's main window. */
   mainWindow = new BrowserWindow({
     height: height(),
     icon: join(__dirname, 'assets', 'images', 'logoRed.png'),
-    webPreferences: { experimentalFeatures: true },
     width: 1152
   })
 
-  /** Hide browser's menu bar. */
+  /** Hide Chromium's menu bar. */
   mainWindow.setMenu(null)
 
-  /** Load the GUI starting point. */
+  /** Load the application's entry point. */
   mainWindow.loadURL(
     format({
       pathname: join(__dirname, 'index.html'),
@@ -53,21 +48,22 @@ app.on('ready', () => {
     })
   )
 
-  /** Open Chromium DevTools in development mode. */
+  /** Open Chromium's DevTools when in development mode. */
   if (process.env.NODE_ENV === 'dev') {
     mainWindow.webContents.openDevTools()
   }
 
   /** Open external links using OS default browser. */
-  mainWindow.webContents.on('new-window', (event, url) => {
+  mainWindow.webContents.on('new-window', (e, url) => {
     if (url !== mainWindow.webContents.getURL()) {
-      event.preventDefault()
+      e.preventDefault()
       shell.openExternal(url)
     }
   })
 
   /** Main window closed. */
   mainWindow.on('closed', () => {
+    /** Send SIGINT signal to the daemon process. */
     if (daemon !== null) {
       daemon.kill('SIGINT')
     }
@@ -77,7 +73,5 @@ app.on('ready', () => {
   })
 })
 
-/** All of the windows are closed. */
-app.on('window-all-closed', () => {
-  app.quit()
-})
+/** Quit once all of the windows are closed. */
+app.on('window-all-closed', () => app.quit())
