@@ -1,7 +1,7 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { action, computed, observable, reaction } from 'mobx'
 import { inject, observer } from 'mobx-react'
+import { action, computed, observable, reaction } from 'mobx'
 import { AutoComplete, Button, Input, Popover } from 'antd'
 
 /**
@@ -50,9 +50,9 @@ class PrivateKeyDump extends React.Component {
   }
 
   /**
-   * Get error status.
+   * Get present error string or false if none.
    * @function errorStatus
-   * @return {string|false} Current error or false if none.
+   * @return {string|false} Error status.
    */
   @computed
   get errorStatus () {

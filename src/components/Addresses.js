@@ -6,11 +6,11 @@ import { Input, Select, Table } from 'antd'
 
 /** Required components. */
 import Address from './Address'
-import AddressNew from './AddressNew'
+import AddressGet from './AddressGet'
 import CurrencyConverter from './CurrencyConverter'
-import KeyDump from './KeyDump'
-import KeyImport from './KeyImport'
 import Message from './Message'
+import PrivateKeyDump from './PrivateKeyDump'
+import PrivateKeyImport from './PrivateKeyImport'
 import SendControls from './SendControls'
 import SendOptions from './SendOptions'
 import SendRecipients from './SendRecipients'
@@ -60,12 +60,12 @@ class Addresses extends React.Component {
           >
             <div className='flex-sb'>
               <div className='flex' style={{ margin: '0 0 0 10px' }}>
-                <AddressNew />
+                <AddressGet />
                 <div style={{ margin: '0 5px 0 5px' }}>
-                  <KeyImport />
+                  <PrivateKeyImport />
                 </div>
                 <div style={{ margin: '0 5px 0 0' }}>
-                  <KeyDump />
+                  <PrivateKeyDump />
                 </div>
                 <Message />
               </div>

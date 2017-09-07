@@ -17,7 +17,9 @@ import Transactions from './Transactions'
 notification.config({ top: 65 })
 message.config({ top: 11 })
 
-/** Application's root component. */
+/**
+ * Application's root component.
+ */
 @inject('connections')
 @observer
 class Root extends React.Component {

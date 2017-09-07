@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { action, computed, observable, reaction } from 'mobx'
-import { AutoComplete, Button, Input, Popover, message } from 'antd'
+import { AutoComplete, Button, Input, message, Popover } from 'antd'
 
 /**
  * Private key importing component.
@@ -114,7 +114,7 @@ class PrivateKeyImport extends React.Component {
         /** Re-enable the button and hide the loading indicator. */
         this.toggleLoading()
 
-        /** Close popover, update wallet and display a success message. */
+        /** Hide popover, update wallet and display a success message. */
         if (response[0].hasOwnProperty('result') === true) {
           if (this.popoverVisible === true) {
             this.togglePopover()
