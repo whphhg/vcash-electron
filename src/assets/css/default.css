@@ -2,7 +2,45 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto+Mono:300,400,500&subset=latin-ext);
 @import url(https://fonts.googleapis.com/icon?family=Material+Icons);
 
-/** Elements */
+/**
+ * General
+ */
+#AppGrid {
+  display: grid;
+  grid-template-rows: 55px 1fr 25px;
+  height: 100vh;
+}
+
+
+/**
+ * Welcome screen.
+ */
+#Welcome {
+  text-align: center;
+}
+
+#Welcome > div:first-of-type {
+  bottom: 150px;
+  left: 0;
+  position: fixed;
+  right: 0;
+}
+
+#Welcome > div:last-of-type {
+  bottom: 0;
+  height: 50px;
+  position: fixed;
+  width: 100%;
+}
+
+#Welcome > div:last-of-type > div {
+  width: 300px;
+}
+
+
+/**
+ * Elements (old->refactor)
+ */
 ::selection { background: #43464B; }
 a { color: #b60127; }
 a:active { color: #b60127; }
@@ -16,8 +54,13 @@ hr { border: 0; border-top: 1px solid #e9e9e9; margin: 10px 0 10px 0; }
 .chartTooltip { margin: 0; padding: 10px; border: 1px solid #f5f5f5; background-color: rgba(255, 255, 255, 0.85); }
 .chartTooltip .label { margin: 0; font-weight: 500; border-bottom: 1px solid #ccc; }
 .flex { align-items: center; display: flex; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
 .flex-sb { align-items: center; display: flex; justify-content: space-between; width: 100%; }
 .green { color: #4fb71c; }
+
+.border-green { border-color: #4fb71c; }
+.border-red { border-color: #b60127; }
+
 .material-icons.md-14 { font-size: 14px; }
 .material-icons.md-16 { font-size: 16px; }
 .material-icons.md-18 { font-size: 18px; }

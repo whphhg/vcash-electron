@@ -1,50 +1,37 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 
+/**
+ * Welcome screen component.
+ */
 @translate(['wallet'], { wait: true })
 class Welcome extends React.Component {
-  constructor (props) {
-    super(props)
-    this.t = props.t
-  }
-
-  render () {
-    return (
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ bottom: '150px', left: 0, position: 'fixed', right: 0 }}>
-          <div className='circlingLogo' />
+  render = () =>
+    <div id='Welcome'>
+      <div>
+        <div className='circlingLogo' />
+      </div>
+      <div className='flex-sb shadow'>
+        <div>
+          <i className='material-icons md-16'>arrow_back</i>
+          <p>
+            <b>Alt-a</b> &nbsp; {this.props.t('wallet:connPrevious')}
+          </p>
         </div>
-        <div
-          className='flex-sb shadow'
-          style={{
-            bottom: 0,
-            height: '50px',
-            position: 'fixed',
-            width: '100%'
-          }}
-        >
-          <div style={{ width: '300px' }}>
-            <i className='material-icons md-16'>arrow_back</i>
-            <p>
-              <b>Alt-a</b> &nbsp; {this.t('wallet:connectionPrevious')}
-            </p>
-          </div>
-          <div style={{ width: '300px' }}>
-            <i className='material-icons md-16'>cast_connected</i>
-            <p>
-              <b>Alt-s</b> &nbsp; {this.t('wallet:connectionManager')}
-            </p>
-          </div>
-          <div style={{ width: '300px' }}>
-            <i className='material-icons md-16'>arrow_forward</i>
-            <p>
-              <b>Alt-d</b> &nbsp; {this.t('wallet:connectionNext')}
-            </p>
-          </div>
+        <div>
+          <i className='material-icons md-16'>cast_connected</i>
+          <p>
+            <b>Alt-s</b> &nbsp; {this.props.t('wallet:connManager')}
+          </p>
+        </div>
+        <div>
+          <i className='material-icons md-16'>arrow_forward</i>
+          <p>
+            <b>Alt-d</b> &nbsp; {this.props.t('wallet:connNext')}
+          </p>
         </div>
       </div>
-    )
-  }
+    </div>
 }
 
 export default Welcome
