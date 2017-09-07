@@ -9,8 +9,7 @@ import gui from '../stores/gui'
  * @function decimalSeparator
  * @return {string} Decimal separator.
  */
-export const decimalSeparator = () => {
-  const n = 1.1
+export const decimalSeparator = (n = 1.1) => {
   return n.toLocaleString().substring(1, 2)
 }
 
