@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 import React from 'react'
 import { render } from 'react-dom'
 import { I18nextProvider } from 'react-i18next'
@@ -40,7 +39,9 @@ import rates from './stores/rates'
 useStrict(true)
 
 /** Enable MobX logging in dev mode. */
-process.env.NODE_ENV === 'dev' && enableLogging()
+if (process.env.NODE_ENV === 'dev') {
+  enableLogging()
+}
 
 render(
   <Provider connections={connections} gui={gui} rates={rates}>
@@ -54,5 +55,5 @@ render(
       </HashRouter>
     </I18nextProvider>
   </Provider>,
-  document.getElementById('ui-root')
+  document.getElementById('application-root')
 )
