@@ -13,46 +13,33 @@ import Network from './Network'
 import Transaction from './Transaction'
 import Transactions from './Transactions'
 
-/** Set notification and message top margin. */
+/** Set notification's and message's top margin. */
 notification.config({ top: 65 })
 message.config({ top: 11 })
 
+/** Application's root component. */
 @inject('connections')
 @observer
 class Root extends React.Component {
-  constructor (props) {
-    super(props)
-    this.connections = props.connections
-  }
-
-  render () {
-    return (
-      <Provider {...this.connections.viewingStores}>
-        <HashRouter>
-          <div>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateRows: '55px 1fr 25px',
-                height: '100vh'
-              }}
-            >
-              <Header />
-              <div>
-                <Route exact path='/:uid' component={Transactions} />
-                <Route path='/:uid/addresses' component={Addresses} />
-                <Route path='/:uid/maintenance' component={Maintenance} />
-                <Route path='/:uid/network' component={Network} />
-              </div>
-              <Footer />
+  render = () =>
+    <Provider {...this.props.connections.viewingStores}>
+      <HashRouter>
+        <div>
+          <div id='AppGrid'>
+            <Header />
+            <div>
+              <Route exact path='/:uid' component={Transactions} />
+              <Route path='/:uid/addresses' component={Addresses} />
+              <Route path='/:uid/maintenance' component={Maintenance} />
+              <Route path='/:uid/network' component={Network} />
             </div>
-            <Console />
-            <Transaction />
+            <Footer />
           </div>
-        </HashRouter>
-      </Provider>
-    )
-  }
+          <Console />
+          <Transaction />
+        </div>
+      </HashRouter>
+    </Provider>
 }
 
 export default Root
