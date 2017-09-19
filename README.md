@@ -1,6 +1,8 @@
 # Vcash Electron GUI
 
 [![Release](https://img.shields.io/github/release/openvcash/vcash-electron.svg)](https://github.com/openvcash/vcash-electron/releases)
+[![AUR](https://img.shields.io/aur/version/vcash-electron.svg)](https://aur.archlinux.org/packages/vcash-electron/)
+[![Libraries.io for GitHub](https://img.shields.io/librariesio/github/openvcash/vcash-electron.svg)](https://github.com/openvcash/vcash-electron)
 [![Styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![Standard style guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
@@ -8,7 +10,7 @@
 a decentralized currency for the internet. Latest release can be found
 [here](https://github.com/openvcash/vcash-electron/releases).
 
-![Screenshots](http://i.imgur.com/i3Dxol0.gif)
+![Screenshots](https://i.imgur.com/i3Dxol0.gif)
 
 ## Table of Contents
 - [Install from source](#install-from-source)
