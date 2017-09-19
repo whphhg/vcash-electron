@@ -2,18 +2,35 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto+Mono:300,400,500&subset=latin-ext);
 @import url(https://fonts.googleapis.com/icon?family=Material+Icons);
 
+::selection {
+  background: #43464B;
+}
+
+a,
+a:active {
+  color: #b60127;
+}
+
+a:hover {
+  color: #43464B;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 13px;
+}
+
 /**
- * General
+ * Application grids
  */
 #AppGrid {
   display: grid;
-  grid-template-rows: 55px 1fr 25px;
+  grid-template-rows: 55px 1fr 25px; /* 55px header, content, 25px footer */
   height: 100vh;
 }
 
-
 /**
- * Welcome screen.
+ * Welcome screen
  */
 #Welcome {
   text-align: center;
@@ -37,15 +54,51 @@
   width: 300px;
 }
 
+/**
+ * Welcome screen circling logo.
+ */
+@-webkit-keyframes clipCircle {
+  0%, 100% { clip: rect(0px, 140.8px, 2px, 0px); }
+  25% { clip: rect(0px, 2px, 140.8px, 0px); }
+  50% { clip: rect(138.8px, 140.8px, 140.8px, 0px); }
+  75% { clip: rect(0px, 140.8px, 140.8px, 138.8px); }
+}
+
+.circlingLogo {
+  background: url('../images/logoRed.png') no-repeat 55% / 95%;
+  bottom: 0;
+  color: #b60127;
+  height: 128px;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 128px;
+}
+
+.circlingLogo::before,
+.circlingLogo::after {
+  bottom: 0;
+  border-radius: 128px;
+  box-shadow: inset 0 0 0 2px;
+  content: '';
+  left: 0;
+  margin: -5px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: -1;
+  -webkit-animation: clipCircle 6s linear infinite;
+}
+
+.circlingLogo::before {
+  -webkit-animation-delay: -3s;
+}
 
 /**
- * Elements (old->refactor)
+ * Elements (old -> refactor)
  */
-::selection { background: #43464B; }
-a { color: #b60127; }
-a:active { color: #b60127; }
-a:hover { color: #43464B; }
-body { font-family: 'Roboto', sans-serif; font-size: 13px; }
 header { background: #b60127; color: #FFFFFF; }
 header i { vertical-align: -6px; }
 header .ant-btn-primary { color: #FFFFFF; background-color: #43464B; border-color: #43464B; min-height: 30px; }
@@ -56,16 +109,12 @@ hr { border: 0; border-top: 1px solid #e9e9e9; margin: 10px 0 10px 0; }
 .flex { align-items: center; display: flex; }
 .flex-center { display: flex; align-items: center; justify-content: center; }
 .flex-sb { align-items: center; display: flex; justify-content: space-between; width: 100%; }
-.green { color: #4fb71c; }
-
-.border-green { border-color: #4fb71c; }
-.border-red { border-color: #b60127; }
-
 .material-icons.md-14 { font-size: 14px; }
 .material-icons.md-16 { font-size: 16px; }
 .material-icons.md-18 { font-size: 18px; }
 .material-icons.md-20 { font-size: 20px; }
 .material-icons + p { margin: 0 0 0 5px; }
+.green { color: #4fb71c; }
 .orange { color: #ff7200; }
 .red { color: #b60127; }
 .shadow { box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12); }
@@ -73,27 +122,9 @@ hr { border: 0; border-top: 1px solid #e9e9e9; margin: 10px 0 10px 0; }
 #sendRecipients { max-height: 375px; overflow-y: scroll; }
 #sendRecipients::-webkit-scrollbar { display: none; }
 
-/** Welcome screen circling logo. */
-@-webkit-keyframes clipCircle {
-  0%, 100% {clip: rect(0px, 140.8px, 2px, 0px); }
-  25% {clip: rect(0px, 2px, 140.8px, 0px); }
-  50% {clip: rect(138.8px, 140.8px, 140.8px, 0px); }
-  75% {clip: rect(0px, 140.8px, 140.8px, 138.8px); }
-}
-.circlingLogo {
-  position: absolute; top: 0; bottom: 0; left: 0; right: 0;
-  width: 128px; height: 128px; margin: auto; color: #b60127;
-  background: url('../images/logoRed.png') no-repeat 55% / 95%;
-}
-.circlingLogo::before, .circlingLogo::after {
-  position: absolute; top: 0; bottom: 0; left: 0; right: 0;
-  content: ''; z-index: -1; margin: -5px;
-  box-shadow: inset 0 0 0 2px; border-radius: 128px;
-  -webkit-animation: clipCircle 6s linear infinite;
-}
-.circlingLogo::before { -webkit-animation-delay: -3s; }
-
-/** Ant.Design */
+/**
+ * Ant Design
+ */
 .ant-anchor-ink-ball { border: 3px solid #b60127; }
 .ant-anchor-link-active > .ant-anchor-link-title { color: #b60127; }
 .ant-select-selection:hover { border-color: #b60127; }

@@ -61,7 +61,7 @@ class Footer extends React.Component {
               <i className='material-icons md-16'>cast_connected</i>
               <p>
                 <a onClick={() => this.connections.toggleModal()}>
-                  {this.t('wallet:connectionManager')}
+                  {this.t('wallet:connManager')}
                 </a>
               </p>
             </div>

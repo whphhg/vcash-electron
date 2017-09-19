@@ -37,16 +37,19 @@ class AddressGet extends React.Component {
   }
 
   /**
-   * Get present error string or false if none.
+   * Get present error or empty string if none.
    * @function errorStatus
-   * @return {string|false} Error status.
+   * @return {string} Error status.
    */
   @computed
   get errorStatus () {
+    /** Check for errors in the entered account name. */
     if (this.account.match(/^[a-z0-9 -]*$/i) === null) return 'accChars'
     if (this.account.length > 100) return 'accLength'
+
+    /** Check for RPC error or return empty string if none. */
     if (this.rpcError !== '') return this.rpcError
-    return false
+    return ''
   }
 
   /**
@@ -115,6 +118,7 @@ class AddressGet extends React.Component {
           />
           {this.address !== '' &&
             <Input
+              className='green'
               readOnly
               style={{ margin: '5px 0 0 0' }}
               value={this.address}
@@ -125,7 +129,7 @@ class AddressGet extends React.Component {
                 this.t('wallet:' + this.errorStatus)}
             </p>
             <Button
-              disabled={this.errorStatus !== false}
+              disabled={this.errorStatus !== ''}
               onClick={this.getNewAddress}
             >
               {this.t('wallet:addrGet')}

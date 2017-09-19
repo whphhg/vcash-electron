@@ -87,7 +87,7 @@ class Connections extends React.Component {
             this.connections.toggleModal()
         }}
         style={{ minWidth: '650px' }}
-        title={this.t('wallet:connectionManager')}
+        title={this.t('wallet:connManager')}
         visible={this.connections.modal === true}
       >
         <Tabs
@@ -124,7 +124,7 @@ class Connections extends React.Component {
                         name='type'
                         value='local'
                       >
-                        {this.t('wallet:connectionLocal')}
+                        {this.t('wallet:connLocal')}
                       </Radio>
                       <Radio
                         disabled={active === true && conn.type === 'local'}
@@ -304,10 +304,10 @@ class Connections extends React.Component {
               okText={this.t('wallet:yes')}
               onConfirm={() => this.connections.remove()}
               placement='bottom'
-              title={this.t('wallet:connectionRemoveConfirm')}
+              title={this.t('wallet:connRemoveConfirm')}
             >
               <Button size='small'>
-                {this.t('wallet:connectionRemove')}
+                {this.t('wallet:connRemove')}
               </Button>
             </Popconfirm>
           </div>

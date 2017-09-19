@@ -50,17 +50,20 @@ class PrivateKeyDump extends React.Component {
   }
 
   /**
-   * Get present error string or false if none.
+   * Get present error or empty string if none.
    * @function errorStatus
-   * @return {string|false} Error status.
+   * @return {string} Error status.
    */
   @computed
   get errorStatus () {
+    /** Check for errors in the entered address. */
     if (this.address.match(/^[a-z0-9]*$/i) === null) return 'addrChars'
     if (this.address.length < 34) return 'addrShort'
     if (this.address.length > 35) return 'addrLong'
+
+    /** Check for RPC error or return empty string if none. */
     if (this.rpcError !== '') return this.rpcError
-    return false
+    return ''
   }
 
   /**
@@ -134,6 +137,7 @@ class PrivateKeyDump extends React.Component {
           />
           {this.privateKey !== '' &&
             <Input
+              className='green'
               readOnly
               style={{ margin: '5px 0 0 0' }}
               value={this.privateKey}
@@ -144,7 +148,7 @@ class PrivateKeyDump extends React.Component {
                 this.t('wallet:' + this.errorStatus)}
             </p>
             <Button
-              disabled={this.errorStatus !== false}
+              disabled={this.errorStatus !== ''}
               onClick={this.dumpPrivKey}
             >
               {this.t('wallet:pkDump')}

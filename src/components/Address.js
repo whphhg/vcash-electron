@@ -39,7 +39,7 @@ class Address extends React.Component {
               </p>) ||
               (this.data.account !== null &&
                 <p>
-                  {this.t('wallet:account')}:{' '}
+                  {this.t('wallet:acc')}:{' '}
                   <span style={{ fontWeight: '500' }}>
                     {this.data.account === ''
                       ? this.t('wallet:default')
