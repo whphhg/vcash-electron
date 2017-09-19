@@ -63,14 +63,14 @@ class CurrencyConverter extends React.Component {
     const amount = e.target.value
     const from = e.target.name
 
-    /** Allow only amount in 0000000[.,]000000 format. */
+    /** Allow only amount in 0000000[.,]00000000 format. */
     switch (decimalSeparator()) {
       case '.':
-        if (amount.match(/^\d{0,7}(?:\.\d{0,6})?$/) === null) return
+        if (amount.match(/^\d{0,7}(?:\.\d{0,8})?$/) === null) return
         break
 
       case ',':
-        if (amount.match(/^\d{0,7}(?:,\d{0,6})?$/) === null) return
+        if (amount.match(/^\d{0,7}(?:,\d{0,8})?$/) === null) return
         break
     }
 
