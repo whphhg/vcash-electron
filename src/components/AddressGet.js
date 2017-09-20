@@ -4,9 +4,7 @@ import { inject, observer } from 'mobx-react'
 import { action, computed, observable, reaction } from 'mobx'
 import { AutoComplete, Button, Input, Popover } from 'antd'
 
-/**
- * New receiving address assigning component.
- */
+/** New receiving address assigning component. */
 @translate(['wallet'], { wait: true })
 @inject('rpc', 'wallet')
 @observer
@@ -43,11 +41,8 @@ class AddressGet extends React.Component {
    */
   @computed
   get errorStatus () {
-    /** Check for errors in the entered account name. */
     if (this.account.match(/^[a-z0-9 -]*$/i) === null) return 'accChars'
     if (this.account.length > 100) return 'accLength'
-
-    /** Check for RPC error or return empty string if none. */
     if (this.rpcError !== '') return this.rpcError
     return ''
   }
@@ -86,16 +81,16 @@ class AddressGet extends React.Component {
     this.rpc.execute(
       [{ method: 'getnewaddress', params: [this.account] }],
       response => {
-        /** Set new receiving address and update wallet addresses. */
         if (response[0].hasOwnProperty('result') === true) {
+          /** Set new receiving address. */
           this.setValues({ address: response[0].result })
+
+          /** Update wallet's address list. */
           this.wallet.getWallet(false, true)
         }
 
-        /** Set error. */
         if (response[0].hasOwnProperty('error') === true) {
           switch (response[0].error.code) {
-            /** error_code_wallet_keypool_ran_out */
             case -12:
               return this.setValues({ rpcError: 'keypoolRanOut' })
           }
@@ -104,49 +99,52 @@ class AddressGet extends React.Component {
     )
   }
 
-  render = () =>
-    <Popover
-      content={
-        <div style={{ width: '400px' }}>
-          <AutoComplete
-            dataSource={this.wallet.accounts}
-            getPopupContainer={triggerNode => triggerNode.parentNode}
-            onChange={account => this.setValues({ account })}
-            placeholder={this.t('wallet:accName')}
-            style={{ width: '100%' }}
-            value={this.account}
-          />
-          {this.address !== '' &&
-            <Input
-              className='green'
-              readOnly
-              style={{ margin: '5px 0 0 0' }}
-              value={this.address}
-            />}
-          <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
-            <p className='red'>
-              {this.errShow.includes(this.errorStatus) === true &&
-                this.t('wallet:' + this.errorStatus)}
-            </p>
-            <Button
-              disabled={this.errorStatus !== ''}
-              onClick={this.getNewAddress}
-            >
-              {this.t('wallet:addrGet')}
-            </Button>
+  render () {
+    return (
+      <Popover
+        content={
+          <div style={{ width: '400px' }}>
+            <AutoComplete
+              dataSource={this.wallet.accounts}
+              getPopupContainer={triggerNode => triggerNode.parentNode}
+              onChange={account => this.setValues({ account })}
+              placeholder={this.t('wallet:accName')}
+              style={{ width: '100%' }}
+              value={this.account}
+            />
+            {this.address !== '' &&
+              <Input
+                className='green'
+                readOnly
+                style={{ margin: '5px 0 0 0' }}
+                value={this.address}
+              />}
+            <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
+              <p className='red'>
+                {this.errShow.includes(this.errorStatus) === true &&
+                  this.t('wallet:' + this.errorStatus)}
+              </p>
+              <Button
+                disabled={this.errorStatus !== ''}
+                onClick={this.getNewAddress}
+              >
+                {this.t('wallet:addrGet')}
+              </Button>
+            </div>
           </div>
-        </div>
-      }
-      onVisibleChange={this.togglePopover}
-      placement='bottomLeft'
-      title={this.t('wallet:addrGetDesc')}
-      trigger='click'
-      visible={this.popoverVisible}
-    >
-      <Button size='small'>
-        <i className='flex-center material-icons md-16'>plus_one</i>
-      </Button>
-    </Popover>
+        }
+        onVisibleChange={this.togglePopover}
+        placement='bottomLeft'
+        title={this.t('wallet:addrGetDesc')}
+        trigger='click'
+        visible={this.popoverVisible}
+      >
+        <Button size='small'>
+          <i className='flex-center material-icons md-16'>plus_one</i>
+        </Button>
+      </Popover>
+    )
+  }
 }
 
 export default AddressGet

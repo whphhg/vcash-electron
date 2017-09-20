@@ -1,8 +1,9 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Button, Tooltip, message } from 'antd'
+import { Button, message, Tooltip } from 'antd'
 
+/** Wallet locking component. */
 @translate(['wallet'], { wait: true })
 @inject('rpc', 'wallet')
 @observer
@@ -16,26 +17,28 @@ class WalletLock extends React.Component {
 
   /**
    * Lock the wallet.
-   * @function lock
+   * @function walletLock
    */
-  lock = () => {
+  walletLock = () => {
     this.rpc.execute([{ method: 'walletlock', params: [] }], response => {
-      /** Update lock status and display a success message. */
       if (response[0].hasOwnProperty('result') === true) {
+        /** Update wallet's lock status. */
         this.wallet.getLockStatus()
+
+        /** Display a success message for 6 seconds. */
         message.success(this.t('wallet:locked'), 6)
       }
     })
   }
 
   render () {
-    if (this.wallet.isEncrypted === false || this.wallet.isLocked === true) {
-      return null
-    }
+    const { isEncrypted, isLocked } = this.wallet
 
+    /** Do not render if the wallet is not encrypted or is locked. */
+    if (isEncrypted === false || isLocked === true) return null
     return (
       <Tooltip placement='bottomRight' title={this.t('wallet:unlocked')}>
-        <Button onClick={this.lock} size='small' type='primary'>
+        <Button onClick={this.walletLock} size='small' type='primary'>
           <i className='material-icons md-20'>lock_open</i>
         </Button>
       </Tooltip>

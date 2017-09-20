@@ -6,6 +6,7 @@ import { Input, Tooltip } from 'antd'
 import { decimalSeparator } from '../utilities/common'
 import moment from 'moment'
 
+/** Local and crypto currency converting component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'rates')
 @observer

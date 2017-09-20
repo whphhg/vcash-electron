@@ -7,6 +7,7 @@ import { humanReadable } from '../utilities/common'
 import RewardCalculator from './RewardCalculator'
 import { Difficulties, HashRate, RewardSpread, RewardsPerDay } from './charts'
 
+/** Network screen component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'wallet')
 @observer
@@ -37,13 +38,7 @@ class Network extends React.Component {
     } = this.wallet.info.getmininginfo
 
     return (
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateRows: '35px 1fr 100px',
-          height: '100%'
-        }}
-      >
+      <div id='NetworkGrid'>
         <div className='shadow'>
           <div style={{ margin: '0 10px 0 10px' }}>
             <div className='flex-sb' style={{ minHeight: '35px' }}>
@@ -88,14 +83,7 @@ class Network extends React.Component {
         </div>
         <div className='shadow'>
           <div style={{ margin: '10px 10px 0 10px' }}>
-            <div
-              style={{
-                display: 'grid',
-                gridGap: '20px',
-                gridTemplateColumns: '1fr 1fr',
-                height: '100%'
-              }}
-            >
+            <div id='NetworkColumnsGrid'>
               <div style={{ minWidth: '100%' }}>
                 <div className='flex'>
                   <i className='material-icons md-16'>timeline</i>

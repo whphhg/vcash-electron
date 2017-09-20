@@ -8,6 +8,7 @@ import moment from 'moment'
 import ChainBlender from './ChainBlender'
 import { TransactionsStatistics } from './charts'
 
+/** Transactions screen component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'wallet')
 @observer
@@ -21,13 +22,7 @@ class Transactions extends React.Component {
 
   render () {
     return (
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateRows: '35px 1fr 160px',
-          height: '100%'
-        }}
-      >
+      <div id='TransactionsGrid'>
         <div className='shadow'>
           <div style={{ margin: '0 10px 0 10px' }}>
             <div className='flex-sb' style={{ height: '35px' }}>

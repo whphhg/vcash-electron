@@ -15,6 +15,7 @@ import SendControls from './SendControls'
 import SendOptions from './SendOptions'
 import SendRecipients from './SendRecipients'
 
+/** Addresses and sending screen component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'rates', 'send', 'wallet')
 @observer
@@ -43,21 +44,9 @@ class Addresses extends React.Component {
     const { accountBalances, spendFrom } = this.wallet
 
     return (
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateRows: '35px 1fr',
-          height: '100%'
-        }}
-      >
+      <div id='AddressesGrid'>
         <div className='shadow' style={{ minHeight: '35px' }}>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1.1fr 1.4fr',
-              height: '100%'
-            }}
-          >
+          <div className='AddressesColumnsGrid'>
             <div className='flex-sb'>
               <div className='flex' style={{ margin: '0 0 0 10px' }}>
                 <AddressGet />
@@ -84,13 +73,7 @@ class Addresses extends React.Component {
             </div>
           </div>
         </div>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1.1fr 1.4fr',
-            height: '100%'
-          }}
-        >
+        <div className='AddressesColumnsGrid'>
           <div style={{ margin: '10px' }}>
             <div className='flex-sb' style={{ margin: '0 0 10px 0' }}>
               <div style={{ lineHeight: '22px', margin: '0 36px 0 0' }}>
@@ -195,14 +178,7 @@ class Addresses extends React.Component {
             />
           </div>
           <div style={{ margin: '10px' }}>
-            <div
-              style={{
-                display: 'grid',
-                gridGap: '10px',
-                gridTemplateRows: '1fr 145px',
-                height: '100%'
-              }}
-            >
+            <div id='RecipientsGrid'>
               <SendRecipients />
               <div style={{ alignSelf: 'end' }}>
                 <SendOptions />

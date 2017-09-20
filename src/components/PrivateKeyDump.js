@@ -4,9 +4,7 @@ import { inject, observer } from 'mobx-react'
 import { action, computed, observable, reaction } from 'mobx'
 import { AutoComplete, Button, Input, Popover } from 'antd'
 
-/**
- * Private key dumping component.
- */
+/** Private key dumping component. */
 @translate(['wallet'], { wait: true })
 @inject('rpc', 'wallet')
 @observer
@@ -56,12 +54,9 @@ class PrivateKeyDump extends React.Component {
    */
   @computed
   get errorStatus () {
-    /** Check for errors in the entered address. */
     if (this.address.match(/^[a-z0-9]*$/i) === null) return 'addrChars'
     if (this.address.length < 34) return 'addrShort'
     if (this.address.length > 35) return 'addrLong'
-
-    /** Check for RPC error or return empty string if none. */
     if (this.rpcError !== '') return this.rpcError
     return ''
   }
@@ -102,19 +97,15 @@ class PrivateKeyDump extends React.Component {
     this.rpc.execute(
       [{ method: 'dumpprivkey', params: [this.address] }],
       response => {
-        /** Set private key. */
         if (response[0].hasOwnProperty('result') === true) {
+          /** Set private key. */
           this.setValues({ privateKey: response[0].result })
         }
 
-        /** Set error. */
         if (response[0].hasOwnProperty('error') === true) {
           switch (response[0].error.code) {
-            /** error_code_wallet_error */
             case -4:
               return this.setValues({ rpcError: 'addrUnknown' })
-
-            /** error_code_invalid_address_or_key */
             case -5:
               return this.setValues({ rpcError: 'addrInvalid' })
           }
@@ -123,49 +114,52 @@ class PrivateKeyDump extends React.Component {
     )
   }
 
-  render = () =>
-    <Popover
-      content={
-        <div style={{ width: '400px' }}>
-          <AutoComplete
-            dataSource={this.wallet.addressList}
-            getPopupContainer={triggerNode => triggerNode.parentNode}
-            onChange={address => this.setValues({ address })}
-            placeholder={this.t('wallet:address')}
-            style={{ width: '100%' }}
-            value={this.address}
-          />
-          {this.privateKey !== '' &&
-            <Input
-              className='green'
-              readOnly
-              style={{ margin: '5px 0 0 0' }}
-              value={this.privateKey}
-            />}
-          <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
-            <p className='red'>
-              {this.errShow.includes(this.errorStatus) === true &&
-                this.t('wallet:' + this.errorStatus)}
-            </p>
-            <Button
-              disabled={this.errorStatus !== ''}
-              onClick={this.dumpPrivKey}
-            >
-              {this.t('wallet:pkDump')}
-            </Button>
+  render () {
+    return (
+      <Popover
+        content={
+          <div style={{ width: '400px' }}>
+            <AutoComplete
+              dataSource={this.wallet.addressList}
+              getPopupContainer={triggerNode => triggerNode.parentNode}
+              onChange={address => this.setValues({ address })}
+              placeholder={this.t('wallet:address')}
+              style={{ width: '100%' }}
+              value={this.address}
+            />
+            {this.privateKey !== '' &&
+              <Input
+                className='green'
+                readOnly
+                style={{ margin: '5px 0 0 0' }}
+                value={this.privateKey}
+              />}
+            <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
+              <p className='red'>
+                {this.errShow.includes(this.errorStatus) === true &&
+                  this.t('wallet:' + this.errorStatus)}
+              </p>
+              <Button
+                disabled={this.errorStatus !== ''}
+                onClick={this.dumpPrivKey}
+              >
+                {this.t('wallet:pkDump')}
+              </Button>
+            </div>
           </div>
-        </div>
-      }
-      onVisibleChange={this.togglePopover}
-      placement='bottomLeft'
-      title={this.t('wallet:pkDumpDesc')}
-      trigger='click'
-      visible={this.popoverVisible}
-    >
-      <Button disabled={this.wallet.isLocked === true} size='small'>
-        <i className='flex-center material-icons md-16'>arrow_upward</i>
-      </Button>
-    </Popover>
+        }
+        onVisibleChange={this.togglePopover}
+        placement='bottomLeft'
+        title={this.t('wallet:pkDumpDesc')}
+        trigger='click'
+        visible={this.popoverVisible}
+      >
+        <Button disabled={this.wallet.isLocked === true} size='small'>
+          <i className='flex-center material-icons md-16'>arrow_upward</i>
+        </Button>
+      </Popover>
+    )
+  }
 }
 
 export default PrivateKeyDump

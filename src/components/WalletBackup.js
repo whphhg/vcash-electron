@@ -7,12 +7,13 @@ import { remote } from 'electron'
 import { join, sep } from 'path'
 import { dataPath } from '../utilities/common'
 
+/** Wallet backing up component. */
 @translate(['wallet'], { wait: true })
 @inject('rpc')
 @observer
 class WalletBackup extends React.Component {
-  @observable error = false
-  @observable path
+  @observable path = ''
+  @observable rpcError = ''
 
   constructor (props) {
     super(props)
@@ -22,35 +23,44 @@ class WalletBackup extends React.Component {
       this.rpc.connection.status.tunnel === true
         ? ''
         : join(dataPath(), 'backups', sep)
+
+    /** Errors that will be shown to the user. */
+    this.errShow = ['backupFailed']
   }
 
   /**
-   * Get error status.
+   * Get present error or empty string if none.
    * @function errorStatus
-   * @return {string|false} Current error or false if none.
+   * @return {string} Error status.
    */
   @computed
   get errorStatus () {
-    if (this.error !== false) return this.error
-    return false
+    if (this.rpcError !== '') return this.rpcError
+    return ''
   }
 
   /**
-   * Set RPC error.
-   * @function setError
-   * @param {string} error - RPC error.
+   * Set value(s) of observable properties.
+   * @function setValues
+   * @param {object} values - Key value combinations.
    */
   @action
-  setError = (error = false) => {
-    this.error = error
+  setValues = values => {
+    const allowed = ['path', 'rpcError']
+
+    /** Set only values of allowed properties that differ from the present. */
+    Object.keys(values).forEach(key => {
+      if (allowed.includes(key) === true && this[key] !== values[key]) {
+        this[key] = values[key]
+      }
+    })
   }
 
   /**
-   * Set backup path.
-   * @function setPath
+   * Get backup path.
+   * @function getPath
    */
-  @action
-  setPath = () => {
+  getPath = () => {
     /** Open directory browser. */
     const selected = remote.dialog.showOpenDialog({
       properties: ['openDirectory']
@@ -58,29 +68,27 @@ class WalletBackup extends React.Component {
 
     /** Set selected path. */
     if (typeof selected !== 'undefined') {
-      this.path = join(selected[0], sep)
+      this.setValues({ path: join(selected[0], sep) })
     }
   }
 
   /**
    * Backup the wallet.
-   * @function backup
+   * @function backupWallet
    */
-  backup = () => {
+  backupWallet = () => {
     this.rpc.execute(
       [{ method: 'backupwallet', params: [this.path] }],
       response => {
-        /** Display a success message. */
         if (response[0].hasOwnProperty('result') === true) {
+          /** Display a success message for 6 seconds. */
           message.success(this.t('wallet:backedUp'), 6)
         }
 
-        /** Set error. */
         if (response[0].hasOwnProperty('error') === true) {
           switch (response[0].error.code) {
-            /** error_code_wallet_error */
             case -4:
-              return this.setError('backupFailed')
+              return this.setValues({ rpcError: 'backupFailed' })
           }
         }
       }
@@ -115,18 +123,18 @@ class WalletBackup extends React.Component {
           style={{ alignItems: 'flex-start', margin: '5px 0 0 0' }}
         >
           <p className='red' style={{ margin: '0 0 0 120px' }}>
-            {this.errorStatus === 'backupFailed' &&
-              this.t('wallet:backupFailed')}
+            {this.errShow.includes(this.errorStatus) === true &&
+              this.t('wallet:' + this.errorStatus)}
           </p>
           <div className='flex' style={{ justifyContent: 'flex-end' }}>
             <Button
               disabled={this.rpc.connection.status.tunnel === true}
-              onClick={this.setPath}
+              onClick={this.getPath}
               style={{ margin: '0 5px 0 0' }}
             >
               {this.t('wallet:browse')}
             </Button>
-            <Button onClick={this.backup}>
+            <Button onClick={this.backupWallet}>
               {this.t('wallet:backup')}
             </Button>
           </div>

@@ -17,6 +17,7 @@ import {
 /** Required components. */
 import { CustomTick, CustomTooltip } from './RechartsCustom'
 
+/** Network hash rate chart component. */
 @translate(['wallet'], { wait: true })
 @inject('stats')
 @observer

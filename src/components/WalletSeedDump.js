@@ -4,68 +4,67 @@ import { action, computed, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button, Input } from 'antd'
 
+/** Wallet seed dumping component. */
 @translate(['wallet'], { wait: true })
 @inject('rpc', 'wallet')
 @observer
 class WalletSeedDump extends React.Component {
-  @observable error = false
   @observable seed = ''
+  @observable rpcError = ''
 
   constructor (props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpc
     this.wallet = props.wallet
+
+    /** Errors that will be shown to the user. */
+    this.errShow = ['notDeterministic']
   }
 
   /**
-   * Get error status.
+   * Get present error or empty string if none.
    * @function errorStatus
-   * @return {string|false} Current error or false if none.
+   * @return {string} Error status.
    */
   @computed
   get errorStatus () {
-    if (this.error !== false) return this.error
-    return false
+    if (this.rpcError !== '') return this.rpcError
+    return ''
   }
 
   /**
-   * Set RPC error.
-   * @function setError
-   * @param {string} error - RPC error.
+   * Set value(s) of observable properties.
+   * @function setValues
+   * @param {object} values - Key value combinations.
    */
   @action
-  setError = (error = false) => {
-    this.error = error
-  }
+  setValues = values => {
+    const allowed = ['seed', 'rpcError']
 
-  /**
-   * Set wallet seed.
-   * @function setSeed
-   * @param {string} seed - Wallet seed.
-   */
-  @action
-  setSeed = seed => {
-    this.seed = seed
+    /** Set only values of allowed properties that differ from the present. */
+    Object.keys(values).forEach(key => {
+      if (allowed.includes(key) === true && this[key] !== values[key]) {
+        this[key] = values[key]
+      }
+    })
   }
 
   /**
    * Dump wallet seed.
-   * @function dumpSeed
+   * @function dumpWalletSeed
    */
-  dumpSeed = () => {
+  dumpWalletSeed = () => {
     this.rpc.execute([{ method: 'dumpwalletseed', params: [] }], response => {
-      /** Set seed. */
       if (response[0].hasOwnProperty('result') === true) {
-        this.setSeed(response[0].result)
+        /** Set wallet's seed. */
+        this.setValues({ seed: response[0].result })
       }
 
-      /** Set error. */
       if (response[0].hasOwnProperty('error') === true) {
         switch (response[0].error.code) {
-          /** error_code_wallet_error */
           case -4:
-            return this.setError('notDeterministic')
+            return this.setValues({ rpcError: 'notDeterministic' })
         }
       }
     })
@@ -93,14 +92,12 @@ class WalletSeedDump extends React.Component {
         </div>
         <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
           <p className='red' style={{ margin: '0 0 0 120px' }}>
-            {this.errorStatus === 'notDeterministic' &&
-              this.t('wallet:notDeterministic')}
+            {this.errShow.includes(this.errorStatus) === true &&
+              this.t('wallet:' + this.errorStatus)}
           </p>
           <Button
-            disabled={
-              this.errorStatus !== false || this.wallet.isLocked === true
-            }
-            onClick={this.dumpSeed}
+            disabled={this.errorStatus !== '' || this.wallet.isLocked === true}
+            onClick={this.dumpWalletSeed}
           >
             {this.t('wallet:seedDump')}
           </Button>

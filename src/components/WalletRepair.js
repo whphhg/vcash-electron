@@ -4,6 +4,7 @@ import { action, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button } from 'antd'
 
+/** Wallet check and repair component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'rpc')
 @observer
@@ -18,7 +19,7 @@ class WalletRepair extends React.Component {
     this.gui = props.gui
     this.rpc = props.rpc
 
-    /** Check the wallet as soon as component loads. */
+    /** Check the wallet when component loads. */
     this.repair()
   }
 
@@ -58,8 +59,8 @@ class WalletRepair extends React.Component {
     const method = checkOnly === true ? 'checkwallet' : 'repairwallet'
 
     this.rpc.execute([{ method, params: [] }], response => {
-      /** Set checkPassed and potential mismatched & amount affected. */
       if (response[0].hasOwnProperty('result') === true) {
+        /** Set checkPassed and potential mismatched & amount affected. */
         this.setResponse(response[0].result)
       }
     })
@@ -83,7 +84,7 @@ class WalletRepair extends React.Component {
                     {this.t('wallet:checkPassed')}
                   </p>}
               </div>
-              <Button onClick={() => this.repair()}>
+              <Button onClick={this.repair}>
                 {this.t('wallet:check')}
               </Button>
             </div>}

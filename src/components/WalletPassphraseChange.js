@@ -4,14 +4,15 @@ import { action, computed, observable, reaction } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button, Input, message } from 'antd'
 
+/** Wallet passphrase changing component. */
 @translate(['wallet'], { wait: true })
 @inject('rpc', 'wallet')
 @observer
 class WalletPassphraseChange extends React.Component {
   @observable current = ''
-  @observable error = false
   @observable next = ''
   @observable repeat = ''
+  @observable rpcError = ''
 
   constructor (props) {
     super(props)
@@ -19,21 +20,28 @@ class WalletPassphraseChange extends React.Component {
     this.rpc = props.rpc
     this.wallet = props.wallet
 
-    /** Clear previous error on current passphrase change. */
+    /** Errors that will be shown to the user. */
+    this.errShow = [
+      'passphraseIncorrect',
+      'passphrasesEqual',
+      'passphrasesNotMatching'
+    ]
+
+    /** Clear previous RPC error on current passphrase change. */
     reaction(
       () => this.current,
       current => {
-        if (this.error !== false) {
-          this.setError()
+        if (this.rpcError !== false) {
+          this.setValues({ rpcError: '' })
         }
       }
     )
   }
 
   /**
-   * Get error status.
+   * Get present error or empty string if none.
    * @function errorStatus
-   * @return {string|false} Current error or false if none.
+   * @return {string} Error status.
    */
   @computed
   get errorStatus () {
@@ -44,11 +52,11 @@ class WalletPassphraseChange extends React.Component {
     }
 
     if (len.old < 1 || len.next < 1 || len.repeat < 1) return 'emptyFields'
-    if (this.next === this.current) return 'oldEqualsNew'
+    if (this.next === this.current) return 'passphrasesEqual'
     if (len.next !== len.repeat) return 'differentLengths'
-    if (this.next !== this.repeat) return 'notMatching'
-    if (this.error !== false) return this.error
-    return false
+    if (this.next !== this.repeat) return 'passphrasesNotMatching'
+    if (this.rpcError !== '') return this.rpcError
+    return ''
   }
 
   /**
@@ -57,52 +65,49 @@ class WalletPassphraseChange extends React.Component {
    */
   @action
   clear = () => {
-    this.current = ''
-    this.next = ''
-    this.repeat = ''
+    this.setValues({ current: '', next: '', repeat: '' })
   }
 
   /**
-   * Set RPC error.
-   * @function setError
-   * @param {string} error - RPC error.
+   * Set value(s) of observable properties.
+   * @function setValues
+   * @param {object} values - Key value combinations.
    */
   @action
-  setError = (error = false) => {
-    this.error = error
+  setValues = values => {
+    const allowed = ['current', 'next', 'repeat', 'rpcError']
+
+    /** Set only values of allowed properties that differ from the present. */
+    Object.keys(values).forEach(key => {
+      if (allowed.includes(key) === true && this[key] !== values[key]) {
+        this[key] = values[key]
+      }
+    })
   }
 
   /**
-   * Set passphrase.
-   * @function setPassphrase
-   * @param {object} e - Input element event.
+   * Change wallet's passphrase.
+   * @function walletPassphraseChange
    */
-  @action
-  setPassphrase = e => {
-    this[e.target.name] = e.target.value
-  }
-
-  /**
-   * Change wallet passphrase.
-   * @function passphraseChange
-   */
-  passphraseChange = () => {
+  walletPassphraseChange = () => {
     this.rpc.execute(
       [{ method: 'walletpassphrasechange', params: [this.current, this.next] }],
       response => {
-        /** Update lock status, clear passes & display a success message. */
         if (response[0].hasOwnProperty('result') === true) {
+          /** Update wallet's lock status. */
           this.wallet.getLockStatus()
+
+          /** Clear entered passphrases. */
           this.clear()
+
+          /** Display a success message for 6 seconds. */
           message.success(this.t('wallet:passphraseChanged'), 6)
         }
 
-        /** Set error. */
         if (response[0].hasOwnProperty('error') === true) {
           switch (response[0].error.code) {
-            /** error_code_wallet_passphrase_incorrect */
             case -14:
-              return this.setError('incorrectPassphrase')
+              return this.setValues({ rpcError: 'passphraseIncorrect' })
           }
         }
       }
@@ -110,6 +115,7 @@ class WalletPassphraseChange extends React.Component {
   }
 
   render () {
+    /** Do not render if the wallet is not encrypted. */
     if (this.wallet.isEncrypted === false) return null
     return (
       <div>
@@ -124,8 +130,7 @@ class WalletPassphraseChange extends React.Component {
             {this.t('wallet:passphrase')}
           </p>
           <Input
-            name='current'
-            onChange={this.setPassphrase}
+            onChange={e => this.setValues({ current: e.target.value })}
             placeholder={this.t('wallet:passphraseLong')}
             style={{ flex: 1 }}
             value={this.current}
@@ -136,8 +141,7 @@ class WalletPassphraseChange extends React.Component {
             {this.t('wallet:passphraseNew')}
           </p>
           <Input
-            name='next'
-            onChange={this.setPassphrase}
+            onChange={e => this.setValues({ next: e.target.value })}
             placeholder={this.t('wallet:passphraseNewLong')}
             style={{ flex: 1 }}
             value={this.next}
@@ -148,8 +152,7 @@ class WalletPassphraseChange extends React.Component {
             {this.t('wallet:passphraseRepeat')}
           </p>
           <Input
-            name='repeat'
-            onChange={this.setPassphrase}
+            onChange={e => this.setValues({ repeat: e.target.value })}
             placeholder={this.t('wallet:passphraseRepeatLong')}
             style={{ flex: 1 }}
             value={this.repeat}
@@ -157,16 +160,12 @@ class WalletPassphraseChange extends React.Component {
         </div>
         <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
           <p className='red' style={{ margin: '0 0 0 120px' }}>
-            {(this.errorStatus === 'notMatching' &&
-              this.t('wallet:passphrasesNotMatching')) ||
-              (this.errorStatus === 'incorrectPassphrase' &&
-                this.t('wallet:passphraseIncorrect')) ||
-              (this.errorStatus === 'oldEqualsNew' &&
-                this.t('wallet:passphrasesEqual'))}
+            {this.errShow.includes(this.errorStatus) === true &&
+              this.t('wallet:' + this.errorStatus)}
           </p>
           <Button
-            disabled={this.errorStatus !== false}
-            onClick={this.passphraseChange}
+            disabled={this.errorStatus !== ''}
+            onClick={this.walletPassphraseChange}
           >
             {this.t('wallet:passphraseChange')}
           </Button>

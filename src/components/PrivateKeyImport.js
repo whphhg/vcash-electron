@@ -4,9 +4,7 @@ import { inject, observer } from 'mobx-react'
 import { action, computed, observable, reaction } from 'mobx'
 import { AutoComplete, Button, Input, message, Popover } from 'antd'
 
-/**
- * Private key importing component.
- */
+/** Private key importing component. */
 @translate(['wallet'], { wait: true })
 @inject('rpc', 'wallet')
 @observer
@@ -54,16 +52,11 @@ class PrivateKeyImport extends React.Component {
    */
   @computed
   get errorStatus () {
-    /** Check for errors in the entered account name. */
     if (this.account.match(/^[a-z0-9 -]*$/i) === null) return 'accChars'
     if (this.account.length > 100) return 'accLength'
-
-    /** Check for errors in the entered private key. */
     if (this.privateKey.match(/^[a-z0-9]*$/i) === null) return 'pkInvalid'
     if (this.privateKey.length < 51) return 'pkShort'
     if (this.privateKey.length > 52) return 'pkLong'
-
-    /** Check for RPC error or return empty string if none. */
     if (this.rpcError !== '') return this.rpcError
     return ''
   }
@@ -119,24 +112,23 @@ class PrivateKeyImport extends React.Component {
         /** Re-enable the button and hide the loading indicator. */
         this.toggleLoading()
 
-        /** Hide popover, update wallet and display a success message. */
         if (response[0].hasOwnProperty('result') === true) {
+          /** Hide popover if it's still visible. */
           if (this.popoverVisible === true) {
             this.togglePopover()
           }
 
+          /** Update wallet's transaction and address history since genesis. */
           this.wallet.getWallet(true, true)
+
+          /** Display a success message for 6 seconds. */
           message.success(this.t('wallet:pkImported'), 6)
         }
 
-        /** Set error. */
         if (response[0].hasOwnProperty('error') === true) {
           switch (response[0].error.code) {
-            /** error_code_wallet_error */
             case -4:
               return this.setValues({ rpcError: 'pkIsMine' })
-
-            /** error_code_invalid_address_or_key */
             case -5:
               return this.setValues({ rpcError: 'pkInvalid' })
           }
@@ -145,49 +137,52 @@ class PrivateKeyImport extends React.Component {
     )
   }
 
-  render = () =>
-    <Popover
-      content={
-        <div style={{ width: '400px' }}>
-          <Input
-            onChange={e => this.setValues({ privateKey: e.target.value })}
-            placeholder={this.t('wallet:pk')}
-            style={{ margin: '0 0 5px 0' }}
-            value={this.privateKey}
-          />
-          <AutoComplete
-            dataSource={this.wallet.accounts}
-            getPopupContainer={triggerNode => triggerNode.parentNode}
-            onChange={account => this.setValues({ account })}
-            placeholder={this.t('wallet:accName')}
-            style={{ width: '100%' }}
-            value={this.account}
-          />
-          <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
-            <p className='red'>
-              {this.errShow.includes(this.errorStatus) === true &&
-                this.t('wallet:' + this.errorStatus)}
-            </p>
-            <Button
-              disabled={this.errorStatus !== ''}
-              loading={this.loading === true}
-              onClick={this.importPrivKey}
-            >
-              {this.t('wallet:pkImport')}
-            </Button>
+  render () {
+    return (
+      <Popover
+        content={
+          <div style={{ width: '400px' }}>
+            <Input
+              onChange={e => this.setValues({ privateKey: e.target.value })}
+              placeholder={this.t('wallet:pk')}
+              style={{ margin: '0 0 5px 0' }}
+              value={this.privateKey}
+            />
+            <AutoComplete
+              dataSource={this.wallet.accounts}
+              getPopupContainer={triggerNode => triggerNode.parentNode}
+              onChange={account => this.setValues({ account })}
+              placeholder={this.t('wallet:accName')}
+              style={{ width: '100%' }}
+              value={this.account}
+            />
+            <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
+              <p className='red'>
+                {this.errShow.includes(this.errorStatus) === true &&
+                  this.t('wallet:' + this.errorStatus)}
+              </p>
+              <Button
+                disabled={this.errorStatus !== ''}
+                loading={this.loading === true}
+                onClick={this.importPrivKey}
+              >
+                {this.t('wallet:pkImport')}
+              </Button>
+            </div>
           </div>
-        </div>
-      }
-      onVisibleChange={this.togglePopover}
-      placement='bottomLeft'
-      title={this.t('wallet:pkImportDesc')}
-      trigger='click'
-      visible={this.popoverVisible}
-    >
-      <Button disabled={this.wallet.isLocked === true} size='small'>
-        <i className='flex-center material-icons md-16'>arrow_downward</i>
-      </Button>
-    </Popover>
+        }
+        onVisibleChange={this.togglePopover}
+        placement='bottomLeft'
+        title={this.t('wallet:pkImportDesc')}
+        trigger='click'
+        visible={this.popoverVisible}
+      >
+        <Button disabled={this.wallet.isLocked === true} size='small'>
+          <i className='flex-center material-icons md-16'>arrow_downward</i>
+        </Button>
+      </Popover>
+    )
+  }
 }
 
 export default PrivateKeyImport

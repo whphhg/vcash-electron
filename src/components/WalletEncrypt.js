@@ -4,6 +4,7 @@ import { action, computed, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button, Input, notification } from 'antd'
 
+/** Wallet encrypting component. */
 @translate(['wallet'], { wait: true })
 @inject('rpc', 'wallet')
 @observer
@@ -16,24 +17,24 @@ class WalletEncrypt extends React.Component {
     this.t = props.t
     this.rpc = props.rpc
     this.wallet = props.wallet
+
+    /** Errors that will be shown to the user. */
+    this.errShow = ['passphrasesNotMatching']
   }
 
   /**
-   * Get error status.
+   * Get present error or empty string if none.
    * @function errorStatus
-   * @return {string|false} Current error or false if none.
+   * @return {string} Error status.
    */
   @computed
   get errorStatus () {
-    const len = {
-      pass: this.passphrase.length,
-      repeat: this.repeat.length
-    }
+    const len = { pass: this.passphrase.length, repeat: this.repeat.length }
 
     if (len.pass < 1 || len.repeat < 1) return 'emptyFields'
     if (len.pass !== len.repeat) return 'differentLengths'
-    if (this.passphrase !== this.repeat) return 'notMatching'
-    return false
+    if (this.passphrase !== this.repeat) return 'passphrasesNotMatching'
+    return ''
   }
 
   /**
@@ -42,32 +43,42 @@ class WalletEncrypt extends React.Component {
    */
   @action
   clear = () => {
-    this.passphrase = ''
-    this.repeat = ''
+    this.setValues({ passphrase: '', repeat: '' })
   }
 
   /**
-   * Set passphrase.
-   * @function setPassphrase
-   * @param {object} e - Input element event.
+   * Set value(s) of observable properties.
+   * @function setValues
+   * @param {object} values - Key value combinations.
    */
   @action
-  setPassphrase = e => {
-    this[e.target.name] = e.target.value
+  setValues = values => {
+    const allowed = ['passphrase', 'repeat', 'rpcError']
+
+    /** Set only values of allowed properties that differ from the present. */
+    Object.keys(values).forEach(key => {
+      if (allowed.includes(key) === true && this[key] !== values[key]) {
+        this[key] = values[key]
+      }
+    })
   }
 
   /**
    * Encrypt the wallet.
-   * @function encrypt
+   * @function encryptWallet
    */
-  encrypt = () => {
+  encryptWallet = () => {
     this.rpc.execute(
       [{ method: 'encryptwallet', params: [this.passphrase] }],
       response => {
-        /** Update lock status, clear passes & display a restart warning. */
         if (response[0].hasOwnProperty('result') === true) {
+          /** Update wallet's lock status. */
           this.wallet.getLockStatus()
+
+          /** Clear entered passphrases. */
           this.clear()
+
+          /** Display a non-expiring restart notification. */
           notification.success({
             message: this.t('wallet:encrypted'),
             description: this.t('wallet:encryptedLong'),
@@ -79,6 +90,7 @@ class WalletEncrypt extends React.Component {
   }
 
   render () {
+    /** Do not render if the wallet is encrypted. */
     if (this.wallet.isEncrypted === true) return null
     return (
       <div>
@@ -93,8 +105,7 @@ class WalletEncrypt extends React.Component {
             {this.t('wallet:passphrase')}
           </p>
           <Input
-            name='passphrase'
-            onChange={this.setPassphrase}
+            onChange={e => this.setValues({ passphrase: e.target.value })}
             placeholder={this.t('wallet:passphraseLong')}
             style={{ flex: 1 }}
             value={this.passphrase}
@@ -105,8 +116,7 @@ class WalletEncrypt extends React.Component {
             {this.t('wallet:passphraseRepeat')}
           </p>
           <Input
-            name='repeat'
-            onChange={this.setPassphrase}
+            onChange={e => this.setValues({ repeat: e.target.value })}
             placeholder={this.t('wallet:passphraseRepeatLong')}
             style={{ flex: 1 }}
             value={this.repeat}
@@ -114,10 +124,13 @@ class WalletEncrypt extends React.Component {
         </div>
         <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
           <p className='red' style={{ margin: '0 0 0 120px' }}>
-            {this.errorStatus === 'notMatching' &&
-              this.t('wallet:passphrasesNotMatching')}
+            {this.errShow.includes(this.errorStatus) === true &&
+              this.t('wallet:' + this.errorStatus)}
           </p>
-          <Button disabled={this.errorStatus !== false} onClick={this.encrypt}>
+          <Button
+            disabled={this.errorStatus !== ''}
+            onClick={this.encryptWallet}
+          >
             {this.t('wallet:encrypt')}
           </Button>
         </div>

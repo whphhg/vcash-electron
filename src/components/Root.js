@@ -17,31 +17,37 @@ import Transactions from './Transactions'
 notification.config({ top: 65 })
 message.config({ top: 11 })
 
-/**
- * Application's root component.
- */
+/** Application's root component. */
 @inject('connections')
 @observer
 class Root extends React.Component {
-  render = () =>
-    <Provider {...this.props.connections.viewingStores}>
-      <HashRouter>
-        <div>
-          <div id='AppGrid'>
-            <Header />
-            <div>
-              <Route exact path='/:uid' component={Transactions} />
-              <Route path='/:uid/addresses' component={Addresses} />
-              <Route path='/:uid/maintenance' component={Maintenance} />
-              <Route path='/:uid/network' component={Network} />
+  constructor (props) {
+    super(props)
+    this.connections = props.connections
+  }
+
+  render () {
+    return (
+      <Provider {...this.connections.viewingStores}>
+        <HashRouter>
+          <div>
+            <div id='AppGrid'>
+              <Header />
+              <div>
+                <Route exact path='/:uid' component={Transactions} />
+                <Route path='/:uid/addresses' component={Addresses} />
+                <Route path='/:uid/maintenance' component={Maintenance} />
+                <Route path='/:uid/network' component={Network} />
+              </div>
+              <Footer />
             </div>
-            <Footer />
+            <Console />
+            <Transaction />
           </div>
-          <Console />
-          <Transaction />
-        </div>
-      </HashRouter>
-    </Provider>
+        </HashRouter>
+      </Provider>
+    )
+  }
 }
 
 export default Root

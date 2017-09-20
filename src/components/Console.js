@@ -5,13 +5,14 @@ import { inject, observer } from 'mobx-react'
 import { Button, Input, Modal } from 'antd'
 import { shortUid } from '../utilities/common'
 
+/** RPC console component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'rpc')
 @observer
 class Console extends React.Component {
   @observable command = ''
-  @observable modal = false
   @observable responses = observable.array([])
+  @observable modalVisible = false
 
   constructor (props) {
     super(props)
@@ -19,7 +20,7 @@ class Console extends React.Component {
     this.gui = props.gui
     this.rpc = props.rpc
 
-    /** React to Alt-c key press and toggle console. */
+    /** Toggle modal on Alt-c key press. */
     document.onkeydown = e => {
       if (e.altKey === true && e.keyCode === 67) {
         this.toggleModal()
@@ -89,19 +90,22 @@ class Console extends React.Component {
   }
 
   /**
-   * Toggle modal.
+   * Toggle modal visibility.
    * @function toggleModal
    */
   @action
   toggleModal = () => {
-    this.modal = !this.modal
+    this.modalVisible = !this.modalVisible
   }
 
   /**
-   * Execute the command.
+   * Execute the RPC command.
    * @function execute
    */
-  execute () {
+  execute = () => {
+    /** Do not execute the RPC command if the status is false. */
+    if (this.executeStatus === false) return
+
     this.rpc.execute(
       [{ method: this.options.method, params: this.options.params }],
       response => {
@@ -118,23 +122,10 @@ class Console extends React.Component {
         onCancel={this.toggleModal}
         style={{ minWidth: '800px' }}
         title={this.t('wallet:rpcConsole')}
-        visible={this.modal === true}
+        visible={this.modalVisible === true}
       >
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateRows: '300px 1fr',
-            height: '100%'
-          }}
-        >
-          <div
-            style={{
-              fontSize: '11px',
-              maxHeight: '300px',
-              maxWidth: '765px',
-              overflowY: 'scroll'
-            }}
-          >
+        <div id='ConsoleGrid'>
+          <div>
             {this.responses.map(response =>
               <pre key={shortUid()}>
                 {JSON.stringify(response, null, 2)}
@@ -145,7 +136,7 @@ class Console extends React.Component {
           <div className='flex'>
             <Button
               disabled={this.executeStatus !== true}
-              onClick={() => this.execute()}
+              onClick={this.execute}
               size='small'
             >
               {this.t('wallet:execute')}
@@ -153,9 +144,7 @@ class Console extends React.Component {
             <div style={{ flex: 1, margin: '0 5px 0 5px' }}>
               <Input
                 onChange={this.setCommand}
-                onPressEnter={() => {
-                  this.executeStatus === true && this.execute()
-                }}
+                onPressEnter={this.execute}
                 placeholder={this.t('wallet:command')}
                 size='small'
                 value={this.command}

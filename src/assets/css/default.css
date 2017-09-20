@@ -20,18 +20,72 @@ body {
   font-size: 13px;
 }
 
-/**
- * Application grids
- */
+/** Application's grids */
 #AppGrid {
   display: grid;
-  grid-template-rows: 55px 1fr 25px; /* 55px header, content, 25px footer */
+  grid-template-rows: 55px 1fr 25px; /** header, body, footer */
   height: 100vh;
 }
 
-/**
- * Welcome screen
- */
+#ConsoleGrid {
+  display: grid;
+  grid-template-rows: 300px 1fr; /** history, input element and buttons */
+  height: 100%;
+}
+
+#TransactionsGrid {
+  display: grid;
+  grid-template-rows: 35px 1fr 160px; /** toolbar, body, transactions chart */
+  height: 100%;
+}
+
+#AddressesGrid {
+  display: grid;
+  grid-template-rows: 35px 1fr; /** toolbar, body */
+  height: 100%;
+}
+
+.AddressesColumnsGrid {
+  display: grid;
+  grid-template-columns: 1.1fr 1.4fr; /** addresses table, sending recipients */
+  height: 100%;
+}
+
+#RecipientsGrid {
+  display: grid;
+  grid-gap: 10px;
+  grid-template-rows: 1fr 145px; /** recipients, send options and currency converter */
+  height: 100%;
+}
+
+#NetworkGrid {
+  display: grid;
+  grid-template-rows: 35px 1fr 100px; /** toolbar, body, stats */
+  height: 100%;
+}
+
+#NetworkColumnsGrid {
+  display: grid;
+  grid-gap: 20px;
+  grid-template-columns: 1fr 1fr; /** reward charts, network charts */
+  height: 100%;
+}
+
+#MaintenanceGrid {
+  display: grid;
+  grid-template-rows: 35px 1fr 230px; /** toolbar, body, core peers table */
+  height: 100%;
+}
+
+/** RPC console */
+#ConsoleGrid > div:first-of-type {
+  font-size: 11px;
+  max-height: 300px;
+  max-width: 765px;
+  overflow-y: scroll;
+}
+
+/** Welcome screen */
 #Welcome {
   text-align: center;
 }
@@ -54,9 +108,7 @@ body {
   width: 300px;
 }
 
-/**
- * Welcome screen circling logo.
- */
+/** Welcome screen circling logo. */
 @-webkit-keyframes clipCircle {
   0%, 100% { clip: rect(0px, 140.8px, 2px, 0px); }
   25% { clip: rect(0px, 2px, 140.8px, 0px); }
@@ -96,9 +148,7 @@ body {
   -webkit-animation-delay: -3s;
 }
 
-/**
- * Elements (old -> refactor)
- */
+/** R E F A C T O R */
 header { background: #b60127; color: #FFFFFF; }
 header i { vertical-align: -6px; }
 header .ant-btn-primary { color: #FFFFFF; background-color: #43464B; border-color: #43464B; min-height: 30px; }
@@ -122,9 +172,7 @@ hr { border: 0; border-top: 1px solid #e9e9e9; margin: 10px 0 10px 0; }
 #sendRecipients { max-height: 375px; overflow-y: scroll; }
 #sendRecipients::-webkit-scrollbar { display: none; }
 
-/**
- * Ant Design
- */
+/** Ant Design */
 .ant-anchor-ink-ball { border: 3px solid #b60127; }
 .ant-anchor-link-active > .ant-anchor-link-title { color: #b60127; }
 .ant-select-selection:hover { border-color: #b60127; }

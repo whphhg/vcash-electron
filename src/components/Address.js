@@ -3,6 +3,7 @@ import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Table } from 'antd'
 
+/** Address details component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'wallet')
 @observer

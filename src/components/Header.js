@@ -8,6 +8,7 @@ import { Menu } from 'antd'
 import WalletLock from './WalletLock'
 import WalletUnlock from './WalletUnlock'
 
+/** Application's header component. */
 @translate(['wallet'], { wait: true })
 @inject('connections', 'gui', 'rates', 'wallet')
 @observer

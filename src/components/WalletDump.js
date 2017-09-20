@@ -4,6 +4,7 @@ import { inject, observer } from 'mobx-react'
 import { Button, Input, message } from 'antd'
 import { dataPath } from '../utilities/common'
 
+/** Wallet dumping component. */
 @translate(['wallet'], { wait: true })
 @inject('rpc', 'wallet')
 @observer
@@ -17,12 +18,12 @@ class WalletDump extends React.Component {
 
   /**
    * Dump the wallet.
-   * @function dump
+   * @function dumpWallet
    */
-  dump = () => {
+  dumpWallet = () => {
     this.rpc.execute([{ method: 'dumpwallet', params: [] }], response => {
-      /** Display a success message. */
       if (response[0].hasOwnProperty('result') === true) {
+        /** Display a success message for 6 seconds. */
         message.success(this.t('wallet:dumped'), 6)
       }
     })

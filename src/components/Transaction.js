@@ -1,9 +1,10 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Modal, Table, message } from 'antd'
+import { message, Modal, Table } from 'antd'
 import moment from 'moment'
 
+/** Transaction details component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'rates', 'rpc', 'wallet')
 @observer
@@ -19,15 +20,17 @@ class Transaction extends React.Component {
 
   /**
    * Lock transaction.
-   * @function ztlock
+   * @function ztLock
    */
-  ztlock = () => {
+  ztLock = () => {
     this.rpc.execute(
       [{ method: 'ztlock', params: [this.wallet.viewing] }],
       response => {
-        /** Update txs ztlock status & display a success message. */
         if (response[0].hasOwnProperty('result') === true) {
+          /** Update transactions ztlock statuses. */
           this.wallet.getWallet()
+
+          /** Display a success message for 6 seconds. */
           message.success(this.t('wallet:transactionLocked'), 6)
         }
       }
@@ -38,6 +41,7 @@ class Transaction extends React.Component {
     const { average, local } = this.rates
     const { viewing, viewingTx } = this.wallet
 
+    /** Do not render if there's no transaction being viewed. */
     if (viewing === null) return null
     return (
       <Modal
@@ -155,7 +159,7 @@ class Transaction extends React.Component {
                   viewingTx.hasOwnProperty('blended') === false &&
                   <p>
                     <a
-                      onClick={this.ztlock}
+                      onClick={this.ztLock}
                       disabled={viewingTx.ztlock === true}
                     >
                       {viewingTx.ztlock === true

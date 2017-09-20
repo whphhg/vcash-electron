@@ -15,6 +15,7 @@ import WalletPassphraseChange from './WalletPassphraseChange'
 import WalletRepair from './WalletRepair'
 import WalletSeedDump from './WalletSeedDump'
 
+/** Maintenance screen component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'wallet')
 @observer
@@ -28,13 +29,7 @@ class Maintenance extends React.Component {
 
   render () {
     return (
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateRows: '35px 1fr 230px',
-          height: '100%'
-        }}
-      >
+      <div id='MaintenanceGrid'>
         <div className='shadow'>
           <div style={{ margin: '0 10px 0 10px' }}>
             <div className='flex-sb' style={{ minHeight: '35px' }}>

@@ -2,15 +2,16 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, observable, reaction } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Button, Input, Modal, Tooltip, message } from 'antd'
+import { Button, Input, message, Modal, Tooltip } from 'antd'
 
+/** Wallet unlocking component. */
 @translate(['wallet'], { wait: true })
 @inject('rpc', 'wallet')
 @observer
 class WalletUnlock extends React.Component {
-  @observable error = false
-  @observable modal = false
   @observable passphrase = ''
+  @observable rpcError = ''
+  @observable modalVisible = false
 
   constructor (props) {
     super(props)
@@ -18,89 +19,91 @@ class WalletUnlock extends React.Component {
     this.rpc = props.rpc
     this.wallet = props.wallet
 
-    /** Clear previous error on passphrase change. */
+    /** Errors that will be shown to the user. */
+    this.errShow = ['passphraseIncorrect']
+
+    /** Clear previous RPC error on passphrase change. */
     reaction(
       () => this.passphrase,
       passphrase => {
-        if (this.error !== false) {
-          this.setError()
+        if (this.rpcError !== '') {
+          this.setValues({ rpcError: '' })
         }
       }
     )
 
-    /** Clear passphrase when modal closes. */
+    /** Clear passphrase when the modal gets hidden. */
     reaction(
-      () => this.modal,
-      modal => {
-        if (modal === false && this.passphrase !== '') {
-          this.setPassphrase()
+      () => this.modalVisible,
+      modalVisible => {
+        if (modalVisible === false && this.passphrase !== '') {
+          this.setValues({ passphrase: '' })
         }
       }
     )
   }
 
   /**
-   * Get error status.
+   * Get present error or empty string if none.
    * @function errorStatus
-   * @return {string|false} Current error or false if none.
+   * @return {string} Error status.
    */
   @computed
   get errorStatus () {
     if (this.passphrase.length < 1) return 'emptyField'
-    if (this.error !== false) return this.error
-    return false
+    if (this.rpcError !== '') return this.rpcError
+    return ''
   }
 
   /**
-   * Set RPC error.
-   * @function setError
-   * @param {string} error - RPC error.
+   * Set value(s) of observable properties.
+   * @function setValues
+   * @param {object} values - Key value combinations.
    */
   @action
-  setError = (error = false) => {
-    this.error = error
+  setValues = values => {
+    const allowed = ['passphrase', 'rpcError']
+
+    /** Set only values of allowed properties that differ from the present. */
+    Object.keys(values).forEach(key => {
+      if (allowed.includes(key) === true && this[key] !== values[key]) {
+        this[key] = values[key]
+      }
+    })
   }
 
   /**
-   * Set passphrase.
-   * @function setPassphrase
-   * @param {object} e - Input element event.
-   */
-  @action
-  setPassphrase = e => {
-    this.passphrase = typeof e === 'undefined' ? '' : e.target.value
-  }
-
-  /**
-   * Toggle modal.
+   * Toggle modal visibility.
    * @function toggleModal
    */
   @action
   toggleModal = () => {
-    this.modal = !this.modal
+    this.modalVisible = !this.modalVisible
   }
 
   /**
    * Unlock the wallet.
-   * @function unlock
+   * @function walletPassphrase
    */
-  unlock = () => {
+  walletPassphrase = () => {
     this.rpc.execute(
       [{ method: 'walletpassphrase', params: [this.passphrase] }],
       response => {
-        /** Update lock status, hide modal & display a success message. */
         if (response[0].hasOwnProperty('result') === true) {
+          /** Update wallet's lock status. */
           this.wallet.getLockStatus()
+
+          /** Hide modal. */
           this.toggleModal()
+
+          /** Display a success message for 6 seconds. */
           message.success(this.t('wallet:unlocked'), 6)
         }
 
-        /** Set error. */
         if (response[0].hasOwnProperty('error') === true) {
           switch (response[0].error.code) {
-            /** error_code_wallet_passphrase_incorrect */
             case -14:
-              return this.setError('incorrectPassphrase')
+              return this.setValues({ rpcError: 'passphraseIncorrect' })
           }
         }
       }
@@ -108,6 +111,7 @@ class WalletUnlock extends React.Component {
   }
 
   render () {
+    /** Do not render if the wallet is unlocked. */
     if (this.wallet.isLocked === false) return null
     return (
       <div>
@@ -115,11 +119,11 @@ class WalletUnlock extends React.Component {
           footer={null}
           onCancel={this.toggleModal}
           title={this.t('wallet:unlock')}
-          visible={this.modal === true}
+          visible={this.modalVisible === true}
         >
           <Input
-            onChange={this.setPassphrase}
-            onPressEnter={this.unlock}
+            onChange={e => this.setValues({ passphrase: e.target.value })}
+            onPressEnter={this.walletPassphrase}
             placeholder={this.t('wallet:passphraseLong')}
             style={{ width: '100%', margin: '0 0 5px 0' }}
             type='password'
@@ -127,10 +131,13 @@ class WalletUnlock extends React.Component {
           />
           <div className='flex-sb'>
             <p className='red'>
-              {this.errorStatus === 'incorrectPassphrase' &&
-                this.t('wallet:passphraseIncorrect')}
+              {this.errShow.includes(this.errorStatus) === true &&
+                this.t('wallet:' + this.errorStatus)}
             </p>
-            <Button disabled={this.errorStatus !== false} onClick={this.unlock}>
+            <Button
+              disabled={this.errorStatus !== ''}
+              onClick={this.walletPassphrase}
+            >
               {this.t('wallet:unlock')}
             </Button>
           </div>

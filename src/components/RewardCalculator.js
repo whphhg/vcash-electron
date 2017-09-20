@@ -5,6 +5,7 @@ import { inject, observer } from 'mobx-react'
 import { Input } from 'antd'
 import { calculateIncentive, calculatePoW } from '../utilities/blockRewards'
 
+/** Block reward calculating component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'wallet')
 @observer
@@ -31,7 +32,7 @@ class RewardCalculator extends React.Component {
   }
 
   /**
-   * Get proof-of-work reward.
+   * Get Proof-of-Work reward.
    * @function powReward
    * @return {number} Reward.
    */
@@ -73,12 +74,10 @@ class RewardCalculator extends React.Component {
   /**
    * Set block.
    * @function setBlock
-   * @param {object} e - Input element event.
+   * @param {string} block - Entered block.
    */
   @action
-  setBlock = e => {
-    const block = typeof e === 'undefined' ? '' : e.target.value
-
+  setBlock = block => {
     if (block.toString().match(/^[0-9]{0,7}$/) !== null) {
       this.enteredBlock = block
     }
@@ -116,7 +115,7 @@ class RewardCalculator extends React.Component {
         <div style={{ margin: '0 0 2px 0' }}>
           <Input
             maxLength={7}
-            onChange={this.setBlock}
+            onChange={e => this.setBlock(e.target.value)}
             placeholder={this.block}
             size='small'
             style={{ margin: '0 0 5px 0', width: '60px' }}

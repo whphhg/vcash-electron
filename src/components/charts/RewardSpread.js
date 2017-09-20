@@ -15,6 +15,7 @@ import moment from 'moment'
 /** Required components. */
 import { CustomTick, CustomTooltip } from './RechartsCustom'
 
+/** Reward spread chart component. */
 @translate(['wallet'], { wait: true })
 @inject('stats')
 @observer

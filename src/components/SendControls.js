@@ -4,11 +4,12 @@ import { action, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button, Popconfirm, Switch, Tooltip } from 'antd'
 
+/** Sending controls component. */
 @translate(['wallet'], { wait: true })
 @inject('rates', 'send', 'wallet')
 @observer
 class Send extends React.Component {
-  @observable popconfirm = false
+  @observable popconfirmVisible = false
 
   constructor (props) {
     super(props)
@@ -19,13 +20,13 @@ class Send extends React.Component {
   }
 
   /**
-   * Toggle visibility of popconfirm.
+   * Toggle popconfirm visibility only when the wallet is unlocked.
    * @function togglePopconfirm
    */
   @action
   togglePopconfirm = () => {
     if (this.wallet.isLocked === false && this.send.errorStatus === false) {
-      this.popconfirm = !this.popconfirm
+      this.popconfirmVisible = !this.popconfirmVisible
     }
   }
 
@@ -40,7 +41,7 @@ class Send extends React.Component {
             onVisibleChange={this.togglePopconfirm}
             placement='bottom'
             title={this.t('wallet:sendConfirm')}
-            visible={this.popconfirm}
+            visible={this.popconfirmVisible}
           >
             <Button
               disabled={

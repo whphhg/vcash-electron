@@ -3,6 +3,7 @@ import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Switch } from 'antd'
 
+/** Sound alerts setting component. */
 @translate(['wallet'], { wait: true })
 @inject('gui')
 @observer

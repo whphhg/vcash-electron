@@ -1,8 +1,9 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Switch, Tooltip, message } from 'antd'
+import { message, Switch, Tooltip } from 'antd'
 
+/** ChainBlender toggling and status component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'rpc', 'wallet')
 @observer
@@ -28,9 +29,11 @@ class ChainBlender extends React.Component {
         }
       ],
       response => {
-        /** Update blending status & display a success message. */
         if (response[0].hasOwnProperty('result') === true) {
+          /** Update blending status. */
           this.wallet.setBlendingStatus()
+
+          /** Display a success message for 6 seconds. */
           message.success(
             this.t('wallet:chainBlender', {
               context: this.wallet.isBlending === true ? 'start' : 'stop'

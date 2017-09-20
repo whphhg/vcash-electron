@@ -3,6 +3,7 @@ import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Input, Popconfirm } from 'antd'
 
+/** Sending recipients component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'rates', 'send')
 @observer

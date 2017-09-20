@@ -4,9 +4,7 @@ import { inject, observer } from 'mobx-react'
 import { action, computed, observable, reaction } from 'mobx'
 import { AutoComplete, Button, Input, Popover } from 'antd'
 
-/**
- * Message signing and verifying component.
- */
+/** Message signing and verifying component. */
 @translate(['wallet'], { wait: true })
 @inject('rpc', 'wallet')
 @observer
@@ -62,17 +60,12 @@ class Message extends React.Component {
   get errorStatus () {
     const signature = this.signature.value
 
-    /** Check for errors in the entered address. */
     if (this.address.match(/^[a-z0-9]*$/i) === null) return 'addrChars'
     if (this.address.length < 34) return 'addrShort'
     if (this.address.length > 35) return 'addrLong'
-
-    /** Check for errors in the entered signature. */
     if (signature.match(/^[a-z0-9+/=]*$/i) === null) return 'sigChars'
     if (signature !== '' && signature.length < 88) return 'sigShort'
     if (signature.length > 88) return 'sigLong'
-
-    /** Check for RPC error or return empty string if none. */
     if (this.rpcError !== '') return this.rpcError
     return ''
   }
@@ -111,22 +104,18 @@ class Message extends React.Component {
     this.rpc.execute(
       [{ method: 'signmessage', params: [this.address, this.message] }],
       response => {
-        /** Set signature. */
         if (response[0].hasOwnProperty('result') === true) {
+          /** Set signature and verification status. */
           this.setValues({
             signature: { value: response[0].result, setBy: 'rpc' },
             verified: true
           })
         }
 
-        /** Set error. */
         if (response[0].hasOwnProperty('error') === true) {
           switch (response[0].error.code) {
-            /** failed to get key id */
             case -3:
               return this.setValues({ rpcError: 'addrUnknown' })
-
-            /** invalid address */
             case -5:
               return this.setValues({ rpcError: 'addrInvalid' })
           }
@@ -148,15 +137,13 @@ class Message extends React.Component {
         }
       ],
       response => {
-        /** Set verified status. */
         if (response[0].hasOwnProperty('result') === true) {
+          /** Set verification status. */
           this.setValues({ verified: response[0].result })
         }
 
-        /** Set error. */
         if (response[0].hasOwnProperty('error') === true) {
           switch (response[0].error.code) {
-            /** invalid address */
             case -5:
               return this.setValues({ rpcError: 'addrInvalid' })
           }
@@ -165,73 +152,77 @@ class Message extends React.Component {
     )
   }
 
-  render = () =>
-    <Popover
-      content={
-        <div style={{ width: '400px' }}>
-          <AutoComplete
-            dataSource={this.wallet.addressList}
-            getPopupContainer={triggerNode => triggerNode.parentNode}
-            onChange={address => this.setValues({ address })}
-            placeholder={this.t('wallet:address')}
-            style={{ width: '100%' }}
-            value={this.address}
-          />
-          <Input.TextArea
-            autosize={{ minRows: 3 }}
-            onChange={e => this.setValues({ message: e.target.value })}
-            placeholder={this.t('wallet:msg')}
-            style={{ margin: '5px 0 0 0' }}
-            value={this.message}
-          />
-          <Input.TextArea
-            autosize={{ minRows: 2, maxRows: 2 }}
-            className={
-              this.verified === null
-                ? ''
-                : this.verified === true ? 'green' : 'red'
-            }
-            onChange={e =>
-              this.setValues({
-                signature: { value: e.target.value, setBy: 'user' }
-              })}
-            placeholder={this.t('wallet:msgSignature')}
-            style={{ margin: '5px 0 5px 0' }}
-            value={this.signature.value}
-          />
-          <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
-            <p className='red'>
-              {this.errShow.includes(this.errorStatus) === true &&
-                this.t('wallet:' + this.errorStatus)}
-            </p>
-            {(this.signature.value === '' &&
-              <Button
-                disabled={
-                  this.errorStatus !== '' || this.wallet.isLocked === true
-                }
-                onClick={this.signMessage}
-              >
-                {this.t('wallet:msgSign')}
-              </Button>) ||
-              <Button
-                disabled={this.errorStatus !== ''}
-                onClick={this.verifyMessage}
-              >
-                {this.t('wallet:msgVerify')}
-              </Button>}
+  render () {
+    return (
+      <Popover
+        content={
+          <div style={{ width: '400px' }}>
+            <AutoComplete
+              dataSource={this.wallet.addressList}
+              getPopupContainer={triggerNode => triggerNode.parentNode}
+              onChange={address => this.setValues({ address })}
+              placeholder={this.t('wallet:address')}
+              style={{ width: '100%' }}
+              value={this.address}
+            />
+            <Input.TextArea
+              autosize={{ minRows: 3 }}
+              name='message'
+              onChange={e => this.setValues({ message: e.target.value })}
+              placeholder={this.t('wallet:msg')}
+              style={{ margin: '5px 0 0 0' }}
+              value={this.message}
+            />
+            <Input.TextArea
+              autosize={{ minRows: 2, maxRows: 2 }}
+              className={
+                this.verified === null
+                  ? ''
+                  : this.verified === true ? 'green' : 'red'
+              }
+              onChange={e =>
+                this.setValues({
+                  signature: { value: e.target.value, setBy: 'user' }
+                })}
+              placeholder={this.t('wallet:msgSignature')}
+              style={{ margin: '5px 0 5px 0' }}
+              value={this.signature.value}
+            />
+            <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
+              <p className='red'>
+                {this.errShow.includes(this.errorStatus) === true &&
+                  this.t('wallet:' + this.errorStatus)}
+              </p>
+              {(this.signature.value === '' &&
+                <Button
+                  disabled={
+                    this.errorStatus !== '' || this.wallet.isLocked === true
+                  }
+                  onClick={this.signMessage}
+                >
+                  {this.t('wallet:msgSign')}
+                </Button>) ||
+                <Button
+                  disabled={this.errorStatus !== ''}
+                  onClick={this.verifyMessage}
+                >
+                  {this.t('wallet:msgVerify')}
+                </Button>}
+            </div>
           </div>
-        </div>
-      }
-      onVisibleChange={this.togglePopover}
-      placement='bottomLeft'
-      title={this.t('wallet:msgDesc')}
-      trigger='click'
-      visible={this.popoverVisible}
-    >
-      <Button size='small'>
-        <i className='flex-center material-icons md-16'>fingerprint</i>
-      </Button>
-    </Popover>
+        }
+        onVisibleChange={this.togglePopover}
+        placement='bottomLeft'
+        title={this.t('wallet:msgDesc')}
+        trigger='click'
+        visible={this.popoverVisible}
+      >
+        <Button size='small'>
+          <i className='flex-center material-icons md-16'>fingerprint</i>
+        </Button>
+      </Popover>
+    )
+  }
 }
 
 export default Message
