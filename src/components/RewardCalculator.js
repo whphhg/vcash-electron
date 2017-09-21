@@ -27,7 +27,7 @@ class RewardCalculator extends React.Component {
   @computed
   get block () {
     return this.enteredBlock.length === 0
-      ? this.wallet.info.getinfo.blocks
+      ? this.wallet.info.blocks
       : Math.round(this.enteredBlock)
   }
 

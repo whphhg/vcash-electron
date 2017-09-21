@@ -20,23 +20,6 @@ class Network extends React.Component {
   }
 
   render () {
-    const { ip, moneysupply, port } = this.wallet.info.getinfo
-    const { collateralized, endpoints } = this.wallet.info.getnetworkinfo
-    const {
-      collateralbalance,
-      collateralrequired,
-      networkstatus,
-      votecandidate,
-      walletaddress
-    } = this.wallet.info.getincentiveinfo
-
-    const {
-      currentblocksize,
-      currentblocktx,
-      pooledtx,
-      testnet
-    } = this.wallet.info.getmininginfo
-
     return (
       <div id='NetworkGrid'>
         <div className='shadow'>
@@ -49,10 +32,10 @@ class Network extends React.Component {
                   <span style={{ fontWeight: 600 }}>
                     {' '}{new Intl.NumberFormat(this.gui.language, {
                       maximumFractionDigits: 6
-                    }).format(collateralbalance)}{' '}
+                    }).format(this.wallet.info.collateralbalance)}{' '}
                     /{' '}
                     {new Intl.NumberFormat(this.gui.language).format(
-                      collateralrequired
+                      this.wallet.info.collateralrequired
                     )}
                   </span>{' '}
                   XVC
@@ -61,7 +44,7 @@ class Network extends React.Component {
                 <p>
                   {this.t('wallet:voteCandidate')}
                   <span style={{ fontWeight: 600 }}>
-                    {' '}{votecandidate === true
+                    {' '}{this.wallet.info.votecandidate === true
                       ? this.t('wallet:yes')
                       : this.t('wallet:no')}
                   </span>
@@ -72,9 +55,9 @@ class Network extends React.Component {
                 <p>
                   {this.t('wallet:defaultAddress')}
                   <span style={{ fontWeight: 600 }}>
-                    {' '}{walletaddress === ''
+                    {' '}{this.wallet.info.walletaddress === ''
                       ? this.t('wallet:unlockRevealed')
-                      : walletaddress}
+                      : this.wallet.info.walletaddress}
                   </span>
                 </p>
               </div>
@@ -153,18 +136,19 @@ class Network extends React.Component {
                   </div>
                   <div style={{ margin: '0 0 1px 0' }}>
                     <p style={{ fontWeight: '500' }}>
-                      {ip}:{port}
+                      {this.wallet.info.ip}:{this.wallet.info.port}
                     </p>
                     <p style={{ fontWeight: '500' }}>
-                      {networkstatus === 'ok'
+                      {this.wallet.info.networkstatus === 'ok'
                         ? this.t('wallet:yes')
                         : this.t('wallet:no')}
                     </p>
                     <p style={{ fontWeight: '500' }}>
-                      {collateralized} / {endpoints.length}
+                      {this.wallet.info.collateralized} /{' '}
+                      {this.wallet.info.endpoints.length}
                     </p>
                     <p style={{ fontWeight: '500' }}>
-                      {testnet === true
+                      {this.wallet.info.testnet === true
                         ? this.t('wallet:yes')
                         : this.t('wallet:no')}
                     </p>
@@ -202,18 +186,18 @@ class Network extends React.Component {
                       <span style={{ fontWeight: '500' }}>
                         {new Intl.NumberFormat(this.gui.language, {
                           maximumFractionDigits: 0
-                        }).format(moneysupply)}
+                        }).format(this.wallet.info.moneysupply)}
                       </span>{' '}
                       XVC
                     </p>
                     <p style={{ fontWeight: '500' }}>
-                      {humanReadable(currentblocksize, false)}
+                      {humanReadable(this.wallet.info.currentblocksize, false)}
                     </p>
                     <p style={{ fontWeight: '500' }}>
-                      {currentblocktx}
+                      {this.wallet.info.currentblocktx}
                     </p>
                     <p style={{ fontWeight: '500' }}>
-                      {pooledtx}
+                      {this.wallet.info.pooledtx}
                     </p>
                   </div>
                 </div>

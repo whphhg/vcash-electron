@@ -46,7 +46,7 @@ class Send extends React.Component {
             <Button
               disabled={
                 this.wallet.isLocked === true ||
-                this.wallet.info.getinfo.balance < 0.0005 ||
+                this.wallet.info.balance < 0.0005 ||
                 this.send.errorStatus !== false
               }
               size='small'

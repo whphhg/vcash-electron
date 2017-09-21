@@ -171,7 +171,7 @@ export default class Send {
       if (confirmations !== '') {
         confirmations = parseInt(confirmations)
 
-        if (confirmations > this.wallet.info.getinfo.blocks) return
+        if (confirmations > this.wallet.info.blocks) return
         if (confirmations < 1) return
       }
 
@@ -228,7 +228,7 @@ export default class Send {
           ? 0 - parseFloat(value)
           : parseFloat(saved.amount) - parseFloat(value)
 
-      if (this.total - difference > this.wallet.info.getinfo.balance) return
+      if (this.total - difference > this.wallet.info.balance) return
 
       /** Set ammount that passed above checks. */
       saved.amount = value

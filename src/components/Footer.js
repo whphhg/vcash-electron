@@ -28,7 +28,7 @@ class Footer extends React.Component {
                 {this.t('wallet:onBlock')}{' '}
                 <span style={{ fontWeight: '500' }}>
                   {new Intl.NumberFormat(this.gui.language).format(
-                    this.wallet.info.getinfo.blocks
+                    this.wallet.info.blocks
                   )}
                 </span>
               </p>
@@ -51,11 +51,11 @@ class Footer extends React.Component {
               <i className='material-icons md-16'>settings_input_antenna</i>
               <p style={{ margin: '0 10px 0 5px' }}>
                 <span style={{ fontWeight: '500' }}>
-                  {this.wallet.info.getnetworkinfo.tcp.connections}
+                  {this.wallet.info.tcp.connections}
                 </span>{' '}
                 TCP &bull;{' '}
                 <span style={{ fontWeight: '500' }}>
-                  {this.wallet.info.getnetworkinfo.udp.connections}
+                  {this.wallet.info.udp.connections}
                 </span>{' '}
                 UDP
               </p>
@@ -74,14 +74,14 @@ class Footer extends React.Component {
               <p style={{ margin: '0 10px 0 5px' }}>
                 Vcash{' '}
                 <span style={{ fontWeight: '500' }}>
-                  {this.wallet.info.getinfo.version.split(':')[1]}
+                  {this.wallet.info.version.split(':')[1]}
                 </span>
               </p>
               <i className='material-icons md-16'>account_balance_wallet</i>
               <p style={{ margin: '0 10px 0 5px' }}>
                 {this.t('wallet:wallet')}{' '}
                 <span style={{ fontWeight: '500' }}>
-                  {this.wallet.info.getinfo.walletversion}
+                  {this.wallet.info.walletversion}
                 </span>
               </p>
               <i className='material-icons md-16'>computer</i>

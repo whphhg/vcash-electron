@@ -24,7 +24,7 @@ class Header extends React.Component {
 
   render () {
     const { average, local } = this.rates
-    const { balance, newmint, stake } = this.wallet.info.getinfo
+    const { balance, newmint, stake } = this.wallet.info
 
     return (
       <header className='flex-sb shadow' style={{ height: '55px' }}>

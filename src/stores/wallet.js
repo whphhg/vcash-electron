@@ -48,18 +48,16 @@ export default class Wallet {
     this.rpc = rpc
     this.lastBlock = ''
     this.timeouts = {
-      getNetworkInfo: null,
-      getWallet: null,
-      getWalletInfo: null
+      network: null,
+      wallet: null,
+
+      getWallet: null
     }
 
     /** Refresh network info every 3s until there are at least 3 peers. */
     autorunAsync(() => {
-      if (
-        this.peers.length < 3 ||
-        this.info.getnetworkinfo.endpoints.length === 0
-      ) {
-        this.restart('getNetworkInfo')
+      if (this.peers.length < 3 || this.info.endpoints.length === 0) {
+        this.getInfo('network')
       }
     }, 3 * 1000)
 
@@ -69,8 +67,8 @@ export default class Wallet {
       ready => {
         /** Start update loops & update lock status. */
         if (ready === true) {
-          this.restart('getNetworkInfo')
-          this.restart('getWalletInfo')
+          this.getInfo('network')
+          this.getInfo('wallet')
           this.getWallet(true, true)
           this.getLockStatus()
         }
@@ -89,7 +87,7 @@ export default class Wallet {
       () => this.isLocked,
       isLocked => {
         if (isLocked === false) {
-          this.restart('getWalletInfo')
+          this.getInfo('wallet')
 
           /**
            * Restart network info update loop 5s after unlocking if
@@ -99,7 +97,7 @@ export default class Wallet {
             const info = this.responses.get('getincentiveinfo')
 
             if (info.walletaddress === '') {
-              setTimeout(() => this.restart('getNetworkInfo'), 5 * 1000)
+              setTimeout(() => this.getInfo('network'), 5 * 1000)
             }
           }
         }
@@ -137,7 +135,7 @@ export default class Wallet {
       }
 
       return balances
-    }, { '#': this.info.getinfo.balance })
+    }, { '#': this.info.balance })
   }
 
   /**
@@ -275,73 +273,59 @@ export default class Wallet {
   }
 
   /**
-   * Get RPC info responses.
+   * Get RPC info responses results.
    * @function info
-   * @return {object} RPC response.
+   * @return {object} Results.
    */
   @computed
   get info () {
-    return this.responses.entries().reduce((responses, [key, value]) => {
-      responses[key] = value
-      return responses
+    return this.responses.entries().reduce((results, [key, values]) => {
+      if (key === 'getpeerinfo') return { ...results, peers: values }
+      return { ...results, ...values }
     }, {
-      chainblender: {
-        blendstate: 'none',
-        balance: 0,
-        denominatedbalance: 0,
-        nondenominatedbalance: 0,
-        blendedbalance: 0,
-        blendedpercentage: 0
-      },
-      getdifficulty: {
-        'proof-of-work': 0,
-        'proof-of-stake': 0
-      },
-      getmininginfo: {
-        blocks: 0,
-        currentblocksize: 0,
-        currentblocktx: 0,
-        difficulty: 0,
-        errors: '',
-        generate: null,
-        genproclimit: 0,
-        hashespersec: 0,
-        networkhashps: 0,
-        pooledtx: 0,
-        testnet: null
-      },
-      getincentiveinfo: {
-        walletaddress: '',
-        collateralrequired: 0,
-        collateralbalance: 0,
-        networkstatus: '',
-        votecandidate: false,
-        votescore: 0
-      },
-      getinfo: {
-        version: ':',
-        protocolversion: 0,
-        walletversion: 0,
-        balance: 0,
-        newmint: 0,
-        stake: 0,
-        blocks: 0,
-        moneysupply: 0,
-        connections: 0,
-        ip: '',
-        port: 0,
-        difficulty: 0,
-        testnet: false,
-        keypoolsize: 0,
-        paytxfee: 0,
-        relayfee: 0
-      },
-      getnetworkinfo: {
-        collateralized: 0,
-        endpoints: [],
-        tcp: { connections: 0 },
-        udp: { connections: 0 }
-      }
+      blendstate: 'none',
+      balance: 0,
+      denominatedbalance: 0,
+      nondenominatedbalance: 0,
+      blendedbalance: 0,
+      blendedpercentage: 0,
+      'proof-of-work': 0,
+      'proof-of-stake': 0,
+      'search-interval': 0,
+      blocks: 0,
+      currentblocksize: 0,
+      currentblocktx: 0,
+      difficulty: 0,
+      errors: '',
+      generate: null,
+      genproclimit: 0,
+      hashespersec: 0,
+      networkhashps: 0,
+      pooledtx: 0,
+      testnet: null,
+      walletaddress: '',
+      collateralrequired: 0,
+      collateralbalance: 0,
+      networkstatus: '',
+      votecandidate: false,
+      votescore: 0,
+      version: ':',
+      protocolversion: 0,
+      walletversion: 0,
+      newmint: 0,
+      stake: 0,
+      moneysupply: 0,
+      connections: 0,
+      ip: '',
+      port: 0,
+      keypoolsize: 0,
+      paytxfee: 0,
+      relayfee: 0,
+      collateralized: 0,
+      endpoints: [],
+      tcp: { connections: 0, ip: '', port: 0 },
+      udp: { connections: 0, ip: '', port: 0 },
+      peers: []
     })
   }
 
@@ -410,9 +394,9 @@ export default class Wallet {
     const peersHeight = this.peers.reduce((height, peer) => {
       if (peer.startingheight > height) return peer.startingheight
       return height
-    }, this.info.getinfo.blocks)
+    }, this.info.blocks)
 
-    return this.info.getinfo.blocks / peersHeight * 100
+    return this.info.blocks / peersHeight * 100
   }
 
   /**
@@ -1011,6 +995,45 @@ export default class Wallet {
   }
 
   /**
+   * Get wallet or network info.
+   * @function getInfo
+   * @param {string} id - Request's id; either network or wallet.
+   */
+  getInfo (id = 'wallet') {
+    /** Clear previous timeout. */
+    clearTimeout(this.timeouts[id])
+
+    /** Grouped RPC info requests and their update intervals. */
+    const requests = {
+      network: {
+        delay: 60 * 1000,
+        options: [
+          { method: 'getnetworkinfo', params: [] },
+          { method: 'getpeerinfo', params: [] },
+          { method: 'getincentiveinfo', params: [] },
+          { method: 'getmininginfo', params: [] },
+          { method: 'getdifficulty', params: [] }
+        ]
+      },
+      wallet: {
+        delay: 10 * 1000,
+        options: [
+          { method: 'getinfo', params: [] },
+          { method: 'chainblender', params: ['info'] }
+        ]
+      }
+    }
+
+    this.rpc.execute(requests[id].options, (response, options) => {
+      /** Set the RPC response. */
+      this.setInfo(response, options)
+
+      /** Start a new timeout. */
+      this.timeouts[id] = setTimeout(() => this.getInfo(id), requests[id].delay)
+    })
+  }
+
+  /**
    * Get wallet lock status.
    * @function getLockStatus
    */
@@ -1030,31 +1053,6 @@ export default class Wallet {
           return this.setLockStatus(true, true)
       }
     })
-  }
-
-  /**
-   * Get network info.
-   * @function getNetworkInfo
-   */
-  getNetworkInfo () {
-    this.rpc.execute(
-      [
-        { method: 'getnetworkinfo', params: [] },
-        { method: 'getpeerinfo', params: [] },
-        { method: 'getincentiveinfo', params: [] },
-        { method: 'getmininginfo', params: [] },
-        { method: 'getdifficulty', params: [] }
-      ],
-      (response, options) => {
-        this.setInfo(response, options)
-
-        /** Set a new timeout for 60 seconds. */
-        this.timeouts.getNetworkInfo = setTimeout(
-          () => this.getNetworkInfo(),
-          60 * 1000
-        )
-      }
-    )
   }
 
   /**
@@ -1191,37 +1189,5 @@ export default class Wallet {
         })
       }
     })
-  }
-
-  /**
-   * Get wallet info.
-   * @function getWalletInfo
-   */
-  getWalletInfo () {
-    this.rpc.execute(
-      [
-        { method: 'getinfo', params: [] },
-        { method: 'chainblender', params: ['info'] }
-      ],
-      (response, options) => {
-        this.setInfo(response, options)
-
-        /** Set a new timeout for 10 seconds. */
-        this.timeouts.getWalletInfo = setTimeout(
-          () => this.getWalletInfo(),
-          10 * 1000
-        )
-      }
-    )
-  }
-
-  /**
-   * Clear previous timeout id and restart the provided update loop.
-   * @function restart
-   * @param {string} timeout - Timeout key.
-   */
-  restart (timeout) {
-    clearTimeout(this.timeouts[timeout])
-    this[timeout]()
   }
 }

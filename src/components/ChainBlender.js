@@ -50,7 +50,7 @@ class ChainBlender extends React.Component {
       blendedbalance,
       blendedpercentage,
       denominatedbalance
-    } = this.wallet.info.chainblender
+    } = this.wallet.info
 
     return (
       <div className='flex'>

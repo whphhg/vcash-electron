@@ -200,9 +200,9 @@ export default class Stats {
   setNetworkByMinute () {
     this.networkByMinute.push({
       date: new Date().getTime(),
-      posDifficulty: this.wallet.info.getdifficulty['proof-of-stake'],
-      powDifficulty: this.wallet.info.getdifficulty['proof-of-work'],
-      hashRate: this.wallet.info.getmininginfo.networkhashps
+      posDifficulty: this.wallet.info['proof-of-stake'],
+      powDifficulty: this.wallet.info['proof-of-work'],
+      hashRate: this.wallet.info.networkhashps
     })
 
     /** Set new timeout only while RPC is ready. */
