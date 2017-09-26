@@ -24,6 +24,7 @@ import { enableLogging } from 'mobx-logger'
 import { Provider } from 'mobx-react'
 import i18next from './utilities/i18next'
 import './utilities/rightClickMenu'
+import 'babel-polyfill'
 
 /** Required components. */
 import Connections from './components/Connections'

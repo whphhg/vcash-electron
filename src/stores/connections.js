@@ -13,6 +13,7 @@ import rates from './rates'
 
 /** Store classes. */
 import RPC from './rpc'
+import RPCNext from './rpc_next'
 import Send from './send'
 import Stats from './stats'
 import Wallet from './wallet'
@@ -302,11 +303,12 @@ class Connections {
     /** Initialize and set the new connection's stores. */
     if (this.stores.has(uid) === false) {
       const rpc = new RPC(conn, this.setStatus)
+      const rpcNext = new RPCNext(conn, this.setStatus)
       const wallet = new Wallet(gui, rates, rpc)
       const send = new Send(rpc, wallet)
       const stats = new Stats(rpc, wallet)
 
-      this.stores.set(uid, { rpc, send, stats, wallet })
+      this.stores.set(uid, { rpc, rpcNext, send, stats, wallet })
     }
 
     /** Set connection active. */
