@@ -5,30 +5,31 @@ import { Button, message, Tooltip } from 'antd'
 
 /** Wallet locking component. */
 @translate(['wallet'], { wait: true })
-@inject('rpc', 'wallet')
+@inject('rpcNext', 'wallet')
 @observer
 class WalletLock extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.rpc = props.rpc
+    this.rpc = props.rpcNext
     this.wallet = props.wallet
+    this.walletLock = this.walletLock.bind(this)
   }
 
   /**
    * Lock the wallet.
    * @function walletLock
    */
-  walletLock = () => {
-    this.rpc.execute([{ method: 'walletlock', params: [] }], response => {
-      if (response[0].hasOwnProperty('result') === true) {
-        /** Update wallet's lock status. */
-        this.wallet.getLockStatus()
+  async walletLock () {
+    const response = await this.rpc.walletLock()
 
-        /** Display a success message for 6 seconds. */
-        message.success(this.t('wallet:locked'), 6)
-      }
-    })
+    if ('result' in response === true) {
+      /** Update wallet's lock status. */
+      this.wallet.getLockStatus()
+
+      /** Display a success message for 6s. */
+      message.success(this.t('wallet:locked'), 6)
+    }
   }
 
   render () {
