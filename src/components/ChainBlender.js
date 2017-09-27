@@ -5,53 +5,44 @@ import { message, Switch, Tooltip } from 'antd'
 
 /** ChainBlender toggling and status component. */
 @translate(['wallet'], { wait: true })
-@inject('gui', 'rpc', 'wallet')
+@inject('gui', 'rpcNext', 'wallet')
 @observer
 class ChainBlender extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
-    this.rpc = props.rpc
+    this.rpc = props.rpcNext
     this.wallet = props.wallet
+
+    /** Bind the async function. */
+    this.toggle = this.toggle.bind(this)
   }
 
   /**
    * Toggle ChainBlender.
    * @function toggle
    */
-  toggle = () => {
-    this.rpc.execute(
-      [
-        {
-          method: 'chainblender',
-          params: [this.wallet.isBlending === true ? 'stop' : 'start']
-        }
-      ],
-      response => {
-        if (response[0].hasOwnProperty('result') === true) {
-          /** Update blending status. */
-          this.wallet.setBlendingStatus()
-
-          /** Display a success message for 6 seconds. */
-          message.success(
-            this.t('wallet:chainBlender', {
-              context: this.wallet.isBlending === true ? 'start' : 'stop'
-            }),
-            6
-          )
-        }
-      }
+  async toggle () {
+    const response = await this.rpc.chainBlender(
+      this.wallet.isBlending === true ? 'stop' : 'start'
     )
+
+    if ('result' in response === true) {
+      /** Update blending status. */
+      this.wallet.setBlendingStatus()
+
+      /** Display a success message for 6s. */
+      message.success(
+        this.t('wallet:chainBlender', {
+          context: this.wallet.isBlending === true ? 'start' : 'stop'
+        }),
+        6
+      )
+    }
   }
 
   render () {
-    const {
-      blendedbalance,
-      blendedpercentage,
-      denominatedbalance
-    } = this.wallet.info
-
     return (
       <div className='flex'>
         <div style={{ margin: '0 10px 3px 0' }}>
@@ -83,15 +74,15 @@ class ChainBlender extends React.Component {
           <span style={{ fontWeight: 600 }}>
             {new Intl.NumberFormat(this.gui.language, {
               maximumFractionDigits: 6
-            }).format(blendedbalance)}
+            }).format(this.wallet.info.blendedbalance)}
           </span>{' '}
           XVC (<span style={{ fontWeight: 600 }}>
             {new Intl.NumberFormat(this.gui.language, {
               maximumFractionDigits: 2
-            }).format(blendedpercentage)}
+            }).format(this.wallet.info.blendedpercentage)}
           </span>%)
         </p>
-        {this.wallet.isLocked === false &&
+        {this.wallet.isLocked === false && (
           <div className='flex' style={{ margin: '0 0 0 10px' }}>
             <i className='material-icons md-16'>grain</i>
             <p>
@@ -99,11 +90,12 @@ class ChainBlender extends React.Component {
               <span style={{ fontWeight: 600 }}>
                 {new Intl.NumberFormat(this.gui.language, {
                   maximumFractionDigits: 6
-                }).format(denominatedbalance)}
+                }).format(this.wallet.info.denominatedbalance)}
               </span>{' '}
               XVC
             </p>
-          </div>}
+          </div>
+        )}
       </div>
     )
   }

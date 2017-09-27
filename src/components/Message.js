@@ -6,7 +6,7 @@ import { AutoComplete, Button, Input, Popover } from 'antd'
 
 /** Message signing and verifying component. */
 @translate(['wallet'], { wait: true })
-@inject('rpc', 'wallet')
+@inject('rpcNext', 'wallet')
 @observer
 class Message extends React.Component {
   @observable address = ''
@@ -19,16 +19,17 @@ class Message extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.rpc = props.rpc
+    this.rpc = props.rpcNext
     this.wallet = props.wallet
+
+    /** Bind the async functions. */
+    this.signMessage = this.signMessage.bind(this)
+    this.verifyMessage = this.verifyMessage.bind(this)
 
     /** Errors that will be shown to the user. */
     this.errShow = ['addrChars', 'addrInvalid', 'addrUnknown', 'sigChars']
 
-    /**
-     * Clear previous RPC error and verification status when the user updates
-     * the address or message.
-     */
+    /** Clear prev. RPC error and verification on address or message update. */
     reaction(
       () => [this.address, this.message],
       ([address, message]) => {
@@ -38,9 +39,7 @@ class Message extends React.Component {
       }
     )
 
-    /**
-     * Clear verification status when the user updates the signature.
-     */
+    /** Clear verification on signature update. */
     reaction(
       () => this.signature,
       signature => {
@@ -79,9 +78,9 @@ class Message extends React.Component {
   setValues = values => {
     const allowed = ['address', 'message', 'signature', 'rpcError', 'verified']
 
-    /** Set only values of allowed properties. */
+    /** Set only values of allowed properties that differ from the present. */
     Object.keys(values).forEach(key => {
-      if (allowed.includes(key) === true) {
+      if (allowed.includes(key) === true && this[key] !== values[key]) {
         this[key] = values[key]
       }
     })
@@ -100,56 +99,49 @@ class Message extends React.Component {
    * Sign the message using the address's private key.
    * @function signMessage
    */
-  signMessage = () => {
-    this.rpc.execute(
-      [{ method: 'signmessage', params: [this.address, this.message] }],
-      response => {
-        if (response[0].hasOwnProperty('result') === true) {
-          /** Set signature and verification status. */
-          this.setValues({
-            signature: { value: response[0].result, setBy: 'rpc' },
-            verified: true
-          })
-        }
+  async signMessage () {
+    const response = await this.rpc.signMessage(this.address, this.message)
 
-        if (response[0].hasOwnProperty('error') === true) {
-          switch (response[0].error.code) {
-            case -3:
-              return this.setValues({ rpcError: 'addrUnknown' })
-            case -5:
-              return this.setValues({ rpcError: 'addrInvalid' })
-          }
-        }
+    if ('result' in response === true) {
+      /** Set signature and verification status. */
+      this.setValues({
+        signature: { value: response.result, setBy: 'rpc' },
+        verified: true
+      })
+    }
+
+    if ('error' in response === true) {
+      switch (response.error.code) {
+        case -3:
+          return this.setValues({ rpcError: 'addrUnknown' })
+        case -5:
+          return this.setValues({ rpcError: 'addrInvalid' })
       }
-    )
+    }
   }
 
   /**
    * Verify the message was signed by the address's private key.
    * @function verifyMessage
    */
-  verifyMessage = () => {
-    this.rpc.execute(
-      [
-        {
-          method: 'verifymessage',
-          params: [this.address, this.signature.value, this.message]
-        }
-      ],
-      response => {
-        if (response[0].hasOwnProperty('result') === true) {
-          /** Set verification status. */
-          this.setValues({ verified: response[0].result })
-        }
-
-        if (response[0].hasOwnProperty('error') === true) {
-          switch (response[0].error.code) {
-            case -5:
-              return this.setValues({ rpcError: 'addrInvalid' })
-          }
-        }
-      }
+  async verifyMessage () {
+    const response = await this.rpc.verifyMessage(
+      this.address,
+      this.signature.value,
+      this.message
     )
+
+    if ('result' in response === true) {
+      /** Set verification status. */
+      this.setValues({ verified: response.result })
+    }
+
+    if ('error' in response === true) {
+      switch (response.error.code) {
+        case -5:
+          return this.setValues({ rpcError: 'addrInvalid' })
+      }
+    }
   }
 
   render () {
@@ -159,6 +151,7 @@ class Message extends React.Component {
           <div style={{ width: '400px' }}>
             <AutoComplete
               dataSource={this.wallet.addressList}
+              filterOption
               getPopupContainer={triggerNode => triggerNode.parentNode}
               onChange={address => this.setValues({ address })}
               placeholder={this.t('wallet:address')}
@@ -193,7 +186,7 @@ class Message extends React.Component {
                 {this.errShow.includes(this.errorStatus) === true &&
                   this.t('wallet:' + this.errorStatus)}
               </p>
-              {(this.signature.value === '' &&
+              {this.signature.value === '' && (
                 <Button
                   disabled={
                     this.errorStatus !== '' || this.wallet.isLocked === true
@@ -201,13 +194,16 @@ class Message extends React.Component {
                   onClick={this.signMessage}
                 >
                   {this.t('wallet:msgSign')}
-                </Button>) ||
+                </Button>
+              )}
+              {this.signature.value !== '' && (
                 <Button
                   disabled={this.errorStatus !== ''}
                   onClick={this.verifyMessage}
                 >
                   {this.t('wallet:msgVerify')}
-                </Button>}
+                </Button>
+              )}
             </div>
           </div>
         }

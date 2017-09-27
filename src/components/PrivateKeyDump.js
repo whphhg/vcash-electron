@@ -6,7 +6,7 @@ import { AutoComplete, Button, Input, Popover } from 'antd'
 
 /** Private key dumping component. */
 @translate(['wallet'], { wait: true })
-@inject('rpc', 'wallet')
+@inject('rpcNext', 'wallet')
 @observer
 class PrivateKeyDump extends React.Component {
   @observable address = ''
@@ -17,8 +17,11 @@ class PrivateKeyDump extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.rpc = props.rpc
+    this.rpc = props.rpcNext
     this.wallet = props.wallet
+
+    /** Bind the async function. */
+    this.dumpPrivKey = this.dumpPrivKey.bind(this)
 
     /** Errors that will be shown to the user. */
     this.errShow = ['addrChars', 'addrInvalid', 'addrUnknown']
@@ -37,11 +40,10 @@ class PrivateKeyDump extends React.Component {
     reaction(
       () => this.popoverVisible,
       popoverVisible => {
-        if (
-          popoverVisible === false &&
-          (this.address !== '' || this.privateKey !== '')
-        ) {
-          this.setValues({ address: '', privateKey: '' })
+        if (popoverVisible === false) {
+          if (this.address !== '' || this.privateKey !== '') {
+            this.setValues({ address: '', privateKey: '' })
+          }
         }
       }
     )
@@ -93,25 +95,22 @@ class PrivateKeyDump extends React.Component {
    * Dump private key.
    * @function dumpPrivKey
    */
-  dumpPrivKey = () => {
-    this.rpc.execute(
-      [{ method: 'dumpprivkey', params: [this.address] }],
-      response => {
-        if (response[0].hasOwnProperty('result') === true) {
-          /** Set private key. */
-          this.setValues({ privateKey: response[0].result })
-        }
+  async dumpPrivKey () {
+    const response = await this.rpc.dumpPrivKey(this.address)
 
-        if (response[0].hasOwnProperty('error') === true) {
-          switch (response[0].error.code) {
-            case -4:
-              return this.setValues({ rpcError: 'addrUnknown' })
-            case -5:
-              return this.setValues({ rpcError: 'addrInvalid' })
-          }
-        }
+    if ('result' in response === true) {
+      /** Set private key. */
+      this.setValues({ privateKey: response.result })
+    }
+
+    if ('error' in response === true) {
+      switch (response.error.code) {
+        case -4:
+          return this.setValues({ rpcError: 'addrUnknown' })
+        case -5:
+          return this.setValues({ rpcError: 'addrInvalid' })
       }
-    )
+    }
   }
 
   render () {
@@ -121,19 +120,21 @@ class PrivateKeyDump extends React.Component {
           <div style={{ width: '400px' }}>
             <AutoComplete
               dataSource={this.wallet.addressList}
+              filterOption
               getPopupContainer={triggerNode => triggerNode.parentNode}
               onChange={address => this.setValues({ address })}
               placeholder={this.t('wallet:address')}
               style={{ width: '100%' }}
               value={this.address}
             />
-            {this.privateKey !== '' &&
+            {this.privateKey !== '' && (
               <Input
                 className='green'
                 readOnly
                 style={{ margin: '5px 0 0 0' }}
                 value={this.privateKey}
-              />}
+              />
+            )}
             <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
               <p className='red'>
                 {this.errShow.includes(this.errorStatus) === true &&

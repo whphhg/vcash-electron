@@ -6,7 +6,7 @@ import { Button } from 'antd'
 
 /** Wallet check and repair component. */
 @translate(['wallet'], { wait: true })
-@inject('gui', 'rpc')
+@inject('gui', 'rpcNext')
 @observer
 class WalletRepair extends React.Component {
   @observable amountAffected = 0
@@ -17,53 +17,55 @@ class WalletRepair extends React.Component {
     super(props)
     this.t = props.t
     this.gui = props.gui
-    this.rpc = props.rpc
+    this.rpc = props.rpcNext
+
+    /** Bind the async function. */
+    this.crWallet = this.crWallet.bind(this)
 
     /** Check the wallet when component loads. */
-    this.repair()
+    this.crWallet()
   }
 
   /**
-   * Set RPC response.
-   * @function setResponse
-   * @param {object} response - RPC response.
+   * Set value(s) of observable properties.
+   * @function setValues
+   * @param {object} values - Key value combinations.
    */
   @action
-  setResponse = response => {
-    /** Re-check after repairing. */
-    if (
-      this.checkPassed === false &&
-      response.hasOwnProperty('wallet check passed') === false
-    ) {
-      return this.repair()
-    }
+  setValues (values) {
+    const allowed = ['amountAffected', 'checkPassed', 'mismatchedSpent']
 
-    /** Update check passed status. */
-    this.checkPassed = response.hasOwnProperty('wallet check passed')
-
-    /** Set or reset amount affected by repair. */
-    this.amountAffected =
-      this.checkPassed === true ? 0 : response['amount affected by repair']
-
-    /** Set or reset mismatched spent amount. */
-    this.mismatchedSpent =
-      this.checkPassed === true ? 0 : response['mismatched spent coins']
+    /** Set only values of allowed properties that differ from the present. */
+    Object.keys(values).forEach(key => {
+      if (allowed.includes(key) === true && this[key] !== values[key]) {
+        this[key] = values[key]
+      }
+    })
   }
 
   /**
    * Check for and repair wallet inconsistencies.
-   * @function repair
+   * @function crWallet
    * @param {boolean} checkOnly - Check for inconsistencies without repairing.
    */
-  repair = (checkOnly = true) => {
-    const method = checkOnly === true ? 'checkwallet' : 'repairwallet'
+  async crWallet (checkOnly = true) {
+    const method = checkOnly === true ? 'checkWallet' : 'repairWallet'
+    const response = await this.rpc[method]()
 
-    this.rpc.execute([{ method, params: [] }], response => {
-      if (response[0].hasOwnProperty('result') === true) {
-        /** Set checkPassed and potential mismatched & amount affected. */
-        this.setResponse(response[0].result)
-      }
-    })
+    if ('result' in response === true) {
+      const result = response.result
+      const cp = 'wallet check passed' in result
+
+      /** Re-check after repairing. */
+      if (this.checkPassed === false && cp === false) return this.crWallet()
+
+      /** Set checkPassed, amount affected and mismatched spent. */
+      this.setValues({
+        amountAffected: cp === true ? 0 : result['amount affected by repair'],
+        checkPassed: cp,
+        mismatchedSpent: cp === true ? 0 : result['mismatched spent coins']
+      })
+    }
   }
 
   render () {
@@ -71,24 +73,20 @@ class WalletRepair extends React.Component {
       <div>
         <div className='flex'>
           <i className='material-icons md-16'>build</i>
-          <p>
-            {this.t('wallet:repairLong')}
-          </p>
+          <p>{this.t('wallet:repairLong')}</p>
         </div>
         <div style={{ margin: '10px 0 0 0' }}>
-          {this.checkPassed !== false &&
+          {this.checkPassed !== false && (
             <div className='flex-sb'>
               <div>
-                {this.checkPassed !== null &&
-                  <p>
-                    {this.t('wallet:checkPassed')}
-                  </p>}
+                {this.checkPassed !== null && (
+                  <p>{this.t('wallet:checkPassed')}</p>
+                )}
               </div>
-              <Button onClick={this.repair}>
-                {this.t('wallet:check')}
-              </Button>
-            </div>}
-          {this.checkPassed === false &&
+              <Button onClick={this.crWallet}>{this.t('wallet:check')}</Button>
+            </div>
+          )}
+          {this.checkPassed === false && (
             <div className='flex-sb'>
               <div>
                 <div className='flex-sb'>
@@ -112,10 +110,11 @@ class WalletRepair extends React.Component {
                   </p>
                 </div>
               </div>
-              <Button onClick={() => this.repair(false)}>
+              <Button onClick={() => this.crWallet(false)}>
                 {this.t('wallet:repair')}
               </Button>
-            </div>}
+            </div>
+          )}
         </div>
       </div>
     )

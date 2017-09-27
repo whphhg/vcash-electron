@@ -6,7 +6,7 @@ import { Button, Input } from 'antd'
 
 /** Wallet seed dumping component. */
 @translate(['wallet'], { wait: true })
-@inject('rpc', 'wallet')
+@inject('rpcNext', 'wallet')
 @observer
 class WalletSeedDump extends React.Component {
   @observable seed = ''
@@ -15,8 +15,11 @@ class WalletSeedDump extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.rpc = props.rpc
+    this.rpc = props.rpcNext
     this.wallet = props.wallet
+
+    /** Bind the async function. */
+    this.dumpWalletSeed = this.dumpWalletSeed.bind(this)
 
     /** Errors that will be shown to the user. */
     this.errShow = ['notDeterministic']
@@ -54,20 +57,20 @@ class WalletSeedDump extends React.Component {
    * Dump wallet seed.
    * @function dumpWalletSeed
    */
-  dumpWalletSeed = () => {
-    this.rpc.execute([{ method: 'dumpwalletseed', params: [] }], response => {
-      if (response[0].hasOwnProperty('result') === true) {
-        /** Set wallet's seed. */
-        this.setValues({ seed: response[0].result })
-      }
+  async dumpWalletSeed () {
+    const response = await this.rpc.dumpWalletSeed()
 
-      if (response[0].hasOwnProperty('error') === true) {
-        switch (response[0].error.code) {
-          case -4:
-            return this.setValues({ rpcError: 'notDeterministic' })
-        }
+    if ('result' in response === true) {
+      /** Set wallet's seed. */
+      this.setValues({ seed: response.result })
+    }
+
+    if ('error' in response === true) {
+      switch (response.error.code) {
+        case -4:
+          return this.setValues({ rpcError: 'notDeterministic' })
       }
-    })
+    }
   }
 
   render () {
@@ -75,14 +78,10 @@ class WalletSeedDump extends React.Component {
       <div>
         <div className='flex'>
           <i className='material-icons md-16'>fingerprint</i>
-          <p>
-            {this.t('wallet:seedDumpLong')}
-          </p>
+          <p>{this.t('wallet:seedDumpLong')}</p>
         </div>
         <div className='flex-sb' style={{ margin: '10px 0 0 0' }}>
-          <p style={{ width: '120px' }}>
-            {this.t('wallet:seed')}
-          </p>
+          <p style={{ width: '120px' }}>{this.t('wallet:seed')}</p>
           <Input
             disabled={this.seed === ''}
             readOnly

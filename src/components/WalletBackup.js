@@ -9,7 +9,7 @@ import { dataPath } from '../utilities/common'
 
 /** Wallet backing up component. */
 @translate(['wallet'], { wait: true })
-@inject('rpc')
+@inject('rpcNext')
 @observer
 class WalletBackup extends React.Component {
   @observable path = ''
@@ -18,11 +18,14 @@ class WalletBackup extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.rpc = props.rpc
+    this.rpc = props.rpcNext
     this.path =
-      this.rpc.connection.status.tunnel === true
+      this.rpc.conn.status.tunnel === true
         ? ''
         : join(dataPath(), 'backups', sep)
+
+    /** Bind the async function. */
+    this.backupWallet = this.backupWallet.bind(this)
 
     /** Errors that will be shown to the user. */
     this.errShow = ['backupFailed']
@@ -76,23 +79,20 @@ class WalletBackup extends React.Component {
    * Backup the wallet.
    * @function backupWallet
    */
-  backupWallet = () => {
-    this.rpc.execute(
-      [{ method: 'backupwallet', params: [this.path] }],
-      response => {
-        if (response[0].hasOwnProperty('result') === true) {
-          /** Display a success message for 6 seconds. */
-          message.success(this.t('wallet:backedUp'), 6)
-        }
+  async backupWallet () {
+    const response = await this.rpc.backupWallet(this.path)
 
-        if (response[0].hasOwnProperty('error') === true) {
-          switch (response[0].error.code) {
-            case -4:
-              return this.setValues({ rpcError: 'backupFailed' })
-          }
-        }
+    if ('result' in response === true) {
+      /** Display a success message for 6s. */
+      message.success(this.t('wallet:backedUp'), 6)
+    }
+
+    if ('error' in response === true) {
+      switch (response.error.code) {
+        case -4:
+          return this.setValues({ rpcError: 'backupFailed' })
       }
-    )
+    }
   }
 
   render () {
@@ -100,19 +100,15 @@ class WalletBackup extends React.Component {
       <div>
         <div className='flex'>
           <i className='material-icons md-16'>save</i>
-          <p>
-            {this.t('wallet:backupLong')}
-          </p>
+          <p>{this.t('wallet:backupLong')}</p>
         </div>
         <div className='flex-sb' style={{ margin: '10px 0 0 0' }}>
-          <p style={{ width: '120px' }}>
-            {this.t('wallet:saveInto')}
-          </p>
+          <p style={{ width: '120px' }}>{this.t('wallet:saveInto')}</p>
           <Input
             disabled
             style={{ flex: 1 }}
             value={
-              this.rpc.connection.status.tunnel === true
+              this.rpc.conn.status.tunnel === true
                 ? this.t('wallet:remoteDataFolder')
                 : this.path
             }
@@ -128,7 +124,7 @@ class WalletBackup extends React.Component {
           </p>
           <div className='flex' style={{ justifyContent: 'flex-end' }}>
             <Button
-              disabled={this.rpc.connection.status.tunnel === true}
+              disabled={this.rpc.conn.status.tunnel === true}
               onClick={this.getPath}
               style={{ margin: '0 5px 0 0' }}
             >

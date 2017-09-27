@@ -6,7 +6,7 @@ import { Button, Input, message, Modal, Tooltip } from 'antd'
 
 /** Wallet unlocking component. */
 @translate(['wallet'], { wait: true })
-@inject('rpc', 'wallet')
+@inject('rpcNext', 'wallet')
 @observer
 class WalletUnlock extends React.Component {
   @observable passphrase = ''
@@ -16,8 +16,11 @@ class WalletUnlock extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.rpc = props.rpc
+    this.rpc = props.rpcNext
     this.wallet = props.wallet
+
+    /** Bind the async function. */
+    this.walletPassphrase = this.walletPassphrase.bind(this)
 
     /** Errors that will be shown to the user. */
     this.errShow = ['passphraseIncorrect']
@@ -26,9 +29,7 @@ class WalletUnlock extends React.Component {
     reaction(
       () => this.passphrase,
       passphrase => {
-        if (this.rpcError !== '') {
-          this.setValues({ rpcError: '' })
-        }
+        if (this.rpcError !== '') this.setValues({ rpcError: '' })
       }
     )
 
@@ -36,8 +37,8 @@ class WalletUnlock extends React.Component {
     reaction(
       () => this.modalVisible,
       modalVisible => {
-        if (modalVisible === false && this.passphrase !== '') {
-          this.setValues({ passphrase: '' })
+        if (modalVisible === false) {
+          if (this.passphrase !== '') this.setValues({ passphrase: '' })
         }
       }
     )
@@ -85,29 +86,26 @@ class WalletUnlock extends React.Component {
    * Unlock the wallet.
    * @function walletPassphrase
    */
-  walletPassphrase = () => {
-    this.rpc.execute(
-      [{ method: 'walletpassphrase', params: [this.passphrase] }],
-      response => {
-        if (response[0].hasOwnProperty('result') === true) {
-          /** Update wallet's lock status. */
-          this.wallet.getLockStatus()
+  async walletPassphrase () {
+    const response = await this.rpc.walletPassphrase(this.passphrase)
 
-          /** Hide modal. */
-          this.toggleModal()
+    if ('result' in response === true) {
+      /** Update wallet's lock status. */
+      this.wallet.getLockStatus()
 
-          /** Display a success message for 6 seconds. */
-          message.success(this.t('wallet:unlocked'), 6)
-        }
+      /** Hide modal. */
+      this.toggleModal()
 
-        if (response[0].hasOwnProperty('error') === true) {
-          switch (response[0].error.code) {
-            case -14:
-              return this.setValues({ rpcError: 'passphraseIncorrect' })
-          }
-        }
+      /** Display a success message for 6s. */
+      message.success(this.t('wallet:unlocked'), 6)
+    }
+
+    if ('error' in response === true) {
+      switch (response.error.code) {
+        case -14:
+          return this.setValues({ rpcError: 'passphraseIncorrect' })
       }
-    )
+    }
   }
 
   render () {

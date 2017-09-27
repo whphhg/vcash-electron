@@ -6,7 +6,7 @@ import { AutoComplete, Button, Input, Popover } from 'antd'
 
 /** New receiving address assigning component. */
 @translate(['wallet'], { wait: true })
-@inject('rpc', 'wallet')
+@inject('rpcNext', 'wallet')
 @observer
 class AddressGet extends React.Component {
   @observable account = ''
@@ -17,8 +17,11 @@ class AddressGet extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.rpc = props.rpc
+    this.rpc = props.rpcNext
     this.wallet = props.wallet
+
+    /** Bind the async function. */
+    this.getNewAddress = this.getNewAddress.bind(this)
 
     /** Errors that will be shown to the user. */
     this.errShow = ['accChars', 'keypoolRanOut']
@@ -27,8 +30,8 @@ class AddressGet extends React.Component {
     reaction(
       () => this.popoverVisible,
       popoverVisible => {
-        if (popoverVisible === false && this.address !== '') {
-          this.setValues({ address: '' })
+        if (popoverVisible === false) {
+          if (this.address !== '') this.setValues({ address: '' })
         }
       }
     )
@@ -77,26 +80,23 @@ class AddressGet extends React.Component {
    * Get new receiving address.
    * @function getNewAddress
    */
-  getNewAddress = () => {
-    this.rpc.execute(
-      [{ method: 'getnewaddress', params: [this.account] }],
-      response => {
-        if (response[0].hasOwnProperty('result') === true) {
-          /** Set new receiving address. */
-          this.setValues({ address: response[0].result })
+  async getNewAddress () {
+    const response = await this.rpc.getNewAddress(this.account)
 
-          /** Update wallet's address list. */
-          this.wallet.getWallet(false, true)
-        }
+    if ('result' in response === true) {
+      /** Set new receiving address. */
+      this.setValues({ address: response.result })
 
-        if (response[0].hasOwnProperty('error') === true) {
-          switch (response[0].error.code) {
-            case -12:
-              return this.setValues({ rpcError: 'keypoolRanOut' })
-          }
-        }
+      /** Update wallet's address list. */
+      this.wallet.getWallet(false, true)
+    }
+
+    if ('error' in response === true) {
+      switch (response.error.code) {
+        case -12:
+          return this.setValues({ rpcError: 'keypoolRanOut' })
       }
-    )
+    }
   }
 
   render () {
@@ -106,19 +106,21 @@ class AddressGet extends React.Component {
           <div style={{ width: '400px' }}>
             <AutoComplete
               dataSource={this.wallet.accounts}
+              filterOption
               getPopupContainer={triggerNode => triggerNode.parentNode}
               onChange={account => this.setValues({ account })}
               placeholder={this.t('wallet:accName')}
               style={{ width: '100%' }}
               value={this.account}
             />
-            {this.address !== '' &&
+            {this.address !== '' && (
               <Input
                 className='green'
                 readOnly
                 style={{ margin: '5px 0 0 0' }}
                 value={this.address}
-              />}
+              />
+            )}
             <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
               <p className='red'>
                 {this.errShow.includes(this.errorStatus) === true &&

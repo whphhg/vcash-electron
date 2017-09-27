@@ -13,6 +13,8 @@ class WalletLock extends React.Component {
     this.t = props.t
     this.rpc = props.rpcNext
     this.wallet = props.wallet
+
+    /** Bind the async function. */
     this.walletLock = this.walletLock.bind(this)
   }
 

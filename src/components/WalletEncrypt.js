@@ -6,7 +6,7 @@ import { Button, Input, notification } from 'antd'
 
 /** Wallet encrypting component. */
 @translate(['wallet'], { wait: true })
-@inject('rpc', 'wallet')
+@inject('rpcNext', 'wallet')
 @observer
 class WalletEncrypt extends React.Component {
   @observable passphrase = ''
@@ -15,8 +15,11 @@ class WalletEncrypt extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
-    this.rpc = props.rpc
+    this.rpc = props.rpcNext
     this.wallet = props.wallet
+
+    /** Bind the async function. */
+    this.encryptWallet = this.encryptWallet.bind(this)
 
     /** Errors that will be shown to the user. */
     this.errShow = ['passphrasesNotMatching']
@@ -35,15 +38,6 @@ class WalletEncrypt extends React.Component {
     if (len.pass !== len.repeat) return 'differentLengths'
     if (this.passphrase !== this.repeat) return 'passphrasesNotMatching'
     return ''
-  }
-
-  /**
-   * Clear entered passphrases.
-   * @function clear
-   */
-  @action
-  clear = () => {
-    this.setValues({ passphrase: '', repeat: '' })
   }
 
   /**
@@ -67,26 +61,23 @@ class WalletEncrypt extends React.Component {
    * Encrypt the wallet.
    * @function encryptWallet
    */
-  encryptWallet = () => {
-    this.rpc.execute(
-      [{ method: 'encryptwallet', params: [this.passphrase] }],
-      response => {
-        if (response[0].hasOwnProperty('result') === true) {
-          /** Update wallet's lock status. */
-          this.wallet.getLockStatus()
+  async encryptWallet () {
+    const response = await this.rpc.encryptWallet(this.passphrase)
 
-          /** Clear entered passphrases. */
-          this.clear()
+    if ('result' in response === true) {
+      /** Update wallet's lock status. */
+      this.wallet.getLockStatus()
 
-          /** Display a non-expiring restart notification. */
-          notification.success({
-            message: this.t('wallet:encrypted'),
-            description: this.t('wallet:encryptedLong'),
-            duration: 0
-          })
-        }
-      }
-    )
+      /** Clear entered passphrases. */
+      this.setValues({ passphrase: '', repeat: '' })
+
+      /** Display a non-expiring restart notification. */
+      notification.success({
+        message: this.t('wallet:encrypted'),
+        description: this.t('wallet:encryptedLong'),
+        duration: 0
+      })
+    }
   }
 
   render () {
@@ -96,14 +87,10 @@ class WalletEncrypt extends React.Component {
       <div>
         <div className='flex'>
           <i className='material-icons md-16'>vpn_key</i>
-          <p>
-            {this.t('wallet:encryptLong')}
-          </p>
+          <p>{this.t('wallet:encryptLong')}</p>
         </div>
         <div className='flex-sb' style={{ margin: '10px 0 0 0' }}>
-          <p style={{ width: '120px' }}>
-            {this.t('wallet:passphrase')}
-          </p>
+          <p style={{ width: '120px' }}>{this.t('wallet:passphrase')}</p>
           <Input
             onChange={e => this.setValues({ passphrase: e.target.value })}
             placeholder={this.t('wallet:passphraseLong')}
@@ -112,9 +99,7 @@ class WalletEncrypt extends React.Component {
           />
         </div>
         <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
-          <p style={{ width: '120px' }}>
-            {this.t('wallet:passphraseRepeat')}
-          </p>
+          <p style={{ width: '120px' }}>{this.t('wallet:passphraseRepeat')}</p>
           <Input
             onChange={e => this.setValues({ repeat: e.target.value })}
             placeholder={this.t('wallet:passphraseRepeatLong')}
