@@ -89,27 +89,19 @@ class RewardCalculator extends React.Component {
         <div style={{ margin: '0 36px 0 0' }}>
           <div className='flex' style={{ margin: '0 0 5px 0' }}>
             <i className='material-icons md-16'>extension</i>
-            <p>
-              {this.t('wallet:block')}
-            </p>
+            <p>{this.t('wallet:block')}</p>
           </div>
           <div className='flex'>
             <i className='material-icons md-16'>stars</i>
-            <p>
-              {this.t('wallet:powReward')}
-            </p>
+            <p>{this.t('wallet:powReward')}</p>
           </div>
           <div className='flex'>
             <i className='material-icons md-16'>developer_board</i>
-            <p>
-              {this.t('wallet:miningReward')}
-            </p>
+            <p>{this.t('wallet:miningReward')}</p>
           </div>
           <div className='flex'>
             <i className='material-icons md-16'>event_seat</i>
-            <p>
-              {this.t('wallet:incentiveReward')}
-            </p>
+            <p>{this.t('wallet:incentiveReward')}</p>
           </div>
         </div>
         <div style={{ margin: '0 0 2px 0' }}>

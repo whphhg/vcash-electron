@@ -62,6 +62,7 @@ class Connections extends React.Component {
    * @param {object} e - Input element event.
    */
   setConfig = e => {
+    console.warn(e)
     this.connections.setConfig(e.target.name, e.target.value)
   }
 
@@ -119,17 +120,19 @@ class Connections extends React.Component {
               >
                 <div className='flex-sb'>
                   <div>
-                    <Radio.Group onChange={this.setConfig} value={conn.type}>
+                    <Radio.Group
+                      name='type'
+                      onChange={this.setConfig}
+                      value={conn.type}
+                    >
                       <Radio
                         disabled={active === true && conn.type === 'ssh'}
-                        name='type'
                         value='local'
                       >
                         {this.t('wallet:connLocal')}
                       </Radio>
                       <Radio
                         disabled={active === true && conn.type === 'local'}
-                        name='type'
                         value='ssh'
                       >
                         {this.t('wallet:sshTunnel')}
@@ -165,7 +168,7 @@ class Connections extends React.Component {
                   style={{ margin: '10px 0 0 0', alignItems: 'flex-start' }}
                 >
                   <div>
-                    {conn.type === 'local' &&
+                    {conn.type === 'local' && (
                       <div className='flex'>
                         <Input
                           disabled
@@ -182,8 +185,9 @@ class Connections extends React.Component {
                           style={{ margin: '0 0 0 5px', width: '60px' }}
                           value={conn.localPort}
                         />
-                      </div>}
-                    {conn.type === 'ssh' &&
+                      </div>
+                    )}
+                    {conn.type === 'ssh' && (
                       <div>
                         <div className='flex'>
                           <Input
@@ -268,23 +272,27 @@ class Connections extends React.Component {
                             />
                           </div>
                         </div>
-                      </div>}
+                      </div>
+                    )}
                   </div>
                   <div>
-                    {(active !== true &&
+                    {active !== true && (
                       <Button
                         disabled={this.connections.startStatus !== true}
                         onClick={() => this.connections.start()}
                         size='small'
                       >
                         {this.t('wallet:start')}
-                      </Button>) ||
+                      </Button>
+                    )}
+                    {active === true && (
                       <Button
                         onClick={() => this.connections.stop()}
                         size='small'
                       >
                         {this.t('wallet:stop')}
-                      </Button>}
+                      </Button>
+                    )}
                   </div>
                 </div>
               </Tabs.TabPane>
@@ -307,9 +315,7 @@ class Connections extends React.Component {
               placement='bottom'
               title={this.t('wallet:connRemoveConfirm')}
             >
-              <Button size='small'>
-                {this.t('wallet:connRemove')}
-              </Button>
+              <Button size='small'>{this.t('wallet:connRemove')}</Button>
             </Popconfirm>
           </div>
         </div>

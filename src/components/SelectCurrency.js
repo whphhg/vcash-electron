@@ -26,11 +26,11 @@ class SelectCurrency extends React.Component {
         size='small'
         style={{ width: '80px' }}
       >
-        {this.rates.localCurrencies.map(currency =>
+        {this.rates.localCurrencies.map(currency => (
           <Select.Option key={currency} value={currency}>
             {currency}
           </Select.Option>
-        )}
+        ))}
       </Select>
     )
   }

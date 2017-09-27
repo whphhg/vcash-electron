@@ -30,7 +30,8 @@ class Network extends React.Component {
                 <p style={{ margin: '0 10px 0 5px' }}>
                   {this.t('wallet:collateralBalance')}
                   <span style={{ fontWeight: 600 }}>
-                    {' '}{new Intl.NumberFormat(this.gui.language, {
+                    {' '}
+                    {new Intl.NumberFormat(this.gui.language, {
                       maximumFractionDigits: 6
                     }).format(this.wallet.info.collateralbalance)}{' '}
                     /{' '}
@@ -44,7 +45,8 @@ class Network extends React.Component {
                 <p>
                   {this.t('wallet:voteCandidate')}
                   <span style={{ fontWeight: 600 }}>
-                    {' '}{this.wallet.info.votecandidate === true
+                    {' '}
+                    {this.wallet.info.votecandidate === true
                       ? this.t('wallet:yes')
                       : this.t('wallet:no')}
                   </span>
@@ -55,7 +57,8 @@ class Network extends React.Component {
                 <p>
                   {this.t('wallet:defaultAddress')}
                   <span style={{ fontWeight: 600 }}>
-                    {' '}{this.wallet.info.walletaddress === ''
+                    {' '}
+                    {this.wallet.info.walletaddress === ''
                       ? this.t('wallet:unlockRevealed')
                       : this.wallet.info.walletaddress}
                   </span>
@@ -70,32 +73,24 @@ class Network extends React.Component {
               <div style={{ minWidth: '100%' }}>
                 <div className='flex'>
                   <i className='material-icons md-16'>timeline</i>
-                  <p>
-                    {this.t('wallet:rewardSpread')}
-                  </p>
+                  <p>{this.t('wallet:rewardSpread')}</p>
                 </div>
                 <RewardSpread />
                 <div className='flex'>
                   <i className='material-icons md-16'>view_week</i>
-                  <p>
-                    {this.t('wallet:rewardsPerDay')}
-                  </p>
+                  <p>{this.t('wallet:rewardsPerDay')}</p>
                 </div>
                 <RewardsPerDay />
               </div>
               <div style={{ minWidth: '100%' }}>
                 <div className='flex'>
                   <i className='material-icons md-16'>trending_up</i>
-                  <p>
-                    {this.t('wallet:difficulties')}
-                  </p>
+                  <p>{this.t('wallet:difficulties')}</p>
                 </div>
                 <Difficulties />
                 <div className='flex'>
                   <i className='material-icons md-16'>network_check</i>
-                  <p>
-                    {this.t('wallet:hashRate')}
-                  </p>
+                  <p>{this.t('wallet:hashRate')}</p>
                 </div>
                 <HashRate />
               </div>
@@ -111,27 +106,19 @@ class Network extends React.Component {
                   <div style={{ margin: '0 36px 0 0' }}>
                     <div className='flex'>
                       <i className='material-icons md-16'>hearing</i>
-                      <p>
-                        {this.t('wallet:listeningOn')}
-                      </p>
+                      <p>{this.t('wallet:listeningOn')}</p>
                     </div>
                     <div className='flex'>
                       <i className='material-icons md-16'>settings_ethernet</i>
-                      <p>
-                        {this.t('wallet:portOpen')}
-                      </p>
+                      <p>{this.t('wallet:portOpen')}</p>
                     </div>
                     <div className='flex'>
                       <i className='material-icons md-16'>event_seat</i>
-                      <p>
-                        {this.t('wallet:collateralizedNodes')}
-                      </p>
+                      <p>{this.t('wallet:collateralizedNodes')}</p>
                     </div>
                     <div className='flex'>
                       <i className='material-icons md-16'>games</i>
-                      <p>
-                        {this.t('wallet:testnet')}
-                      </p>
+                      <p>{this.t('wallet:testnet')}</p>
                     </div>
                   </div>
                   <div style={{ margin: '0 0 1px 0' }}>
@@ -158,27 +145,19 @@ class Network extends React.Component {
                   <div style={{ margin: '0 36px 0 36px' }}>
                     <div className='flex'>
                       <i className='material-icons md-16'>account_balance</i>
-                      <p>
-                        {this.t('wallet:moneySupply')}
-                      </p>
+                      <p>{this.t('wallet:moneySupply')}</p>
                     </div>
                     <div className='flex'>
                       <i className='material-icons md-16'>grid_on</i>
-                      <p>
-                        {this.t('wallet:currentBlockSize')}
-                      </p>
+                      <p>{this.t('wallet:currentBlockSize')}</p>
                     </div>
                     <div className='flex'>
                       <i className='material-icons md-16'>playlist_add_check</i>
-                      <p>
-                        {this.t('wallet:currentBlockTxs')}
-                      </p>
+                      <p>{this.t('wallet:currentBlockTxs')}</p>
                     </div>
                     <div className='flex'>
                       <i className='material-icons md-16'>playlist_add</i>
-                      <p>
-                        {this.t('wallet:pooledTxs')}
-                      </p>
+                      <p>{this.t('wallet:pooledTxs')}</p>
                     </div>
                   </div>
                   <div style={{ margin: '0 0 1px 0' }}>

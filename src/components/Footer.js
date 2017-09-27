@@ -32,7 +32,7 @@ class Footer extends React.Component {
                   )}
                 </span>
               </p>
-              {this.wallet.syncPercent < 100 &&
+              {this.wallet.syncPercent < 100 && (
                 <div className='flex'>
                   <div style={{ width: '90px' }}>
                     <Progress
@@ -47,7 +47,8 @@ class Footer extends React.Component {
                       maximumFractionDigits: 2
                     }).format(this.wallet.syncPercent)}%
                   </p>
-                </div>}
+                </div>
+              )}
               <i className='material-icons md-16'>settings_input_antenna</i>
               <p style={{ margin: '0 10px 0 5px' }}>
                 <span style={{ fontWeight: '500' }}>

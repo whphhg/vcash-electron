@@ -85,9 +85,7 @@ class CurrencyConverter extends React.Component {
         <div className='flex-sb' style={{ margin: '0 0 10px 0' }}>
           <div className='flex'>
             <i className='material-icons md-16'>cached</i>
-            <p>
-              {this.t('wallet:currencyConverter')}
-            </p>
+            <p>{this.t('wallet:currencyConverter')}</p>
           </div>
           <div className='flex'>
             <img src='./assets/images/exchangePoloniex.png' />

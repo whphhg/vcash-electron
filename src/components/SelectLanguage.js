@@ -25,11 +25,11 @@ class SelectLanguage extends React.Component {
         size='small'
         style={{ width: '120px' }}
       >
-        {this.gui.languages.map(entry =>
+        {this.gui.languages.map(entry => (
           <Select.Option key={entry.language} value={entry.language}>
             {entry.name}
           </Select.Option>
-        )}
+        ))}
       </Select>
     )
   }

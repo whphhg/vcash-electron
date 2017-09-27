@@ -34,19 +34,17 @@ class Address extends React.Component {
         <div className='flex-sb' style={{ margin: '0 0 10px 0' }}>
           <div className='flex'>
             <i className='material-icons md-16'>account_balance</i>
-            {(this.data.account === null &&
+            {this.data.account === null && <p>{this.t('wallet:change')}</p>}
+            {this.data.account !== null && (
               <p>
-                {this.t('wallet:change')}
-              </p>) ||
-              (this.data.account !== null &&
-                <p>
-                  {this.t('wallet:acc')}:{' '}
-                  <span style={{ fontWeight: '500' }}>
-                    {this.data.account === ''
-                      ? this.t('wallet:default')
-                      : this.data.account}
-                  </span>
-                </p>)}
+                {this.t('wallet:acc')}:{' '}
+                <span style={{ fontWeight: '500' }}>
+                  {this.data.account === ''
+                    ? this.t('wallet:default')
+                    : this.data.account}
+                </span>
+              </p>
+            )}
           </div>
           <div className='flex'>
             <i className='material-icons md-16'>call_received</i>
@@ -61,7 +59,7 @@ class Address extends React.Component {
             </p>
           </div>
         </div>
-        {this.data.outputs.length > 0 &&
+        {this.data.outputs.length > 0 && (
           <div style={{ textAlign: 'center' }}>
             <Table
               bordered
@@ -70,7 +68,7 @@ class Address extends React.Component {
                   dataIndex: 'txid',
                   title: this.t('wallet:transactionId'),
                   width: 275,
-                  render: (txid, record) =>
+                  render: (txid, record) => (
                     <p className='text-mono'>
                       {(record.spentTxid === '' &&
                         txid.slice(0, 15) + '...' + txid.slice(49, 64)) ||
@@ -79,11 +77,12 @@ class Address extends React.Component {
                             '...' +
                             record.spentTxid.slice(49, 64))}
                     </p>
+                  )
                 },
                 {
                   dataIndex: 'amount',
                   title: this.t('wallet:amount'),
-                  render: (amount, record) =>
+                  render: (amount, record) => (
                     <p className={record.color} style={{ textAlign: 'right' }}>
                       {new Intl.NumberFormat(this.gui.language, {
                         minimumFractionDigits: 6,
@@ -91,6 +90,7 @@ class Address extends React.Component {
                       }).format(amount)}{' '}
                       XVC
                     </p>
+                  )
                 }
               ]}
               dataSource={this.data.outputs}
@@ -98,7 +98,8 @@ class Address extends React.Component {
               pagination={this.data.outputs.length > 10}
               size='small'
             />
-          </div>}
+          </div>
+        )}
       </div>
     )
   }

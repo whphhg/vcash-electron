@@ -91,7 +91,7 @@ class Transactions extends React.Component {
                   dataIndex: 'comment',
                   title: this.t('wallet:description'),
                   width: 360,
-                  render: comment =>
+                  render: comment => (
                     <div
                       style={{
                         overflow: 'hidden',
@@ -102,24 +102,27 @@ class Transactions extends React.Component {
                     >
                       {comment}
                     </div>
+                  )
                 },
                 {
                   dataIndex: 'amount',
                   title: this.t('wallet:amount'),
                   width: 150,
-                  render: (text, record) =>
+                  render: (text, record) => (
                     <p className={record.color} style={{ textAlign: 'right' }}>
                       {text} XVC
                     </p>
+                  )
                 },
                 {
                   dataIndex: 'amountLocal',
                   title: this.gui.localCurrency,
                   width: 150,
-                  render: (text, record) =>
+                  render: (text, record) => (
                     <p className={record.color} style={{ textAlign: 'right' }}>
                       {text} {this.gui.localCurrency}
                     </p>
+                  )
                 }
               ]}
               dataSource={this.wallet.txsData}

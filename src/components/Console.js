@@ -127,11 +127,9 @@ class Console extends React.Component {
       >
         <div id='ConsoleGrid'>
           <div>
-            {this.responses.map(response =>
-              <pre key={shortUid()}>
-                {JSON.stringify(response, null, 2)}
-              </pre>
-            )}
+            {this.responses.map(response => (
+              <pre key={shortUid()}>{JSON.stringify(response, null, 2)}</pre>
+            ))}
           </div>
           <hr />
           <div className='flex'>

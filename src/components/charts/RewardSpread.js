@@ -56,11 +56,31 @@ class RewardSpread extends React.Component {
             tick={<CustomTick textType='date' textX={0} textY={15} />}
             ticks={[
               Math.round(beginning),
-              Math.round(moment(beginning).add(6, 'days').format('x')),
-              Math.round(moment(beginning).add(11, 'days').format('x')),
-              Math.round(moment(beginning).add(16, 'days').format('x')),
-              Math.round(moment(beginning).add(21, 'days').format('x')),
-              Math.round(moment(beginning).add(26, 'days').format('x')),
+              Math.round(
+                moment(beginning)
+                  .add(6, 'days')
+                  .format('x')
+              ),
+              Math.round(
+                moment(beginning)
+                  .add(11, 'days')
+                  .format('x')
+              ),
+              Math.round(
+                moment(beginning)
+                  .add(16, 'days')
+                  .format('x')
+              ),
+              Math.round(
+                moment(beginning)
+                  .add(21, 'days')
+                  .format('x')
+              ),
+              Math.round(
+                moment(beginning)
+                  .add(26, 'days')
+                  .format('x')
+              ),
               Math.round(moment().format('x'))
             ]}
           />

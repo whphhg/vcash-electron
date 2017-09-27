@@ -31,7 +31,7 @@ class SendRecipient extends React.Component {
     return (
       <div>
         <div id='sendRecipients'>
-          {this.send.recipients.values().map(rcpt =>
+          {this.send.recipients.values().map(rcpt => (
             <div
               className='flex-sb'
               key={rcpt.uid}
@@ -89,9 +89,9 @@ class SendRecipient extends React.Component {
                 />
               </div>
             </div>
-          )}
+          ))}
         </div>
-        {this.send.recipients.size > 1 &&
+        {this.send.recipients.size > 1 && (
           <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
             <div style={{ width: '55%' }} />
             <div style={{ flex: 1, margin: '0 10px 0 10px' }}>
@@ -114,7 +114,8 @@ class SendRecipient extends React.Component {
                 }).format(this.send.total * local * average)}
               />
             </div>
-          </div>}
+          </div>
+        )}
       </div>
     )
   }

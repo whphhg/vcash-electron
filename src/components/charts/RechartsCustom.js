@@ -67,17 +67,11 @@ const CustomTooltip = props => {
 
       return (
         <div className='chartTooltip'>
-          <p className='label'>
-            {i18next.t('wallet:' + category)}
-          </p>
+          <p className='label'>{i18next.t('wallet:' + category)}</p>
           <div className='flex-sb'>
             <div style={{ margin: '0 32px 0 0' }}>
-              <p>
-                {i18next.t('wallet:amount')}
-              </p>
-              <p>
-                {i18next.t('wallet:date')}
-              </p>
+              <p>{i18next.t('wallet:amount')}</p>
+              <p>{i18next.t('wallet:date')}</p>
             </div>
             <div style={{ textAlign: 'right' }}>
               <p style={{ color }}>
@@ -87,9 +81,7 @@ const CustomTooltip = props => {
                 }).format(amount)}{' '}
                 XVC
               </p>
-              <p>
-                {moment(date).format('L - LTS')}
-              </p>
+              <p>{moment(date).format('L - LTS')}</p>
             </div>
           </div>
         </div>

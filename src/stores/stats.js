@@ -65,10 +65,16 @@ export default class Stats {
 
     /** Populate the dailyTotals map with dates. */
     for (let i = 1; i <= 31; i++) {
-      const date = moment(threshold).add(i, 'day').format('YYYYMMDD')
+      const date = moment(threshold)
+        .add(i, 'day')
+        .format('YYYYMMDD')
 
       dailyTotals.set(date, {
-        date: Math.round(moment(threshold).add(i, 'day').format('x')),
+        date: Math.round(
+          moment(threshold)
+            .add(i, 'day')
+            .format('x')
+        ),
         sent: 0,
         received: 0,
         stakingReward: 0,
@@ -109,10 +115,16 @@ export default class Stats {
 
     /** Populate the rewardsPerDay map with dates. */
     for (let i = 1; i <= 31; i++) {
-      const date = moment(threshold).add(i, 'day').format('YYYYMMDD')
+      const date = moment(threshold)
+        .add(i, 'day')
+        .format('YYYYMMDD')
 
       rewardsPerDay.set(date, {
-        date: Math.round(moment(threshold).add(i, 'day').format('x')),
+        date: Math.round(
+          moment(threshold)
+            .add(i, 'day')
+            .format('x')
+        ),
         stakingReward: 0,
         miningReward: 0,
         incentiveReward: 0
