@@ -2,12 +2,12 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Button, Input, Modal } from 'antd'
+import { AutoComplete, Button, Modal } from 'antd'
 import { shortUid } from '../utilities/common'
 
 /** RPC console component. */
 @translate(['wallet'], { wait: true })
-@inject('gui', 'rpc')
+@inject('gui', 'rpcNext')
 @observer
 class Console extends React.Component {
   @observable command = ''
@@ -18,13 +18,14 @@ class Console extends React.Component {
     super(props)
     this.t = props.t
     this.gui = props.gui
-    this.rpc = props.rpc
+    this.rpc = props.rpcNext
+
+    /** Bind the async function. */
+    this.execute = this.execute.bind(this)
 
     /** Toggle modal on Alt-c key press. */
     document.onkeydown = e => {
-      if (e.altKey === true && e.keyCode === 67) {
-        this.toggleModal()
-      }
+      if (e.altKey === true && e.keyCode === 67) this.toggleModal()
     }
   }
 
@@ -72,11 +73,11 @@ class Console extends React.Component {
   /**
    * Set command.
    * @function setCommand
-   * @param {object} e - Input element event.
+   * @param {string} input - AutoComplete element event.
    */
   @action
-  setCommand = e => {
-    this.command = e.target.value
+  setCommand = input => {
+    this.command = input
   }
 
   /**
@@ -102,16 +103,16 @@ class Console extends React.Component {
    * Execute the RPC command.
    * @function execute
    */
-  execute = () => {
+  async execute () {
     /** Do not execute the RPC command if the status is false. */
     if (this.executeStatus === false) return
 
-    this.rpc.execute(
-      [{ method: this.options.method, params: this.options.params }],
-      response => {
-        this.setResponse(response[0])
-      }
-    )
+    const response = await this.rpc.batch([
+      { method: this.options.method, params: this.options.params }
+    ])
+
+    /** Set the response. */
+    this.setResponse(response)
   }
 
   render () {
@@ -142,11 +143,12 @@ class Console extends React.Component {
               {this.t('wallet:execute')}
             </Button>
             <div style={{ flex: 1, margin: '0 5px 0 5px' }}>
-              <Input
+              <AutoComplete
+                dataSource={this.rpc.methods}
+                filterOption
                 onChange={this.setCommand}
-                onPressEnter={this.execute}
                 placeholder={this.t('wallet:command')}
-                size='small'
+                style={{ width: '100%' }}
                 value={this.command}
               />
             </div>
