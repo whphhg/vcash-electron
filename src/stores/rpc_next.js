@@ -6,7 +6,7 @@ class RPC {
    * @constructor
    * @param {object} conn - Connection's settings and status.
    * @param {function} setStatus - Set connection's status.
-   * @property {array} methods - RPC method names.
+   * @property {array} methods - RPC methods names.
    * @property {number|null} testTimeout - testRPC() timeout id.
    */
   constructor (conn, setStatus) {
@@ -17,8 +17,8 @@ class RPC {
 
     /** Assign camelCase named RPC methods as functions wrapping batch(). */
     Object.keys(rpcs).forEach(method => {
-      this[rpcs[method]] = async function (params = []) {
-        const response = await this.batch([{ method, params }])
+      this[rpcs[method]] = async function () {
+        const response = await this.batch([{ method, params: [...arguments] }])
         return response
       }
     })
@@ -60,7 +60,7 @@ class RPC {
    */
   async batch (req) {
     try {
-      /** Add jsonrpc version and random id to each RPC in this request. */
+      /** Add jsonrpc version and random id to each RPC in the request. */
       req.map(rpc => {
         rpc.jsonrpc = '2.0'
         rpc.id = Math.floor(Math.random() * 10000)
@@ -83,12 +83,9 @@ class RPC {
         this.setStatus(this.conn.uid, { rpc: true })
       }
 
-      /** Return the responses and requests or a single response. */
-      if (req.length > 1) {
-        return { res, req }
-      } else {
-        return res[0]
-      }
+      /** Return the responses and requests, or a single response. */
+      if (req.length > 1) return { res, req }
+      return res[0]
     } catch (error) {
       console.error('rpc.batch:', error.message)
 
