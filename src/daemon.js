@@ -3,7 +3,7 @@ import { existsSync } from 'fs'
 import { join } from 'path'
 
 /**
- * Start daemon.
+ * Start the daemon.
  * @function start
  * @return {object|null} Child process or null.
  */
@@ -17,18 +17,16 @@ const start = () => {
   /** Prepare daemon path. */
   let path = join(__dirname, '..', 'bin', daemonName)
 
-  /** Execute from unpacked asar directory when running packaged. */
+  /** Execute from the unpacked asar directory when running packaged. */
   path = path.replace('app.asar', 'app.asar.unpacked')
 
-  /** Check if daemon exists and spawn it. */
+  /** Check if the daemon exists and spawn it. */
   const daemon = existsSync(path) === true ? spawn(path) : null
 
   if (daemon !== null) {
     /** Log daemon stderr in dev mode. */
     daemon.stderr.on('data', data => {
-      if (process.env.NODE_ENV === 'dev') {
-        console.log(data.toString().trim())
-      }
+      if (process.env.NODE_ENV === 'dev') console.log(data.toString().trim())
     })
 
     /** Log daemon exit. */
@@ -40,8 +38,8 @@ const start = () => {
   return daemon
 }
 
-/** Start daemon. */
+/** Start the daemon. */
 const daemon = start()
 
-/** Export child process. */
+/** Export the daemon. */
 export default daemon

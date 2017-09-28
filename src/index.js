@@ -39,10 +39,8 @@ import rates from './stores/rates'
 /** Use MobX strict mode, allowing only actions to alter the state. */
 useStrict(true)
 
-/** Enable MobX logging in dev mode. */
-if (process.env.NODE_ENV === 'dev') {
-  enableLogging()
-}
+/** Enable MobX logging in development mode. */
+if (process.env.NODE_ENV === 'dev') enableLogging()
 
 render(
   <Provider connections={connections} gui={gui} rates={rates}>

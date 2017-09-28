@@ -1,8 +1,6 @@
 import { app, BrowserWindow, shell } from 'electron'
 import { join } from 'path'
 import { format } from 'url'
-
-/** Vcash daemon child process (if started). */
 import daemon from './daemon'
 
 /** Global reference of the window object. */
@@ -49,9 +47,7 @@ app.on('ready', () => {
   )
 
   /** Open Chromium's DevTools when in development mode. */
-  if (process.env.NODE_ENV === 'dev') {
-    mainWindow.webContents.openDevTools()
-  }
+  if (process.env.NODE_ENV === 'dev') mainWindow.webContents.openDevTools()
 
   /** Open external links using OS default browser. */
   mainWindow.webContents.on('new-window', (e, url) => {
@@ -64,9 +60,7 @@ app.on('ready', () => {
   /** Main window closed. */
   mainWindow.on('closed', () => {
     /** Send SIGINT signal to the daemon process. */
-    if (daemon !== null) {
-      daemon.kill('SIGINT')
-    }
+    if (daemon !== null) daemon.kill('SIGINT')
 
     /** Dereference the window object. */
     mainWindow = null
