@@ -1,22 +1,21 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { action, computed, observable } from 'mobx'
+import { action, computed, extendObservable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button, Input } from 'antd'
 
-/** Wallet seed dumping component. */
 @translate(['wallet'], { wait: true })
 @inject('rpcNext', 'wallet')
 @observer
 class WalletSeedDump extends React.Component {
-  @observable seed = ''
-  @observable rpcError = ''
-
   constructor (props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
     this.wallet = props.wallet
+
+    /** Extend the component with observable properties. */
+    extendObservable(this, { seed: '', rpcError: '' })
 
     /** Bind the async function. */
     this.dumpWalletSeed = this.dumpWalletSeed.bind(this)

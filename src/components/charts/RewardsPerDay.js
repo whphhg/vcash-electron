@@ -14,7 +14,6 @@ import moment from 'moment'
 /** Required components. */
 import { CustomTick, CustomTooltip } from './RechartsCustom'
 
-/** Rewards per day chart component. */
 @inject('stats')
 @observer
 class RewardsPerDay extends React.Component {

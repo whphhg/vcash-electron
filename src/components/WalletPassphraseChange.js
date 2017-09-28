@@ -1,24 +1,21 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { action, computed, observable, reaction } from 'mobx'
+import { action, computed, extendObservable, reaction } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button, Input, message } from 'antd'
 
-/** Wallet passphrase changing component. */
 @translate(['wallet'], { wait: true })
 @inject('rpcNext', 'wallet')
 @observer
 class WalletPassphraseChange extends React.Component {
-  @observable current = ''
-  @observable next = ''
-  @observable repeat = ''
-  @observable rpcError = ''
-
   constructor (props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
     this.wallet = props.wallet
+
+    /** Extend the component with observable properties. */
+    extendObservable(this, { current: '', next: '', repeat: '', rpcError: '' })
 
     /** Bind the async function. */
     this.walletPassphraseChange = this.walletPassphraseChange.bind(this)

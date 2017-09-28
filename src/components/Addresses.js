@@ -1,6 +1,6 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { action, observable } from 'mobx'
+import { action, extendObservable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Input, Select, Table } from 'antd'
 
@@ -15,13 +15,10 @@ import SendControls from './SendControls'
 import SendOptions from './SendOptions'
 import SendRecipients from './SendRecipients'
 
-/** Addresses and sending screen component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'rates', 'send', 'wallet')
 @observer
 class Addresses extends React.Component {
-  @observable filters = { address: ['spendable', 'new'] }
-
   constructor (props) {
     super(props)
     this.t = props.t
@@ -29,6 +26,9 @@ class Addresses extends React.Component {
     this.rates = props.rates
     this.send = props.send
     this.wallet = props.wallet
+
+    /** Extend the component with observable properties. */
+    extendObservable(this, { filters: { address: ['spendable', 'new'] } })
   }
 
   /**

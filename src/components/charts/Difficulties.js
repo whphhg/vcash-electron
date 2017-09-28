@@ -14,7 +14,6 @@ import {
 /** Required components. */
 import { CustomTick, CustomTooltip } from './RechartsCustom'
 
-/** PoW and PoS difficulties chart component. */
 @translate(['wallet'], { wait: true })
 @inject('stats')
 @observer

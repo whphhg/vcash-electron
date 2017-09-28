@@ -4,7 +4,6 @@ import { inject, observer } from 'mobx-react'
 import { Progress } from 'antd'
 import { version } from '../../package.json'
 
-/** Application's footer component. */
 @translate(['wallet'], { wait: true })
 @inject('connections', 'gui', 'wallet')
 @observer

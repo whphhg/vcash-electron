@@ -10,7 +10,6 @@ import { remote } from 'electron'
 import SelectCurrency from './SelectCurrency'
 import SelectLanguage from './SelectLanguage'
 
-/** Connections manager component. */
 @translate(['wallet'], { wait: true })
 @inject('connections', 'gui')
 @observer

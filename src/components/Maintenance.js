@@ -15,7 +15,6 @@ import WalletPassphraseChange from './WalletPassphraseChange'
 import WalletRepair from './WalletRepair'
 import WalletSeedDump from './WalletSeedDump'
 
-/** Maintenance screen component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'wallet')
 @observer

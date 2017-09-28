@@ -1,7 +1,6 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 
-/** Welcome screen component. */
 @translate(['wallet'], { wait: true })
 class Welcome extends React.Component {
   constructor (props) {

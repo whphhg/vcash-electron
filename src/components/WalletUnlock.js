@@ -1,23 +1,25 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { action, computed, observable, reaction } from 'mobx'
+import { action, computed, extendObservable, reaction } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button, Input, message, Modal, Tooltip } from 'antd'
 
-/** Wallet unlocking component. */
 @translate(['wallet'], { wait: true })
 @inject('rpcNext', 'wallet')
 @observer
 class WalletUnlock extends React.Component {
-  @observable passphrase = ''
-  @observable rpcError = ''
-  @observable modalVisible = false
-
   constructor (props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
     this.wallet = props.wallet
+
+    /** Extend the component with observable properties. */
+    extendObservable(this, {
+      passphrase: '',
+      rpcError: '',
+      modalVisible: false
+    })
 
     /** Bind the async function. */
     this.walletPassphrase = this.walletPassphrase.bind(this)

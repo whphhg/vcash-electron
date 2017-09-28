@@ -1,24 +1,26 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { action, computed, observable, reaction } from 'mobx'
+import { action, computed, extendObservable, reaction } from 'mobx'
 import { AutoComplete, Button, Input, Popover } from 'antd'
 
-/** New receiving address assigning component. */
 @translate(['wallet'], { wait: true })
 @inject('rpcNext', 'wallet')
 @observer
 class AddressGet extends React.Component {
-  @observable account = ''
-  @observable address = ''
-  @observable rpcError = ''
-  @observable popoverVisible = false
-
   constructor (props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
     this.wallet = props.wallet
+
+    /** Extend the component with observable properties. */
+    extendObservable(this, {
+      account: '',
+      address: '',
+      rpcError: '',
+      popoverVisible: false
+    })
 
     /** Bind the async function. */
     this.getNewAddress = this.getNewAddress.bind(this)

@@ -1,25 +1,27 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { action, computed, observable, reaction } from 'mobx'
+import { action, computed, extendObservable, reaction } from 'mobx'
 import { AutoComplete, Button, Input, message, Popover } from 'antd'
 
-/** Private key importing component. */
 @translate(['wallet'], { wait: true })
 @inject('rpcNext', 'wallet')
 @observer
 class PrivateKeyImport extends React.Component {
-  @observable account = ''
-  @observable privateKey = ''
-  @observable rpcError = ''
-  @observable loading = false
-  @observable popoverVisible = false
-
   constructor (props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
     this.wallet = props.wallet
+
+    /** Extend the component with observable properties. */
+    extendObservable(this, {
+      account: '',
+      privateKey: '',
+      rpcError: '',
+      loading: false,
+      popoverVisible: false
+    })
 
     /** Bind the async function. */
     this.importPrivKey = this.importPrivKey.bind(this)

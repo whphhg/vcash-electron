@@ -1,24 +1,23 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { action, computed, observable } from 'mobx'
+import { action, computed, extendObservable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Input, Tooltip } from 'antd'
 import { decimalSeparator } from '../utilities/common'
 import moment from 'moment'
 
-/** Local and crypto currency converting component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'rates')
 @observer
 class CurrencyConverter extends React.Component {
-  @observable amount = 1
-  @observable from = 'vcash'
-
   constructor (props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
     this.rates = props.rates
+
+    /** Extend the component with observable properties. */
+    extendObservable(this, { amount: 1, from: 'vcash' })
   }
 
   /**

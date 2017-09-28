@@ -1,24 +1,22 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { action, computed, observable } from 'mobx'
+import { action, computed, extendObservable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { AutoComplete, Button, Modal } from 'antd'
 import { shortUid } from '../utilities/common'
 
-/** RPC console component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'rpcNext')
 @observer
 class Console extends React.Component {
-  @observable command = ''
-  @observable responses = observable.array([])
-  @observable modalVisible = false
-
   constructor (props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
     this.rpc = props.rpcNext
+
+    /** Extend the component with observable properties. */
+    extendObservable(this, { command: '', responses: [], modalVisible: false })
 
     /** Bind the async function. */
     this.execute = this.execute.bind(this)

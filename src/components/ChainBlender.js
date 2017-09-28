@@ -3,7 +3,6 @@ import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { message, Switch, Tooltip } from 'antd'
 
-/** ChainBlender toggling and status component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'rpcNext', 'wallet')
 @observer

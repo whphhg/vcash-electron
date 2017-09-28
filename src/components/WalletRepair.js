@@ -1,23 +1,25 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { action, observable } from 'mobx'
+import { action, extendObservable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button } from 'antd'
 
-/** Wallet check and repair component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'rpcNext')
 @observer
 class WalletRepair extends React.Component {
-  @observable amountAffected = 0
-  @observable checkPassed = null
-  @observable mismatchedSpent = 0
-
   constructor (props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
     this.rpc = props.rpcNext
+
+    /** Extend the component with observable properties. */
+    extendObservable(this, {
+      amountAffected: 0,
+      checkPassed: null,
+      mismatchedSpent: 0
+    })
 
     /** Bind the async function. */
     this.crWallet = this.crWallet.bind(this)

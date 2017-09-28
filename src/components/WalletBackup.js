@@ -1,20 +1,16 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { action, computed, observable } from 'mobx'
+import { action, computed, extendObservable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button, Input, message } from 'antd'
 import { remote } from 'electron'
 import { join, sep } from 'path'
 import { dataPath } from '../utilities/common'
 
-/** Wallet backing up component. */
 @translate(['wallet'], { wait: true })
 @inject('rpcNext')
 @observer
 class WalletBackup extends React.Component {
-  @observable path = ''
-  @observable rpcError = ''
-
   constructor (props) {
     super(props)
     this.t = props.t
@@ -23,6 +19,9 @@ class WalletBackup extends React.Component {
       this.rpc.conn.status.tunnel === true
         ? ''
         : join(dataPath(), 'backups', sep)
+
+    /** Extend the component with observable properties. */
+    extendObservable(this, { path: '', rpcError: '' })
 
     /** Bind the async function. */
     this.backupWallet = this.backupWallet.bind(this)

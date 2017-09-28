@@ -1,22 +1,22 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { action, observable } from 'mobx'
+import { action, extendObservable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Button, Popconfirm, Switch, Tooltip } from 'antd'
 
-/** Sending controls component. */
 @translate(['wallet'], { wait: true })
 @inject('rates', 'send', 'wallet')
 @observer
-class Send extends React.Component {
-  @observable popconfirmVisible = false
-
+class SendControls extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
     this.rates = props.rates
     this.send = props.send
     this.wallet = props.wallet
+
+    /** Extend the component with observable properties. */
+    extendObservable(this, { popconfirmVisible: false })
   }
 
   /**
@@ -117,4 +117,4 @@ class Send extends React.Component {
   }
 }
 
-export default Send
+export default SendControls

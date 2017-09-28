@@ -1,22 +1,22 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { action, computed, observable } from 'mobx'
+import { action, computed, extendObservable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Input } from 'antd'
 import { calculateIncentive, calculatePoW } from '../utilities/blockRewards'
 
-/** Block reward calculating component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'wallet')
 @observer
 class RewardCalculator extends React.Component {
-  @observable enteredBlock = ''
-
   constructor (props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
     this.wallet = props.wallet
+
+    /** Extend the component with observable properties. */
+    extendObservable(this, { enteredBlock: '' })
   }
 
   /**

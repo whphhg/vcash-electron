@@ -4,7 +4,6 @@ import { inject, observer } from 'mobx-react'
 import { message, Modal, Table } from 'antd'
 import moment from 'moment'
 
-/** Transaction details component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'rates', 'rpcNext', 'wallet')
 @observer

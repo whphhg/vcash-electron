@@ -3,7 +3,6 @@ import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Select } from 'antd'
 
-/** Language setting component. */
 @translate(['wallet'], { wait: true })
 @inject('gui')
 @observer

@@ -17,7 +17,6 @@ import moment from 'moment'
 /** Required components. */
 import { CustomTick, CustomTooltip } from './RechartsCustom'
 
-/** Transactions statistics chart component. */
 @translate(['wallet'], { wait: true })
 @inject('stats')
 @observer

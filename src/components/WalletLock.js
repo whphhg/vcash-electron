@@ -3,7 +3,6 @@ import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Button, message, Tooltip } from 'antd'
 
-/** Wallet locking component. */
 @translate(['wallet'], { wait: true })
 @inject('rpcNext', 'wallet')
 @observer

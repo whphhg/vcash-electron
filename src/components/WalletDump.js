@@ -4,7 +4,6 @@ import { inject, observer } from 'mobx-react'
 import { Button, Input, message } from 'antd'
 import { dataPath } from '../utilities/common'
 
-/** Wallet dumping component. */
 @translate(['wallet'], { wait: true })
 @inject('rpcNext', 'wallet')
 @observer

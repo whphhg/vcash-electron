@@ -3,7 +3,6 @@ import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Input } from 'antd'
 
-/** Sending options component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'send', 'wallet')
 @observer

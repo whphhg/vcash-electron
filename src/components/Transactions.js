@@ -6,9 +6,8 @@ import moment from 'moment'
 
 /** Required components. */
 import ChainBlender from './ChainBlender'
-import { TransactionsStatistics } from './charts'
+import TransactionsStatistics from './charts/TransactionsStatistics'
 
-/** Transactions screen component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'wallet')
 @observer

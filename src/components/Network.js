@@ -5,9 +5,11 @@ import { humanReadable } from '../utilities/common'
 
 /** Required components. */
 import RewardCalculator from './RewardCalculator'
-import { Difficulties, HashRate, RewardSpread, RewardsPerDay } from './charts'
+import Difficulties from './charts/Difficulties'
+import HashRate from './charts/HashRate'
+import RewardSpread from './charts/RewardSpread'
+import RewardsPerDay from './charts/RewardsPerDay'
 
-/** Network screen component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'wallet')
 @observer

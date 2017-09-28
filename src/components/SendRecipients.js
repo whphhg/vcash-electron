@@ -3,11 +3,10 @@ import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { Input, Popconfirm } from 'antd'
 
-/** Sending recipients component. */
 @translate(['wallet'], { wait: true })
 @inject('gui', 'rates', 'send')
 @observer
-class SendRecipient extends React.Component {
+class SendRecipients extends React.Component {
   constructor (props) {
     super(props)
     this.t = props.t
@@ -121,4 +120,4 @@ class SendRecipient extends React.Component {
   }
 }
 
-export default SendRecipient
+export default SendRecipients
