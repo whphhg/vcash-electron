@@ -18,8 +18,8 @@ class RPC {
     /** Assign camelCase named RPC methods as functions wrapping batch(). */
     Object.keys(rpcs).forEach(method => {
       this[rpcs[method]] = async function () {
-        const response = await this.batch([{ method, params: [...arguments] }])
-        return response
+        const res = await this.batch([{ method, params: [...arguments] }])
+        return res
       }
     })
 
@@ -53,20 +53,20 @@ class RPC {
   }
 
   /**
-   * Make a single or batch RPC request.
+   * Make a single RPC request or a batch of RPC requests.
    * @function batch
    * @param {array} req - RPC method and params object(s).
    * @returns {object} Response(s) and request(s), single response, or empty.
    */
   async batch (req) {
     try {
-      /** Add jsonrpc version and random id to each RPC in the request. */
+      /** Add jsonrpc version and random id to each RPC request. */
       req.map(rpc => {
         rpc.jsonrpc = '2.0'
         rpc.id = Math.floor(Math.random() * 10000)
       })
 
-      /** Serialize the RPC(s) and make the POST request. */
+      /** Serialize the RPC request(s) and make the POST request. */
       const request = await window.fetch(
         'http://127.0.0.1:' + this.conn.localPort,
         {
@@ -75,7 +75,7 @@ class RPC {
         }
       )
 
-      /** Get the JSON response. */
+      /** Get the JSON response(s). */
       const res = await request.json()
 
       /** Toggle connection's RPC status if not true. */
@@ -83,9 +83,8 @@ class RPC {
         this.setStatus(this.conn.uid, { rpc: true })
       }
 
-      /** Return the responses and requests, or a single response. */
-      if (req.length > 1) return { res, req }
-      return res[0]
+      /** Return a single response or responses and requests. */
+      return res.length === 1 ? res[0] : { res, req }
     } catch (error) {
       console.error('rpc.batch:', error.message)
 
@@ -97,7 +96,7 @@ class RPC {
         this.setStatus(this.conn.uid, { rpc: false })
       }
 
-      /** Test RPC every 5s until the daemon is reachable. */
+      /** Test RPC every 5s until the daemon is connectable. */
       this.testTimeout = setTimeout(() => this.testRPC(), 5 * 1000)
 
       /** Return empty object on a failed request. */
@@ -106,7 +105,7 @@ class RPC {
   }
 
   /**
-   * Test daemon's RPC reachability.
+   * Test daemon's RPC connectivity.
    * @function testRPC
    */
   async testRPC () {
