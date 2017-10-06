@@ -17,6 +17,7 @@ import RPCNext from './rpc_next'
 import Send from './send'
 import Stats from './stats'
 import Wallet from './wallet'
+import WalletNext from './wallet_next'
 
 class Connections {
   /**
@@ -285,7 +286,7 @@ class Connections {
   }
 
   /**
-   * Toggle modal.
+   * Toggle modal's visibility.
    * @function toggleModal
    */
   @action
@@ -305,10 +306,11 @@ class Connections {
       const rpc = new RPC(conn, this.setStatus)
       const rpcNext = new RPCNext(conn, this.setStatus)
       const wallet = new Wallet(gui, rates, rpc)
+      const walletNext = new WalletNext(gui, rates, rpcNext)
       const send = new Send(rpc, wallet)
       const stats = new Stats(rpc, wallet)
 
-      this.stores.set(uid, { rpc, rpcNext, send, stats, wallet })
+      this.stores.set(uid, { rpc, rpcNext, send, stats, wallet, walletNext })
     }
 
     /** Set connection active. */
