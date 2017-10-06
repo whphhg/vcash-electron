@@ -87,40 +87,40 @@ class CurrencyConverter extends React.Component {
             <p>{this.t('wallet:currencyConverter')}</p>
           </div>
           <div className='flex'>
-            <img src='./assets/images/exchangePoloniex.png' />
-            <Tooltip
-              placement='bottom'
-              title={''.concat(
-                this.t('wallet:lastUpdated'),
-                ' ',
-                moment(this.rates.poloniex.updated).format('LTS')
-              )}
-            >
-              <p style={{ margin: '0 10px 0 5px' }}>
-                <span style={{ fontWeight: '500' }}>
-                  {new Intl.NumberFormat(this.gui.language, {
-                    minimumFractionDigits: 8,
-                    maximumFractionDigits: 8
-                  }).format(this.rates.poloniex.last)}
-                </span>{' '}
-                BTC
-              </p>
-            </Tooltip>
             <img src='./assets/images/exchangeBittrex.png' />
             <Tooltip
-              placement='bottomRight'
+              placement='bottom'
               title={''.concat(
                 this.t('wallet:lastUpdated'),
                 ' ',
                 moment(this.rates.bittrex.updated).format('LTS')
               )}
             >
-              <p style={{ margin: '0 0 0 5px' }}>
+              <p style={{ margin: '1px 10px 0 5px' }}>
                 <span style={{ fontWeight: '500' }}>
                   {new Intl.NumberFormat(this.gui.language, {
                     minimumFractionDigits: 8,
                     maximumFractionDigits: 8
                   }).format(this.rates.bittrex.Last)}
+                </span>{' '}
+                BTC
+              </p>
+            </Tooltip>
+            <img src='./assets/images/exchangePoloniex.png' />
+            <Tooltip
+              placement='bottomRight'
+              title={''.concat(
+                this.t('wallet:lastUpdated'),
+                ' ',
+                moment(this.rates.poloniex.updated).format('LTS')
+              )}
+            >
+              <p style={{ margin: '1px 0 0 5px' }}>
+                <span style={{ fontWeight: '500' }}>
+                  {new Intl.NumberFormat(this.gui.language, {
+                    minimumFractionDigits: 8,
+                    maximumFractionDigits: 8
+                  }).format(this.rates.poloniex.last)}
                 </span>{' '}
                 BTC
               </p>

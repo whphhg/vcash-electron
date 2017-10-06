@@ -1,36 +1,25 @@
-import { action, computed, observable } from 'mobx'
+import { action, computed, extendObservable } from 'mobx'
 import { getItem, setItem } from '../utilities/localStorage'
 
 /** Required store instances. */
 import gui from './gui'
 
 class Rates {
-  /**
-   * Observable properties.
-   * @property {object} bitcoinAverage - Bitcoin average price index.
-   * @property {object} bittrex - Bittrex ticker.
-   * @property {object} poloniex - Poloniex ticker.
-   */
-  @observable
-  bitcoinAverage = getItem('bitcoinAverage') || {
-    rates: {},
-    updated: 0
-  }
-  @observable bittrex = { Last: 0 }
-  @observable poloniex = { last: 0 }
-
-  /**
-   * Start upate loops.
-   * @constructor
-   */
   constructor () {
+    extendObservable(this, {
+      bitcoinAverage: getItem('bitcoinAverage') || { rates: {}, updated: 0 },
+      bittrex: { Last: 0 },
+      poloniex: { last: 0 }
+    })
+
+    /** Start the update loops. */
     this.fetchBitcoinAverage()
     this.fetchBittrex()
     this.fetchPoloniex()
   }
 
   /**
-   * Get current Vcash price average.
+   * Get the current Vcash price average.
    * @function average
    * @return {number} Vcash price average.
    */
@@ -135,17 +124,18 @@ class Rates {
    * to obey the 100 requests per day limit.
    * @function fetchBitcoinAverage
    */
-  fetchBitcoinAverage () {
+  async fetchBitcoinAverage () {
     if (new Date().getTime() - this.bitcoinAverage.updated > 15 * 59 * 1000) {
-      window
-        .fetch(
+      try {
+        let res = await window.fetch(
           'https://apiv2.bitcoinaverage.com/indices/global/ticker/short?crypto=BTC'
         )
-        .then(response => {
-          if (response.ok === true) return response.json()
-        })
-        .then(priceIndex => this.setBitcoinAverage(priceIndex))
-        .catch(error => console.error('BitcoinAverage:', error.message))
+
+        res = await res.json()
+        this.setBitcoinAverage(res)
+      } catch (error) {
+        console.error('BitcoinAverage:', error.message)
+      }
     }
 
     setTimeout(() => this.fetchBitcoinAverage(), 15 * 60 * 1000)
@@ -155,16 +145,17 @@ class Rates {
    * Fetch Bittrex ticker.
    * @function fetchBittrex
    */
-  fetchBittrex () {
-    window
-      .fetch(
+  async fetchBittrex () {
+    try {
+      let res = await window.fetch(
         'https://bittrex.com/api/v1.1/public/getmarketsummary?market=btc-xvc'
       )
-      .then(response => {
-        if (response.ok === true) return response.json()
-      })
-      .then(ticker => this.setBittrex(ticker))
-      .catch(error => console.error('Bittrex:', error.message))
+
+      res = await res.json()
+      this.setBittrex(res)
+    } catch (error) {
+      console.error('Bittrex:', error.message)
+    }
 
     setTimeout(() => this.fetchBittrex(), 60 * 1000)
   }
@@ -173,16 +164,19 @@ class Rates {
    * Fetch Poloniex ticker.
    * @function fetchPoloniex
    */
-  fetchPoloniex () {
-    window
-      .fetch('https://poloniex.com/public?command=returnTicker')
-      .then(response => {
-        if (response.ok === true) return response.json()
-      })
-      .then(ticker => this.setPoloniex(ticker))
-      .catch(error => console.error('Poloniex:', error.message))
+  async fetchPoloniex () {
+    try {
+      let res = await window.fetch(
+        'https://poloniex.com/public?command=returnTicker'
+      )
 
-    setTimeout(() => this.fetchPoloniex(), 30 * 1000)
+      res = await res.json()
+      this.setPoloniex(res)
+    } catch (error) {
+      console.error('Poloniex:', error.message)
+    }
+
+    setTimeout(() => this.fetchPoloniex(), 60 * 1000)
   }
 }
 
