@@ -21,7 +21,7 @@ class Console extends React.Component {
     /** Bind the async function. */
     this.execute = this.execute.bind(this)
 
-    /** Toggle modal on Alt-c key press. */
+    /** Toggle modal's visibility on Alt-c key press. */
     document.onkeydown = e => {
       if (e.altKey === true && e.keyCode === 67) this.toggleModal()
     }
@@ -89,7 +89,7 @@ class Console extends React.Component {
   }
 
   /**
-   * Toggle modal visibility.
+   * Toggle modal's visibility.
    * @function toggleModal
    */
   @action
@@ -105,12 +105,12 @@ class Console extends React.Component {
     /** Do not execute the RPC command if the status is false. */
     if (this.executeStatus === false) return
 
-    const response = await this.rpc.batch([
+    const res = await this.rpc.batch([
       { method: this.options.method, params: this.options.params }
     ])
 
     /** Set the response. */
-    this.setResponse(response)
+    this.setResponse(res)
   }
 
   render () {

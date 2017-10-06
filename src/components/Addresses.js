@@ -45,7 +45,7 @@ class Addresses extends React.Component {
 
     return (
       <div id='AddressesGrid'>
-        <div className='shadow' style={{ minHeight: '35px' }}>
+        <div className='shadow' style={{ minHeight: '30px' }}>
           <div className='AddressesColumnsGrid'>
             <div className='flex-sb'>
               <div className='flex' style={{ margin: '0 0 0 10px' }}>

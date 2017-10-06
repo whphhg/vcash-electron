@@ -42,13 +42,8 @@ class WalletSeedDump extends React.Component {
    */
   @action
   setValues = values => {
-    const allowed = ['seed', 'rpcError']
-
-    /** Set only values of allowed properties that differ from the present. */
     Object.keys(values).forEach(key => {
-      if (allowed.includes(key) === true && this[key] !== values[key]) {
-        this[key] = values[key]
-      }
+      this[key] = values[key]
     })
   }
 
@@ -57,15 +52,15 @@ class WalletSeedDump extends React.Component {
    * @function dumpWalletSeed
    */
   async dumpWalletSeed () {
-    const response = await this.rpc.dumpWalletSeed()
+    const res = await this.rpc.dumpWalletSeed()
 
-    if ('result' in response === true) {
+    if ('result' in res === true) {
       /** Set wallet's seed. */
-      this.setValues({ seed: response.result })
+      this.setValues({ seed: res.result })
     }
 
-    if ('error' in response === true) {
-      switch (response.error.code) {
+    if ('error' in res === true) {
+      switch (res.error.code) {
         case -4:
           return this.setValues({ rpcError: 'notDeterministic' })
       }

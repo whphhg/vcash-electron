@@ -23,9 +23,9 @@ class WalletDump extends React.Component {
    * @function dumpWallet
    */
   async dumpWallet () {
-    const response = await this.rpc.dumpWallet()
+    const res = await this.rpc.dumpWallet()
 
-    if ('result' in response === true) {
+    if ('result' in res === true) {
       /** Display a success message for 6s. */
       message.success(this.t('wallet:dumped'), 6)
     }

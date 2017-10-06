@@ -35,13 +35,8 @@ class WalletRepair extends React.Component {
    */
   @action
   setValues (values) {
-    const allowed = ['amountAffected', 'checkPassed', 'mismatchedSpent']
-
-    /** Set only values of allowed properties that differ from the present. */
     Object.keys(values).forEach(key => {
-      if (allowed.includes(key) === true && this[key] !== values[key]) {
-        this[key] = values[key]
-      }
+      this[key] = values[key]
     })
   }
 
@@ -52,10 +47,10 @@ class WalletRepair extends React.Component {
    */
   async crWallet (checkOnly = true) {
     const method = checkOnly === true ? 'checkWallet' : 'repairWallet'
-    const response = await this.rpc[method]()
+    const res = await this.rpc[method]()
 
-    if ('result' in response === true) {
-      const result = response.result
+    if ('result' in res === true) {
+      const result = res.result
       const cp = 'wallet check passed' in result
 
       /** Re-check after repairing. */

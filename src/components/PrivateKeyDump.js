@@ -72,18 +72,13 @@ class PrivateKeyDump extends React.Component {
    */
   @action
   setValues = values => {
-    const allowed = ['address', 'privateKey', 'rpcError']
-
-    /** Set only values of allowed properties that differ from the present. */
     Object.keys(values).forEach(key => {
-      if (allowed.includes(key) === true && this[key] !== values[key]) {
-        this[key] = values[key]
-      }
+      this[key] = values[key]
     })
   }
 
   /**
-   * Toggle popover visibility only when the wallet is unlocked.
+   * Toggle popover's visibility only when the wallet is unlocked.
    * @function togglePopover
    */
   @action
@@ -98,15 +93,15 @@ class PrivateKeyDump extends React.Component {
    * @function dumpPrivKey
    */
   async dumpPrivKey () {
-    const response = await this.rpc.dumpPrivKey(this.address)
+    const res = await this.rpc.dumpPrivKey(this.address)
 
-    if ('result' in response === true) {
+    if ('result' in res === true) {
       /** Set private key. */
-      this.setValues({ privateKey: response.result })
+      this.setValues({ privateKey: res.result })
     }
 
-    if ('error' in response === true) {
-      switch (response.error.code) {
+    if ('error' in res === true) {
+      switch (res.error.code) {
         case -4:
           return this.setValues({ rpcError: 'addrUnknown' })
         case -5:

@@ -48,13 +48,8 @@ class WalletBackup extends React.Component {
    */
   @action
   setValues = values => {
-    const allowed = ['path', 'rpcError']
-
-    /** Set only values of allowed properties that differ from the present. */
     Object.keys(values).forEach(key => {
-      if (allowed.includes(key) === true && this[key] !== values[key]) {
-        this[key] = values[key]
-      }
+      this[key] = values[key]
     })
   }
 
@@ -79,15 +74,15 @@ class WalletBackup extends React.Component {
    * @function backupWallet
    */
   async backupWallet () {
-    const response = await this.rpc.backupWallet(this.path)
+    const res = await this.rpc.backupWallet(this.path)
 
-    if ('result' in response === true) {
+    if ('result' in res === true) {
       /** Display a success message for 6s. */
       message.success(this.t('wallet:backedUp'), 6)
     }
 
-    if ('error' in response === true) {
-      switch (response.error.code) {
+    if ('error' in res === true) {
+      switch (res.error.code) {
         case -4:
           return this.setValues({ rpcError: 'backupFailed' })
       }

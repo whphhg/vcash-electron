@@ -5,7 +5,7 @@ import { Progress } from 'antd'
 import { version } from '../../package.json'
 
 @translate(['wallet'], { wait: true })
-@inject('connections', 'gui', 'wallet')
+@inject('connections', 'gui', 'walletNext')
 @observer
 class Footer extends React.Component {
   constructor (props) {
@@ -13,7 +13,7 @@ class Footer extends React.Component {
     this.t = props.t
     this.connections = props.connections
     this.gui = props.gui
-    this.wallet = props.wallet
+    this.wallet = props.walletNext
   }
 
   render () {

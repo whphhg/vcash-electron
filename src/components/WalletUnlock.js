@@ -65,18 +65,13 @@ class WalletUnlock extends React.Component {
    */
   @action
   setValues = values => {
-    const allowed = ['passphrase', 'rpcError']
-
-    /** Set only values of allowed properties that differ from the present. */
     Object.keys(values).forEach(key => {
-      if (allowed.includes(key) === true && this[key] !== values[key]) {
-        this[key] = values[key]
-      }
+      this[key] = values[key]
     })
   }
 
   /**
-   * Toggle modal visibility.
+   * Toggle modal's visibility.
    * @function toggleModal
    */
   @action
@@ -89,9 +84,9 @@ class WalletUnlock extends React.Component {
    * @function walletPassphrase
    */
   async walletPassphrase () {
-    const response = await this.rpc.walletPassphrase(this.passphrase)
+    const res = await this.rpc.walletPassphrase(this.passphrase)
 
-    if ('result' in response === true) {
+    if ('result' in res === true) {
       /** Update wallet's lock status. */
       this.wallet.getLockStatus()
 
@@ -102,8 +97,8 @@ class WalletUnlock extends React.Component {
       message.success(this.t('wallet:unlocked'), 6)
     }
 
-    if ('error' in response === true) {
-      switch (response.error.code) {
+    if ('error' in res === true) {
+      switch (res.error.code) {
         case -14:
           return this.setValues({ rpcError: 'passphraseIncorrect' })
       }
@@ -143,8 +138,8 @@ class WalletUnlock extends React.Component {
           </div>
         </Modal>
         <Tooltip placement='bottomRight' title={this.t('wallet:locked')}>
-          <Button onClick={this.toggleModal} size='small' type='primary'>
-            <i className='material-icons md-20'>lock</i>
+          <Button onClick={this.toggleModal}>
+            <i className='material-icons md-16'>lock</i>
           </Button>
         </Tooltip>
       </div>

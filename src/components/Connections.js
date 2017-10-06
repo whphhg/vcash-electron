@@ -61,7 +61,6 @@ class Connections extends React.Component {
    * @param {object} e - Input element event.
    */
   setConfig = e => {
-    console.warn(e)
     this.connections.setConfig(e.target.name, e.target.value)
   }
 

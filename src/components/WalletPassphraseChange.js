@@ -64,13 +64,8 @@ class WalletPassphraseChange extends React.Component {
    */
   @action
   setValues = values => {
-    const allowed = ['current', 'next', 'repeat', 'rpcError']
-
-    /** Set only values of allowed properties that differ from the present. */
     Object.keys(values).forEach(key => {
-      if (allowed.includes(key) === true && this[key] !== values[key]) {
-        this[key] = values[key]
-      }
+      this[key] = values[key]
     })
   }
 
@@ -79,12 +74,9 @@ class WalletPassphraseChange extends React.Component {
    * @function walletPassphraseChange
    */
   async walletPassphraseChange () {
-    const response = await this.rpc.walletPassphraseChange(
-      this.current,
-      this.next
-    )
+    const res = await this.rpc.walletPassphraseChange(this.current, this.next)
 
-    if ('result' in response) {
+    if ('result' in res) {
       /** Update wallet's lock status. */
       this.wallet.getLockStatus()
 
@@ -95,8 +87,8 @@ class WalletPassphraseChange extends React.Component {
       message.success(this.t('wallet:passphraseChanged'), 6)
     }
 
-    if ('error' in response) {
-      switch (response.error.code) {
+    if ('error' in res) {
+      switch (res.error.code) {
         case -14:
           return this.setValues({ rpcError: 'passphraseIncorrect' })
       }

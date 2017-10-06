@@ -71,13 +71,8 @@ class PrivateKeyImport extends React.Component {
    */
   @action
   setValues = values => {
-    const allowed = ['account', 'privateKey', 'rpcError']
-
-    /** Set only values of allowed properties that differ from the present. */
     Object.keys(values).forEach(key => {
-      if (allowed.includes(key) === true && this[key] !== values[key]) {
-        this[key] = values[key]
-      }
+      this[key] = values[key]
     })
   }
 
@@ -91,7 +86,7 @@ class PrivateKeyImport extends React.Component {
   }
 
   /**
-   * Toggle popover visibility only when the wallet is unlocked.
+   * Toggle popover's visibility only when the wallet is unlocked.
    * @function togglePopover
    */
   @action
@@ -109,12 +104,12 @@ class PrivateKeyImport extends React.Component {
     /** Disable the button and show the loading indicator. */
     this.toggleLoading()
 
-    const response = await this.rpc.importPrivKey(this.privateKey, this.account)
+    const res = await this.rpc.importPrivKey(this.privateKey, this.account)
 
     /** Re-enable the button and hide the loading indicator. */
     this.toggleLoading()
 
-    if ('result' in response === true) {
+    if ('result' in res === true) {
       /** Hide popover if it's still visible. */
       if (this.popoverVisible === true) this.togglePopover()
 
@@ -125,8 +120,8 @@ class PrivateKeyImport extends React.Component {
       message.success(this.t('wallet:pkImported'), 6)
     }
 
-    if ('error' in response === true) {
-      switch (response.error.code) {
+    if ('error' in res === true) {
+      switch (res.error.code) {
         case -4:
           return this.setValues({ rpcError: 'pkIsMine' })
         case -5:

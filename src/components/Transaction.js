@@ -25,9 +25,9 @@ class Transaction extends React.Component {
    * @function ztLock
    */
   async ztLock () {
-    const response = await this.rpc.ztLock(this.wallet.viewing)
+    const res = await this.rpc.ztLock(this.wallet.viewing)
 
-    if ('result' in response === true) {
+    if ('result' in res === true) {
       /** Update transactions ztlock statuses. */
       this.wallet.getWallet()
 

@@ -59,18 +59,13 @@ class AddressGet extends React.Component {
    */
   @action
   setValues = values => {
-    const allowed = ['account', 'address', 'rpcError']
-
-    /** Set only values of allowed properties that differ from the present. */
     Object.keys(values).forEach(key => {
-      if (allowed.includes(key) === true && this[key] !== values[key]) {
-        this[key] = values[key]
-      }
+      this[key] = values[key]
     })
   }
 
   /**
-   * Toggle popover visibility.
+   * Toggle popover's visibility.
    * @function togglePopover
    */
   @action
@@ -83,18 +78,18 @@ class AddressGet extends React.Component {
    * @function getNewAddress
    */
   async getNewAddress () {
-    const response = await this.rpc.getNewAddress(this.account)
+    const res = await this.rpc.getNewAddress(this.account)
 
-    if ('result' in response === true) {
+    if ('result' in res === true) {
       /** Set new receiving address. */
-      this.setValues({ address: response.result })
+      this.setValues({ address: res.result })
 
       /** Update wallet's address list. */
       this.wallet.getWallet(false, true)
     }
 
-    if ('error' in response === true) {
-      switch (response.error.code) {
+    if ('error' in res === true) {
+      switch (res.error.code) {
         case -12:
           return this.setValues({ rpcError: 'keypoolRanOut' })
       }

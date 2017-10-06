@@ -31,7 +31,7 @@ class Maintenance extends React.Component {
       <div id='MaintenanceGrid'>
         <div className='shadow'>
           <div style={{ margin: '0 10px 0 10px' }}>
-            <div className='flex-sb' style={{ minHeight: '35px' }}>
+            <div className='flex-sb' style={{ minHeight: '30px' }}>
               <div className='flex'>
                 <i className='material-icons md-16'>language</i>
                 <p style={{ margin: '0 10px 0 5px' }}>

@@ -46,13 +46,8 @@ class WalletEncrypt extends React.Component {
    */
   @action
   setValues = values => {
-    const allowed = ['passphrase', 'repeat', 'rpcError']
-
-    /** Set only values of allowed properties that differ from the present. */
     Object.keys(values).forEach(key => {
-      if (allowed.includes(key) === true && this[key] !== values[key]) {
-        this[key] = values[key]
-      }
+      this[key] = values[key]
     })
   }
 
@@ -61,9 +56,9 @@ class WalletEncrypt extends React.Component {
    * @function encryptWallet
    */
   async encryptWallet () {
-    const response = await this.rpc.encryptWallet(this.passphrase)
+    const res = await this.rpc.encryptWallet(this.passphrase)
 
-    if ('result' in response === true) {
+    if ('result' in res === true) {
       /** Update wallet's lock status. */
       this.wallet.getLockStatus()
 

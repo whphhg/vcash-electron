@@ -78,18 +78,13 @@ class Message extends React.Component {
    */
   @action
   setValues = values => {
-    const allowed = ['address', 'message', 'signature', 'rpcError', 'verified']
-
-    /** Set only values of allowed properties that differ from the present. */
     Object.keys(values).forEach(key => {
-      if (allowed.includes(key) === true && this[key] !== values[key]) {
-        this[key] = values[key]
-      }
+      this[key] = values[key]
     })
   }
 
   /**
-   * Toggle popover visibility.
+   * Toggle popover's visibility.
    * @function togglePopover
    */
   @action
@@ -102,18 +97,18 @@ class Message extends React.Component {
    * @function signMessage
    */
   async signMessage () {
-    const response = await this.rpc.signMessage(this.address, this.message)
+    const res = await this.rpc.signMessage(this.address, this.message)
 
-    if ('result' in response === true) {
+    if ('result' in res === true) {
       /** Set signature and verification status. */
       this.setValues({
-        signature: { value: response.result, setBy: 'rpc' },
+        signature: { value: res.result, setBy: 'rpc' },
         verified: true
       })
     }
 
-    if ('error' in response === true) {
-      switch (response.error.code) {
+    if ('error' in res === true) {
+      switch (res.error.code) {
         case -3:
           return this.setValues({ rpcError: 'addrUnknown' })
         case -5:
@@ -127,19 +122,19 @@ class Message extends React.Component {
    * @function verifyMessage
    */
   async verifyMessage () {
-    const response = await this.rpc.verifyMessage(
+    const res = await this.rpc.verifyMessage(
       this.address,
       this.signature.value,
       this.message
     )
 
-    if ('result' in response === true) {
+    if ('result' in res === true) {
       /** Set verification status. */
-      this.setValues({ verified: response.result })
+      this.setValues({ verified: res.result })
     }
 
-    if ('error' in response === true) {
-      switch (response.error.code) {
+    if ('error' in res === true) {
+      switch (res.error.code) {
         case -5:
           return this.setValues({ rpcError: 'addrInvalid' })
       }

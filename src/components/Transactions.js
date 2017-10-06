@@ -24,7 +24,7 @@ class Transactions extends React.Component {
       <div id='TransactionsGrid'>
         <div className='shadow'>
           <div style={{ margin: '0 10px 0 10px' }}>
-            <div className='flex-sb' style={{ height: '35px' }}>
+            <div className='flex-sb' style={{ height: '30px' }}>
               <div>
                 <ChainBlender />
               </div>

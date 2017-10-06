@@ -23,11 +23,11 @@ class ChainBlender extends React.Component {
    * @function toggle
    */
   async toggle () {
-    const response = await this.rpc.chainBlender(
+    const res = await this.rpc.chainBlender(
       this.wallet.isBlending === true ? 'stop' : 'start'
     )
 
-    if ('result' in response === true) {
+    if ('result' in res === true) {
       /** Update blending status. */
       this.wallet.setBlendingStatus()
 
