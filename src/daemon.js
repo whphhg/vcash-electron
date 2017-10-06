@@ -15,7 +15,7 @@ const start = () => {
   )
 
   /** Prepare daemon path. */
-  let path = join(__dirname, '..', 'bin', daemonName)
+  let path = join(__dirname, '..', 'build', 'bin', daemonName)
 
   /** Execute from the unpacked asar directory when running packaged. */
   path = path.replace('app.asar', 'app.asar.unpacked')
