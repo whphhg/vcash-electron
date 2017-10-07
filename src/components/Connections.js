@@ -3,8 +3,16 @@ import { translate } from 'react-i18next'
 import { withRouter } from 'react-router-dom'
 import { reaction } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Button, Input, Modal, Popconfirm, Radio, Tabs, Tooltip } from 'antd'
 import { remote } from 'electron'
+
+/** Ant Design */
+import Button from 'antd/lib/button'
+import Input from 'antd/lib/input'
+import Modal from 'antd/lib/modal'
+import Popconfirm from 'antd/lib/popconfirm'
+import Radio from 'antd/lib/radio'
+import Tabs from 'antd/lib/tabs'
+import Tooltip from 'antd/lib/tooltip'
 
 /** Required components. */
 import SelectCurrency from './SelectCurrency'

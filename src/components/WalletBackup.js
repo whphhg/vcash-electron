@@ -2,10 +2,14 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, extendObservable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Button, Input, message } from 'antd'
 import { remote } from 'electron'
 import { join, sep } from 'path'
 import { dataPath } from '../utilities/common'
+
+/** Ant Design */
+import Button from 'antd/lib/button'
+import Input from 'antd/lib/input'
+import message from 'antd/lib/message'
 
 @translate(['wallet'], { wait: true })
 @inject('rpcNext')
@@ -15,13 +19,15 @@ class WalletBackup extends React.Component {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
-    this.path =
-      this.rpc.conn.status.tunnel === true
-        ? ''
-        : join(dataPath(), 'backups', sep)
 
     /** Extend the component with observable properties. */
-    extendObservable(this, { path: '', rpcError: '' })
+    extendObservable(this, {
+      path:
+        this.rpc.conn.status.tunnel === true
+          ? ''
+          : join(dataPath(), 'backups', sep),
+      rpcError: ''
+    })
 
     /** Bind the async function. */
     this.backupWallet = this.backupWallet.bind(this)

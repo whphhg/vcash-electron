@@ -1,7 +1,10 @@
 import React from 'react'
 import { HashRouter, Route } from 'react-router-dom'
 import { inject, observer, Provider } from 'mobx-react'
-import { message, notification } from 'antd'
+
+/** Ant Design */
+import message from 'antd/lib/message'
+import notification from 'antd/lib/notification'
 
 /** Required components. */
 import Addresses from './Addresses'

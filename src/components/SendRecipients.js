@@ -1,7 +1,10 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Input, Popconfirm } from 'antd'
+
+/** Ant Design */
+import Input from 'antd/lib/input'
+import Popconfirm from 'antd/lib/popconfirm'
 
 @translate(['wallet'], { wait: true })
 @inject('gui', 'rates', 'send')

@@ -1,8 +1,11 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Input, Table } from 'antd'
 import moment from 'moment'
+
+/** Ant Design */
+import Input from 'antd/lib/input'
+import Table from 'antd/lib/table'
 
 /** Required components. */
 import ChainBlender from './ChainBlender'

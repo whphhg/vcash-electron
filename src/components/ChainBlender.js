@@ -1,7 +1,11 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { message, Switch, Tooltip } from 'antd'
+
+/** Ant Design */
+import message from 'antd/lib/message'
+import Switch from 'antd/lib/switch'
+import Tooltip from 'antd/lib/tooltip'
 
 @translate(['wallet'], { wait: true })
 @inject('gui', 'rpcNext', 'wallet')

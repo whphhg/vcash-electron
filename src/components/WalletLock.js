@@ -1,7 +1,10 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Button, Tooltip } from 'antd'
+
+/** Ant Design */
+import Button from 'antd/lib/button'
+import Tooltip from 'antd/lib/tooltip'
 
 @translate(['wallet'], { wait: true })
 @inject('rpcNext', 'wallet')
@@ -38,7 +41,7 @@ class WalletLock extends React.Component {
     return (
       <Tooltip placement='bottomRight' title={this.t('wallet:unlocked')}>
         <Button onClick={this.walletLock}>
-          <i className='material-icons md-16'>lock_open</i>
+          <i className='material-icons md-20'>lock_open</i>
         </Button>
       </Tooltip>
     )

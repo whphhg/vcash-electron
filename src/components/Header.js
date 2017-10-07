@@ -2,7 +2,9 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { withRouter } from 'react-router-dom'
 import { inject, observer } from 'mobx-react'
-import { Menu } from 'antd'
+
+/** Ant Design */
+import Menu from 'antd/lib/menu'
 
 /** Required components. */
 import WalletLock from './WalletLock'

@@ -2,7 +2,13 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, extendObservable, reaction } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Button, Input, message, Modal, Tooltip } from 'antd'
+
+/** Ant Design */
+import Button from 'antd/lib/button'
+import Input from 'antd/lib/input'
+import message from 'antd/lib/message'
+import Modal from 'antd/lib/modal'
+import Tooltip from 'antd/lib/tooltip'
 
 @translate(['wallet'], { wait: true })
 @inject('rpcNext', 'wallet')
@@ -139,7 +145,7 @@ class WalletUnlock extends React.Component {
         </Modal>
         <Tooltip placement='bottomRight' title={this.t('wallet:locked')}>
           <Button onClick={this.toggleModal}>
-            <i className='material-icons md-16'>lock</i>
+            <i className='material-icons md-20'>lock</i>
           </Button>
         </Tooltip>
       </div>

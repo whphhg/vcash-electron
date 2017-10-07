@@ -1,7 +1,9 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Switch } from 'antd'
+
+/** Ant Design */
+import Switch from 'antd/lib/switch'
 
 @translate(['wallet'], { wait: true })
 @inject('gui')

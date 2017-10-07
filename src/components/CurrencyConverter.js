@@ -2,9 +2,12 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, extendObservable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Input, Tooltip } from 'antd'
 import { decimalSeparator } from '../utilities/common'
 import moment from 'moment'
+
+/** Ant Design */
+import Input from 'antd/lib/input'
+import Tooltip from 'antd/lib/tooltip'
 
 @translate(['wallet'], { wait: true })
 @inject('gui', 'rates')

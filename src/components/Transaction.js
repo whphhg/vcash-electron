@@ -1,8 +1,12 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { message, Modal, Table } from 'antd'
 import moment from 'moment'
+
+/** Ant Design */
+import message from 'antd/lib/message'
+import Modal from 'antd/lib/modal'
+import Table from 'antd/lib/table'
 
 @translate(['wallet'], { wait: true })
 @inject('gui', 'rates', 'rpcNext', 'wallet')

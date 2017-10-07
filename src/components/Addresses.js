@@ -2,7 +2,11 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, extendObservable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Input, Select, Table } from 'antd'
+
+/** Ant Design */
+import Input from 'antd/lib/input'
+import Select from 'antd/lib/select'
+import Table from 'antd/lib/table'
 
 /** Required components. */
 import Address from './Address'

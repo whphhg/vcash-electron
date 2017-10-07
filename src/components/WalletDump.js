@@ -1,8 +1,12 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Button, Input, message } from 'antd'
 import { dataPath } from '../utilities/common'
+
+/** Ant Design */
+import Button from 'antd/lib/button'
+import Input from 'antd/lib/input'
+import message from 'antd/lib/message'
 
 @translate(['wallet'], { wait: true })
 @inject('rpcNext', 'wallet')

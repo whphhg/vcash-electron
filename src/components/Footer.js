@@ -1,8 +1,10 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { Progress } from 'antd'
 import { version } from '../../package.json'
+
+/** Ant Design */
+import Progress from 'antd/lib/progress'
 
 @translate(['wallet'], { wait: true })
 @inject('connections', 'gui', 'walletNext')

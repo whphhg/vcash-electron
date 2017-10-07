@@ -2,7 +2,12 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { action, computed, extendObservable, reaction } from 'mobx'
-import { AutoComplete, Button, Input, Popover } from 'antd'
+
+/** Ant Design */
+import AutoComplete from 'antd/lib/auto-complete'
+import Button from 'antd/lib/button'
+import Input from 'antd/lib/input'
+import Popover from 'antd/lib/popover'
 
 @translate(['wallet'], { wait: true })
 @inject('rpcNext', 'wallet')

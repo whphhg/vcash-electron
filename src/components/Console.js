@@ -2,8 +2,12 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, extendObservable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { AutoComplete, Button, Modal } from 'antd'
 import { shortUid } from '../utilities/common'
+
+/** Ant Design */
+import AutoComplete from 'antd/lib/auto-complete'
+import Button from 'antd/lib/button'
+import Modal from 'antd/lib/modal'
 
 @translate(['wallet'], { wait: true })
 @inject('gui', 'rpcNext')

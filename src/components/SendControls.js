@@ -2,7 +2,12 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, extendObservable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { Button, Popconfirm, Switch, Tooltip } from 'antd'
+
+/** Ant Design */
+import Button from 'antd/lib/button'
+import Popconfirm from 'antd/lib/popconfirm'
+import Switch from 'antd/lib/switch'
+import Tooltip from 'antd/lib/tooltip'
 
 @translate(['wallet'], { wait: true })
 @inject('rates', 'send', 'wallet')

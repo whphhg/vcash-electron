@@ -15,7 +15,7 @@
 
 a,
 a:active {
-  color: #b60127;
+  color: #B60127;
 }
 
 a:hover {
@@ -29,7 +29,7 @@ body {
 }
 
 header {
-  background: #b60127;
+  background: #B60127;
   color: #FFFFFF;
 }
 
@@ -53,7 +53,7 @@ header .ant-btn:hover,
 header .ant-btn:focus {
   background-color: #43464B;
   border-color: #43464B;
-  color: #b60127;
+  color: #B60127;
 }
 
 /** Application's grids */
@@ -163,9 +163,43 @@ header .ant-btn:focus {
   width: 100%;
 }
 
+/** Material icons */
+.material-icons.md-20 {
+  font-size: 20px;
+}
+
+.material-icons.md-18 {
+  font-size: 18px;
+}
+
+.material-icons.md-16 {
+  font-size: 16px;
+}
+
+.material-icons.md-14 {
+  font-size: 14px;
+}
+
+.material-icons + p {
+  margin: 0 0 0 5px;
+}
+
+/** Success, warning and error */
+.green {
+  color: #4FB71C;
+}
+
+.orange {
+  color: #FF7200;
+}
+
+.red {
+  color: #B60127;
+}
+
 /** Ant Design */
 .ant-menu {
-  background: #b60127;
+  background: #B60127;
   color: #FFFFFF;
   line-height: 30px;
 }
@@ -185,28 +219,15 @@ header .ant-btn:focus {
   color: #FFFFFF;
 }
 
-
-
-
-
-
-/** R E F A C T O R */
+/**
+ * R E F A C T O R
+ */
 hr { border: 0; border-top: 1px solid #e9e9e9; margin: 10px 0 10px 0; }
 .chartTooltip { margin: 0; padding: 10px; border: 1px solid #f5f5f5; background-color: rgba(255, 255, 255, 0.85); }
 .chartTooltip .label { margin: 0; font-weight: 500; border-bottom: 1px solid #ccc; }
-.material-icons.md-14 { font-size: 14px; }
-.material-icons.md-16 { font-size: 16px; }
-.material-icons.md-18 { font-size: 18px; }
-.material-icons.md-20 { font-size: 20px; }
-.material-icons + p { margin: 0 0 0 5px; }
-.green { color: #4fb71c; }
-.orange { color: #ff7200; }
-.red { color: #b60127; }
 .text-mono { font-family: 'Roboto Mono'; font-size: 13px; }
 #sendRecipients { max-height: 375px; overflow-y: scroll; }
 #sendRecipients::-webkit-scrollbar { display: none; }
-
-
 
 .ant-select-selection:hover { border-color: #b60127; }
 .ant-select-focused .ant-select-selection,
