@@ -13,9 +13,14 @@ a branch with a descriptive name that includes the issue number (e.g. #233).
 
 Next, install [Node.js](https://nodejs.org/en/download/current/) dependencies
 in the local clone of your fork using `npm install`. After the dependency
-installation is completed you can run the GUI using `npm run gui`. Depending
-on the size of your changes you might also require development tools which are
-enabled when using `npm run dev` or `npm run dev-win` on Windows.
+installation is completed, start `npm run watch` to auto-transform the source
+code on any changes to the files in the `src/` directory.
+
+    npm run watch
+
+You can now run the GUI using `npm run gui`. Depending on the size of your
+changes you might also require development tools which are enabled when using
+`npm run dev` or `npm run dev-win` on Windows.
 
     npm run gui
     npm run dev (Linux and macOS)

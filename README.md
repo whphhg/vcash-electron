@@ -31,14 +31,17 @@ install Node.js dependencies using `npm install`.
     cd vcash-electron/
     npm install
 
-You can run the GUI using `npm run gui` after the dependency installation
-is completed.
+After the dependency installation is completed, transform the source code using
+`npm run babel` or `npm run watch` to auto-transform on any changes to the
+files in the `src/` directory.
+
+    npm run babel (transform once)
+    npm run watch (auto-transform on changes)
+
+You can now run the GUI using `npm run gui`, or if you want to use development
+tools, using `npm run dev` or `npm run dev-win` on Windows.
 
     npm run gui
-
-Alternatively, if you want to use development tools, run the GUI
-using `npm run dev` or `npm run dev-win` on Windows.
-
     npm run dev (Linux and macOS)
     npm run dev-win (Windows)
 
