@@ -1,8 +1,11 @@
 {
   "name": "vcash-electron",
   "productName": "Vcash Electron GUI",
-  "version": "0.33.9",
+  "version": "0.33.10",
   "description": "Multi-platform and multi-node GUI for Vcash.",
+  "author": "whphhg <whphhg@protonmail.ch>",
+  "license": "GPL-3.0",
+  "homepage": "https://github.com/openvcash/vcash-electron#readme",
   "main": "lib/electron.js",
   "scripts": {
     "gui": "electron .",
@@ -10,77 +13,30 @@
     "dev-win": "set NODE_ENV=dev&&electron .",
     "babel": "babel --copy-files src/ --out-dir lib/",
     "watch": "babel --copy-files src/ --out-dir lib/ --watch",
-    "lint": "standard",
-    "format": "prettier-standard 'src/**/*.js' && standard",
-    "pack": "build --dir",
-    "dist-linux": "build --linux --x64",
-    "dist-macos": "build --mac --x64",
-    "dist-win-nsis": "build --win nsis --ia32 --x64",
-    "dist-win-ia32": "build --win portable --ia32",
-    "dist-win-x64": "build --win portable --x64"
-  },
-  "babel": {
-    "presets": [
-      "stage-0",
-      "react",
-      [
-        "env",
-        {
-          "targets": {
-            "electron": "1.7.8",
-            "node": "current"
-          }
-        }
-      ]
-    ],
-    "plugins": [
-      "transform-decorators-legacy"
-    ]
-  },
-  "build": {
-    "appId": "vcash.electron.gui",
-    "asarUnpack": [
-      "build/bin"
-    ],
-    "files": [
-      "lib/**/*"
-    ],
-    "linux": {
-      "category": "Network",
-      "target": [
-        "deb",
-        "zip"
-      ]
-    },
-    "mac": {
-      "category": "public.app-category.finance",
-      "target": "dmg"
-    }
+    "lint": "eslint src/",
+    "format": "prettier --write --config .prettierrc 'src/**/*.js' && npm run lint",
+    "pack": "build --dir --config .buildrc",
+    "dist-linux": "build --linux --x64 --config .buildrc",
+    "dist-macos": "build --mac --x64 --config .buildrc",
+    "dist-win-nsis": "build --win nsis --ia32 --x64 --config .buildrc",
+    "dist-win-ia32": "build --win portable --ia32 --config .buildrc",
+    "dist-win-x64": "build --win portable --x64 --config .buildrc"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/openvcash/vcash-electron.git"
+  },
+  "bugs": {
+    "url": "https://github.com/openvcash/vcash-electron/issues"
   },
   "keywords": [
     "vcash",
     "electron",
     "gui"
   ],
-  "author": "whphhg <whphhg@protonmail.ch>",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/openvcash/vcash-electron/issues"
-  },
-  "homepage": "https://github.com/openvcash/vcash-electron#readme",
-  "standard": {
-    "parser": "babel-eslint",
-    "globals": [
-      "Audio"
-    ]
-  },
   "dependencies": {
     "antd": "2.13.4",
-    "i18next": "9.0.1",
+    "i18next": "9.1.0",
     "i18next-node-fs-backend": "1.0.0",
     "mobx": "3.3.1",
     "mobx-logger": "0.6.0",
@@ -102,8 +58,15 @@
     "babel-preset-stage-0": "6.24.1",
     "electron": "1.7.8",
     "electron-builder": "19.34.2",
-    "eslint": "3.19.0",
-    "prettier-standard": "7.0.1",
-    "standard": "10.0.3"
+    "eslint": "4.8.0",
+    "eslint-config-standard": "10.2.1",
+    "eslint-config-standard-jsx": "4.0.2",
+    "eslint-plugin-import": "2.7.0",
+    "eslint-plugin-node": "5.2.0",
+    "eslint-plugin-prettier": "2.3.1",
+    "eslint-plugin-promise": "3.5.0",
+    "eslint-plugin-react": "7.4.0",
+    "eslint-plugin-standard": "3.0.1",
+    "prettier": "1.7.4"
   }
 }

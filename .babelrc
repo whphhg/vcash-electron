@@ -1,0 +1,13 @@
+{
+  "presets": [
+    "stage-0",
+    "react",
+    ["env", {
+      "targets": {
+        "electron": "1.7.8",
+        "node": "current"
+      }
+    }]
+  ],
+  "plugins": ["transform-decorators-legacy"]
+}

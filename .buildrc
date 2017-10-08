@@ -1,0 +1,13 @@
+{
+  "appId": "vcash.electron.gui",
+  "asarUnpack": ["build/bin"],
+  "files": ["lib/**/*"],
+  "linux": {
+    "category": "Network",
+    "target": ["deb", "zip"]
+  },
+  "mac": {
+    "category": "public.app-category.finance",
+    "target": "dmg"
+  }
+}
