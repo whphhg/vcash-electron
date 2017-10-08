@@ -11,7 +11,7 @@ import Tooltip from 'antd/lib/tooltip'
 @inject('gui', 'rpcNext', 'wallet')
 @observer
 class ChainBlender extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
@@ -26,7 +26,7 @@ class ChainBlender extends React.Component {
    * Toggle ChainBlender.
    * @function toggle
    */
-  async toggle () {
+  async toggle() {
     const res = await this.rpc.chainBlender(
       this.wallet.isBlending === true ? 'stop' : 'start'
     )
@@ -45,33 +45,33 @@ class ChainBlender extends React.Component {
     }
   }
 
-  render () {
+  render() {
     return (
-      <div className='flex'>
+      <div className="flex">
         <div style={{ margin: '0 10px 3px 0' }}>
           <Tooltip
-            placement='bottomLeft'
+            placement="bottomLeft"
             title={this.t('wallet:toggleChainBlender')}
           >
             <Switch
               checked={this.wallet.isBlending === true}
               checkedChildren={
                 <div style={{ margin: '-2px 0 0 0' }}>
-                  <i className='material-icons md-16'>done</i>
+                  <i className="material-icons md-16">done</i>
                 </div>
               }
               disabled={this.wallet.isLocked === true}
               onChange={this.toggle}
-              size='small'
+              size="small"
               unCheckedChildren={
                 <div style={{ margin: '-2px 0 0 0' }}>
-                  <i className='material-icons md-16'>clear</i>
+                  <i className="material-icons md-16">clear</i>
                 </div>
               }
             />
           </Tooltip>
         </div>
-        <i className='material-icons md-16'>shuffle</i>
+        <i className="material-icons md-16">shuffle</i>
         <p>
           {this.t('wallet:blended')}{' '}
           <span style={{ fontWeight: 600 }}>
@@ -86,8 +86,8 @@ class ChainBlender extends React.Component {
           </span>%)
         </p>
         {this.wallet.isLocked === false && (
-          <div className='flex' style={{ margin: '0 0 0 10px' }}>
-            <i className='material-icons md-16'>grain</i>
+          <div className="flex" style={{ margin: '0 0 0 10px' }}>
+            <i className="material-icons md-16">grain</i>
             <p>
               {this.t('wallet:denominated')}{' '}
               <span style={{ fontWeight: 600 }}>

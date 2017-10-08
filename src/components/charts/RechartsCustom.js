@@ -43,7 +43,7 @@ const CustomTick = props => {
   return (
     <g transform={`translate(${props.x},${props.y})`}>
       <text
-        fill='#666666'
+        fill="#666666"
         textAnchor={props.textAnchor || 'end'}
         x={props.textX || 0}
         y={props.textY || 0}
@@ -66,9 +66,9 @@ const CustomTooltip = props => {
       const { amount, category, color, date } = props.payload[0].payload
 
       return (
-        <div className='chartTooltip'>
-          <p className='label'>{i18next.t('wallet:' + category)}</p>
-          <div className='flex-sb'>
+        <div className="chartTooltip">
+          <p className="label">{i18next.t('wallet:' + category)}</p>
+          <div className="flex-sb">
             <div style={{ margin: '0 32px 0 0' }}>
               <p>{i18next.t('wallet:amount')}</p>
               <p>{i18next.t('wallet:date')}</p>
@@ -89,8 +89,8 @@ const CustomTooltip = props => {
 
     default:
       return (
-        <div className='chartTooltip'>
-          <p className='label'>
+        <div className="chartTooltip">
+          <p className="label">
             {i18next.t('wallet:statisticsFor')}{' '}
             {props.labelTime === true
               ? moment(props.label).format('LT')
@@ -98,7 +98,7 @@ const CustomTooltip = props => {
           </p>
           {props.payload.map(entry => {
             return (
-              <div className='flex-sb' key={entry.color + entry.name}>
+              <div className="flex-sb" key={entry.color + entry.name}>
                 <p style={{ color: entry.color, margin: '0 72px 0 0' }}>
                   {i18next.t('wallet:' + entry.name)}
                 </p>

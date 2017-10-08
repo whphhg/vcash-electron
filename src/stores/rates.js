@@ -5,7 +5,7 @@ import { getItem, setItem } from '../utilities/localStorage'
 import gui from './gui'
 
 class Rates {
-  constructor () {
+  constructor() {
     extendObservable(this, {
       bitcoinAverage: getItem('bitcoinAverage') || { rates: {}, updated: 0 },
       bittrex: { Last: 0 },
@@ -24,7 +24,7 @@ class Rates {
    * @return {number} Vcash price average.
    */
   @computed
-  get average () {
+  get average() {
     const rates = [this.bittrex.Last, this.poloniex.last]
 
     const result = rates.reduce(
@@ -51,7 +51,7 @@ class Rates {
    * @return {number} Local bitcoin price.
    */
   @computed
-  get local () {
+  get local() {
     if (this.bitcoinAverage.rates.hasOwnProperty(gui.localCurrency) === true) {
       return this.bitcoinAverage.rates[gui.localCurrency]
     }
@@ -65,7 +65,7 @@ class Rates {
    * @return {array} Local currencies.
    */
   @computed
-  get localCurrencies () {
+  get localCurrencies() {
     return Object.keys(this.bitcoinAverage.rates)
   }
 
@@ -75,7 +75,7 @@ class Rates {
    * @param {object} priceIndex - Bitcoin average price index.
    */
   @action
-  setBitcoinAverage (priceIndex) {
+  setBitcoinAverage(priceIndex) {
     /** Set only if rates is an object. */
     if (priceIndex === Object(priceIndex)) {
       this.bitcoinAverage = {
@@ -96,7 +96,7 @@ class Rates {
    * @param {string} ticker - Ticker.
    */
   @action
-  setBittrex (ticker) {
+  setBittrex(ticker) {
     /** Set only if ticker is an object and result exists. */
     if (ticker === Object(ticker) && ticker.hasOwnProperty('result') === true) {
       this.bittrex = { ...ticker.result[0], updated: new Date() }
@@ -109,7 +109,7 @@ class Rates {
    * @param {string} ticker - Ticker.
    */
   @action
-  setPoloniex (ticker) {
+  setPoloniex(ticker) {
     /** Set only if ticker is an object and BTC_XVC pair exists. */
     if (
       ticker === Object(ticker) &&
@@ -124,7 +124,7 @@ class Rates {
    * to obey the 100 requests per day limit.
    * @function fetchBitcoinAverage
    */
-  async fetchBitcoinAverage () {
+  async fetchBitcoinAverage() {
     if (new Date().getTime() - this.bitcoinAverage.updated > 15 * 59 * 1000) {
       try {
         let res = await window.fetch(
@@ -145,7 +145,7 @@ class Rates {
    * Fetch Bittrex ticker.
    * @function fetchBittrex
    */
-  async fetchBittrex () {
+  async fetchBittrex() {
     try {
       let res = await window.fetch(
         'https://bittrex.com/api/v1.1/public/getmarketsummary?market=btc-xvc'
@@ -164,7 +164,7 @@ class Rates {
    * Fetch Poloniex ticker.
    * @function fetchPoloniex
    */
-  async fetchPoloniex () {
+  async fetchPoloniex() {
     try {
       let res = await window.fetch(
         'https://poloniex.com/public?command=returnTicker'

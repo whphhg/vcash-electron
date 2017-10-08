@@ -15,7 +15,7 @@ import message from 'antd/lib/message'
 @inject('rpcNext')
 @observer
 class WalletBackup extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
@@ -42,7 +42,7 @@ class WalletBackup extends React.Component {
    * @return {string} Error status.
    */
   @computed
-  get errorStatus () {
+  get errorStatus() {
     if (this.rpcError !== '') return this.rpcError
     return ''
   }
@@ -79,7 +79,7 @@ class WalletBackup extends React.Component {
    * Backup the wallet.
    * @function backupWallet
    */
-  async backupWallet () {
+  async backupWallet() {
     const res = await this.rpc.backupWallet(this.path)
 
     if ('result' in res === true) {
@@ -95,14 +95,14 @@ class WalletBackup extends React.Component {
     }
   }
 
-  render () {
+  render() {
     return (
       <div>
-        <div className='flex'>
-          <i className='material-icons md-16'>save</i>
+        <div className="flex">
+          <i className="material-icons md-16">save</i>
           <p>{this.t('wallet:backupLong')}</p>
         </div>
-        <div className='flex-sb' style={{ margin: '10px 0 0 0' }}>
+        <div className="flex-sb" style={{ margin: '10px 0 0 0' }}>
           <p style={{ width: '120px' }}>{this.t('wallet:saveInto')}</p>
           <Input
             disabled
@@ -115,14 +115,14 @@ class WalletBackup extends React.Component {
           />
         </div>
         <div
-          className='flex-sb'
+          className="flex-sb"
           style={{ alignItems: 'flex-start', margin: '5px 0 0 0' }}
         >
-          <p className='red' style={{ margin: '0 0 0 120px' }}>
+          <p className="red" style={{ margin: '0 0 0 120px' }}>
             {this.errShow.includes(this.errorStatus) === true &&
               this.t('wallet:' + this.errorStatus)}
           </p>
-          <div className='flex' style={{ justifyContent: 'flex-end' }}>
+          <div className="flex" style={{ justifyContent: 'flex-end' }}>
             <Button
               disabled={this.rpc.conn.status.tunnel === true}
               onClick={this.getPath}

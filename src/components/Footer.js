@@ -10,7 +10,7 @@ import Progress from 'antd/lib/progress'
 @inject('connections', 'gui', 'walletNext')
 @observer
 class Footer extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.connections = props.connections
@@ -18,13 +18,13 @@ class Footer extends React.Component {
     this.wallet = props.walletNext
   }
 
-  render () {
+  render() {
     return (
-      <div className='shadow'>
+      <div className="shadow">
         <div style={{ margin: '0 10px 0 10px' }}>
-          <div className='flex-sb' style={{ height: '25px' }}>
-            <div className='flex'>
-              <i className='material-icons md-16'>extension</i>
+          <div className="flex-sb" style={{ height: '25px' }}>
+            <div className="flex">
+              <i className="material-icons md-16">extension</i>
               <p style={{ margin: '0 10px 0 5px' }}>
                 {this.t('wallet:onBlock')}{' '}
                 <span style={{ fontWeight: '500' }}>
@@ -34,12 +34,12 @@ class Footer extends React.Component {
                 </span>
               </p>
               {this.wallet.syncPercent < 100 && (
-                <div className='flex'>
+                <div className="flex">
                   <div style={{ width: '90px' }}>
                     <Progress
                       percent={this.wallet.syncPercent}
                       showInfo={false}
-                      status='active'
+                      status="active"
                       strokeWidth={5}
                     />
                   </div>
@@ -50,7 +50,7 @@ class Footer extends React.Component {
                   </p>
                 </div>
               )}
-              <i className='material-icons md-16'>settings_input_antenna</i>
+              <i className="material-icons md-16">settings_input_antenna</i>
               <p style={{ margin: '0 10px 0 5px' }}>
                 <span style={{ fontWeight: '500' }}>
                   {this.wallet.info.tcp.connections}
@@ -61,16 +61,16 @@ class Footer extends React.Component {
                 </span>{' '}
                 UDP
               </p>
-              <i className='material-icons md-16'>cast_connected</i>
+              <i className="material-icons md-16">cast_connected</i>
               <p>
                 <a onClick={() => this.connections.toggleModal()}>
                   {this.t('wallet:connManager')}
                 </a>
               </p>
             </div>
-            <div className='flex'>
+            <div className="flex">
               <img
-                src='./assets/images/logoGrey.png'
+                src="./assets/images/logoGrey.png"
                 style={{ height: '15px', width: '15px' }}
               />
               <p style={{ margin: '0 10px 0 5px' }}>
@@ -79,14 +79,14 @@ class Footer extends React.Component {
                   {this.wallet.info.version.split(':')[1]}
                 </span>
               </p>
-              <i className='material-icons md-16'>account_balance_wallet</i>
+              <i className="material-icons md-16">account_balance_wallet</i>
               <p style={{ margin: '0 10px 0 5px' }}>
                 {this.t('wallet:wallet')}{' '}
                 <span style={{ fontWeight: '500' }}>
                   {this.wallet.info.walletversion}
                 </span>
               </p>
-              <i className='material-icons md-16'>computer</i>
+              <i className="material-icons md-16">computer</i>
               <p>
                 GUI <span style={{ fontWeight: '500' }}>{version}</span>
               </p>

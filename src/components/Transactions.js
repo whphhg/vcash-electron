@@ -15,28 +15,28 @@ import TransactionsStatistics from './charts/TransactionsStatistics'
 @inject('gui', 'wallet')
 @observer
 class Transactions extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
     this.wallet = props.wallet
   }
 
-  render () {
+  render() {
     return (
-      <div id='TransactionsGrid'>
-        <div className='shadow'>
+      <div id="TransactionsGrid">
+        <div className="shadow">
           <div style={{ margin: '0 10px 0 10px' }}>
-            <div className='flex-sb' style={{ height: '30px' }}>
+            <div className="flex-sb" style={{ height: '30px' }}>
               <div>
                 <ChainBlender />
               </div>
-              <div className='flex'>
+              <div className="flex">
                 <Input
                   onChange={e => this.wallet.setSearch('txs', e.target.value)}
                   placeholder={this.t('wallet:searchTransactions')}
-                  prefix={<i className='material-icons md-14'>search</i>}
-                  size='small'
+                  prefix={<i className="material-icons md-14">search</i>}
+                  size="small"
                   style={{ width: '268px' }}
                   value={this.wallet.search.txs.value}
                 />
@@ -44,7 +44,7 @@ class Transactions extends React.Component {
             </div>
           </div>
         </div>
-        <div className='shadow'>
+        <div className="shadow">
           <div style={{ margin: '10px 10px 0 10px', textAlign: 'center' }}>
             <Table
               bordered
@@ -138,7 +138,7 @@ class Transactions extends React.Component {
                 defaultPageSize: 15,
                 style: { display: 'inline-block' }
               }}
-              size='small'
+              size="small"
             />
           </div>
         </div>

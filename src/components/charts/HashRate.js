@@ -21,45 +21,45 @@ import { CustomTick, CustomTooltip } from './RechartsCustom'
 @inject('stats')
 @observer
 class HashRate extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.stats = props.stats
   }
 
-  render () {
+  render() {
     return (
-      <ResponsiveContainer width='100%' height={215}>
+      <ResponsiveContainer width="100%" height={215}>
         <AreaChart
           data={this.stats.network}
           margin={{ top: 15, right: 60, bottom: 5, left: 30 }}
-          syncId='0'
+          syncId="0"
         >
           <defs>
-            <linearGradient id='colorPoW' x1='0' y1='0' x2='0' y2='1'>
-              <stop offset='35%' stopColor='#b60127' stopOpacity={0.9} />
-              <stop offset='100%' stopColor='#b60127' stopOpacity={0.3} />
+            <linearGradient id="colorPoW" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="35%" stopColor="#b60127" stopOpacity={0.9} />
+              <stop offset="100%" stopColor="#b60127" stopOpacity={0.3} />
             </linearGradient>
           </defs>
           <Area
-            dataKey='hashRate'
-            fill='url(#colorPoW)'
+            dataKey="hashRate"
+            fill="url(#colorPoW)"
             fillOpacity={1}
-            stroke='#b60127'
-            type='monotone'
-            yAxisId='left'
+            stroke="#b60127"
+            type="monotone"
+            yAxisId="left"
           />
-          <CartesianGrid strokeDasharray='3 3' />
+          <CartesianGrid strokeDasharray="3 3" />
           <Tooltip content={<CustomTooltip labelTime hashRate />} />
           <XAxis
-            dataKey='date'
+            dataKey="date"
             domain={['dataMin', 'dataMax']}
-            tick={<CustomTick textType='time' textX={0} textY={15} />}
+            tick={<CustomTick textType="time" textX={0} textY={15} />}
           />
           <YAxis
-            orientation='left'
-            tick={<CustomTick textType='hashRate' textX={-5} textY={4} />}
-            yAxisId='left'
+            orientation="left"
+            tick={<CustomTick textType="hashRate" textX={-5} textY={4} />}
+            yAxisId="left"
           />
         </AreaChart>
       </ResponsiveContainer>

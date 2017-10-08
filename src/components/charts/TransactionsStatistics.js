@@ -21,85 +21,85 @@ import { CustomTick, CustomTooltip } from './RechartsCustom'
 @inject('stats')
 @observer
 class TransactionsStatistics extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.stats = props.stats
   }
 
-  render () {
+  render() {
     const beginning = new Date().getTime() - 31 * 24 * 60 * 60 * 1000
 
     return (
-      <ResponsiveContainer height={160} width='100%'>
+      <ResponsiveContainer height={160} width="100%">
         <AreaChart
           data={this.stats.dailyTotals}
           margin={{ top: 10, right: 37, bottom: 0, left: 37 }}
         >
           <defs>
-            <linearGradient id='colorSent' x1='0' y1='0' x2='0' y2='1'>
-              <stop offset='5%' stopColor='#B60127' stopOpacity={0.8} />
-              <stop offset='95%' stopColor='#B60127' stopOpacity={0} />
+            <linearGradient id="colorSent" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#B60127" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#B60127" stopOpacity={0} />
             </linearGradient>
-            <linearGradient id='colorReceived' x1='0' y1='0' x2='0' y2='1'>
-              <stop offset='5%' stopColor='#33691E' stopOpacity={0.8} />
-              <stop offset='95%' stopColor='#33691E' stopOpacity={0} />
+            <linearGradient id="colorReceived" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#33691E" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#33691E" stopOpacity={0} />
             </linearGradient>
-            <linearGradient id='colorStaking' x1='0' y1='0' x2='0' y2='1'>
-              <stop offset='5%' stopColor='#FE9950' stopOpacity={0.8} />
-              <stop offset='95%' stopColor='#FE9950' stopOpacity={0} />
+            <linearGradient id="colorStaking" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#FE9950" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#FE9950" stopOpacity={0} />
             </linearGradient>
-            <linearGradient id='colorMining' x1='0' y1='0' x2='0' y2='1'>
-              <stop offset='5%' stopColor='#EC5E44' stopOpacity={0.8} />
-              <stop offset='95%' stopColor='#EC5E44' stopOpacity={0} />
+            <linearGradient id="colorMining" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#EC5E44" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#EC5E44" stopOpacity={0} />
             </linearGradient>
-            <linearGradient id='colorIncentive' x1='0' y1='0' x2='0' y2='1'>
-              <stop offset='5%' stopColor='#803888' stopOpacity={0.8} />
-              <stop offset='95%' stopColor='#803888' stopOpacity={0} />
+            <linearGradient id="colorIncentive" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#803888" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#803888" stopOpacity={0} />
             </linearGradient>
           </defs>
           <Area
-            dataKey='sent'
-            fill='url(#colorSent)'
+            dataKey="sent"
+            fill="url(#colorSent)"
             fillOpacity={1}
-            stroke='#B60127'
-            type='monotone'
+            stroke="#B60127"
+            type="monotone"
           />
           <Area
-            dataKey='received'
-            fill='url(#colorReceived)'
+            dataKey="received"
+            fill="url(#colorReceived)"
             fillOpacity={1}
-            stroke='#33691E'
-            type='monotone'
+            stroke="#33691E"
+            type="monotone"
           />
           <Area
-            dataKey='stakingReward'
-            fill='url(#colorStaking)'
+            dataKey="stakingReward"
+            fill="url(#colorStaking)"
             fillOpacity={1}
-            stroke='#FE9950'
-            type='monotone'
+            stroke="#FE9950"
+            type="monotone"
           />
           <Area
-            dataKey='miningReward'
-            fill='url(#colorMining)'
+            dataKey="miningReward"
+            fill="url(#colorMining)"
             fillOpacity={1}
-            stroke='#EC5E44'
-            type='monotone'
+            stroke="#EC5E44"
+            type="monotone"
           />
           <Area
-            dataKey='incentiveReward'
-            fill='url(#colorIncentive)'
+            dataKey="incentiveReward"
+            fill="url(#colorIncentive)"
             fillOpacity={1}
-            stroke='#803888'
-            type='monotone'
+            stroke="#803888"
+            type="monotone"
           />
-          <CartesianGrid strokeDasharray='3 3' />
+          <CartesianGrid strokeDasharray="3 3" />
           <Tooltip content={<CustomTooltip amounts />} />
           <XAxis
-            dataKey='date'
+            dataKey="date"
             domain={[Math.round(beginning), Math.round(moment().format('x'))]}
             interval={4}
-            tick={<CustomTick textType='date' textX={0} textY={15} />}
+            tick={<CustomTick textType="date" textX={0} textY={15} />}
           />
         </AreaChart>
       </ResponsiveContainer>

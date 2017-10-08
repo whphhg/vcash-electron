@@ -13,7 +13,7 @@ import Popover from 'antd/lib/popover'
 @inject('rpcNext', 'wallet')
 @observer
 class AddressGet extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
@@ -50,7 +50,7 @@ class AddressGet extends React.Component {
    * @return {string} Error status.
    */
   @computed
-  get errorStatus () {
+  get errorStatus() {
     if (this.account.match(/^[a-z0-9 -]*$/i) === null) return 'accChars'
     if (this.account.length > 100) return 'accLength'
     if (this.rpcError !== '') return this.rpcError
@@ -82,7 +82,7 @@ class AddressGet extends React.Component {
    * Get new receiving address.
    * @function getNewAddress
    */
-  async getNewAddress () {
+  async getNewAddress() {
     const res = await this.rpc.getNewAddress(this.account)
 
     if ('result' in res === true) {
@@ -101,7 +101,7 @@ class AddressGet extends React.Component {
     }
   }
 
-  render () {
+  render() {
     return (
       <Popover
         content={
@@ -117,14 +117,14 @@ class AddressGet extends React.Component {
             />
             {this.address !== '' && (
               <Input
-                className='green'
+                className="green"
                 readOnly
                 style={{ margin: '5px 0 0 0' }}
                 value={this.address}
               />
             )}
-            <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
-              <p className='red'>
+            <div className="flex-sb" style={{ margin: '5px 0 0 0' }}>
+              <p className="red">
                 {this.errShow.includes(this.errorStatus) === true &&
                   this.t('wallet:' + this.errorStatus)}
               </p>
@@ -138,13 +138,13 @@ class AddressGet extends React.Component {
           </div>
         }
         onVisibleChange={this.togglePopover}
-        placement='bottomLeft'
+        placement="bottomLeft"
         title={this.t('wallet:addrGetDesc')}
-        trigger='click'
+        trigger="click"
         visible={this.popoverVisible}
       >
-        <Button size='small'>
-          <i className='flex-center material-icons md-16'>plus_one</i>
+        <Button size="small">
+          <i className="flex-center material-icons md-16">plus_one</i>
         </Button>
       </Popover>
     )

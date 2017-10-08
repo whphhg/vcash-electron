@@ -12,7 +12,7 @@ import message from 'antd/lib/message'
 @inject('rpcNext', 'wallet')
 @observer
 class WalletDump extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
@@ -26,7 +26,7 @@ class WalletDump extends React.Component {
    * Dump the wallet.
    * @function dumpWallet
    */
-  async dumpWallet () {
+  async dumpWallet() {
     const res = await this.rpc.dumpWallet()
 
     if ('result' in res === true) {
@@ -35,14 +35,14 @@ class WalletDump extends React.Component {
     }
   }
 
-  render () {
+  render() {
     return (
       <div>
-        <div className='flex'>
-          <i className='material-icons md-16'>assignment</i>
+        <div className="flex">
+          <i className="material-icons md-16">assignment</i>
           <p>{this.t('wallet:dumpLong')}</p>
         </div>
-        <div className='flex-sb' style={{ margin: '10px 0 5px 0' }}>
+        <div className="flex-sb" style={{ margin: '10px 0 5px 0' }}>
           <p style={{ width: '120px' }}>{this.t('wallet:saveInto')}</p>
           <Input
             disabled
@@ -54,7 +54,7 @@ class WalletDump extends React.Component {
             }
           />
         </div>
-        <div className='flex' style={{ justifyContent: 'flex-end' }}>
+        <div className="flex" style={{ justifyContent: 'flex-end' }}>
           <Button
             disabled={this.wallet.isLocked === true}
             onClick={this.dumpWallet}

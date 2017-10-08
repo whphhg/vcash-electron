@@ -13,7 +13,7 @@ import Modal from 'antd/lib/modal'
 @inject('gui', 'rpcNext')
 @observer
 class Console extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
@@ -37,7 +37,7 @@ class Console extends React.Component {
    * @return {boolean} Execute button status.
    */
   @computed
-  get executeStatus () {
+  get executeStatus() {
     if (this.command.length < 4) return false
     if (this.options.params === null) return false
     return true
@@ -49,7 +49,7 @@ class Console extends React.Component {
    * @return {object} RPC options.
    */
   @computed
-  get options () {
+  get options() {
     const command = this.command.split(/ (.+)/)
     const params = () => {
       try {
@@ -105,7 +105,7 @@ class Console extends React.Component {
    * Execute the RPC command.
    * @function execute
    */
-  async execute () {
+  async execute() {
     /** Do not execute the RPC command if the status is false. */
     if (this.executeStatus === false) return
 
@@ -117,7 +117,7 @@ class Console extends React.Component {
     this.setResponse(res)
   }
 
-  render () {
+  render() {
     return (
       <Modal
         footer={null}
@@ -127,18 +127,18 @@ class Console extends React.Component {
         title={this.t('wallet:rpcConsole')}
         visible={this.modalVisible === true}
       >
-        <div id='ConsoleGrid'>
+        <div id="ConsoleGrid">
           <div>
             {this.responses.map(response => (
               <pre key={shortUid()}>{JSON.stringify(response, null, 2)}</pre>
             ))}
           </div>
           <hr />
-          <div className='flex'>
+          <div className="flex">
             <Button
               disabled={this.executeStatus !== true}
               onClick={this.execute}
-              size='small'
+              size="small"
             >
               {this.t('wallet:execute')}
             </Button>
@@ -152,7 +152,7 @@ class Console extends React.Component {
                 value={this.command}
               />
             </div>
-            <Button onClick={this.reset} size='small'>
+            <Button onClick={this.reset} size="small">
               {this.t('wallet:reset')}
             </Button>
           </div>

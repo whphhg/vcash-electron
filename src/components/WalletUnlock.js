@@ -14,7 +14,7 @@ import Tooltip from 'antd/lib/tooltip'
 @inject('rpcNext', 'wallet')
 @observer
 class WalletUnlock extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
@@ -58,7 +58,7 @@ class WalletUnlock extends React.Component {
    * @return {string} Error status.
    */
   @computed
-  get errorStatus () {
+  get errorStatus() {
     if (this.passphrase.length < 1) return 'emptyField'
     if (this.rpcError !== '') return this.rpcError
     return ''
@@ -89,7 +89,7 @@ class WalletUnlock extends React.Component {
    * Unlock the wallet.
    * @function walletPassphrase
    */
-  async walletPassphrase () {
+  async walletPassphrase() {
     const res = await this.rpc.walletPassphrase(this.passphrase)
 
     if ('result' in res === true) {
@@ -111,7 +111,7 @@ class WalletUnlock extends React.Component {
     }
   }
 
-  render () {
+  render() {
     /** Do not render if the wallet is unlocked. */
     if (this.wallet.isLocked === false) return null
     return (
@@ -127,11 +127,11 @@ class WalletUnlock extends React.Component {
             onPressEnter={this.walletPassphrase}
             placeholder={this.t('wallet:passphraseLong')}
             style={{ width: '100%', margin: '0 0 5px 0' }}
-            type='password'
+            type="password"
             value={this.passphrase}
           />
-          <div className='flex-sb'>
-            <p className='red'>
+          <div className="flex-sb">
+            <p className="red">
               {this.errShow.includes(this.errorStatus) === true &&
                 this.t('wallet:' + this.errorStatus)}
             </p>
@@ -143,9 +143,9 @@ class WalletUnlock extends React.Component {
             </Button>
           </div>
         </Modal>
-        <Tooltip placement='bottomRight' title={this.t('wallet:locked')}>
+        <Tooltip placement="bottomRight" title={this.t('wallet:locked')}>
           <Button onClick={this.toggleModal}>
-            <i className='material-icons md-20'>lock</i>
+            <i className="material-icons md-20">lock</i>
           </Button>
         </Tooltip>
       </div>

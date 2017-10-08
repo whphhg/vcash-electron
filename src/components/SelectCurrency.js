@@ -9,22 +9,22 @@ import Select from 'antd/lib/select'
 @inject('gui', 'rates')
 @observer
 class SelectCurrency extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
     this.rates = props.rates
   }
 
-  render () {
+  render() {
     return (
       <Select
         defaultValue={this.gui.localCurrency}
         notFoundContent={this.t('wallet:notFound')}
         onChange={currency => this.gui.setLocalCurrency(currency)}
-        optionFilterProp='children'
+        optionFilterProp="children"
         showSearch
-        size='small'
+        size="small"
         style={{ width: '80px' }}
       >
         {this.rates.localCurrencies.map(currency => (

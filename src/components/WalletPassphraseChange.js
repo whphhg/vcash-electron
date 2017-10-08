@@ -12,7 +12,7 @@ import message from 'antd/lib/message'
 @inject('rpcNext', 'wallet')
 @observer
 class WalletPassphraseChange extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
@@ -46,7 +46,7 @@ class WalletPassphraseChange extends React.Component {
    * @return {string} Error status.
    */
   @computed
-  get errorStatus () {
+  get errorStatus() {
     const len = {
       old: this.current.length,
       next: this.next.length,
@@ -77,7 +77,7 @@ class WalletPassphraseChange extends React.Component {
    * Change wallet's passphrase.
    * @function walletPassphraseChange
    */
-  async walletPassphraseChange () {
+  async walletPassphraseChange() {
     const res = await this.rpc.walletPassphraseChange(this.current, this.next)
 
     if ('result' in res) {
@@ -99,16 +99,16 @@ class WalletPassphraseChange extends React.Component {
     }
   }
 
-  render () {
+  render() {
     /** Do not render if the wallet is not encrypted. */
     if (this.wallet.isEncrypted === false) return null
     return (
       <div>
-        <div className='flex'>
-          <i className='material-icons md-16'>vpn_key</i>
+        <div className="flex">
+          <i className="material-icons md-16">vpn_key</i>
           <p>{this.t('wallet:passphraseChangeLong')}</p>
         </div>
-        <div className='flex-sb' style={{ margin: '10px 0 0 0' }}>
+        <div className="flex-sb" style={{ margin: '10px 0 0 0' }}>
           <p style={{ width: '120px' }}>{this.t('wallet:passphrase')}</p>
           <Input
             onChange={e => this.setValues({ current: e.target.value })}
@@ -117,7 +117,7 @@ class WalletPassphraseChange extends React.Component {
             value={this.current}
           />
         </div>
-        <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
+        <div className="flex-sb" style={{ margin: '5px 0 0 0' }}>
           <p style={{ width: '120px' }}>{this.t('wallet:passphraseNew')}</p>
           <Input
             onChange={e => this.setValues({ next: e.target.value })}
@@ -126,7 +126,7 @@ class WalletPassphraseChange extends React.Component {
             value={this.next}
           />
         </div>
-        <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
+        <div className="flex-sb" style={{ margin: '5px 0 0 0' }}>
           <p style={{ width: '120px' }}>{this.t('wallet:passphraseRepeat')}</p>
           <Input
             onChange={e => this.setValues({ repeat: e.target.value })}
@@ -135,8 +135,8 @@ class WalletPassphraseChange extends React.Component {
             value={this.repeat}
           />
         </div>
-        <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
-          <p className='red' style={{ margin: '0 0 0 120px' }}>
+        <div className="flex-sb" style={{ margin: '5px 0 0 0' }}>
+          <p className="red" style={{ margin: '0 0 0 120px' }}>
             {this.errShow.includes(this.errorStatus) === true &&
               this.t('wallet:' + this.errorStatus)}
           </p>

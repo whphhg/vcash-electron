@@ -12,7 +12,7 @@ import notification from 'antd/lib/notification'
 @inject('rpcNext', 'wallet')
 @observer
 class WalletEncrypt extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
@@ -34,7 +34,7 @@ class WalletEncrypt extends React.Component {
    * @return {string} Error status.
    */
   @computed
-  get errorStatus () {
+  get errorStatus() {
     const len = { pass: this.passphrase.length, repeat: this.repeat.length }
 
     if (len.pass < 1 || len.repeat < 1) return 'emptyFields'
@@ -59,7 +59,7 @@ class WalletEncrypt extends React.Component {
    * Encrypt the wallet.
    * @function encryptWallet
    */
-  async encryptWallet () {
+  async encryptWallet() {
     const res = await this.rpc.encryptWallet(this.passphrase)
 
     if ('result' in res === true) {
@@ -78,16 +78,16 @@ class WalletEncrypt extends React.Component {
     }
   }
 
-  render () {
+  render() {
     /** Do not render if the wallet is encrypted. */
     if (this.wallet.isEncrypted === true) return null
     return (
       <div>
-        <div className='flex'>
-          <i className='material-icons md-16'>vpn_key</i>
+        <div className="flex">
+          <i className="material-icons md-16">vpn_key</i>
           <p>{this.t('wallet:encryptLong')}</p>
         </div>
-        <div className='flex-sb' style={{ margin: '10px 0 0 0' }}>
+        <div className="flex-sb" style={{ margin: '10px 0 0 0' }}>
           <p style={{ width: '120px' }}>{this.t('wallet:passphrase')}</p>
           <Input
             onChange={e => this.setValues({ passphrase: e.target.value })}
@@ -96,7 +96,7 @@ class WalletEncrypt extends React.Component {
             value={this.passphrase}
           />
         </div>
-        <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
+        <div className="flex-sb" style={{ margin: '5px 0 0 0' }}>
           <p style={{ width: '120px' }}>{this.t('wallet:passphraseRepeat')}</p>
           <Input
             onChange={e => this.setValues({ repeat: e.target.value })}
@@ -105,8 +105,8 @@ class WalletEncrypt extends React.Component {
             value={this.repeat}
           />
         </div>
-        <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
-          <p className='red' style={{ margin: '0 0 0 120px' }}>
+        <div className="flex-sb" style={{ margin: '5px 0 0 0' }}>
+          <p className="red" style={{ margin: '0 0 0 120px' }}>
             {this.errShow.includes(this.errorStatus) === true &&
               this.t('wallet:' + this.errorStatus)}
           </p>

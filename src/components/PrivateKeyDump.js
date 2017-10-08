@@ -13,7 +13,7 @@ import Popover from 'antd/lib/popover'
 @inject('rpcNext', 'wallet')
 @observer
 class PrivateKeyDump extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
@@ -62,7 +62,7 @@ class PrivateKeyDump extends React.Component {
    * @return {string} Error status.
    */
   @computed
-  get errorStatus () {
+  get errorStatus() {
     if (this.address.match(/^[a-z0-9]*$/i) === null) return 'addrChars'
     if (this.address.length < 34) return 'addrShort'
     if (this.address.length > 35) return 'addrLong'
@@ -97,7 +97,7 @@ class PrivateKeyDump extends React.Component {
    * Dump private key.
    * @function dumpPrivKey
    */
-  async dumpPrivKey () {
+  async dumpPrivKey() {
     const res = await this.rpc.dumpPrivKey(this.address)
 
     if ('result' in res === true) {
@@ -115,7 +115,7 @@ class PrivateKeyDump extends React.Component {
     }
   }
 
-  render () {
+  render() {
     return (
       <Popover
         content={
@@ -131,14 +131,14 @@ class PrivateKeyDump extends React.Component {
             />
             {this.privateKey !== '' && (
               <Input
-                className='green'
+                className="green"
                 readOnly
                 style={{ margin: '5px 0 0 0' }}
                 value={this.privateKey}
               />
             )}
-            <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
-              <p className='red'>
+            <div className="flex-sb" style={{ margin: '5px 0 0 0' }}>
+              <p className="red">
                 {this.errShow.includes(this.errorStatus) === true &&
                   this.t('wallet:' + this.errorStatus)}
               </p>
@@ -152,13 +152,13 @@ class PrivateKeyDump extends React.Component {
           </div>
         }
         onVisibleChange={this.togglePopover}
-        placement='bottomLeft'
+        placement="bottomLeft"
         title={this.t('wallet:pkDumpDesc')}
-        trigger='click'
+        trigger="click"
         visible={this.popoverVisible}
       >
-        <Button disabled={this.wallet.isLocked === true} size='small'>
-          <i className='flex-center material-icons md-16'>arrow_upward</i>
+        <Button disabled={this.wallet.isLocked === true} size="small">
+          <i className="flex-center material-icons md-16">arrow_upward</i>
         </Button>
       </Popover>
     )

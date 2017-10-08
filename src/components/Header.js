@@ -14,7 +14,7 @@ import WalletUnlock from './WalletUnlock'
 @inject('connections', 'gui', 'rates', 'walletNext')
 @observer
 class Header extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.connections = props.connections
@@ -23,14 +23,14 @@ class Header extends React.Component {
     this.wallet = props.walletNext
   }
 
-  render () {
+  render() {
     const { average, local } = this.rates
     const { balance } = this.wallet.info
 
     return (
-      <header className='flex-sb shadow'>
-        <div className='flex' style={{ margin: '0 0 0 10px' }}>
-          <img src='./assets/images/logoGrey.png' style={{ height: '26px' }} />
+      <header className="flex-sb shadow">
+        <div className="flex" style={{ margin: '0 0 0 10px' }}>
+          <img src="./assets/images/logoGrey.png" style={{ height: '26px' }} />
           <p style={{ margin: '0 15px 0 15px' }}>
             <span>
               {new Intl.NumberFormat(this.gui.language, {
@@ -100,25 +100,25 @@ class Header extends React.Component {
             </div>
           )}
         </div>
-        <div className='flex' style={{ margin: '0 10px 0 0' }}>
+        <div className="flex" style={{ margin: '0 10px 0 0' }}>
           <Menu
             defaultSelectedKeys={['/']}
-            mode='horizontal'
+            mode="horizontal"
             onClick={item => {
               this.props.history.push('/' + this.connections.viewing + item.key)
             }}
           >
-            <Menu.Item key='/'>
-              <i className='material-icons md-20'>account_balance_wallet</i>
+            <Menu.Item key="/">
+              <i className="material-icons md-20">account_balance_wallet</i>
             </Menu.Item>
-            <Menu.Item key='/addresses'>
-              <i className='material-icons md-20'>send</i>
+            <Menu.Item key="/addresses">
+              <i className="material-icons md-20">send</i>
             </Menu.Item>
-            <Menu.Item key='/network'>
-              <i className='material-icons md-20'>public</i>
+            <Menu.Item key="/network">
+              <i className="material-icons md-20">public</i>
             </Menu.Item>
-            <Menu.Item key='/maintenance'>
-              <i className='material-icons md-20'>settings</i>
+            <Menu.Item key="/maintenance">
+              <i className="material-icons md-20">settings</i>
             </Menu.Item>
           </Menu>
           {this.wallet.isEncrypted === true && (

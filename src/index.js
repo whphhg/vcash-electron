@@ -47,8 +47,8 @@ render(
       <HashRouter>
         <div>
           <Connections />
-          <Route exact path='/' component={Welcome} />
-          <Route path='/:uid' component={Root} />
+          <Route exact path="/" component={Welcome} />
+          <Route path="/:uid" component={Root} />
         </div>
       </HashRouter>
     </I18nextProvider>

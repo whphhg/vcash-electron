@@ -9,7 +9,7 @@ import Input from 'antd/lib/input'
 @inject('gui', 'send', 'wallet')
 @observer
 class SendOptions extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
@@ -17,24 +17,24 @@ class SendOptions extends React.Component {
     this.wallet = props.wallet
   }
 
-  render () {
+  render() {
     return (
       <div>
-        <div className='flex-sb'>
+        <div className="flex-sb">
           <div style={{ lineHeight: '22px', margin: '0 36px 0 0' }}>
             {this.send.recipients.size === 1 && (
-              <div className='flex' style={{ margin: '5px 0 0 0' }}>
-                <i className='material-icons md-16'>perm_identity</i>
+              <div className="flex" style={{ margin: '5px 0 0 0' }}>
+                <i className="material-icons md-16">perm_identity</i>
                 <p>{this.t('wallet:recipient')}</p>
               </div>
             )}
-            <div className='flex' style={{ margin: '5px 0 0 0' }}>
-              <i className='material-icons md-16'>create</i>
+            <div className="flex" style={{ margin: '5px 0 0 0' }}>
+              <i className="material-icons md-16">create</i>
               <p>{this.t('wallet:description')}</p>
             </div>
             {this.wallet.spendFrom !== '#' && (
-              <div className='flex' style={{ margin: '5px 0 0 0' }}>
-                <i className='material-icons md-16'>done_all</i>
+              <div className="flex" style={{ margin: '5px 0 0 0' }}>
+                <i className="material-icons md-16">done_all</i>
                 <p>{this.t('wallet:minimumConfirmations')}</p>
               </div>
             )}
@@ -45,7 +45,7 @@ class SendOptions extends React.Component {
                 <Input
                   onChange={e => this.send.setCommentTo(e.target.value)}
                   placeholder={this.t('wallet:recipientLong')}
-                  size='small'
+                  size="small"
                   value={this.send.commentTo}
                 />
               </div>
@@ -54,7 +54,7 @@ class SendOptions extends React.Component {
               <Input
                 onChange={e => this.send.setComment(e.target.value)}
                 placeholder={this.t('wallet:descriptionLong')}
-                size='small'
+                size="small"
                 value={this.send.comment}
               />
             </div>
@@ -62,7 +62,7 @@ class SendOptions extends React.Component {
               <div style={{ width: '60px', margin: '5px 0 0 0' }}>
                 <Input
                   onChange={e => this.send.setMinConf(e.target.value)}
-                  size='small'
+                  size="small"
                   value={this.send.minConf}
                 />
               </div>

@@ -11,7 +11,7 @@ import Input from 'antd/lib/input'
 @inject('gui', 'wallet')
 @observer
 class RewardCalculator extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
@@ -27,7 +27,7 @@ class RewardCalculator extends React.Component {
    * @return {number} Entered or current block.
    */
   @computed
-  get block () {
+  get block() {
     return this.enteredBlock.length === 0
       ? this.wallet.info.blocks
       : Math.round(this.enteredBlock)
@@ -39,7 +39,7 @@ class RewardCalculator extends React.Component {
    * @return {number} Reward.
    */
   @computed
-  get powReward () {
+  get powReward() {
     return calculatePoW(this.block)
   }
 
@@ -49,7 +49,7 @@ class RewardCalculator extends React.Component {
    * @return {number} Percent.
    */
   @computed
-  get incentivePercent () {
+  get incentivePercent() {
     return calculateIncentive(this.block)
   }
 
@@ -59,7 +59,7 @@ class RewardCalculator extends React.Component {
    * @return {number} Reward.
    */
   @computed
-  get miningReward () {
+  get miningReward() {
     return this.powReward - this.incentiveReward
   }
 
@@ -69,7 +69,7 @@ class RewardCalculator extends React.Component {
    * @return {number} Reward.
    */
   @computed
-  get incentiveReward () {
+  get incentiveReward() {
     return this.powReward / 100 * this.incentivePercent
   }
 
@@ -85,24 +85,24 @@ class RewardCalculator extends React.Component {
     }
   }
 
-  render () {
+  render() {
     return (
-      <div className='flex'>
+      <div className="flex">
         <div style={{ margin: '0 36px 0 0' }}>
-          <div className='flex' style={{ margin: '0 0 5px 0' }}>
-            <i className='material-icons md-16'>extension</i>
+          <div className="flex" style={{ margin: '0 0 5px 0' }}>
+            <i className="material-icons md-16">extension</i>
             <p>{this.t('wallet:block')}</p>
           </div>
-          <div className='flex'>
-            <i className='material-icons md-16'>stars</i>
+          <div className="flex">
+            <i className="material-icons md-16">stars</i>
             <p>{this.t('wallet:powReward')}</p>
           </div>
-          <div className='flex'>
-            <i className='material-icons md-16'>developer_board</i>
+          <div className="flex">
+            <i className="material-icons md-16">developer_board</i>
             <p>{this.t('wallet:miningReward')}</p>
           </div>
-          <div className='flex'>
-            <i className='material-icons md-16'>event_seat</i>
+          <div className="flex">
+            <i className="material-icons md-16">event_seat</i>
             <p>{this.t('wallet:incentiveReward')}</p>
           </div>
         </div>
@@ -111,7 +111,7 @@ class RewardCalculator extends React.Component {
             maxLength={7}
             onChange={e => this.setBlock(e.target.value)}
             placeholder={this.block}
-            size='small'
+            size="small"
             style={{ margin: '0 0 5px 0', width: '60px' }}
             value={this.enteredBlock}
           />

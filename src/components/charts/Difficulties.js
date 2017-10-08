@@ -18,57 +18,57 @@ import { CustomTick, CustomTooltip } from './RechartsCustom'
 @inject('stats')
 @observer
 class Difficulties extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.stats = props.stats
   }
 
-  render () {
+  render() {
     return (
-      <ResponsiveContainer height={215} width='100%'>
+      <ResponsiveContainer height={215} width="100%">
         <LineChart
           data={this.stats.network}
           margin={{ top: 15, right: 0, bottom: 5, left: 30 }}
-          syncId='0'
+          syncId="0"
         >
-          <CartesianGrid strokeDasharray='3 3' />
+          <CartesianGrid strokeDasharray="3 3" />
           <Line
-            dataKey='powDifficulty'
+            dataKey="powDifficulty"
             dot={false}
-            stroke='#EC5E44'
-            type='monotone'
-            yAxisId='left'
+            stroke="#EC5E44"
+            type="monotone"
+            yAxisId="left"
           />
           <Line
-            dataKey='posDifficulty'
+            dataKey="posDifficulty"
             dot={false}
-            stroke='#FE9950'
-            type='monotone'
-            yAxisId='right'
+            stroke="#FE9950"
+            type="monotone"
+            yAxisId="right"
           />
           <Tooltip content={<CustomTooltip labelTime />} />
           <XAxis
-            dataKey='date'
+            dataKey="date"
             domain={['dataMin', 'dataMax']}
-            tick={<CustomTick textType='time' textX={0} textY={15} />}
+            tick={<CustomTick textType="time" textX={0} textY={15} />}
           />
           <YAxis
-            orientation='left'
-            tick={<CustomTick textType='number' textX={-5} textY={4} />}
-            yAxisId='left'
+            orientation="left"
+            tick={<CustomTick textType="number" textX={-5} textY={4} />}
+            yAxisId="left"
           />
           <YAxis
-            orientation='right'
+            orientation="right"
             tick={
               <CustomTick
-                textAnchor='start'
-                textType='number'
+                textAnchor="start"
+                textType="number"
                 textX={5}
                 textY={4}
               />
             }
-            yAxisId='right'
+            yAxisId="right"
           />
         </LineChart>
       </ResponsiveContainer>

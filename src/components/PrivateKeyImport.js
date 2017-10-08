@@ -14,7 +14,7 @@ import Popover from 'antd/lib/popover'
 @inject('rpcNext', 'wallet')
 @observer
 class PrivateKeyImport extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
@@ -60,7 +60,7 @@ class PrivateKeyImport extends React.Component {
    * @return {string} Error status.
    */
   @computed
-  get errorStatus () {
+  get errorStatus() {
     if (this.account.match(/^[a-z0-9 -]*$/i) === null) return 'accChars'
     if (this.account.length > 100) return 'accLength'
     if (this.privateKey.match(/^[a-z0-9]*$/i) === null) return 'pkInvalid'
@@ -106,7 +106,7 @@ class PrivateKeyImport extends React.Component {
    * Import private key.
    * @function importPrivKey
    */
-  async importPrivKey () {
+  async importPrivKey() {
     /** Disable the button and show the loading indicator. */
     this.toggleLoading()
 
@@ -136,7 +136,7 @@ class PrivateKeyImport extends React.Component {
     }
   }
 
-  render () {
+  render() {
     return (
       <Popover
         content={
@@ -156,8 +156,8 @@ class PrivateKeyImport extends React.Component {
               style={{ width: '100%' }}
               value={this.account}
             />
-            <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
-              <p className='red'>
+            <div className="flex-sb" style={{ margin: '5px 0 0 0' }}>
+              <p className="red">
                 {this.errShow.includes(this.errorStatus) === true &&
                   this.t('wallet:' + this.errorStatus)}
               </p>
@@ -172,13 +172,13 @@ class PrivateKeyImport extends React.Component {
           </div>
         }
         onVisibleChange={this.togglePopover}
-        placement='bottomLeft'
+        placement="bottomLeft"
         title={this.t('wallet:pkImportDesc')}
-        trigger='click'
+        trigger="click"
         visible={this.popoverVisible}
       >
-        <Button disabled={this.wallet.isLocked === true} size='small'>
-          <i className='flex-center material-icons md-16'>arrow_downward</i>
+        <Button disabled={this.wallet.isLocked === true} size="small">
+          <i className="flex-center material-icons md-16">arrow_downward</i>
         </Button>
       </Popover>
     )

@@ -13,7 +13,7 @@ import Popover from 'antd/lib/popover'
 @inject('rpcNext', 'wallet')
 @observer
 class Message extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
@@ -63,7 +63,7 @@ class Message extends React.Component {
    * @return {string} Error status.
    */
   @computed
-  get errorStatus () {
+  get errorStatus() {
     const signature = this.signature.value
 
     if (this.address.match(/^[a-z0-9]*$/i) === null) return 'addrChars'
@@ -101,7 +101,7 @@ class Message extends React.Component {
    * Sign the message using the address's private key.
    * @function signMessage
    */
-  async signMessage () {
+  async signMessage() {
     const res = await this.rpc.signMessage(this.address, this.message)
 
     if ('result' in res === true) {
@@ -126,7 +126,7 @@ class Message extends React.Component {
    * Verify the message was signed by the address's private key.
    * @function verifyMessage
    */
-  async verifyMessage () {
+  async verifyMessage() {
     const res = await this.rpc.verifyMessage(
       this.address,
       this.signature.value,
@@ -146,7 +146,7 @@ class Message extends React.Component {
     }
   }
 
-  render () {
+  render() {
     return (
       <Popover
         content={
@@ -162,7 +162,7 @@ class Message extends React.Component {
             />
             <Input.TextArea
               autosize={{ minRows: 3 }}
-              name='message'
+              name="message"
               onChange={e => this.setValues({ message: e.target.value })}
               placeholder={this.t('wallet:msg')}
               style={{ margin: '5px 0 0 0' }}
@@ -183,8 +183,8 @@ class Message extends React.Component {
               style={{ margin: '5px 0 5px 0' }}
               value={this.signature.value}
             />
-            <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
-              <p className='red'>
+            <div className="flex-sb" style={{ margin: '5px 0 0 0' }}>
+              <p className="red">
                 {this.errShow.includes(this.errorStatus) === true &&
                   this.t('wallet:' + this.errorStatus)}
               </p>
@@ -210,13 +210,13 @@ class Message extends React.Component {
           </div>
         }
         onVisibleChange={this.togglePopover}
-        placement='bottomLeft'
+        placement="bottomLeft"
         title={this.t('wallet:msgDesc')}
-        trigger='click'
+        trigger="click"
         visible={this.popoverVisible}
       >
-        <Button size='small'>
-          <i className='flex-center material-icons md-16'>fingerprint</i>
+        <Button size="small">
+          <i className="flex-center material-icons md-16">fingerprint</i>
         </Button>
       </Popover>
     )

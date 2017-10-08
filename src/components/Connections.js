@@ -22,7 +22,7 @@ import SelectLanguage from './SelectLanguage'
 @inject('connections', 'gui')
 @observer
 class Connections extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.connections = props.connections
@@ -86,7 +86,7 @@ class Connections extends React.Component {
     }
   }
 
-  render () {
+  render() {
     return (
       <Modal
         footer={null}
@@ -101,11 +101,11 @@ class Connections extends React.Component {
         <Tabs
           activeKey={this.connections.viewing}
           onChange={uid => this.connections.setViewing(uid)}
-          size='small'
+          size="small"
           tabBarExtraContent={
             <Button
               onClick={() => this.connections.add()}
-              size='small'
+              size="small"
               style={{ margin: '7px 0 0 0' }}
             >
               +
@@ -124,35 +124,35 @@ class Connections extends React.Component {
                     : conn.host + ':' + conn.port
                 }
               >
-                <div className='flex-sb'>
+                <div className="flex-sb">
                   <div>
                     <Radio.Group
-                      name='type'
+                      name="type"
                       onChange={this.setConfig}
                       value={conn.type}
                     >
                       <Radio
                         disabled={active === true && conn.type === 'ssh'}
-                        value='local'
+                        value="local"
                       >
                         {this.t('wallet:connLocal')}
                       </Radio>
                       <Radio
                         disabled={active === true && conn.type === 'local'}
-                        value='ssh'
+                        value="ssh"
                       >
                         {this.t('wallet:sshTunnel')}
                       </Radio>
                     </Radio.Group>
                   </div>
-                  <div className='flex'>
+                  <div className="flex">
                     <div
                       className={
                         'flex ' +
                         (rpc === null ? '' : rpc === true ? 'green' : 'red')
                       }
                     >
-                      <i className='material-icons md-16'>power_settings_new</i>
+                      <i className="material-icons md-16">power_settings_new</i>
                       <p>RPC</p>
                     </div>
                     <div
@@ -164,30 +164,30 @@ class Connections extends React.Component {
                       }
                       style={{ margin: '0 0 0 10px' }}
                     >
-                      <i className='material-icons md-16'>power_settings_new</i>
+                      <i className="material-icons md-16">power_settings_new</i>
                       <p>SSH</p>
                     </div>
                   </div>
                 </div>
                 <div
-                  className='flex-sb'
+                  className="flex-sb"
                   style={{ margin: '10px 0 0 0', alignItems: 'flex-start' }}
                 >
                   <div>
                     {conn.type === 'local' && (
-                      <div className='flex'>
+                      <div className="flex">
                         <Input
                           disabled
-                          size='small'
+                          size="small"
                           style={{ width: '240px' }}
-                          value='127.0.0.1'
+                          value="127.0.0.1"
                         />
                         <Input
                           disabled={active === true}
-                          name='localPort'
+                          name="localPort"
                           onChange={this.setConfig}
                           placeholder={this.t('wallet:port')}
-                          size='small'
+                          size="small"
                           style={{ margin: '0 0 0 5px', width: '60px' }}
                           value={conn.localPort}
                         />
@@ -195,22 +195,22 @@ class Connections extends React.Component {
                     )}
                     {conn.type === 'ssh' && (
                       <div>
-                        <div className='flex'>
+                        <div className="flex">
                           <Input
                             disabled={active === true}
-                            name='host'
+                            name="host"
                             onChange={this.setConfig}
                             placeholder={this.t('wallet:hostname')}
-                            size='small'
+                            size="small"
                             style={{ width: '240px' }}
                             value={conn.host}
                           />
                           <Input
                             disabled={active === true}
-                            name='port'
+                            name="port"
                             onChange={this.setConfig}
                             placeholder={this.t('wallet:port')}
-                            size='small'
+                            size="small"
                             style={{ margin: '0 0 0 5px', width: '60px' }}
                             value={conn.port}
                           />
@@ -219,9 +219,9 @@ class Connections extends React.Component {
                               <Tooltip title={this.t('wallet:rpcRemote')}>
                                 <Input
                                   disabled={active === true}
-                                  name='dstPort'
+                                  name="dstPort"
                                   onChange={this.setConfig}
-                                  size='small'
+                                  size="small"
                                   style={{ width: '60px' }}
                                   value={conn.dstPort}
                                 />
@@ -229,9 +229,9 @@ class Connections extends React.Component {
                               <Tooltip title={this.t('wallet:rpcLocal')}>
                                 <Input
                                   disabled={active === true}
-                                  name='localPort'
+                                  name="localPort"
                                   onChange={this.setConfig}
-                                  size='small'
+                                  size="small"
                                   style={{ width: '60px' }}
                                   value={conn.localPort}
                                 />
@@ -242,37 +242,37 @@ class Connections extends React.Component {
                         <div style={{ margin: '5px 0 0 0' }}>
                           <Input
                             disabled={active === true}
-                            name='username'
+                            name="username"
                             onChange={this.setConfig}
                             placeholder={this.t('wallet:user')}
-                            size='small'
+                            size="small"
                             style={{ width: '120px' }}
                             value={conn.username}
                           />
                           <Input
                             disabled={active === true}
-                            name='password'
+                            name="password"
                             onChange={this.setConfig}
                             placeholder={this.t('wallet:passphrase')}
-                            size='small'
+                            size="small"
                             style={{ margin: '0 0 0 5px', width: '305px' }}
-                            type='password'
+                            type="password"
                             value={conn.password}
                           />
                         </div>
                         <div style={{ margin: '10px 0 0 0' }}>
-                          <div className='flex' style={{ width: '430px' }}>
+                          <div className="flex" style={{ width: '430px' }}>
                             <Button
                               disabled={active === true}
                               onClick={this.setPrivateKey}
-                              size='small'
+                              size="small"
                               style={{ margin: '0 5px 0 0' }}
                             >
                               {this.t('wallet:keyFile')}
                             </Button>
                             <Input
                               disabled
-                              size='small'
+                              size="small"
                               style={{ flex: 1 }}
                               value={conn.privateKey}
                             />
@@ -286,7 +286,7 @@ class Connections extends React.Component {
                       <Button
                         disabled={this.connections.startStatus !== true}
                         onClick={() => this.connections.start()}
-                        size='small'
+                        size="small"
                       >
                         {this.t('wallet:start')}
                       </Button>
@@ -294,7 +294,7 @@ class Connections extends React.Component {
                     {active === true && (
                       <Button
                         onClick={() => this.connections.stop()}
-                        size='small'
+                        size="small"
                       >
                         {this.t('wallet:stop')}
                       </Button>
@@ -306,8 +306,8 @@ class Connections extends React.Component {
           })}
         </Tabs>
         <hr />
-        <div className='flex-sb'>
-          <div className='flex'>
+        <div className="flex-sb">
+          <div className="flex">
             <div style={{ margin: '0 5px 0 0' }}>
               <SelectLanguage />
             </div>
@@ -318,10 +318,10 @@ class Connections extends React.Component {
               cancelText={this.t('wallet:no')}
               okText={this.t('wallet:yes')}
               onConfirm={() => this.connections.remove()}
-              placement='bottom'
+              placement="bottom"
               title={this.t('wallet:connRemoveConfirm')}
             >
-              <Button size='small'>{this.t('wallet:connRemove')}</Button>
+              <Button size="small">{this.t('wallet:connRemove')}</Button>
             </Popconfirm>
           </div>
         </div>

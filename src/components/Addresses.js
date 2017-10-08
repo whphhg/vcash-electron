@@ -23,7 +23,7 @@ import SendRecipients from './SendRecipients'
 @inject('gui', 'rates', 'send', 'wallet')
 @observer
 class Addresses extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
@@ -44,15 +44,15 @@ class Addresses extends React.Component {
     this.filters = filters
   }
 
-  render () {
+  render() {
     const { accountBalances, spendFrom } = this.wallet
 
     return (
-      <div id='AddressesGrid'>
-        <div className='shadow' style={{ minHeight: '30px' }}>
-          <div className='AddressesColumnsGrid'>
-            <div className='flex-sb'>
-              <div className='flex' style={{ margin: '0 0 0 10px' }}>
+      <div id="AddressesGrid">
+        <div className="shadow" style={{ minHeight: '30px' }}>
+          <div className="AddressesColumnsGrid">
+            <div className="flex-sb">
+              <div className="flex" style={{ margin: '0 0 0 10px' }}>
                 <AddressGet />
                 <div style={{ margin: '0 5px 0 5px' }}>
                   <PrivateKeyImport />
@@ -66,42 +66,42 @@ class Addresses extends React.Component {
                 onChange={e =>
                   this.wallet.setSearch('addresses', e.target.value)}
                 placeholder={this.t('wallet:searchAddresses')}
-                prefix={<i className='material-icons md-14'>search</i>}
-                size='small'
+                prefix={<i className="material-icons md-14">search</i>}
+                size="small"
                 style={{ margin: '0 10px 0 0', width: '290px' }}
                 value={this.wallet.search.addresses.value}
               />
             </div>
-            <div className='flex' style={{ margin: '0 10px 0 10px' }}>
+            <div className="flex" style={{ margin: '0 10px 0 10px' }}>
               <SendControls />
             </div>
           </div>
         </div>
-        <div className='AddressesColumnsGrid'>
+        <div className="AddressesColumnsGrid">
           <div style={{ margin: '10px' }}>
-            <div className='flex-sb' style={{ margin: '0 0 10px 0' }}>
+            <div className="flex-sb" style={{ margin: '0 0 10px 0' }}>
               <div style={{ lineHeight: '22px', margin: '0 36px 0 0' }}>
-                <div className='flex'>
-                  <i className='material-icons md-16'>account_balance</i>
+                <div className="flex">
+                  <i className="material-icons md-16">account_balance</i>
                   <p>{this.t('wallet:spendFrom')}</p>
                 </div>
               </div>
               <div style={{ flex: 1 }}>
-                <div className='flex'>
+                <div className="flex">
                   <Select
                     onChange={account => this.wallet.setSpendFrom(account)}
-                    optionFilterProp='children'
-                    size='small'
+                    optionFilterProp="children"
+                    size="small"
                     style={{ flex: 1, margin: '0 5px 0 0' }}
                     value={spendFrom}
                   >
                     <Select.Option
                       disabled={this.send.recipients.size > 1}
-                      value='#'
+                      value="#"
                     >
                       {this.t('wallet:any')}
                     </Select.Option>
-                    <Select.Option value='*'>
+                    <Select.Option value="*">
                       {this.t('wallet:default')}
                     </Select.Option>
                     {this.wallet.accounts.map(account => (
@@ -113,8 +113,8 @@ class Addresses extends React.Component {
                   <div style={{ width: '140px' }}>
                     <Input
                       disabled
-                      size='small'
-                      suffix='XVC'
+                      size="small"
+                      suffix="XVC"
                       value={new Intl.NumberFormat(this.gui.language, {
                         maximumFractionDigits: 6
                       }).format(accountBalances[spendFrom])}
@@ -146,7 +146,7 @@ class Addresses extends React.Component {
                   },
                   title: this.t('wallet:addresses'),
                   width: 290,
-                  render: address => <p className='text-mono'>{address}</p>
+                  render: address => <p className="text-mono">{address}</p>
                 },
                 {
                   dataIndex: 'balance',
@@ -172,13 +172,13 @@ class Addresses extends React.Component {
               }}
               onChange={this.tableChange}
               pagination={false}
-              rowKey='address'
+              rowKey="address"
               scroll={{ y: 504 }}
-              size='small'
+              size="small"
             />
           </div>
           <div style={{ margin: '10px' }}>
-            <div id='RecipientsGrid'>
+            <div id="RecipientsGrid">
               <SendRecipients />
               <div style={{ alignSelf: 'end' }}>
                 <SendOptions />

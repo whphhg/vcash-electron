@@ -9,7 +9,7 @@ class RPC {
    * @property {array} methods - RPC methods names.
    * @property {number|null} testTimeout - testRPC() timeout id.
    */
-  constructor (conn, setStatus) {
+  constructor(conn, setStatus) {
     this.conn = conn
     this.setStatus = setStatus
     this.methods = Object.keys(rpcs)
@@ -17,7 +17,7 @@ class RPC {
 
     /** Assign camelCase named RPC methods as functions wrapping batch(). */
     Object.keys(rpcs).forEach(method => {
-      this[rpcs[method]] = async function () {
+      this[rpcs[method]] = async function() {
         const res = await this.batch([{ method, params: [...arguments] }])
         return res
       }
@@ -47,7 +47,7 @@ class RPC {
    * @return {boolean} RPC status.
    */
   @computed
-  get ready () {
+  get ready() {
     if (this.conn.status.active === false) return false
     return this.conn.status.rpc
   }
@@ -58,7 +58,7 @@ class RPC {
    * @param {array} req - RPC method and params object(s).
    * @returns {object} Response(s) and request(s), single response, or empty.
    */
-  async batch (req) {
+  async batch(req) {
     try {
       /** Add jsonrpc version and random id to each RPC request. */
       req.map(rpc => {
@@ -108,7 +108,7 @@ class RPC {
    * Test daemon's RPC connectivity.
    * @function testRPC
    */
-  async testRPC () {
+  async testRPC() {
     clearTimeout(this.testTimeout)
     await this.getInfo()
   }

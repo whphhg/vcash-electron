@@ -13,7 +13,7 @@ import Tooltip from 'antd/lib/tooltip'
 @inject('gui', 'rates')
 @observer
 class CurrencyConverter extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
@@ -29,7 +29,7 @@ class CurrencyConverter extends React.Component {
    * @return {object} Converted amounts.
    */
   @computed
-  get amounts () {
+  get amounts() {
     const { average, local } = this.rates
 
     switch (this.from) {
@@ -81,18 +81,18 @@ class CurrencyConverter extends React.Component {
     this.from = from
   }
 
-  render () {
+  render() {
     return (
       <div>
-        <div className='flex-sb' style={{ margin: '0 0 10px 0' }}>
-          <div className='flex'>
-            <i className='material-icons md-16'>cached</i>
+        <div className="flex-sb" style={{ margin: '0 0 10px 0' }}>
+          <div className="flex">
+            <i className="material-icons md-16">cached</i>
             <p>{this.t('wallet:currencyConverter')}</p>
           </div>
-          <div className='flex'>
-            <img src='./assets/images/exchangeBittrex.png' />
+          <div className="flex">
+            <img src="./assets/images/exchangeBittrex.png" />
             <Tooltip
-              placement='bottom'
+              placement="bottom"
               title={''.concat(
                 this.t('wallet:lastUpdated'),
                 ' ',
@@ -109,9 +109,9 @@ class CurrencyConverter extends React.Component {
                 BTC
               </p>
             </Tooltip>
-            <img src='./assets/images/exchangePoloniex.png' />
+            <img src="./assets/images/exchangePoloniex.png" />
             <Tooltip
-              placement='bottomRight'
+              placement="bottomRight"
               title={''.concat(
                 this.t('wallet:lastUpdated'),
                 ' ',
@@ -130,34 +130,34 @@ class CurrencyConverter extends React.Component {
             </Tooltip>
           </div>
         </div>
-        <div className='flex-sb'>
+        <div className="flex-sb">
           <div style={{ flex: '1' }}>
             <Input
-              addonBefore='XVC'
-              name='vcash'
+              addonBefore="XVC"
+              name="vcash"
               onChange={this.convert}
               placeholder={this.t('wallet:amount')}
-              size='small'
+              size="small"
               value={this.amounts.vcash}
             />
           </div>
           <div style={{ flex: 1, margin: '0 10px 0 10px' }}>
             <Input
-              addonBefore='BTC'
-              name='bitcoin'
+              addonBefore="BTC"
+              name="bitcoin"
               onChange={this.convert}
               placeholder={this.t('wallet:amount')}
-              size='small'
+              size="small"
               value={this.amounts.bitcoin}
             />
           </div>
           <div style={{ flex: '1' }}>
             <Input
               addonBefore={this.gui.localCurrency}
-              name='local'
+              name="local"
               onChange={this.convert}
               placeholder={this.t('wallet:amount')}
-              size='small'
+              size="small"
               value={this.amounts.local}
             />
           </div>

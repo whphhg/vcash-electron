@@ -10,7 +10,7 @@ import Button from 'antd/lib/button'
 @inject('gui', 'rpcNext')
 @observer
 class WalletRepair extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
@@ -36,7 +36,7 @@ class WalletRepair extends React.Component {
    * @param {object} values - Key value combinations.
    */
   @action
-  setValues (values) {
+  setValues(values) {
     Object.keys(values).forEach(key => {
       this[key] = values[key]
     })
@@ -47,7 +47,7 @@ class WalletRepair extends React.Component {
    * @function crWallet
    * @param {boolean} checkOnly - Check for inconsistencies without repairing.
    */
-  async crWallet (checkOnly = true) {
+  async crWallet(checkOnly = true) {
     const method = checkOnly === true ? 'checkWallet' : 'repairWallet'
     const res = await this.rpc[method]()
 
@@ -67,16 +67,16 @@ class WalletRepair extends React.Component {
     }
   }
 
-  render () {
+  render() {
     return (
       <div>
-        <div className='flex'>
-          <i className='material-icons md-16'>build</i>
+        <div className="flex">
+          <i className="material-icons md-16">build</i>
           <p>{this.t('wallet:repairLong')}</p>
         </div>
         <div style={{ margin: '10px 0 0 0' }}>
           {this.checkPassed !== false && (
-            <div className='flex-sb'>
+            <div className="flex-sb">
               <div>
                 {this.checkPassed !== null && (
                   <p>{this.t('wallet:checkPassed')}</p>
@@ -86,9 +86,9 @@ class WalletRepair extends React.Component {
             </div>
           )}
           {this.checkPassed === false && (
-            <div className='flex-sb'>
+            <div className="flex-sb">
               <div>
-                <div className='flex-sb'>
+                <div className="flex-sb">
                   <p style={{ margin: '0 36px 0 0' }}>
                     {this.t('wallet:mismatched')}:{' '}
                     <span style={{ fontWeight: '500' }}>

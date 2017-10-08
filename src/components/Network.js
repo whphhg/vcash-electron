@@ -14,21 +14,21 @@ import RewardsPerDay from './charts/RewardsPerDay'
 @inject('gui', 'wallet')
 @observer
 class Network extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
     this.wallet = props.wallet
   }
 
-  render () {
+  render() {
     return (
-      <div id='NetworkGrid'>
-        <div className='shadow'>
+      <div id="NetworkGrid">
+        <div className="shadow">
           <div style={{ margin: '0 10px 0 10px' }}>
-            <div className='flex-sb' style={{ minHeight: '30px' }}>
-              <div className='flex'>
-                <i className='material-icons md-16'>redeem</i>
+            <div className="flex-sb" style={{ minHeight: '30px' }}>
+              <div className="flex">
+                <i className="material-icons md-16">redeem</i>
                 <p style={{ margin: '0 10px 0 5px' }}>
                   {this.t('wallet:collateralBalance')}
                   <span style={{ fontWeight: 600 }}>
@@ -43,7 +43,7 @@ class Network extends React.Component {
                   </span>{' '}
                   XVC
                 </p>
-                <i className='material-icons md-16'>gavel</i>
+                <i className="material-icons md-16">gavel</i>
                 <p>
                   {this.t('wallet:voteCandidate')}
                   <span style={{ fontWeight: 600 }}>
@@ -54,8 +54,8 @@ class Network extends React.Component {
                   </span>
                 </p>
               </div>
-              <div className='flex'>
-                <i className='material-icons md-16'>account_circle</i>
+              <div className="flex">
+                <i className="material-icons md-16">account_circle</i>
                 <p>
                   {this.t('wallet:defaultAddress')}
                   <span style={{ fontWeight: 600 }}>
@@ -69,29 +69,29 @@ class Network extends React.Component {
             </div>
           </div>
         </div>
-        <div className='shadow'>
+        <div className="shadow">
           <div style={{ margin: '10px 10px 0 10px' }}>
-            <div id='NetworkColumnsGrid'>
+            <div id="NetworkColumnsGrid">
               <div style={{ minWidth: '100%' }}>
-                <div className='flex'>
-                  <i className='material-icons md-16'>timeline</i>
+                <div className="flex">
+                  <i className="material-icons md-16">timeline</i>
                   <p>{this.t('wallet:rewardSpread')}</p>
                 </div>
                 <RewardSpread />
-                <div className='flex'>
-                  <i className='material-icons md-16'>view_week</i>
+                <div className="flex">
+                  <i className="material-icons md-16">view_week</i>
                   <p>{this.t('wallet:rewardsPerDay')}</p>
                 </div>
                 <RewardsPerDay />
               </div>
               <div style={{ minWidth: '100%' }}>
-                <div className='flex'>
-                  <i className='material-icons md-16'>trending_up</i>
+                <div className="flex">
+                  <i className="material-icons md-16">trending_up</i>
                   <p>{this.t('wallet:difficulties')}</p>
                 </div>
                 <Difficulties />
-                <div className='flex'>
-                  <i className='material-icons md-16'>network_check</i>
+                <div className="flex">
+                  <i className="material-icons md-16">network_check</i>
                   <p>{this.t('wallet:hashRate')}</p>
                 </div>
                 <HashRate />
@@ -101,25 +101,25 @@ class Network extends React.Component {
         </div>
         <div>
           <div style={{ margin: '10px 10px 0 10px' }}>
-            <div className='flex-sb'>
+            <div className="flex-sb">
               <RewardCalculator />
-              <div className='flex'>
-                <div className='flex'>
+              <div className="flex">
+                <div className="flex">
                   <div style={{ margin: '0 36px 0 0' }}>
-                    <div className='flex'>
-                      <i className='material-icons md-16'>hearing</i>
+                    <div className="flex">
+                      <i className="material-icons md-16">hearing</i>
                       <p>{this.t('wallet:listeningOn')}</p>
                     </div>
-                    <div className='flex'>
-                      <i className='material-icons md-16'>settings_ethernet</i>
+                    <div className="flex">
+                      <i className="material-icons md-16">settings_ethernet</i>
                       <p>{this.t('wallet:portOpen')}</p>
                     </div>
-                    <div className='flex'>
-                      <i className='material-icons md-16'>event_seat</i>
+                    <div className="flex">
+                      <i className="material-icons md-16">event_seat</i>
                       <p>{this.t('wallet:collateralizedNodes')}</p>
                     </div>
-                    <div className='flex'>
-                      <i className='material-icons md-16'>games</i>
+                    <div className="flex">
+                      <i className="material-icons md-16">games</i>
                       <p>{this.t('wallet:testnet')}</p>
                     </div>
                   </div>
@@ -143,22 +143,22 @@ class Network extends React.Component {
                     </p>
                   </div>
                 </div>
-                <div className='flex'>
+                <div className="flex">
                   <div style={{ margin: '0 36px 0 36px' }}>
-                    <div className='flex'>
-                      <i className='material-icons md-16'>account_balance</i>
+                    <div className="flex">
+                      <i className="material-icons md-16">account_balance</i>
                       <p>{this.t('wallet:moneySupply')}</p>
                     </div>
-                    <div className='flex'>
-                      <i className='material-icons md-16'>grid_on</i>
+                    <div className="flex">
+                      <i className="material-icons md-16">grid_on</i>
                       <p>{this.t('wallet:currentBlockSize')}</p>
                     </div>
-                    <div className='flex'>
-                      <i className='material-icons md-16'>playlist_add_check</i>
+                    <div className="flex">
+                      <i className="material-icons md-16">playlist_add_check</i>
                       <p>{this.t('wallet:currentBlockTxs')}</p>
                     </div>
-                    <div className='flex'>
-                      <i className='material-icons md-16'>playlist_add</i>
+                    <div className="flex">
+                      <i className="material-icons md-16">playlist_add</i>
                       <p>{this.t('wallet:pooledTxs')}</p>
                     </div>
                   </div>

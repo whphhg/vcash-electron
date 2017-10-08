@@ -11,7 +11,7 @@ import Input from 'antd/lib/input'
 @inject('rpcNext', 'wallet')
 @observer
 class WalletSeedDump extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
@@ -33,7 +33,7 @@ class WalletSeedDump extends React.Component {
    * @return {string} Error status.
    */
   @computed
-  get errorStatus () {
+  get errorStatus() {
     if (this.rpcError !== '') return this.rpcError
     return ''
   }
@@ -54,7 +54,7 @@ class WalletSeedDump extends React.Component {
    * Dump wallet seed.
    * @function dumpWalletSeed
    */
-  async dumpWalletSeed () {
+  async dumpWalletSeed() {
     const res = await this.rpc.dumpWalletSeed()
 
     if ('result' in res === true) {
@@ -70,14 +70,14 @@ class WalletSeedDump extends React.Component {
     }
   }
 
-  render () {
+  render() {
     return (
       <div>
-        <div className='flex'>
-          <i className='material-icons md-16'>fingerprint</i>
+        <div className="flex">
+          <i className="material-icons md-16">fingerprint</i>
           <p>{this.t('wallet:seedDumpLong')}</p>
         </div>
-        <div className='flex-sb' style={{ margin: '10px 0 0 0' }}>
+        <div className="flex-sb" style={{ margin: '10px 0 0 0' }}>
           <p style={{ width: '120px' }}>{this.t('wallet:seed')}</p>
           <Input
             disabled={this.seed === ''}
@@ -86,8 +86,8 @@ class WalletSeedDump extends React.Component {
             value={this.seed}
           />
         </div>
-        <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
-          <p className='red' style={{ margin: '0 0 0 120px' }}>
+        <div className="flex-sb" style={{ margin: '5px 0 0 0' }}>
+          <p className="red" style={{ margin: '0 0 0 120px' }}>
             {this.errShow.includes(this.errorStatus) === true &&
               this.t('wallet:' + this.errorStatus)}
           </p>

@@ -21,28 +21,28 @@ import WalletSeedDump from './WalletSeedDump'
 @inject('gui', 'wallet')
 @observer
 class Maintenance extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
     this.wallet = props.wallet
   }
 
-  render () {
+  render() {
     return (
-      <div id='MaintenanceGrid'>
-        <div className='shadow'>
+      <div id="MaintenanceGrid">
+        <div className="shadow">
           <div style={{ margin: '0 10px 0 10px' }}>
-            <div className='flex-sb' style={{ minHeight: '30px' }}>
-              <div className='flex'>
-                <i className='material-icons md-16'>language</i>
+            <div className="flex-sb" style={{ minHeight: '30px' }}>
+              <div className="flex">
+                <i className="material-icons md-16">language</i>
                 <p style={{ margin: '0 10px 0 5px' }}>
                   {this.t('wallet:selectLanguage')}
                 </p>
                 <SelectLanguage />
               </div>
-              <div className='flex'>
-                <i className='material-icons md-16'>monetization_on</i>
+              <div className="flex">
+                <i className="material-icons md-16">monetization_on</i>
                 <p style={{ margin: '0 10px 0 5px' }}>
                   {this.t('wallet:selectCurrency')}
                 </p>
@@ -51,7 +51,7 @@ class Maintenance extends React.Component {
             </div>
           </div>
         </div>
-        <div className='shadow'>
+        <div className="shadow">
           <div style={{ display: 'flex', margin: '10px' }}>
             <div style={{ flex: 1, margin: '0 10px 0 0' }}>
               <WalletBackup />
@@ -131,7 +131,7 @@ class Maintenance extends React.Component {
           locale={{ emptyText: this.t('wallet:notFound') }}
           pagination={false}
           scroll={this.wallet.peers.length > 8 ? { y: 183 } : {}}
-          size='small'
+          size="small"
           style={{ margin: '10px 10px 0 10px' }}
         />
       </div>

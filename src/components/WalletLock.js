@@ -10,7 +10,7 @@ import Tooltip from 'antd/lib/tooltip'
 @inject('rpcNext', 'wallet')
 @observer
 class WalletLock extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
@@ -24,7 +24,7 @@ class WalletLock extends React.Component {
    * Lock the wallet.
    * @function walletLock
    */
-  async walletLock () {
+  async walletLock() {
     const res = await this.rpc.walletLock()
 
     if ('result' in res === true) {
@@ -33,15 +33,15 @@ class WalletLock extends React.Component {
     }
   }
 
-  render () {
+  render() {
     const { isEncrypted, isLocked } = this.wallet
 
     /** Do not render if the wallet is not encrypted or is locked. */
     if (isEncrypted === false || isLocked === true) return null
     return (
-      <Tooltip placement='bottomRight' title={this.t('wallet:unlocked')}>
+      <Tooltip placement="bottomRight" title={this.t('wallet:unlocked')}>
         <Button onClick={this.walletLock}>
-          <i className='material-icons md-20'>lock_open</i>
+          <i className="material-icons md-20">lock_open</i>
         </Button>
       </Tooltip>
     )

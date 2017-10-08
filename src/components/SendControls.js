@@ -13,7 +13,7 @@ import Tooltip from 'antd/lib/tooltip'
 @inject('rates', 'send', 'wallet')
 @observer
 class SendControls extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.rates = props.rates
@@ -35,16 +35,16 @@ class SendControls extends React.Component {
     }
   }
 
-  render () {
+  render() {
     return (
-      <div className='flex-sb'>
-        <div className='flex'>
+      <div className="flex-sb">
+        <div className="flex">
           <Popconfirm
             cancelText={this.t('wallet:no')}
             okText={this.t('wallet:yes')}
             onConfirm={() => this.send.confirm()}
             onVisibleChange={this.togglePopconfirm}
-            placement='bottom'
+            placement="bottom"
             title={this.t('wallet:sendConfirm')}
             visible={this.popconfirmVisible}
           >
@@ -54,7 +54,7 @@ class SendControls extends React.Component {
                 this.wallet.info.balance < 0.0005 ||
                 this.send.errorStatus !== false
               }
-              size='small'
+              size="small"
             >
               {this.t('wallet:send')}
             </Button>
@@ -62,56 +62,56 @@ class SendControls extends React.Component {
           <Button
             disabled={this.wallet.spendFrom === '#'}
             onClick={() => this.send.addRecipient()}
-            size='small'
+            size="small"
             style={{ margin: '0 5px 0 5px' }}
           >
             <div style={{ margin: '2px 0 0 0' }}>
-              <i className='material-icons md-16'>person_add</i>
+              <i className="material-icons md-16">person_add</i>
             </div>
           </Button>
           <Popconfirm
             cancelText={this.t('wallet:no')}
             okText={this.t('wallet:yes')}
             onConfirm={() => this.send.clear()}
-            placement='bottom'
+            placement="bottom"
             title={this.t('wallet:sendReset')}
           >
-            <Button size='small'>{this.t('wallet:reset')}</Button>
+            <Button size="small">{this.t('wallet:reset')}</Button>
           </Popconfirm>
         </div>
-        <div className='flex'>
-          <i className='material-icons md-16'>timer_off</i>
-          <Tooltip placement='bottomLeft' title={this.t('wallet:zeroTime')}>
+        <div className="flex">
+          <i className="material-icons md-16">timer_off</i>
+          <Tooltip placement="bottomLeft" title={this.t('wallet:zeroTime')}>
             <Switch
               checkedChildren={
                 <div style={{ margin: '-2px 0 0 0' }}>
-                  <i className='material-icons md-16'>done</i>
+                  <i className="material-icons md-16">done</i>
                 </div>
               }
               disabled
-              size='small'
+              size="small"
               style={{ margin: '0 20px 0 5px' }}
               unCheckedChildren={
                 <div style={{ margin: '-2px 0 0 0' }}>
-                  <i className='material-icons md-16'>clear</i>
+                  <i className="material-icons md-16">clear</i>
                 </div>
               }
             />
           </Tooltip>
-          <i className='material-icons md-16'>shuffle</i>
-          <Tooltip placement='bottomLeft' title={this.t('wallet:blendedOnly')}>
+          <i className="material-icons md-16">shuffle</i>
+          <Tooltip placement="bottomLeft" title={this.t('wallet:blendedOnly')}>
             <Switch
               checkedChildren={
                 <div style={{ margin: '-2px 0 0 0' }}>
-                  <i className='material-icons md-16'>done</i>
+                  <i className="material-icons md-16">done</i>
                 </div>
               }
               disabled
-              size='small'
+              size="small"
               style={{ margin: '0 0 0 5px' }}
               unCheckedChildren={
                 <div style={{ margin: '-2px 0 0 0' }}>
-                  <i className='material-icons md-16'>clear</i>
+                  <i className="material-icons md-16">clear</i>
                 </div>
               }
             />

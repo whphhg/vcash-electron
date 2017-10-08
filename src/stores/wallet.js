@@ -42,7 +42,7 @@ export default class Wallet {
    * @property {string} lastBlock - Last looked up block.
    * @property {object} timeouts - Timeout ids.
    */
-  constructor (gui, rates, rpc) {
+  constructor(gui, rates, rpc) {
     this.gui = gui
     this.rates = rates
     this.rpc = rpc
@@ -121,7 +121,7 @@ export default class Wallet {
    * @return {object} Account balances.
    */
   @computed
-  get accountBalances () {
+  get accountBalances() {
     return this.addresses.values().reduce((balances, address) => {
       /** Skip change addresses. */
       if (address.account !== null) {
@@ -135,7 +135,8 @@ export default class Wallet {
       }
 
       return balances
-    }, { '#': this.info.balance })
+    },
+    { '#': this.info.balance })
   }
 
   /**
@@ -144,7 +145,7 @@ export default class Wallet {
    * @return {array} Account list.
    */
   @computed
-  get accounts () {
+  get accounts() {
     let accounts = new Set()
 
     /** Add accounts to the set. */
@@ -171,7 +172,7 @@ export default class Wallet {
    * @return {array} Address list.
    */
   @computed
-  get addressList () {
+  get addressList() {
     return [...this.addresses.keys()]
   }
 
@@ -181,7 +182,7 @@ export default class Wallet {
    * @return {array} Addresses data.
    */
   @computed
-  get addressesData () {
+  get addressesData() {
     let addresses = []
 
     this.addresses.forEach(address => {
@@ -243,7 +244,7 @@ export default class Wallet {
    * @return {array} Generated txs.
    */
   @computed
-  get generated () {
+  get generated() {
     let generated = []
 
     this.txs.forEach((data, txid) => {
@@ -262,7 +263,7 @@ export default class Wallet {
    * @return {map} Generated pending txs.
    */
   @computed
-  get generatedPending () {
+  get generatedPending() {
     return this.generated.reduce((pending, tx) => {
       if (tx.confirmations > 0 && tx.confirmations <= 220) {
         pending.set(tx.txid, tx)
@@ -278,11 +279,12 @@ export default class Wallet {
    * @return {object} Results.
    */
   @computed
-  get info () {
+  get info() {
     return this.responses.entries().reduce((results, [key, values]) => {
       if (key === 'getpeerinfo') return { ...results, peers: values }
       return { ...results, ...values }
-    }, {
+    },
+    {
       blendstate: 'none',
       balance: 0,
       denominatedbalance: 0,
@@ -335,7 +337,7 @@ export default class Wallet {
    * @return {array} Saved RPC response.
    */
   @computed
-  get peers () {
+  get peers() {
     if (this.responses.has('getpeerinfo') === true) {
       const peerInfo = this.responses.get('getpeerinfo')
 
@@ -345,7 +347,10 @@ export default class Wallet {
             peers.push({
               ...peer,
               key: shortUid(),
-              version: peer.subver.match(/\/(.*)\(/).pop().split(':')[1],
+              version: peer.subver
+                .match(/\/(.*)\(/)
+                .pop()
+                .split(':')[1],
               os: peer.subver.split(' ')[1].replace(')/', ''),
               ip: peer.addr.split(':')[0],
               port: peer.addr.split(':')[1]
@@ -366,7 +371,7 @@ export default class Wallet {
    * @return {number} Amount pending.
    */
   @computed
-  get pendingAmount () {
+  get pendingAmount() {
     let pending = 0
 
     this.txs.forEach((tx, txid) => {
@@ -390,7 +395,7 @@ export default class Wallet {
    * @return {number} Blockchain sync percentage.
    */
   @computed
-  get syncPercent () {
+  get syncPercent() {
     const peersHeight = this.peers.reduce((height, peer) => {
       if (peer.startingheight > height) return peer.startingheight
       return height
@@ -405,7 +410,7 @@ export default class Wallet {
    * @return {array} Txs data.
    */
   @computed
-  get txsData () {
+  get txsData() {
     let txs = []
 
     this.txs.forEach((tx, txid) => {
@@ -430,7 +435,9 @@ export default class Wallet {
           (tx.blockhash && tx.blockhash.indexOf(keyword) > -1) ||
           (tx.comment && tx.comment.indexOf(keyword) > -1) ||
           tx.txid.indexOf(keyword) > -1 ||
-          moment(tx.time).format('L - LTS').indexOf(keyword) > -1
+          moment(tx.time)
+            .format('L - LTS')
+            .indexOf(keyword) > -1
         ) {
           keywordMatches += 1
         }
@@ -461,7 +468,7 @@ export default class Wallet {
    * @return {object|null} Transaction data or null.
    */
   @computed
-  get viewingTx () {
+  get viewingTx() {
     if (this.txs.has(this.viewing) === true) {
       const saved = this.txs.get(this.viewing)
 
@@ -515,7 +522,7 @@ export default class Wallet {
    * @function setBlendingStatus
    */
   @action
-  setBlendingStatus () {
+  setBlendingStatus() {
     this.isBlending = !this.isBlending
   }
 
@@ -526,7 +533,7 @@ export default class Wallet {
    * @param {array} options - RPC options.
    */
   @action
-  setInfo (responses, options) {
+  setInfo(responses, options) {
     const overwrite = ['getnetworkinfo', 'getpeerinfo']
 
     responses.forEach((response, index) => {
@@ -555,7 +562,7 @@ export default class Wallet {
    * @param {boolean} isLocked - Lock status.
    */
   @action
-  setLockStatus (isEncrypted, isLocked) {
+  setLockStatus(isEncrypted, isLocked) {
     this.isEncrypted = isEncrypted
     this.isLocked = isLocked
   }
@@ -567,7 +574,7 @@ export default class Wallet {
    * @param {string} value - Input element value.
    */
   @action
-  setSearch (key, value) {
+  setSearch(key, value) {
     /** Clear previous timeout id. */
     clearTimeout(this.search[key].timeoutId)
 
@@ -589,7 +596,7 @@ export default class Wallet {
    * @param {string} account - Account name.
    */
   @action
-  setSpendFrom (account = '#') {
+  setSpendFrom(account = '#') {
     this.spendFrom = account
   }
 
@@ -602,7 +609,7 @@ export default class Wallet {
    * @param {array} options - io RPC request options.
    */
   @action
-  setWallet (txs = null, addresses = null, io = null, options = null) {
+  setWallet(txs = null, addresses = null, io = null, options = null) {
     let inputTxs = new Map()
 
     /** Grouped notifications for pending and spendable txs. */
@@ -976,7 +983,7 @@ export default class Wallet {
    * @param {string} txid - Transaction id.
    */
   @action
-  setViewing (txid = null) {
+  setViewing(txid = null) {
     /** Lookup transaction that was just sent. */
     if (txid !== null && this.txs.has(txid) === false) {
       /** Save the txid in viewing queue. */
@@ -999,7 +1006,7 @@ export default class Wallet {
    * @function getInfo
    * @param {string} id - Request's id; either network or wallet.
    */
-  getInfo (id = 'wallet') {
+  getInfo(id = 'wallet') {
     /** Clear previous timeout. */
     clearTimeout(this.timeouts[id])
 
@@ -1037,7 +1044,7 @@ export default class Wallet {
    * Get wallet lock status.
    * @function getLockStatus
    */
-  getLockStatus () {
+  getLockStatus() {
     this.rpc.execute([{ method: 'walletpassphrase', params: [] }], response => {
       switch (response[0].error.code) {
         /** error_code_wallet_wrong_enc_state (unencrypted) */
@@ -1061,7 +1068,7 @@ export default class Wallet {
    * @param {boolean} addresses - Get addresses.
    * @function getWallet
    */
-  getWallet (fromGenesis = false, addresses = false) {
+  getWallet(fromGenesis = false, addresses = false) {
     /** Clear previous timeout id. */
     clearTimeout(this.timeouts.getWallet)
 

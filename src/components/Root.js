@@ -23,23 +23,23 @@ message.config({ top: 11 })
 @inject('connections')
 @observer
 class Root extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.connections = props.connections
   }
 
-  render () {
+  render() {
     return (
       <Provider {...this.connections.viewingStores}>
         <HashRouter>
           <div>
-            <div id='AppGrid'>
+            <div id="AppGrid">
               <Header />
               <div>
-                <Route exact path='/:uid' component={Transactions} />
-                <Route path='/:uid/addresses' component={Addresses} />
-                <Route path='/:uid/maintenance' component={Maintenance} />
-                <Route path='/:uid/network' component={Network} />
+                <Route exact path="/:uid" component={Transactions} />
+                <Route path="/:uid/addresses" component={Addresses} />
+                <Route path="/:uid/maintenance" component={Maintenance} />
+                <Route path="/:uid/network" component={Network} />
               </div>
               <Footer />
             </div>

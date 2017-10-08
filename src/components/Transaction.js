@@ -12,7 +12,7 @@ import Table from 'antd/lib/table'
 @inject('gui', 'rates', 'rpcNext', 'wallet')
 @observer
 class Transaction extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
@@ -28,7 +28,7 @@ class Transaction extends React.Component {
    * Lock transaction.
    * @function ztLock
    */
-  async ztLock () {
+  async ztLock() {
     const res = await this.rpc.ztLock(this.wallet.viewing)
 
     if ('result' in res === true) {
@@ -40,7 +40,7 @@ class Transaction extends React.Component {
     }
   }
 
-  render () {
+  render() {
     const { average, local } = this.rates
     const { viewing, viewingTx } = this.wallet
 
@@ -54,50 +54,50 @@ class Transaction extends React.Component {
         visible={viewing !== ''}
         width={1000}
       >
-        <div className='flex-sb' style={{ alignItems: 'flex-start' }}>
+        <div className="flex-sb" style={{ alignItems: 'flex-start' }}>
           <div style={{ lineHeight: '20px', margin: '0 36px 0 0' }}>
-            <div className='flex'>
-              <i className='material-icons md-16'>label</i>
+            <div className="flex">
+              <i className="material-icons md-16">label</i>
               <p>{this.t('wallet:transactionId')}</p>
             </div>
             {viewingTx.hasOwnProperty('blockhash') === true && (
-              <div className='flex'>
-                <i className='material-icons md-16'>extension</i>
+              <div className="flex">
+                <i className="material-icons md-16">extension</i>
                 <p>{this.t('wallet:includedInBlock')}</p>
               </div>
             )}
-            <div className='flex'>
-              <i className='material-icons md-16'>access_time</i>
+            <div className="flex">
+              <i className="material-icons md-16">access_time</i>
               <p>{this.t('wallet:relayedOn')}</p>
             </div>
             {viewingTx.hasOwnProperty('blocktime') === true &&
               viewingTx.blocktime > 0 && (
-                <div className='flex'>
-                  <i className='material-icons md-16'>access_time</i>
+                <div className="flex">
+                  <i className="material-icons md-16">access_time</i>
                   <p>{this.t('wallet:blockFound')}</p>
                 </div>
               )}
-            <div className='flex'>
-              <i className='material-icons md-16'>folder</i>
+            <div className="flex">
+              <i className="material-icons md-16">folder</i>
               <p>{this.t('wallet:category')}</p>
             </div>
-            <div className='flex' style={{ margin: '10px 0 0 0' }}>
-              <i className='material-icons md-16'>monetization_on</i>
+            <div className="flex" style={{ margin: '10px 0 0 0' }}>
+              <i className="material-icons md-16">monetization_on</i>
               <p>{this.t('wallet:amount')}</p>
             </div>
             {viewingTx.hasOwnProperty('fee') === true && (
-              <div className='flex'>
-                <i className='material-icons md-16'>card_giftcard</i>
+              <div className="flex">
+                <i className="material-icons md-16">card_giftcard</i>
                 <p>{this.t('wallet:fee')}</p>
               </div>
             )}
-            <div className='flex'>
-              <i className='material-icons md-16'>done_all</i>
+            <div className="flex">
+              <i className="material-icons md-16">done_all</i>
               <p>{this.t('wallet:confirmations')}</p>
             </div>
           </div>
           <div style={{ flex: 1, lineHeight: '20px' }}>
-            <div className='flex-sb' style={{ alignItems: 'flex-start' }}>
+            <div className="flex-sb" style={{ alignItems: 'flex-start' }}>
               <div style={{ margin: '0 0 10px 0' }}>
                 <p style={{ fontWeight: '500' }}>{viewingTx.txid}</p>
                 {viewingTx.hasOwnProperty('blockhash') === true && (
@@ -118,7 +118,7 @@ class Transaction extends React.Component {
               <div style={{ textAlign: 'right' }}>
                 <p>
                   <a
-                    target='_blank'
+                    target="_blank"
                     href={'https://explorer.vchain.info/tx/' + viewingTx.txid}
                   >
                     {this.t('wallet:transactionOnExplorer')}
@@ -126,7 +126,7 @@ class Transaction extends React.Component {
                 </p>
                 <p>
                   <a
-                    target='_blank'
+                    target="_blank"
                     href={
                       'https://explorer.vchain.info/block/' +
                       viewingTx.blockhash
@@ -156,7 +156,7 @@ class Transaction extends React.Component {
                   )}
               </div>
             </div>
-            <div className='flex-sb' style={{ alignItems: 'flex-start' }}>
+            <div className="flex-sb" style={{ alignItems: 'flex-start' }}>
               <div>
                 <p className={viewingTx.color}>
                   {new Intl.NumberFormat(this.gui.language, {
@@ -170,7 +170,7 @@ class Transaction extends React.Component {
                   {this.gui.localCurrency})
                 </p>
                 {viewingTx.hasOwnProperty('fee') === true && (
-                  <p className='red'>
+                  <p className="red">
                     {new Intl.NumberFormat(this.gui.language, {
                       maximumFractionDigits: 6
                     }).format(viewingTx.fee)}{' '}
@@ -180,19 +180,19 @@ class Transaction extends React.Component {
                 <p className={viewingTx.color}>{viewingTx.confirmations}</p>
               </div>
               <div
-                className='flex-sb'
+                className="flex-sb"
                 style={{ alignItems: 'flex-start', width: '467px' }}
               >
                 <div style={{ margin: '0 36px 0 0' }}>
                   {viewingTx.hasOwnProperty('to') === true && (
-                    <div className='flex'>
-                      <i className='material-icons md-16'>perm_identity</i>
+                    <div className="flex">
+                      <i className="material-icons md-16">perm_identity</i>
                       <p>{this.t('wallet:recipient')}</p>
                     </div>
                   )}
                   {viewingTx.hasOwnProperty('comment') === true && (
-                    <div className='flex'>
-                      <i className='material-icons md-16'>create</i>
+                    <div className="flex">
+                      <i className="material-icons md-16">create</i>
                       <p>{this.t('wallet:comment')}</p>
                     </div>
                   )}
@@ -210,7 +210,7 @@ class Transaction extends React.Component {
           </div>
         </div>
         <div
-          className='flex-sb'
+          className="flex-sb"
           style={{ alignItems: 'flex-start', margin: '10px 0 0 0' }}
         >
           <Table
@@ -220,7 +220,7 @@ class Transaction extends React.Component {
                 dataIndex: 'address',
                 title: this.t('wallet:from'),
                 width: 290,
-                render: address => <p className='text-mono'>{address}</p>
+                render: address => <p className="text-mono">{address}</p>
               },
               {
                 dataIndex: 'amount',
@@ -240,11 +240,11 @@ class Transaction extends React.Component {
             locale={{ emptyText: this.t('wallet:coinbase') }}
             pagination={false}
             scroll={viewingTx.inputs.length > 8 ? { y: 190 } : {}}
-            size='small'
+            size="small"
             style={{ flex: 1, margin: '0 10px 0 0' }}
           />
           <div style={{ margin: 'auto 0 auto 0' }}>
-            <i className='material-icons md-18'>forward</i>
+            <i className="material-icons md-18">forward</i>
           </div>
           <Table
             bordered
@@ -253,7 +253,7 @@ class Transaction extends React.Component {
                 dataIndex: 'address',
                 title: this.t('wallet:to'),
                 width: 290,
-                render: address => <p className='text-mono'>{address}</p>
+                render: address => <p className="text-mono">{address}</p>
               },
               {
                 dataIndex: 'amount',
@@ -272,7 +272,7 @@ class Transaction extends React.Component {
             dataSource={[...viewingTx.outputs]}
             pagination={false}
             scroll={viewingTx.outputs.length > 8 ? { y: 190 } : {}}
-            size='small'
+            size="small"
             style={{ flex: 1, margin: '0 0 0 10px' }}
           />
         </div>

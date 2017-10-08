@@ -10,7 +10,7 @@ import Popconfirm from 'antd/lib/popconfirm'
 @inject('gui', 'rates', 'send')
 @observer
 class SendRecipients extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
@@ -27,15 +27,15 @@ class SendRecipients extends React.Component {
     this.send.setRecipient(e.target.id, e.target.name, e.target.value)
   }
 
-  render () {
+  render() {
     const { average, local } = this.rates
 
     return (
       <div>
-        <div id='sendRecipients'>
+        <div id="sendRecipients">
           {this.send.recipients.values().map(rcpt => (
             <div
-              className='flex-sb'
+              className="flex-sb"
               key={rcpt.uid}
               style={{ margin: '0 0 5px 0' }}
             >
@@ -48,7 +48,7 @@ class SendRecipients extends React.Component {
                       : '')
                   }
                   id={rcpt.uid}
-                  name='address'
+                  name="address"
                   onChange={this.setRecipient}
                   placeholder={this.t('wallet:address')}
                   prefix={
@@ -56,33 +56,33 @@ class SendRecipients extends React.Component {
                       cancelText={this.t('wallet:no')}
                       okText={this.t('wallet:yes')}
                       onConfirm={() => this.send.removeRecipient(rcpt.uid)}
-                      placement='bottomLeft'
+                      placement="bottomLeft"
                       title={this.t('wallet:recipientRemove')}
                     >
                       <div style={{ cursor: 'pointer' }}>
-                        <i className='material-icons md-14'>delete_forever</i>
+                        <i className="material-icons md-14">delete_forever</i>
                       </div>
                     </Popconfirm>
                   }
-                  size='small'
+                  size="small"
                   value={rcpt.address}
                 />
               </div>
               <div style={{ flex: 1, margin: '0 10px 0 10px' }}>
                 <Input
                   id={rcpt.uid}
-                  name='amount'
+                  name="amount"
                   onChange={this.setRecipient}
                   placeholder={this.t('wallet:amount')}
-                  size='small'
-                  suffix='XVC'
+                  size="small"
+                  suffix="XVC"
                   value={rcpt.amount}
                 />
               </div>
               <div style={{ flex: 1 }}>
                 <Input
                   disabled
-                  size='small'
+                  size="small"
                   suffix={this.gui.localCurrency}
                   value={new Intl.NumberFormat(this.gui.language, {
                     minimumFractionDigits: 2,
@@ -94,13 +94,13 @@ class SendRecipients extends React.Component {
           ))}
         </div>
         {this.send.recipients.size > 1 && (
-          <div className='flex-sb' style={{ margin: '5px 0 0 0' }}>
+          <div className="flex-sb" style={{ margin: '5px 0 0 0' }}>
             <div style={{ width: '55%' }} />
             <div style={{ flex: 1, margin: '0 10px 0 10px' }}>
               <Input
                 disabled
-                size='small'
-                suffix='XVC'
+                size="small"
+                suffix="XVC"
                 value={new Intl.NumberFormat(this.gui.language, {
                   maximumFractionDigits: 6
                 }).format(this.send.total)}
@@ -109,7 +109,7 @@ class SendRecipients extends React.Component {
             <div style={{ flex: 1 }}>
               <Input
                 disabled
-                size='small'
+                size="small"
                 suffix={this.gui.localCurrency}
                 value={new Intl.NumberFormat(this.gui.language, {
                   maximumFractionDigits: 2

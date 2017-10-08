@@ -9,7 +9,7 @@ import Table from 'antd/lib/table'
 @inject('gui', 'wallet')
 @observer
 class Address extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.data = props.data
@@ -29,12 +29,12 @@ class Address extends React.Component {
     )
   }
 
-  render () {
+  render() {
     return (
       <div style={{ margin: '5px 0 6px 0' }}>
-        <div className='flex-sb' style={{ margin: '0 0 10px 0' }}>
-          <div className='flex'>
-            <i className='material-icons md-16'>account_balance</i>
+        <div className="flex-sb" style={{ margin: '0 0 10px 0' }}>
+          <div className="flex">
+            <i className="material-icons md-16">account_balance</i>
             {this.data.account === null && <p>{this.t('wallet:change')}</p>}
             {this.data.account !== null && (
               <p>
@@ -47,13 +47,13 @@ class Address extends React.Component {
               </p>
             )}
           </div>
-          <div className='flex'>
-            <i className='material-icons md-16'>call_received</i>
+          <div className="flex">
+            <i className="material-icons md-16">call_received</i>
             <p style={{ margin: '0 10px 0 5px' }}>
               {this.t('wallet:received')}:{' '}
               <span style={{ fontWeight: '500' }}>{this.data.received}</span>
             </p>
-            <i className='material-icons md-16'>call_made</i>
+            <i className="material-icons md-16">call_made</i>
             <p>
               {this.t('wallet:spent')}:{' '}
               <span style={{ fontWeight: '500' }}>{this.data.spent}</span>
@@ -70,7 +70,7 @@ class Address extends React.Component {
                   title: this.t('wallet:transactionId'),
                   width: 275,
                   render: (txid, record) => (
-                    <p className='text-mono'>
+                    <p className="text-mono">
                       {(record.spentTxid === '' &&
                         txid.slice(0, 15) + '...' + txid.slice(49, 64)) ||
                         (record.spentTxid !== '' &&
@@ -97,7 +97,7 @@ class Address extends React.Component {
               dataSource={this.data.outputs}
               onRowClick={this.viewTransaction}
               pagination={this.data.outputs.length > 10}
-              size='small'
+              size="small"
             />
           </div>
         )}

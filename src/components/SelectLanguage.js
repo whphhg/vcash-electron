@@ -9,21 +9,21 @@ import Select from 'antd/lib/select'
 @inject('gui')
 @observer
 class SelectLanguage extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
   }
 
-  render () {
+  render() {
     return (
       <Select
         defaultValue={this.gui.language}
         notFoundContent={this.t('wallet:notFound')}
         onChange={language => this.gui.setLanguage(language)}
-        optionFilterProp='children'
+        optionFilterProp="children"
         showSearch
-        size='small'
+        size="small"
         style={{ width: '120px' }}
       >
         {this.gui.languages.map(entry => (

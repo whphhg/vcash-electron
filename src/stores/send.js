@@ -30,7 +30,7 @@ export default class Send {
    * @param {object} rpc - RPC store.
    * @param {object} wallet - Wallet store.
    */
-  constructor (rpc, wallet) {
+  constructor(rpc, wallet) {
     this.rpc = rpc
     this.wallet = wallet
 
@@ -48,7 +48,7 @@ export default class Send {
    * @return {string|boolean} Current error or false if none.
    */
   @computed
-  get errorStatus () {
+  get errorStatus() {
     if (this.minConf === '') return 'missingMinConf'
 
     /** Get recipients. */
@@ -82,7 +82,7 @@ export default class Send {
    * @return {number} Total amount to send.
    */
   @computed
-  get total () {
+  get total() {
     return (
       this.recipients.values().reduce((total, recipient) => {
         return total + recipient.amount * 1000000
@@ -95,7 +95,7 @@ export default class Send {
    * @function addRecipient
    */
   @action
-  addRecipient () {
+  addRecipient() {
     const uid = shortUid()
 
     this.recipients.set(uid, {
@@ -110,7 +110,7 @@ export default class Send {
    * @function clear
    */
   @action
-  clear () {
+  clear() {
     this.wallet.setSpendFrom()
     this.setComment()
     this.setCommentTo()
@@ -124,7 +124,7 @@ export default class Send {
    * @param {string} uid - Recipient uid.
    */
   @action
-  removeRecipient (uid) {
+  removeRecipient(uid) {
     this.recipients.delete(uid)
   }
 
@@ -134,7 +134,7 @@ export default class Send {
    * @param {boolean} blendedOnly - Blended only.
    */
   @action
-  setBlendedOnly (blendedOnly = false) {
+  setBlendedOnly(blendedOnly = false) {
     this.blendedOnly = blendedOnly
   }
 
@@ -144,7 +144,7 @@ export default class Send {
    * @param {string} comment - Comment assigned to this transaction.
    */
   @action
-  setComment (comment = '') {
+  setComment(comment = '') {
     this.comment = comment
   }
 
@@ -154,7 +154,7 @@ export default class Send {
    * @param {string} commentTo - Comment describing the recipient.
    */
   @action
-  setCommentTo (commentTo = '') {
+  setCommentTo(commentTo = '') {
     this.commentTo = commentTo
   }
 
@@ -165,7 +165,7 @@ export default class Send {
    * @param {string} confirmations - Minimum confirmations.
    */
   @action
-  setMinConf (confirmations = '1') {
+  setMinConf(confirmations = '1') {
     if (confirmations.match(/^[0-9]{0,6}$/) !== null) {
       /** Allow emptying input. */
       if (confirmations !== '') {
@@ -187,7 +187,7 @@ export default class Send {
    * @param {string} value - Entered value.
    */
   @action
-  setRecipient (uid, name, value) {
+  setRecipient(uid, name, value) {
     let saved =
       this.recipients.has(uid) === true ? this.recipients.get(uid) : false
 
@@ -270,7 +270,7 @@ export default class Send {
    * @param {boolean} zeroTime - Use ZeroTime.
    */
   @action
-  setZeroTime (zeroTime = false) {
+  setZeroTime(zeroTime = false) {
     this.zeroTime = zeroTime
   }
 
@@ -278,7 +278,7 @@ export default class Send {
    * Confirm sending.
    * @function confirm
    */
-  confirm () {
+  confirm() {
     /** Determine which sending method to use. */
     if (this.recipients.size === 1) {
       if (this.wallet.spendFrom === '#') {
@@ -296,7 +296,7 @@ export default class Send {
    * @function failed
    * @param {string} type - Error type.
    */
-  failed (type) {
+  failed(type) {
     notification.error({
       message: i18next.t('wallet:sendingFailed'),
       description: i18next.t('wallet:' + type),
@@ -308,7 +308,7 @@ export default class Send {
    * Send using sendtoaddress RPC.
    * @function sendtoaddress
    */
-  sendtoaddress () {
+  sendtoaddress() {
     /** Get the recipient data. */
     const recipient = this.recipients.values()
 
@@ -349,7 +349,7 @@ export default class Send {
    * Send using sendfrom RPC.
    * @function sendfrom
    */
-  sendfrom () {
+  sendfrom() {
     /** Get the recipient data. */
     const recipient = this.recipients.values()
 
@@ -392,7 +392,7 @@ export default class Send {
    * Send using sendmany RPC.
    * @function sendmany
    */
-  sendmany () {
+  sendmany() {
     /** Get recipients data. */
     const recipients = this.recipients.values().reduce((list, recipient) => {
       list[recipient.address] = recipient.amount
