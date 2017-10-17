@@ -8,14 +8,14 @@ import { calculateIncentive, calculatePoW } from '../utilities/blockRewards'
 import Input from 'antd/lib/input'
 
 @translate(['wallet'], { wait: true })
-@inject('gui', 'wallet')
+@inject('gui', 'walletNext')
 @observer
 class RewardCalculator extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
-    this.wallet = props.wallet
+    this.wallet = props.walletNext
 
     /** Extend the component with observable properties. */
     extendObservable(this, { enteredBlock: '' })
@@ -108,7 +108,6 @@ class RewardCalculator extends React.Component {
         </div>
         <div style={{ margin: '0 0 2px 0' }}>
           <Input
-            maxLength={7}
             onChange={e => this.setBlock(e.target.value)}
             placeholder={this.block}
             size="small"

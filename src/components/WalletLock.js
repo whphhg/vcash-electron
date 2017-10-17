@@ -7,14 +7,14 @@ import Button from 'antd/lib/button'
 import Tooltip from 'antd/lib/tooltip'
 
 @translate(['wallet'], { wait: true })
-@inject('rpcNext', 'wallet')
+@inject('rpcNext', 'walletNext')
 @observer
 class WalletLock extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
-    this.wallet = props.wallet
+    this.wallet = props.walletNext
 
     /** Bind the async function. */
     this.walletLock = this.walletLock.bind(this)
@@ -29,7 +29,7 @@ class WalletLock extends React.Component {
 
     if ('result' in res === true) {
       /** Update wallet's lock status. */
-      this.wallet.getLockStatus()
+      this.wallet.updateLockStatus()
     }
   }
 

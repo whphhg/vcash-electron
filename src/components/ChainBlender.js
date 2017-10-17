@@ -8,7 +8,7 @@ import Switch from 'antd/lib/switch'
 import Tooltip from 'antd/lib/tooltip'
 
 @translate(['wallet'], { wait: true })
-@inject('gui', 'rpcNext', 'wallet')
+@inject('gui', 'rpcNext', 'walletNext')
 @observer
 class ChainBlender extends React.Component {
   constructor(props) {
@@ -16,7 +16,7 @@ class ChainBlender extends React.Component {
     this.t = props.t
     this.gui = props.gui
     this.rpc = props.rpcNext
-    this.wallet = props.wallet
+    this.wallet = props.walletNext
 
     /** Bind the async function. */
     this.toggle = this.toggle.bind(this)

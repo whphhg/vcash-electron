@@ -10,14 +10,14 @@ import Input from 'antd/lib/input'
 import Popover from 'antd/lib/popover'
 
 @translate(['wallet'], { wait: true })
-@inject('rpcNext', 'wallet')
+@inject('rpcNext', 'walletNext')
 @observer
 class AddressGet extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
-    this.wallet = props.wallet
+    this.wallet = props.walletNext
 
     /** Extend the component with observable properties. */
     extendObservable(this, {
@@ -89,8 +89,8 @@ class AddressGet extends React.Component {
       /** Set new receiving address. */
       this.setValues({ address: res.result })
 
-      /** Update wallet's address list. */
-      this.wallet.getWallet(false, true)
+      /** Update account's address list. */
+      this.wallet.updateAddresses([this.account])
     }
 
     if ('error' in res === true) {
@@ -107,7 +107,7 @@ class AddressGet extends React.Component {
         content={
           <div style={{ width: '400px' }}>
             <AutoComplete
-              dataSource={this.wallet.accounts}
+              dataSource={this.wallet.accountNames}
               filterOption
               getPopupContainer={triggerNode => triggerNode.parentNode}
               onChange={account => this.setValues({ account })}

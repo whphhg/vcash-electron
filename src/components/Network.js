@@ -11,14 +11,14 @@ import RewardSpread from './charts/RewardSpread'
 import RewardsPerDay from './charts/RewardsPerDay'
 
 @translate(['wallet'], { wait: true })
-@inject('gui', 'wallet')
+@inject('gui', 'walletNext')
 @observer
 class Network extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
-    this.wallet = props.wallet
+    this.wallet = props.walletNext
   }
 
   render() {

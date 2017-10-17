@@ -109,9 +109,10 @@ class Console extends React.Component {
     /** Do not execute the RPC command if the status is false. */
     if (this.executeStatus === false) return
 
-    const res = await this.rpc.batch([
-      { method: this.options.method, params: this.options.params }
-    ])
+    const res = await this.rpc.batch(
+      [{ method: this.options.method, params: this.options.params }],
+      true
+    )
 
     /** Set the response. */
     this.setResponse(res)

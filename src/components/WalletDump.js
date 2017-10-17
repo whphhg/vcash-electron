@@ -9,14 +9,14 @@ import Input from 'antd/lib/input'
 import message from 'antd/lib/message'
 
 @translate(['wallet'], { wait: true })
-@inject('rpcNext', 'wallet')
+@inject('rpcNext', 'walletNext')
 @observer
 class WalletDump extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
-    this.wallet = props.wallet
+    this.wallet = props.walletNext
 
     /** Bind the async function. */
     this.dumpWallet = this.dumpWallet.bind(this)

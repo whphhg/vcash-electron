@@ -11,14 +11,14 @@ import Modal from 'antd/lib/modal'
 import Tooltip from 'antd/lib/tooltip'
 
 @translate(['wallet'], { wait: true })
-@inject('rpcNext', 'wallet')
+@inject('rpcNext', 'walletNext')
 @observer
 class WalletUnlock extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
-    this.wallet = props.wallet
+    this.wallet = props.walletNext
 
     /** Extend the component with observable properties. */
     extendObservable(this, {
@@ -94,7 +94,7 @@ class WalletUnlock extends React.Component {
 
     if ('result' in res === true) {
       /** Update wallet's lock status. */
-      this.wallet.getLockStatus()
+      this.wallet.updateLockStatus()
 
       /** Hide modal. */
       this.toggleModal()

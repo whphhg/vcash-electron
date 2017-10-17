@@ -119,7 +119,7 @@ class Transaction extends React.Component {
                 <p>
                   <a
                     target="_blank"
-                    href={'https://explorer.vchain.info/tx/' + viewingTx.txid}
+                    href={'https://explorer.vcash.info/tx/' + viewingTx.txid}
                   >
                     {this.t('wallet:transactionOnExplorer')}
                   </a>
@@ -128,8 +128,7 @@ class Transaction extends React.Component {
                   <a
                     target="_blank"
                     href={
-                      'https://explorer.vchain.info/block/' +
-                      viewingTx.blockhash
+                      'https://explorer.vcash.info/block/' + viewingTx.blockhash
                     }
                     disabled={
                       viewingTx.hasOwnProperty('blockhash') === false ||

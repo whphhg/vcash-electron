@@ -9,14 +9,14 @@ import Input from 'antd/lib/input'
 import notification from 'antd/lib/notification'
 
 @translate(['wallet'], { wait: true })
-@inject('rpcNext', 'wallet')
+@inject('rpcNext', 'walletNext')
 @observer
 class WalletEncrypt extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
-    this.wallet = props.wallet
+    this.wallet = props.walletNext
 
     /** Extend the component with observable properties. */
     extendObservable(this, { passphrase: '', repeat: '' })
@@ -64,7 +64,7 @@ class WalletEncrypt extends React.Component {
 
     if ('result' in res === true) {
       /** Update wallet's lock status. */
-      this.wallet.getLockStatus()
+      this.wallet.updateLockStatus()
 
       /** Clear entered passphrases. */
       this.setValues({ passphrase: '', repeat: '' })

@@ -18,14 +18,14 @@ import WalletRepair from './WalletRepair'
 import WalletSeedDump from './WalletSeedDump'
 
 @translate(['wallet'], { wait: true })
-@inject('gui', 'wallet')
+@inject('gui', 'walletNext')
 @observer
 class Maintenance extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
-    this.wallet = props.wallet
+    this.wallet = props.walletNext
   }
 
   render() {

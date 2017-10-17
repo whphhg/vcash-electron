@@ -9,14 +9,14 @@ import Input from 'antd/lib/input'
 import message from 'antd/lib/message'
 
 @translate(['wallet'], { wait: true })
-@inject('rpcNext', 'wallet')
+@inject('rpcNext', 'walletNext')
 @observer
 class WalletPassphraseChange extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
     this.rpc = props.rpcNext
-    this.wallet = props.wallet
+    this.wallet = props.walletNext
 
     /** Extend the component with observable properties. */
     extendObservable(this, { current: '', next: '', repeat: '', rpcError: '' })
@@ -82,7 +82,7 @@ class WalletPassphraseChange extends React.Component {
 
     if ('result' in res) {
       /** Update wallet's lock status. */
-      this.wallet.getLockStatus()
+      this.wallet.updateLockStatus()
 
       /** Clear entered passphrases. */
       this.setValues({ current: '', next: '', repeat: '' })
