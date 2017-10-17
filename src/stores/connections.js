@@ -1,5 +1,5 @@
 import { action, autorunAsync, computed, observable, reaction } from 'mobx'
-import { notification } from 'antd'
+import notification from 'antd/lib/notification'
 import { readFileSync } from 'fs'
 import { createServer } from 'net'
 import { Client } from 'ssh2'

@@ -18,7 +18,7 @@ class RPC {
     /** Assign camelCase named RPC methods as functions wrapping batch(). */
     Object.keys(rpcs).forEach(method => {
       this[rpcs[method]] = async function() {
-        const res = await this.batch([{ method, params: [...arguments] }])
+        const res = await this.batch([{ method, params: [...arguments] }], true)
         return res
       }
     })
@@ -29,7 +29,8 @@ class RPC {
       active => {
         if (active === true && this.conn.type === 'local') this.testRPC()
         if (active === false) clearTimeout(this.testTimeout)
-      }
+      },
+      { name: "RPC: connection's status changed." }
     )
 
     /** Test RPC on SSH tunnel ready. */
@@ -56,9 +57,10 @@ class RPC {
    * Make a single RPC request or a batch of RPC requests.
    * @function batch
    * @param {array} req - RPC method and params object(s).
+   * @param {string} single - Return single response if only 1 RPC request.
    * @returns {object} Response(s) and request(s), single response, or empty.
    */
-  async batch(req) {
+  async batch(req, single = false) {
     try {
       /** Add jsonrpc version and random id to each RPC request. */
       req.map(rpc => {
@@ -84,7 +86,8 @@ class RPC {
       }
 
       /** Return a single response or responses and requests. */
-      return res.length === 1 ? res[0] : { res, req }
+      if (res.length === 1 && single === true) return res[0]
+      return { res, req }
     } catch (error) {
       console.error('rpc.batch:', error.message)
 

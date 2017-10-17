@@ -54,16 +54,18 @@ start-up by
 [daemon.js](https://github.com/openvcash/vcash-electron/blob/master/src/daemon.js)
 which launches the daemon if it matches the correct platform and arch.
 
-Packages are created according to the `build` and `scripts` options in
-[package.json](https://github.com/openvcash/vcash-electron/blob/master/package.json#L13-L36),
+Packages are created according to the
+[.buildrc](https://github.com/openvcash/vcash-electron/blob/master/.buildrc)
+config and `scripts` options in
+[package.json](https://github.com/openvcash/vcash-electron/blob/master/package.json#L18-L23),
 about which you can read more
-[here](https://github.com/electron-userland/electron-builder/wiki/Options).
+[here](https://www.electron.build/configuration/configuration).
 
 ### Package for Linux
 Run the command below (on Linux) to create and save 64-bit .deb and .zip
 packages into the `dist/` directory.
 
-    npm install && npm prune && npm run dist-linux
+    npm install && npm prune && npm run babel && npm run dist-linux
 
 **Note:** The command above can also be run inside the docker container to
 create Linux packages on Windows. You can read more about packaging using
@@ -75,7 +77,7 @@ section below.
 Run the command below (on macOS) to create and save 64-bit .dmg
 package into the `dist/` directory.
 
-    npm install && npm prune && npm run dist-macos
+    npm install && npm prune && npm run babel && npm run dist-macos
 
 ### Package for Windows (using Docker)
 Make sure you have installed `docker` and that your user is in the docker
@@ -88,13 +90,13 @@ docker run --rm -ti -v ${PWD}:/project -v ${PWD##*/}-node-modules:/project/node_
 Next, run any of the scripts from the table below to create and save 64-bit and
 32-bit packages into the `dist/` directory.
 
-Script | Description
------- | ------
+Script        | Description
+------------- | ----------------------------------------------------------------
 dist-win-nsis | Create a Windows NSIS installer for both architectures
 dist-win-ia32 | Create a 32-bit Windows portable executable
-dist-win-x64 | Create a 64-bit Windows portable executable
+dist-win-x64  | Create a 64-bit Windows portable executable
 
-    npm install && npm prune && npm run <script>
+    npm install && npm prune && npm run babel && npm run <script>
 
 **Note:** `dist-win-nsis` script requires both `vcashd-ia32.exe` and
 `vcashd-x64.exe` in the `build/bin/` directory.

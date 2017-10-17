@@ -1,23 +1,9 @@
-import { action, observable, reaction } from 'mobx'
+import { action, extendObservable, reaction } from 'mobx'
 import { getItem, setItem } from '../utilities/localStorage'
 import i18next from '../utilities/i18next'
 import moment from 'moment'
 
 class GUI {
-  /**
-   * Observable properties.
-   * @property {string} language - Display language.
-   * @property {string} localCurrency - Local currency.
-   * @property {object} soundAlerts - Sound alerts.
-   */
-  @observable language = getItem('language') || 'en-US'
-  @observable localCurrency = getItem('localCurrency') || 'EUR'
-  @observable
-  soundAlerts = getItem('soundAlerts') || {
-    incoming: false,
-    spendable: false
-  }
-
   /**
    * @constructor
    * @property {array} languages - Available languages.
@@ -31,6 +17,16 @@ class GUI {
       { language: 'sl-SI', name: 'Slovenian' },
       { language: 'es-ES', name: 'Spanish' }
     ]
+
+    /** Extend the store with observable properties. */
+    extendObservable(this, {
+      language: getItem('language') || 'en-US',
+      localCurrency: getItem('localCurrency') || 'EUR',
+      soundAlerts: getItem('soundAlerts') || {
+        incoming: false,
+        spendable: false
+      }
+    })
 
     /** Update i18next and moment on locale change. */
     reaction(

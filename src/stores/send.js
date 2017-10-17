@@ -1,6 +1,6 @@
 import { action, autorun, computed, observable } from 'mobx'
 import { decimalSeparator, shortUid } from '../utilities/common'
-import { notification } from 'antd'
+import notification from 'antd/lib/notification'
 import i18next from '../utilities/i18next'
 
 /**
