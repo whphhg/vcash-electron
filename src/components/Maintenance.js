@@ -33,7 +33,7 @@ class Maintenance extends React.Component {
       <div id="MaintenanceGrid">
         <div className="shadow">
           <div style={{ margin: '0 10px 0 10px' }}>
-            <div className="flex-sb" style={{ minHeight: '30px' }}>
+            <div className="flex-sb" style={{ minHeight: '32px' }}>
               <div className="flex">
                 <i className="material-icons md-16">language</i>
                 <p style={{ margin: '0 10px 0 5px' }}>
@@ -130,7 +130,7 @@ class Maintenance extends React.Component {
           dataSource={this.wallet.peers}
           locale={{ emptyText: this.t('wallet:notFound') }}
           pagination={false}
-          scroll={this.wallet.peers.length > 8 ? { y: 183 } : {}}
+          scroll={this.wallet.peers.length > 8 ? { y: 158 } : {}}
           size="small"
           style={{ margin: '10px 10px 0 10px' }}
         />

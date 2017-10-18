@@ -29,16 +29,22 @@ class Header extends React.Component {
 
     return (
       <header className="flex-sb shadow">
-        <div className="flex" style={{ margin: '0 0 0 10px' }}>
-          <img src="./assets/images/logoGrey.png" style={{ height: '26px' }} />
-          <p style={{ margin: '0 15px 0 15px' }}>
-            <span>
-              {new Intl.NumberFormat(this.gui.language, {
-                maximumFractionDigits: 6
-              }).format(balance)}
-            </span>{' '}
-            XVC
-          </p>
+        <div
+          className="flex"
+          style={{ alignItems: 'flex-end', margin: '0 0 0 10px' }}
+        >
+          <img src="./assets/images/logoGrey.png" style={{ height: '33px' }} />
+          <div style={{ margin: '0 15px 0 15px' }}>
+            <p>{this.t('balance')}</p>
+            <p>
+              <span>
+                {new Intl.NumberFormat(this.gui.language, {
+                  maximumFractionDigits: 6
+                }).format(balance)}
+              </span>{' '}
+              XVC
+            </p>
+          </div>
           <p style={{ margin: '0 15px 0 0' }}>
             ~{' '}
             <span>
