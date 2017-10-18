@@ -25,6 +25,10 @@ class GUI {
       soundAlerts: getItem('soundAlerts') || {
         incoming: false,
         spendable: false
+      },
+      windowSize: {
+        height: window.innerHeight,
+        width: window.innerWidth
       }
     })
 
@@ -37,6 +41,11 @@ class GUI {
       },
       true
     )
+
+    /** Update window size on resize. */
+    window.onresize = () => {
+      this.setWindowSize(window.innerHeight, window.innerWidth)
+    }
   }
 
   /**
@@ -70,6 +79,18 @@ class GUI {
   setSoundAlert(alert) {
     this.soundAlerts[alert] = !this.soundAlerts[alert]
     setItem('soundAlerts', this.soundAlerts)
+  }
+
+  /**
+   * Set window height and width.
+   * @function setWindowSize
+   * @param {number} height - Window height.
+   * @param {number} width - Window width.
+   */
+  @action
+  setWindowSize(height, width) {
+    this.windowSize.height = height
+    this.windowSize.width = width
   }
 }
 

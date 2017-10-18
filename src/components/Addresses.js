@@ -49,7 +49,7 @@ class Addresses extends React.Component {
 
     return (
       <div id="AddressesGrid">
-        <div className="shadow" style={{ minHeight: '30px' }}>
+        <div className="shadow" style={{ minHeight: '32px' }}>
           <div className="AddressesColumnsGrid">
             <div className="flex-sb">
               <div className="flex" style={{ margin: '0 0 0 10px' }}>
@@ -123,59 +123,67 @@ class Addresses extends React.Component {
                 </div>
               </div>
             </div>
-            <Table
-              bordered
-              columns={[
-                {
-                  dataIndex: 'address',
-                  filteredValue: this.filters.address.slice() || null,
-                  filters: [
-                    { text: this.t('wallet:spent'), value: 'spent' },
-                    { text: this.t('wallet:spendable'), value: 'spendable' },
-                    { text: this.t('wallet:new'), value: 'new' }
-                  ],
-                  onFilter: (value, { received, spent }) => {
-                    switch (value) {
-                      case 'spent':
-                        return received - spent === 0 && received > 0
-                      case 'spendable':
-                        return received - spent !== 0
-                      case 'new':
-                        return received === 0
-                    }
+            <div style={{ textAlign: 'center' }}>
+              <Table
+                bordered
+                columns={[
+                  {
+                    dataIndex: 'address',
+                    filteredValue: this.filters.address.slice() || null,
+                    filters: [
+                      { text: this.t('wallet:spent'), value: 'spent' },
+                      { text: this.t('wallet:spendable'), value: 'spendable' },
+                      { text: this.t('wallet:new'), value: 'new' }
+                    ],
+                    onFilter: (value, { received, spent }) => {
+                      switch (value) {
+                        case 'spent':
+                          return received - spent === 0 && received > 0
+                        case 'spendable':
+                          return received - spent !== 0
+                        case 'new':
+                          return received === 0
+                      }
+                    },
+                    title: this.t('wallet:addresses'),
+                    width: 290,
+                    render: address => <p className="text-mono">{address}</p>
                   },
-                  title: this.t('wallet:addresses'),
-                  width: 290,
-                  render: address => <p className="text-mono">{address}</p>
-                },
-                {
-                  dataIndex: 'balance',
-                  sorter: (a, b) => a.balance - b.balance,
-                  title: this.t('wallet:balance'),
-                  render: balance => (
-                    <p style={{ textAlign: 'right' }}>
-                      {new Intl.NumberFormat(this.gui.language, {
-                        minimumFractionDigits: 6,
-                        maximumFractionDigits: 6
-                      }).format(balance)}{' '}
-                      XVC
-                    </p>
-                  )
-                }
-              ]}
-              dataSource={this.wallet.addressesData}
-              expandedRowRender={data => <Address data={data} />}
-              locale={{
-                emptyText: this.t('wallet:notFound'),
-                filterConfirm: this.t('wallet:ok'),
-                filterReset: this.t('wallet:reset')
-              }}
-              onChange={this.tableChange}
-              pagination={false}
-              rowKey="address"
-              scroll={{ y: 504 }}
-              size="small"
-            />
+                  {
+                    dataIndex: 'balance',
+                    sorter: (a, b) => a.balance - b.balance,
+                    title: this.t('wallet:balance'),
+                    render: balance => (
+                      <p style={{ textAlign: 'right' }}>
+                        {new Intl.NumberFormat(this.gui.language, {
+                          minimumFractionDigits: 6,
+                          maximumFractionDigits: 6
+                        }).format(balance)}{' '}
+                        XVC
+                      </p>
+                    )
+                  }
+                ]}
+                dataSource={this.wallet.addressesData}
+                expandedRowRender={data => <Address data={data} />}
+                key={'addr-table-' + this.gui.windowSize.height}
+                locale={{
+                  emptyText: this.t('wallet:notFound'),
+                  filterConfirm: this.t('wallet:ok'),
+                  filterReset: this.t('wallet:reset')
+                }}
+                onChange={this.tableChange}
+                pagination={{
+                  defaultPageSize: Math.round(
+                    (this.gui.windowSize.height - 225) / 22
+                  ),
+                  style: { display: 'inline-block' }
+                }}
+                rowKey="address"
+                scroll={{ y: this.gui.windowSize.height - 217 }}
+                size="small"
+              />
+            </div>
           </div>
           <div style={{ margin: '10px' }}>
             <div id="RecipientsGrid">

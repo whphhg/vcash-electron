@@ -27,7 +27,7 @@ class Transactions extends React.Component {
       <div id="TransactionsGrid">
         <div className="shadow">
           <div style={{ margin: '0 10px 0 10px' }}>
-            <div className="flex-sb" style={{ height: '30px' }}>
+            <div className="flex-sb" style={{ minHeight: '32px' }}>
               <div>
                 <ChainBlender />
               </div>
@@ -128,6 +128,7 @@ class Transactions extends React.Component {
                 }
               ]}
               dataSource={this.wallet.txsData}
+              key={'txs-table-' + this.gui.windowSize.height}
               locale={{
                 emptyText: this.t('wallet:notFound'),
                 filterConfirm: this.t('wallet:ok'),
@@ -135,7 +136,9 @@ class Transactions extends React.Component {
               }}
               onRowClick={record => this.wallet.setViewing(record.txid)}
               pagination={{
-                defaultPageSize: 15,
+                defaultPageSize: Math.round(
+                  (this.gui.windowSize.height - 350) / 20
+                ),
                 style: { display: 'inline-block' }
               }}
               size="small"
