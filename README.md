@@ -1,5 +1,6 @@
 # Vcash Electron GUI
 
+[![TravisCI](https://img.shields.io/travis/openvcash/vcash-electron/master.svg)](https://travis-ci.org/openvcash/vcash-electron)
 [![Release](https://img.shields.io/github/release/openvcash/vcash-electron.svg)](https://github.com/openvcash/vcash-electron/releases)
 [![AUR](https://img.shields.io/aur/version/vcash-electron.svg)](https://aur.archlinux.org/packages/vcash-electron/)
 [![Libraries.io for GitHub](https://img.shields.io/librariesio/github/openvcash/vcash-electron.svg)](https://github.com/openvcash/vcash-electron)
