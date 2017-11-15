@@ -5,10 +5,10 @@ import { inject, observer } from 'mobx-react'
 /** Ant Design */
 import Select from 'antd/lib/select'
 
-@translate(['wallet'], { wait: true })
+@translate(['wallet'])
 @inject('gui', 'rates')
 @observer
-class SelectCurrency extends React.Component {
+class SetCurrency extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
@@ -20,12 +20,12 @@ class SelectCurrency extends React.Component {
     return (
       <Select
         defaultValue={this.gui.localCurrency}
-        notFoundContent={this.t('wallet:notFound')}
+        notFoundContent={this.t('notFound')}
         onChange={currency => this.gui.setLocalCurrency(currency)}
         optionFilterProp="children"
         showSearch
         size="small"
-        style={{ width: '80px' }}
+        style={{ width: '110px' }}
       >
         {this.rates.localCurrencies.map(currency => (
           <Select.Option key={currency} value={currency}>
@@ -37,4 +37,4 @@ class SelectCurrency extends React.Component {
   }
 }
 
-export default SelectCurrency
+export default SetCurrency

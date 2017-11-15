@@ -5,10 +5,10 @@ import { inject, observer } from 'mobx-react'
 /** Ant Design */
 import Select from 'antd/lib/select'
 
-@translate(['wallet'], { wait: true })
+@translate(['wallet'])
 @inject('gui')
 @observer
-class SelectLanguage extends React.Component {
+class SetLanguage extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
@@ -19,12 +19,12 @@ class SelectLanguage extends React.Component {
     return (
       <Select
         defaultValue={this.gui.language}
-        notFoundContent={this.t('wallet:notFound')}
+        notFoundContent={this.t('notFound')}
         onChange={language => this.gui.setLanguage(language)}
         optionFilterProp="children"
         showSearch
         size="small"
-        style={{ width: '120px' }}
+        style={{ width: '110px' }}
       >
         {this.gui.languages.map(entry => (
           <Select.Option key={entry.language} value={entry.language}>
@@ -36,4 +36,4 @@ class SelectLanguage extends React.Component {
   }
 }
 
-export default SelectLanguage
+export default SetLanguage
