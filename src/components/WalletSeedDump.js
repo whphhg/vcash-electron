@@ -7,24 +7,22 @@ import { inject, observer } from 'mobx-react'
 import Button from 'antd/lib/button'
 import Input from 'antd/lib/input'
 
-@translate(['wallet'], { wait: true })
-@inject('rpcNext', 'walletNext')
+@translate(['wallet'])
+@inject('rpc', 'wallet')
 @observer
 class WalletSeedDump extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
-    this.rpc = props.rpcNext
-    this.wallet = props.walletNext
-
-    /** Extend the component with observable properties. */
-    extendObservable(this, { seed: '', rpcError: '' })
-
-    /** Bind the async function. */
+    this.rpc = props.rpc
+    this.wallet = props.wallet
     this.dumpWalletSeed = this.dumpWalletSeed.bind(this)
 
     /** Errors that will be shown to the user. */
     this.errShow = ['notDeterministic']
+
+    /** Extend the component with observable properties. */
+    extendObservable(this, { seed: '', rpcError: '' })
   }
 
   /**
@@ -39,15 +37,13 @@ class WalletSeedDump extends React.Component {
   }
 
   /**
-   * Set value(s) of observable properties.
-   * @function setValues
-   * @param {object} values - Key value combinations.
+   * Set observable properties.
+   * @function setProps
+   * @param {object} props - Key value combinations.
    */
   @action
-  setValues = values => {
-    Object.keys(values).forEach(key => {
-      this[key] = values[key]
-    })
+  setProps = props => {
+    Object.keys(props).forEach(key => (this[key] = props[key]))
   }
 
   /**
@@ -58,14 +54,13 @@ class WalletSeedDump extends React.Component {
     const res = await this.rpc.dumpWalletSeed()
 
     if ('result' in res === true) {
-      /** Set wallet's seed. */
-      this.setValues({ seed: res.result })
+      this.setProps({ seed: res.result })
     }
 
     if ('error' in res === true) {
       switch (res.error.code) {
         case -4:
-          return this.setValues({ rpcError: 'notDeterministic' })
+          return this.setProps({ rpcError: 'notDeterministic' })
       }
     }
   }
@@ -75,10 +70,10 @@ class WalletSeedDump extends React.Component {
       <div>
         <div className="flex">
           <i className="material-icons md-16">fingerprint</i>
-          <p>{this.t('wallet:seedDumpLong')}</p>
+          <p>{this.t('seedDumpDesc')}</p>
         </div>
-        <div className="flex-sb" style={{ margin: '10px 0 0 0' }}>
-          <p style={{ width: '120px' }}>{this.t('wallet:seed')}</p>
+        <div className="flex-sb" style={{ margin: '15px 0 10px 0' }}>
+          <p style={{ width: '140px' }}>{this.t('seed')}</p>
           <Input
             disabled={this.seed === ''}
             readOnly
@@ -86,16 +81,16 @@ class WalletSeedDump extends React.Component {
             value={this.seed}
           />
         </div>
-        <div className="flex-sb" style={{ margin: '5px 0 0 0' }}>
-          <p className="red" style={{ margin: '0 0 0 120px' }}>
+        <div className="flex-sb">
+          <p className="red" style={{ margin: '0 0 0 140px' }}>
             {this.errShow.includes(this.errorStatus) === true &&
-              this.t('wallet:' + this.errorStatus)}
+              this.t(this.errorStatus)}
           </p>
           <Button
             disabled={this.errorStatus !== '' || this.wallet.isLocked === true}
             onClick={this.dumpWalletSeed}
           >
-            {this.t('wallet:seedDump')}
+            {this.t('seedDump')}
           </Button>
         </div>
       </div>

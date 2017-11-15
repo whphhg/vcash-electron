@@ -8,17 +8,15 @@ import Button from 'antd/lib/button'
 import Input from 'antd/lib/input'
 import message from 'antd/lib/message'
 
-@translate(['wallet'], { wait: true })
-@inject('rpcNext', 'walletNext')
+@translate(['wallet'])
+@inject('rpc', 'wallet')
 @observer
 class WalletDump extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
-    this.rpc = props.rpcNext
-    this.wallet = props.walletNext
-
-    /** Bind the async function. */
+    this.rpc = props.rpc
+    this.wallet = props.wallet
     this.dumpWallet = this.dumpWallet.bind(this)
   }
 
@@ -30,8 +28,7 @@ class WalletDump extends React.Component {
     const res = await this.rpc.dumpWallet()
 
     if ('result' in res === true) {
-      /** Display a success message for 6s. */
-      message.success(this.t('wallet:dumped'), 6)
+      message.success(this.t('dumped'))
     }
   }
 
@@ -40,16 +37,16 @@ class WalletDump extends React.Component {
       <div>
         <div className="flex">
           <i className="material-icons md-16">assignment</i>
-          <p>{this.t('wallet:dumpLong')}</p>
+          <p>{this.t('dumpDesc')}</p>
         </div>
-        <div className="flex-sb" style={{ margin: '10px 0 5px 0' }}>
-          <p style={{ width: '120px' }}>{this.t('wallet:saveInto')}</p>
+        <div className="flex-sb" style={{ margin: '15px 0 10px 0' }}>
+          <p style={{ width: '140px' }}>{this.t('saveInto')}</p>
           <Input
             disabled
             style={{ flex: 1 }}
             value={
-              this.rpc.conn.status.tunnel === true
-                ? this.t('wallet:remoteDataFolder')
+              this.rpc.connection.status.tunnel === true
+                ? this.t('remoteDataFolder')
                 : dataPath()
             }
           />
@@ -59,7 +56,7 @@ class WalletDump extends React.Component {
             disabled={this.wallet.isLocked === true}
             onClick={this.dumpWallet}
           >
-            {this.t('wallet:dump')}
+            {this.t('dump')}
           </Button>
         </div>
       </div>

@@ -6,15 +6,16 @@ import { inject, observer } from 'mobx-react'
 /** Ant Design */
 import Button from 'antd/lib/button'
 
-@translate(['wallet'], { wait: true })
-@inject('gui', 'rpcNext')
+@translate(['wallet'])
+@inject('gui', 'rpc')
 @observer
 class WalletRepair extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
-    this.rpc = props.rpcNext
+    this.rpc = props.rpc
+    this.crWallet = this.crWallet.bind(this)
 
     /** Extend the component with observable properties. */
     extendObservable(this, {
@@ -23,23 +24,18 @@ class WalletRepair extends React.Component {
       mismatchedSpent: 0
     })
 
-    /** Bind the async function. */
-    this.crWallet = this.crWallet.bind(this)
-
     /** Check the wallet when component loads. */
     this.crWallet()
   }
 
   /**
-   * Set value(s) of observable properties.
-   * @function setValues
-   * @param {object} values - Key value combinations.
+   * Set observable properties.
+   * @function setProps
+   * @param {object} props - Key value combinations.
    */
   @action
-  setValues(values) {
-    Object.keys(values).forEach(key => {
-      this[key] = values[key]
-    })
+  setProps(props) {
+    Object.keys(props).forEach(key => (this[key] = props[key]))
   }
 
   /**
@@ -59,7 +55,7 @@ class WalletRepair extends React.Component {
       if (this.checkPassed === false && cp === false) return this.crWallet()
 
       /** Set checkPassed, amount affected and mismatched spent. */
-      this.setValues({
+      this.setProps({
         amountAffected: cp === true ? 0 : result['amount affected by repair'],
         checkPassed: cp,
         mismatchedSpent: cp === true ? 0 : result['mismatched spent coins']
@@ -72,25 +68,24 @@ class WalletRepair extends React.Component {
       <div>
         <div className="flex">
           <i className="material-icons md-16">build</i>
-          <p>{this.t('wallet:repairLong')}</p>
+          <p>{this.t('repairDesc')}</p>
         </div>
-        <div style={{ margin: '10px 0 0 0' }}>
+        <div className="flex-sb" style={{ margin: '15px 0 0 0' }}>
+          <p style={{ width: '140px' }}>{this.t('status')}</p>
           {this.checkPassed !== false && (
-            <div className="flex-sb">
+            <div className="flex-sb" style={{ flex: 1 }}>
               <div>
-                {this.checkPassed !== null && (
-                  <p>{this.t('wallet:checkPassed')}</p>
-                )}
+                {this.checkPassed !== null && <p>{this.t('checkPassed')}</p>}
               </div>
-              <Button onClick={this.crWallet}>{this.t('wallet:check')}</Button>
+              <Button onClick={this.crWallet}>{this.t('check')}</Button>
             </div>
           )}
           {this.checkPassed === false && (
-            <div className="flex-sb">
+            <div className="flex-sb" style={{ flex: 1 }}>
               <div>
                 <div className="flex-sb">
                   <p style={{ margin: '0 36px 0 0' }}>
-                    {this.t('wallet:mismatched')}:{' '}
+                    {this.t('mismatched')}:{' '}
                     <span style={{ fontWeight: '500' }}>
                       {new Intl.NumberFormat(this.gui.language, {
                         maximumFractionDigits: 6
@@ -99,7 +94,7 @@ class WalletRepair extends React.Component {
                     </span>
                   </p>
                   <p>
-                    {this.t('wallet:amountAffected')}:{' '}
+                    {this.t('amountAffected')}:{' '}
                     <span style={{ fontWeight: '500' }}>
                       {new Intl.NumberFormat(this.gui.language, {
                         maximumFractionDigits: 6
@@ -110,7 +105,7 @@ class WalletRepair extends React.Component {
                 </div>
               </div>
               <Button onClick={() => this.crWallet(false)}>
-                {this.t('wallet:repair')}
+                {this.t('repair')}
               </Button>
             </div>
           )}

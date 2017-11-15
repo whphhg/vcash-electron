@@ -10,15 +10,19 @@ import message from 'antd/lib/message'
 import Modal from 'antd/lib/modal'
 import Tooltip from 'antd/lib/tooltip'
 
-@translate(['wallet'], { wait: true })
-@inject('rpcNext', 'walletNext')
+@translate(['wallet'])
+@inject('rpc', 'wallet')
 @observer
 class WalletUnlock extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
-    this.rpc = props.rpcNext
-    this.wallet = props.walletNext
+    this.rpc = props.rpc
+    this.wallet = props.wallet
+    this.walletPassphrase = this.walletPassphrase.bind(this)
+
+    /** Errors that will be shown to the user. */
+    this.errShow = ['passphraseIncorrect']
 
     /** Extend the component with observable properties. */
     extendObservable(this, {
@@ -27,18 +31,13 @@ class WalletUnlock extends React.Component {
       modalVisible: false
     })
 
-    /** Bind the async function. */
-    this.walletPassphrase = this.walletPassphrase.bind(this)
-
-    /** Errors that will be shown to the user. */
-    this.errShow = ['passphraseIncorrect']
-
     /** Clear previous RPC error on passphrase change. */
     reaction(
       () => this.passphrase,
       passphrase => {
-        if (this.rpcError !== '') this.setValues({ rpcError: '' })
-      }
+        if (this.rpcError !== '') this.setProps({ rpcError: '' })
+      },
+      { name: 'WalletUnlock: passphrase changed, clearing previous RPC error.' }
     )
 
     /** Clear passphrase when the modal gets hidden. */
@@ -46,9 +45,10 @@ class WalletUnlock extends React.Component {
       () => this.modalVisible,
       modalVisible => {
         if (modalVisible === false) {
-          if (this.passphrase !== '') this.setValues({ passphrase: '' })
+          if (this.passphrase !== '') this.setProps({ passphrase: '' })
         }
-      }
+      },
+      { name: 'WalletUnlock: modal toggled, clearing previous passphrase.' }
     )
   }
 
@@ -65,19 +65,17 @@ class WalletUnlock extends React.Component {
   }
 
   /**
-   * Set value(s) of observable properties.
-   * @function setValues
-   * @param {object} values - Key value combinations.
+   * Set observable properties.
+   * @function setProps
+   * @param {object} props - Key value combinations.
    */
   @action
-  setValues = values => {
-    Object.keys(values).forEach(key => {
-      this[key] = values[key]
-    })
+  setProps = props => {
+    Object.keys(props).forEach(key => (this[key] = props[key]))
   }
 
   /**
-   * Toggle modal's visibility.
+   * Toggle modal visibility.
    * @function toggleModal
    */
   @action
@@ -93,20 +91,15 @@ class WalletUnlock extends React.Component {
     const res = await this.rpc.walletPassphrase(this.passphrase)
 
     if ('result' in res === true) {
-      /** Update wallet's lock status. */
       this.wallet.updateLockStatus()
-
-      /** Hide modal. */
       this.toggleModal()
-
-      /** Display a success message for 6s. */
-      message.success(this.t('wallet:unlocked'), 6)
+      message.success(this.t('unlocked'))
     }
 
     if ('error' in res === true) {
       switch (res.error.code) {
         case -14:
-          return this.setValues({ rpcError: 'passphraseIncorrect' })
+          return this.setProps({ rpcError: 'passphraseIncorrect' })
       }
     }
   }
@@ -119,13 +112,13 @@ class WalletUnlock extends React.Component {
         <Modal
           footer={null}
           onCancel={this.toggleModal}
-          title={this.t('wallet:unlock')}
+          title={this.t('unlock')}
           visible={this.modalVisible === true}
         >
           <Input
-            onChange={e => this.setValues({ passphrase: e.target.value })}
+            onChange={e => this.setProps({ passphrase: e.target.value })}
             onPressEnter={this.walletPassphrase}
-            placeholder={this.t('wallet:passphraseLong')}
+            placeholder={this.t('passphraseDesc')}
             style={{ width: '100%', margin: '0 0 5px 0' }}
             type="password"
             value={this.passphrase}
@@ -133,19 +126,19 @@ class WalletUnlock extends React.Component {
           <div className="flex-sb">
             <p className="red">
               {this.errShow.includes(this.errorStatus) === true &&
-                this.t('wallet:' + this.errorStatus)}
+                this.t(this.errorStatus)}
             </p>
             <Button
               disabled={this.errorStatus !== ''}
               onClick={this.walletPassphrase}
             >
-              {this.t('wallet:unlock')}
+              {this.t('unlock')}
             </Button>
           </div>
         </Modal>
-        <Tooltip placement="bottomRight" title={this.t('wallet:locked')}>
-          <Button onClick={this.toggleModal}>
-            <i className="material-icons md-20">lock</i>
+        <Tooltip placement="bottomRight" title={this.t('locked')}>
+          <Button className="flex" onClick={this.toggleModal}>
+            <i className="material-icons md-19">lock</i>
           </Button>
         </Tooltip>
       </div>

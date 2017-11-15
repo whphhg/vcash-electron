@@ -4,14 +4,14 @@ import { withRouter } from 'react-router-dom'
 import { inject, observer } from 'mobx-react'
 
 /** Ant Design */
-import Menu from 'antd/lib/menu'
+import Popover from 'antd/lib/popover'
 
-/** Required components. */
+/** Components */
 import WalletLock from './WalletLock'
 import WalletUnlock from './WalletUnlock'
 
-@translate(['wallet'], { wait: true })
-@inject('connections', 'gui', 'rates', 'walletNext')
+@translate(['wallet'])
+@inject('connections', 'gui', 'rates', 'wallet')
 @observer
 class Header extends React.Component {
   constructor(props) {
@@ -20,121 +20,117 @@ class Header extends React.Component {
     this.connections = props.connections
     this.gui = props.gui
     this.rates = props.rates
-    this.wallet = props.walletNext
+    this.wallet = props.wallet
   }
 
   render() {
     const { average, local } = this.rates
-    const { balance } = this.wallet.info
 
     return (
-      <header className="flex-sb shadow">
-        <div
-          className="flex"
-          style={{ alignItems: 'flex-end', margin: '0 0 0 10px' }}
-        >
-          <img src="./assets/images/logoGrey.png" style={{ height: '33px' }} />
-          <div style={{ margin: '0 15px 0 15px' }}>
-            <p>{this.t('balance')}</p>
-            <p>
-              <span>
-                {new Intl.NumberFormat(this.gui.language, {
-                  maximumFractionDigits: 6
-                }).format(balance)}
-              </span>{' '}
-              XVC
-            </p>
-          </div>
-          <p style={{ margin: '0 15px 0 0' }}>
-            ~{' '}
+      <div className="flex-sb" id="Header">
+        <div className="flex">
+          <i className="material-icons md-18">account_balance</i>
+          <p className="flex">
+            <span style={{ margin: '0 4px 0 3px' }}>
+              {new Intl.NumberFormat(this.gui.language, {
+                maximumFractionDigits: 6
+              }).format(this.wallet.info.balance)}
+            </span>
+            XVC
+          </p>
+          <p className="flex" style={{ margin: '0 15px 0 15px' }}>
+            ~
             <span>
               {new Intl.NumberFormat(this.gui.language, {
                 maximumFractionDigits: 8
-              }).format(balance * average)}
-            </span>{' '}
+              }).format(this.wallet.info.balance * average)}
+            </span>
             BTC
           </p>
-          <p style={{ margin: '0 30px 0 0' }}>
-            ~{' '}
+          <p className="flex">
+            ~
             <span>
               {new Intl.NumberFormat(this.gui.language, {
                 maximumFractionDigits: 2
-              }).format(balance * average * local)}
-            </span>{' '}
+              }).format(this.wallet.info.balance * average * local)}
+            </span>
             {this.gui.localCurrency}
           </p>
-
-          {this.wallet.info.unconfirmed > 0 && (
-            <div style={{ margin: '0 15px 0 0' }}>
-              <p>{this.t('wallet:pending')}</p>
-              <p>
-                <span>
-                  {new Intl.NumberFormat(this.gui.language, {
-                    maximumFractionDigits: 6
-                  }).format(this.wallet.info.unconfirmed)}
-                </span>{' '}
-                XVC
-              </p>
-            </div>
-          )}
-
-          {this.wallet.info.newmint > 0 && (
-            <div style={{ margin: '0 15px 0 0' }}>
-              <p>{this.t('wallet:immature')}</p>
-              <p>
-                <span>
-                  {new Intl.NumberFormat(this.gui.language, {
-                    maximumFractionDigits: 6
-                  }).format(this.wallet.info.newmint)}
-                </span>{' '}
-                XVC
-              </p>
-            </div>
-          )}
-
-          {this.wallet.info.stake > 0 && (
-            <div>
-              <p>{this.t('wallet:staking')}</p>
-              <p>
-                <span>
-                  {new Intl.NumberFormat(this.gui.language, {
-                    maximumFractionDigits: 6
-                  }).format(this.wallet.info.stake)}
-                </span>{' '}
-                XVC
-              </p>
-            </div>
-          )}
         </div>
-        <div className="flex" style={{ margin: '0 10px 0 0' }}>
-          <Menu
-            defaultSelectedKeys={['/']}
-            mode="horizontal"
-            onClick={item => {
-              this.props.history.push('/' + this.connections.viewing + item.key)
-            }}
-          >
-            <Menu.Item key="/">
-              <i className="material-icons md-20">account_balance_wallet</i>
-            </Menu.Item>
-            <Menu.Item key="/addresses">
-              <i className="material-icons md-20">send</i>
-            </Menu.Item>
-            <Menu.Item key="/network">
-              <i className="material-icons md-20">public</i>
-            </Menu.Item>
-            <Menu.Item key="/maintenance">
-              <i className="material-icons md-20">settings</i>
-            </Menu.Item>
-          </Menu>
+        <div className="flex">
+          {this.wallet.pending > 0 && (
+            <Popover
+              content={
+                <div style={{ minWidth: '200px' }}>
+                  {this.wallet.info.unconfirmed > 0 && (
+                    <div className="flex-sb">
+                      <p>{this.t('unconfirmed')}</p>
+                      <p>
+                        <span style={{ fontWeight: 500 }}>
+                          {new Intl.NumberFormat(this.gui.language, {
+                            maximumFractionDigits: 6
+                          }).format(this.wallet.info.unconfirmed)}
+                        </span>{' '}
+                        XVC
+                      </p>
+                    </div>
+                  )}
+
+                  {this.wallet.info.stake > 0 && (
+                    <div className="flex-sb">
+                      <p>{this.t('staking')}</p>
+                      <p>
+                        <span style={{ fontWeight: 500 }}>
+                          {new Intl.NumberFormat(this.gui.language, {
+                            maximumFractionDigits: 6
+                          }).format(this.wallet.info.stake)}
+                        </span>{' '}
+                        XVC
+                      </p>
+                    </div>
+                  )}
+
+                  {this.wallet.info.newmint > 0 && (
+                    <div className="flex-sb">
+                      <p>{this.t('immature')}</p>
+                      <p>
+                        <span style={{ fontWeight: 500 }}>
+                          {new Intl.NumberFormat(this.gui.language, {
+                            maximumFractionDigits: 6
+                          }).format(this.wallet.info.newmint)}
+                        </span>{' '}
+                        XVC
+                      </p>
+                    </div>
+                  )}
+                </div>
+              }
+              placement="bottomRight"
+              trigger="hover"
+            >
+              <div className="flex" style={{ margin: '0 15px 0 0' }}>
+                <i className="material-icons md-18">access_time</i>
+                <p className="flex">
+                  {this.t('pending')}
+                  <span style={{ margin: '0 4px 0 6px' }}>
+                    {new Intl.NumberFormat(this.gui.language, {
+                      maximumFractionDigits: 6
+                    }).format(this.wallet.pending)}
+                  </span>
+                  XVC
+                </p>
+              </div>
+            </Popover>
+          )}
+
           {this.wallet.isEncrypted === true && (
-            <div style={{ margin: '0 0 0 15px' }}>
+            <div>
               <WalletLock />
               <WalletUnlock />
             </div>
           )}
         </div>
-      </header>
+      </div>
     )
   }
 }

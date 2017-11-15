@@ -11,29 +11,27 @@ import Button from 'antd/lib/button'
 import Input from 'antd/lib/input'
 import message from 'antd/lib/message'
 
-@translate(['wallet'], { wait: true })
-@inject('rpcNext')
+@translate(['wallet'])
+@inject('rpc')
 @observer
 class WalletBackup extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
-    this.rpc = props.rpcNext
-
-    /** Extend the component with observable properties. */
-    extendObservable(this, {
-      path:
-        this.rpc.conn.status.tunnel === true
-          ? ''
-          : join(dataPath(), 'backups', sep),
-      rpcError: ''
-    })
-
-    /** Bind the async function. */
+    this.rpc = props.rpc
     this.backupWallet = this.backupWallet.bind(this)
 
     /** Errors that will be shown to the user. */
     this.errShow = ['backupFailed']
+
+    /** Extend the component with observable properties. */
+    extendObservable(this, {
+      path:
+        this.rpc.connection.status.tunnel === true
+          ? ''
+          : join(dataPath(), 'backups', sep),
+      rpcError: ''
+    })
   }
 
   /**
@@ -48,15 +46,13 @@ class WalletBackup extends React.Component {
   }
 
   /**
-   * Set value(s) of observable properties.
-   * @function setValues
-   * @param {object} values - Key value combinations.
+   * Set observable properties.
+   * @function setProps
+   * @param {object} props - Key value combinations.
    */
   @action
-  setValues = values => {
-    Object.keys(values).forEach(key => {
-      this[key] = values[key]
-    })
+  setProps = props => {
+    Object.keys(props).forEach(key => (this[key] = props[key]))
   }
 
   /**
@@ -71,7 +67,7 @@ class WalletBackup extends React.Component {
 
     /** Set selected path. */
     if (typeof selected !== 'undefined') {
-      this.setValues({ path: join(selected[0], sep) })
+      this.setProps({ path: join(selected[0], sep) })
     }
   }
 
@@ -83,14 +79,13 @@ class WalletBackup extends React.Component {
     const res = await this.rpc.backupWallet(this.path)
 
     if ('result' in res === true) {
-      /** Display a success message for 6s. */
-      message.success(this.t('wallet:backedUp'), 6)
+      message.success(this.t('backedUp'))
     }
 
     if ('error' in res === true) {
       switch (res.error.code) {
         case -4:
-          return this.setValues({ rpcError: 'backupFailed' })
+          return this.setProps({ rpcError: 'backupFailed' })
       }
     }
   }
@@ -100,39 +95,34 @@ class WalletBackup extends React.Component {
       <div>
         <div className="flex">
           <i className="material-icons md-16">save</i>
-          <p>{this.t('wallet:backupLong')}</p>
+          <p>{this.t('backupDesc')}</p>
         </div>
-        <div className="flex-sb" style={{ margin: '10px 0 0 0' }}>
-          <p style={{ width: '120px' }}>{this.t('wallet:saveInto')}</p>
+        <div className="flex-sb" style={{ margin: '15px 0 10px 0' }}>
+          <p style={{ width: '140px' }}>{this.t('saveInto')}</p>
           <Input
             disabled
             style={{ flex: 1 }}
             value={
-              this.rpc.conn.status.tunnel === true
-                ? this.t('wallet:remoteDataFolder')
+              this.rpc.connection.status.tunnel === true
+                ? this.t('remoteDataFolder')
                 : this.path
             }
           />
         </div>
-        <div
-          className="flex-sb"
-          style={{ alignItems: 'flex-start', margin: '5px 0 0 0' }}
-        >
-          <p className="red" style={{ margin: '0 0 0 120px' }}>
+        <div className="flex-sb" style={{ alignItems: 'flex-start' }}>
+          <p className="red" style={{ margin: '0 0 0 140px' }}>
             {this.errShow.includes(this.errorStatus) === true &&
-              this.t('wallet:' + this.errorStatus)}
+              this.t(this.errorStatus)}
           </p>
           <div className="flex" style={{ justifyContent: 'flex-end' }}>
             <Button
-              disabled={this.rpc.conn.status.tunnel === true}
+              disabled={this.rpc.connection.status.tunnel === true}
               onClick={this.getPath}
               style={{ margin: '0 5px 0 0' }}
             >
-              {this.t('wallet:browse')}
+              {this.t('browse')}
             </Button>
-            <Button onClick={this.backupWallet}>
-              {this.t('wallet:backup')}
-            </Button>
+            <Button onClick={this.backupWallet}>{this.t('backup')}</Button>
           </div>
         </div>
       </div>

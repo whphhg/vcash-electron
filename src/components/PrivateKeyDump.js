@@ -7,52 +7,33 @@ import { action, computed, extendObservable, reaction } from 'mobx'
 import AutoComplete from 'antd/lib/auto-complete'
 import Button from 'antd/lib/button'
 import Input from 'antd/lib/input'
-import Popover from 'antd/lib/popover'
 
-@translate(['wallet'], { wait: true })
-@inject('rpcNext', 'walletNext')
+@translate(['wallet'])
+@inject('rpc', 'wallet')
 @observer
 class PrivateKeyDump extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
-    this.rpc = props.rpcNext
-    this.wallet = props.walletNext
-
-    /** Extend the component with observable properties. */
-    extendObservable(this, {
-      address: '',
-      privateKey: '',
-      rpcError: '',
-      popoverVisible: false
-    })
-
-    /** Bind the async function. */
+    this.rpc = props.rpc
+    this.wallet = props.wallet
     this.dumpPrivKey = this.dumpPrivKey.bind(this)
 
     /** Errors that will be shown to the user. */
     this.errShow = ['addrChars', 'addrInvalid', 'addrUnknown']
+
+    /** Extend the component with observable properties. */
+    extendObservable(this, { address: '', privateKey: '', rpcError: '' })
 
     /** Clear private key and previous RPC error when the address is updated. */
     reaction(
       () => this.address,
       address => {
         if (this.privateKey !== '' || this.rpcError !== '') {
-          this.setValues({ privateKey: '', rpcError: '' })
+          this.setProps({ privateKey: '', rpcError: '' })
         }
-      }
-    )
-
-    /** Clear address and private key when the popover gets hidden. */
-    reaction(
-      () => this.popoverVisible,
-      popoverVisible => {
-        if (popoverVisible === false) {
-          if (this.address !== '' || this.privateKey !== '') {
-            this.setValues({ address: '', privateKey: '' })
-          }
-        }
-      }
+      },
+      { name: 'PrivateKeyDump: address changed, clearing key and RPC error.' }
     )
   }
 
@@ -71,26 +52,13 @@ class PrivateKeyDump extends React.Component {
   }
 
   /**
-   * Set value(s) of observable properties.
-   * @function setValues
-   * @param {object} values - Key value combinations.
+   * Set observable properties.
+   * @function setProps
+   * @param {object} props - Key value combinations.
    */
   @action
-  setValues = values => {
-    Object.keys(values).forEach(key => {
-      this[key] = values[key]
-    })
-  }
-
-  /**
-   * Toggle popover's visibility only when the wallet is unlocked.
-   * @function togglePopover
-   */
-  @action
-  togglePopover = () => {
-    if (this.wallet.isLocked === false) {
-      this.popoverVisible = !this.popoverVisible
-    }
+  setProps = props => {
+    Object.keys(props).forEach(key => (this[key] = props[key]))
   }
 
   /**
@@ -101,66 +69,60 @@ class PrivateKeyDump extends React.Component {
     const res = await this.rpc.dumpPrivKey(this.address)
 
     if ('result' in res === true) {
-      /** Set private key. */
-      this.setValues({ privateKey: res.result })
+      this.setProps({ privateKey: res.result })
     }
 
     if ('error' in res === true) {
       switch (res.error.code) {
         case -4:
-          return this.setValues({ rpcError: 'addrUnknown' })
+          return this.setProps({ rpcError: 'addrUnknown' })
         case -5:
-          return this.setValues({ rpcError: 'addrInvalid' })
+          return this.setProps({ rpcError: 'addrInvalid' })
       }
     }
   }
 
   render() {
     return (
-      <Popover
-        content={
-          <div style={{ width: '400px' }}>
-            <AutoComplete
-              dataSource={this.wallet.addressList}
-              filterOption
-              getPopupContainer={triggerNode => triggerNode.parentNode}
-              onChange={address => this.setValues({ address })}
-              placeholder={this.t('wallet:address')}
-              style={{ width: '100%' }}
-              value={this.address}
-            />
-            {this.privateKey !== '' && (
-              <Input
-                className="green"
-                readOnly
-                style={{ margin: '5px 0 0 0' }}
-                value={this.privateKey}
-              />
-            )}
-            <div className="flex-sb" style={{ margin: '5px 0 0 0' }}>
-              <p className="red">
-                {this.errShow.includes(this.errorStatus) === true &&
-                  this.t('wallet:' + this.errorStatus)}
-              </p>
-              <Button
-                disabled={this.errorStatus !== ''}
-                onClick={this.dumpPrivKey}
-              >
-                {this.t('wallet:pkDump')}
-              </Button>
-            </div>
-          </div>
-        }
-        onVisibleChange={this.togglePopover}
-        placement="bottomLeft"
-        title={this.t('wallet:pkDumpDesc')}
-        trigger="click"
-        visible={this.popoverVisible}
-      >
-        <Button disabled={this.wallet.isLocked === true} size="small">
-          <i className="flex-center material-icons md-16">arrow_upward</i>
-        </Button>
-      </Popover>
+      <div>
+        <div className="flex">
+          <i className="flex-center material-icons md-16">vpn_key</i>
+          <p>{this.t('pkDumpDesc')}</p>
+        </div>
+        <div className="flex-sb" style={{ margin: '15px 0 5px 0' }}>
+          <p style={{ width: '140px' }}>{this.t('address')}</p>
+          <AutoComplete
+            dataSource={this.wallet.addressList}
+            filterOption
+            getPopupContainer={triggerNode => triggerNode.parentNode}
+            onChange={address => this.setProps({ address })}
+            placeholder={this.t('address')}
+            style={{ flex: 1 }}
+            value={this.address}
+          />
+        </div>
+        <div className="flex-sb" style={{ margin: '0 0 10px 0' }}>
+          <p style={{ width: '140px' }}>{this.t('pk')}</p>
+          <Input
+            disabled={this.privateKey === ''}
+            readOnly
+            style={{ flex: 1 }}
+            value={this.privateKey}
+          />
+        </div>
+        <div className="flex-sb">
+          <p className="red" style={{ margin: '0 0 0 140px' }}>
+            {this.errShow.includes(this.errorStatus) === true &&
+              this.t(this.errorStatus)}
+          </p>
+          <Button
+            disabled={this.errorStatus !== '' || this.wallet.isLocked === true}
+            onClick={this.dumpPrivKey}
+          >
+            {this.t('pkDump')}
+          </Button>
+        </div>
+      </div>
     )
   }
 }
