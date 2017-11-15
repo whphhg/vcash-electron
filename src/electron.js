@@ -1,12 +1,14 @@
 import { app, BrowserWindow, shell } from 'electron'
 import { join } from 'path'
 import { format } from 'url'
-import daemon from './daemon'
+
+/** Store instance */
+import daemon from './stores/daemon'
 
 /** Global reference of the window object. */
 let mainWindow = null
 
-/** Set the application's name. */
+/** Set application name. */
 app.setName('Vcash Electron GUI')
 
 /** Keep separate userData directories for development and production modes. */
@@ -27,17 +29,17 @@ app.on('ready', () => {
     return 700
   }
 
-  /** Create the application's main window. */
+  /** Create the main window. */
   mainWindow = new BrowserWindow({
     height: height(),
     icon: join(__dirname, 'assets', 'images', 'logoRed.png'),
-    width: 1152
+    width: 1200
   })
 
-  /** Hide Chromium's menu bar. */
+  /** Hide Chromium menu bar. */
   mainWindow.setMenu(null)
 
-  /** Load the application's entry point. */
+  /** Load the application entry point. */
   mainWindow.loadURL(
     format({
       pathname: join(__dirname, 'index.html'),
@@ -46,7 +48,7 @@ app.on('ready', () => {
     })
   )
 
-  /** Open Chromium's DevTools when in development mode. */
+  /** Open Chromium DevTools in development mode. */
   if (process.env.NODE_ENV === 'dev') mainWindow.webContents.openDevTools()
 
   /** Open external links using OS default browser. */
@@ -59,8 +61,8 @@ app.on('ready', () => {
 
   /** Main window closed. */
   mainWindow.on('closed', () => {
-    /** Send SIGINT signal to the daemon process. */
-    if (daemon !== null) daemon.kill('SIGINT')
+    /** Stop the daemon process. */
+    daemon.stop()
 
     /** Dereference the window object. */
     mainWindow = null
