@@ -6,6 +6,7 @@
   "rules": {
     "prettier/prettier": "error",
     "space-before-function-paren": "off",
+    "indent": "off",
     "jsx-quotes": "off"
   },
   "parser": "babel-eslint",

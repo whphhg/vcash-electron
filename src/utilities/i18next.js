@@ -1,19 +1,19 @@
 import i18next from 'i18next'
 import backend from 'i18next-node-fs-backend'
-import { getItem } from '../utilities/localStorage'
 import { readdirSync } from 'fs'
 import { join } from 'path'
+import { getItem } from '../utilities/localStorage'
 
 /**
- * Start i18next.
- * @function start
+ * Initialize a new globally used i18next instance.
+ * @function i18n
  * @return {object} i18next instance.
  */
-const start = () => {
+const i18n = (() => {
   /** Get available languages. */
   const languages = readdirSync(join(__dirname, '..', 'locales'))
 
-  /** Get saved language. */
+  /** Get language saved in local storage. */
   let fallbackLng = getItem('language')
 
   /** Check if the language exists or revert to default. */
@@ -32,9 +32,14 @@ const start = () => {
     interpolation: { escapeValue: false },
     languages,
     load: 'currentOnly',
-    ns: ['wallet']
+    ns: ['wallet'],
+    react: {
+      bindI18n: 'languageChanged',
+      bindStore: false,
+      wait: true
+    }
   })
-}
+})()
 
-/** Export i18next instance. */
-export default start()
+/** Export the initialized instance as default export. */
+export default i18n

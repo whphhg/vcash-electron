@@ -17,23 +17,26 @@
  */
 import React from 'react'
 import { render } from 'react-dom'
-import { I18nextProvider } from 'react-i18next'
-import { HashRouter, Route } from 'react-router-dom'
+import { translate } from 'react-i18next'
+import { BrowserRouter, Route } from 'react-router-dom'
 import { useStrict } from 'mobx'
 import { enableLogging } from 'mobx-logger'
 import { Provider } from 'mobx-react'
 import i18next from './utilities/i18next'
 import './utilities/rightClickMenu'
 
-/** Required components. */
+/** Components */
 import Connections from './components/Connections'
+import MainMenu from './components/MainMenu'
 import Root from './components/Root'
-import Welcome from './components/Welcome'
 
-/** Required store instances. */
+/** Store instances */
 import connections from './stores/connections'
 import gui from './stores/gui'
 import rates from './stores/rates'
+
+/** Set the i18next instance. */
+translate.setI18n(i18next)
 
 /** Use MobX strict mode, allowing only actions to alter the state. */
 useStrict(true)
@@ -43,15 +46,13 @@ if (process.env.NODE_ENV === 'dev') enableLogging()
 
 render(
   <Provider connections={connections} gui={gui} rates={rates}>
-    <I18nextProvider i18n={i18next}>
-      <HashRouter>
-        <div>
-          <Connections />
-          <Route exact path="/" component={Welcome} />
-          <Route path="/:uid" component={Root} />
-        </div>
-      </HashRouter>
-    </I18nextProvider>
+    <BrowserRouter>
+      <div id="App">
+        <MainMenu />
+        <Route exact path="/" component={Connections} />
+        <Route path="/:id" component={Root} />
+      </div>
+    </BrowserRouter>
   </Provider>,
   document.getElementById('application-root')
 )
