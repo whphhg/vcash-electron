@@ -8,10 +8,10 @@ export const getItem = key => {
   const item = window.localStorage.getItem(key)
 
   if (item === null) {
-    console.warn('LocalStorage: ' + key + ' not found.')
+    console.warn('LocalStorage: ' + key + ' has not been set yet.')
     return undefined
   } else {
-    console.info('LocalStorage: Loaded ' + key + '.')
+    console.info('LocalStorage: ' + key)
     return JSON.parse(item)
   }
 }

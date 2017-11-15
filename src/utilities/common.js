@@ -1,9 +1,6 @@
 import { homedir } from 'os'
 import { join, sep } from 'path'
 
-/** Required store instances. */
-import gui from '../stores/gui'
-
 /**
  * Get decimal separator.
  * @function decimalSeparator
@@ -49,10 +46,11 @@ export const shortUid = () => {
  * @param {number} num - Number of bytes.
  * @param {string} dec - Decimal (true) or binary (false).
  * @param {string} suffix - Unit suffix.
+ * @param {string} language - Local language.
  * @return {string} Human readable string.
  * @see {@link http://stackoverflow.com/a/14919494|StackOverflow}
  */
-export const humanReadable = (num = 0, dec = true, suffix = 'B') => {
+export const humanReadable = (num = 0, dec = true, suffix = 'B', language) => {
   const threshold = dec === true ? 1000 : 1024
 
   /** Return the number with suffix if below threshold. */
@@ -69,9 +67,32 @@ export const humanReadable = (num = 0, dec = true, suffix = 'B') => {
     unit++
   } while (Math.abs(num) >= threshold && unit < units.length - 1)
 
-  num = new Intl.NumberFormat(gui.language, {
+  num = new Intl.NumberFormat(language, {
     maximumFractionDigits: 2
   }).format(num)
 
   return ''.concat(num, ' ', units[unit], suffix)
+}
+
+/**
+ * Debounce a function for a specified delay.
+ * @function debounce
+ * @param {function} callback - Function to be called upon execution.
+ * @param {number} delay - Delay from last debounce until execution.
+ * @return {function} Debounced function.
+ * @see {@link https://remysharp.com/2010/07/21/throttling-function-calls|Blog}
+ */
+export const debounce = (callback, delay = 1000) => {
+  var timer = null
+
+  return () => {
+    let context = this
+    let args = arguments
+
+    /** Clear previous timeout. */
+    clearTimeout(timer)
+
+    /** Set a new timeout and apply context and arguments to the function. */
+    timer = setTimeout(() => callback.apply(context, args), delay)
+  }
 }

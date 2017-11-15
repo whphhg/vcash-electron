@@ -1,12 +1,16 @@
 import { action, extendObservable, reaction } from 'mobx'
 import { getItem, setItem } from '../utilities/localStorage'
+import { debounce } from '../utilities/common'
 import i18next from '../utilities/i18next'
 import moment from 'moment'
 
 class GUI {
   /**
-   * @constructor
-   * @property {array} languages - Available languages.
+   * @prop {array} languages - Available languages.
+   * @prop {string} language - Selected language.
+   * @prop {string} localCurrency - Selected local currency.
+   * @prop {object} soundAlerts - Sound alert settings.
+   * @prop {object} window - Window height and width.
    */
   constructor() {
     this.languages = [
@@ -26,26 +30,31 @@ class GUI {
         incoming: false,
         spendable: false
       },
-      windowSize: {
-        height: window.innerHeight,
-        width: window.innerWidth
-      }
+      window: { height: window.innerHeight, width: window.innerWidth }
     })
 
-    /** Update i18next and moment on locale change. */
+    /** Update i18next and moment on language change. */
     reaction(
       () => this.language,
       language => {
         i18next.changeLanguage(language)
         moment.locale(language)
       },
-      true
+      {
+        fireImmediately: true,
+        name: 'GUI: language changed, updating i18next and moment.'
+      }
     )
 
     /** Update window size on resize. */
-    window.onresize = () => {
-      this.setWindowSize(window.innerHeight, window.innerWidth)
-    }
+    window.addEventListener(
+      'resize',
+      debounce(
+        () => this.setWindowSize(window.innerHeight, window.innerWidth),
+        0.1 * 1000
+      ),
+      true
+    )
   }
 
   /**
@@ -89,17 +98,14 @@ class GUI {
    */
   @action
   setWindowSize(height, width) {
-    this.windowSize.height = height
-    this.windowSize.width = width
+    this.window.height = height
+    this.window.width = width
   }
 }
 
 /** Initialize a new globally used store. */
 const gui = new GUI()
 
-/**
- * Export initialized store as default export,
- * and store class as named export.
- */
+/** Export initialized store as default export & store class as named export. */
 export default gui
 export { GUI }
