@@ -1,5 +1,4 @@
 # Vcash Electron GUI
-
 [![Release](https://img.shields.io/github/release/openvcash/vcash-electron.svg)](https://github.com/openvcash/vcash-electron/releases)
 [![Styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![Standard style guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
@@ -12,10 +11,7 @@ a decentralized currency for the internet. Latest release can be found
 
 ## Table of Contents
 - [Install from source](#install-from-source)
-- [Build and package](#build-and-package)
-  * [Package for Linux](#package-for-linux)
-  * [Package for macOS](#package-for-macos)
-  * [Package for Windows (using Docker)](#package-for-windows-using-docker)
+- [Build and package for Linux, macOS and Windows](#build-and-package-for-linux-macos-and-windows)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -23,7 +19,7 @@ a decentralized currency for the internet. Latest release can be found
 
 ## Install from source
 Make sure you have installed `git` and the latest version of
-[Node.js](https://nodejs.org/en/download/current/). Then clone this repository
+[Node.js](https://nodejs.org/en/download/current/), then clone this repository
 using `git clone`, move to the cloned directory using `cd vcash-electron/` and
 install Node.js dependencies using `npm install`.
 
@@ -32,8 +28,8 @@ install Node.js dependencies using `npm install`.
     npm install
 
 After the dependency installation is completed, transform the source code using
-`npm run babel` or `npm run watch` to auto-transform on any changes to the
-files in the `src/` directory.
+`npm run babel` or `npm run watch` to keep auto-transforming on any changes to
+the files in the `src/` directory.
 
     npm run babel (transform once)
     npm run watch (auto-transform on changes)
@@ -45,13 +41,13 @@ tools, using `npm run dev` or `npm run dev-win` on Windows.
     npm run dev (Linux and macOS)
     npm run dev-win (Windows)
 
-## Build and package
-[Download](https://vcash.info/wallets.php) the latest daemon for your platform
+## Build and package for Linux, macOS and Windows
+[Download](https://vcash.info/) the latest daemon for your platform
 to the `build/bin/` directory and rename it to either `vcashd-ia32` or
 `vcashd-x64`, depending on the arch. The `build/bin/` directory gets bundled
-with the GUI when you run any of the `npm run dist-*` scripts and is checked on
+with the GUI when you run any of the `npm run dist-*` scripts, and is checked on
 start-up by
-[daemon.js](https://github.com/openvcash/vcash-electron/blob/master/src/daemon.js)
+[daemon.js](https://github.com/openvcash/vcash-electron/blob/master/src/stores/daemon.js)
 which launches the daemon if it matches the correct platform and arch.
 
 Packages are created according to the
@@ -61,42 +57,23 @@ config and `scripts` options in
 about which you can read more
 [here](https://www.electron.build/configuration/configuration).
 
-### Package for Linux
-Run the command below (on Linux) to create and save 64-bit .deb and .zip
-packages into the `dist/` directory.
+Run the commands below to install npm dependencies, remove extraneous npm
+packages and transform the source code to `lib/` directory using `Babel`.
 
-    npm install && npm prune && npm run babel && npm run dist-linux
+    npm install && npm prune && npm run babel
 
-**Note:** The command above can also be run inside the docker container to
-create Linux packages on Windows. You can read more about packaging using
-docker in the
-[Package for Windows (using Docker)](#package-for-windows-using-docker)
-section below.
-
-### Package for macOS
-Run the command below (on macOS) to create and save 64-bit .dmg
-package into the `dist/` directory.
-
-    npm install && npm prune && npm run babel && npm run dist-macos
-
-### Package for Windows (using Docker)
-Make sure you have installed `docker` and that your user is in the docker
-group. You can run the docker container either on Linux or Windows.
-
-```
-docker run --rm -ti -v ${PWD}:/project -v ${PWD##*/}-node-modules:/project/node_modules -v ~/.electron:/root/.electron electronuserland/electron-builder:wine
-```
-
-Next, run any of the scripts from the table below to create and save 64-bit and
-32-bit packages into the `dist/` directory.
+You can now create and save packages into the `dist/` directory by running the
+scripts (for your platform) from the table below.
 
 Script        | Description
 ------------- | ----------------------------------------------------------------
+dist-linux    | Create 64-bit .deb and .zip packages
+dist-macos    | Create a 64-bit .dmg package
 dist-win-nsis | Create a Windows NSIS installer for both architectures
 dist-win-ia32 | Create a 32-bit Windows portable executable
 dist-win-x64  | Create a 64-bit Windows portable executable
 
-    npm install && npm prune && npm run babel && npm run <script>
+    npm run <script>
 
 **Note:** `dist-win-nsis` script requires both `vcashd-ia32.exe` and
 `vcashd-x64.exe` in the `build/bin/` directory.
