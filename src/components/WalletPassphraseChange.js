@@ -8,20 +8,15 @@ import Button from 'antd/lib/button'
 import Input from 'antd/lib/input'
 import message from 'antd/lib/message'
 
-@translate(['wallet'], { wait: true })
-@inject('rpcNext', 'walletNext')
+@translate(['wallet'])
+@inject('rpc', 'wallet')
 @observer
 class WalletPassphraseChange extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
-    this.rpc = props.rpcNext
-    this.wallet = props.walletNext
-
-    /** Extend the component with observable properties. */
-    extendObservable(this, { current: '', next: '', repeat: '', rpcError: '' })
-
-    /** Bind the async function. */
+    this.rpc = props.rpc
+    this.wallet = props.wallet
     this.walletPassphraseChange = this.walletPassphraseChange.bind(this)
 
     /** Errors that will be shown to the user. */
@@ -31,12 +26,16 @@ class WalletPassphraseChange extends React.Component {
       'passphrasesNotMatching'
     ]
 
+    /** Extend the component with observable properties. */
+    extendObservable(this, { current: '', next: '', repeat: '', rpcError: '' })
+
     /** Clear previous RPC error on current passphrase change. */
     reaction(
       () => this.current,
       current => {
-        if (this.rpcError !== false) this.setValues({ rpcError: '' })
-      }
+        if (this.rpcError !== false) this.setProps({ rpcError: '' })
+      },
+      { name: 'WalletPassChange: pass changed, clearing previous RPC error.' }
     )
   }
 
@@ -62,39 +61,32 @@ class WalletPassphraseChange extends React.Component {
   }
 
   /**
-   * Set value(s) of observable properties.
-   * @function setValues
-   * @param {object} values - Key value combinations.
+   * Set observable properties.
+   * @function setProps
+   * @param {object} props - Key value combinations.
    */
   @action
-  setValues = values => {
-    Object.keys(values).forEach(key => {
-      this[key] = values[key]
-    })
+  setProps = props => {
+    Object.keys(props).forEach(key => (this[key] = props[key]))
   }
 
   /**
-   * Change wallet's passphrase.
+   * Change wallet passphrase.
    * @function walletPassphraseChange
    */
   async walletPassphraseChange() {
     const res = await this.rpc.walletPassphraseChange(this.current, this.next)
 
     if ('result' in res) {
-      /** Update wallet's lock status. */
       this.wallet.updateLockStatus()
-
-      /** Clear entered passphrases. */
-      this.setValues({ current: '', next: '', repeat: '' })
-
-      /** Display a success message for 6s. */
-      message.success(this.t('wallet:passphraseChanged'), 6)
+      this.setProps({ current: '', next: '', repeat: '' })
+      message.success(this.t('passphraseChanged'))
     }
 
     if ('error' in res) {
       switch (res.error.code) {
         case -14:
-          return this.setValues({ rpcError: 'passphraseIncorrect' })
+          return this.setProps({ rpcError: 'passphraseIncorrect' })
       }
     }
   }
@@ -106,45 +98,48 @@ class WalletPassphraseChange extends React.Component {
       <div>
         <div className="flex">
           <i className="material-icons md-16">vpn_key</i>
-          <p>{this.t('wallet:passphraseChangeLong')}</p>
+          <p>{this.t('passphraseChangeDesc')}</p>
         </div>
-        <div className="flex-sb" style={{ margin: '10px 0 0 0' }}>
-          <p style={{ width: '120px' }}>{this.t('wallet:passphrase')}</p>
+        <div className="flex-sb" style={{ margin: '15px 0 5px 0' }}>
+          <p style={{ width: '140px' }}>{this.t('passphrase')}</p>
           <Input
-            onChange={e => this.setValues({ current: e.target.value })}
-            placeholder={this.t('wallet:passphraseLong')}
+            onChange={e => this.setProps({ current: e.target.value })}
+            placeholder={this.t('passphraseDesc')}
             style={{ flex: 1 }}
+            type="password"
             value={this.current}
           />
         </div>
-        <div className="flex-sb" style={{ margin: '5px 0 0 0' }}>
-          <p style={{ width: '120px' }}>{this.t('wallet:passphraseNew')}</p>
+        <div className="flex-sb">
+          <p style={{ width: '140px' }}>{this.t('passphraseNew')}</p>
           <Input
-            onChange={e => this.setValues({ next: e.target.value })}
-            placeholder={this.t('wallet:passphraseNewLong')}
+            onChange={e => this.setProps({ next: e.target.value })}
+            placeholder={this.t('passphraseNewDesc')}
             style={{ flex: 1 }}
+            type="password"
             value={this.next}
           />
         </div>
-        <div className="flex-sb" style={{ margin: '5px 0 0 0' }}>
-          <p style={{ width: '120px' }}>{this.t('wallet:passphraseRepeat')}</p>
+        <div className="flex-sb" style={{ margin: '5px 0 10px 0' }}>
+          <p style={{ width: '140px' }}>{this.t('passphraseRepeat')}</p>
           <Input
-            onChange={e => this.setValues({ repeat: e.target.value })}
-            placeholder={this.t('wallet:passphraseRepeatLong')}
+            onChange={e => this.setProps({ repeat: e.target.value })}
+            placeholder={this.t('passphraseRepeatDesc')}
             style={{ flex: 1 }}
+            type="password"
             value={this.repeat}
           />
         </div>
-        <div className="flex-sb" style={{ margin: '5px 0 0 0' }}>
-          <p className="red" style={{ margin: '0 0 0 120px' }}>
+        <div className="flex-sb">
+          <p className="red" style={{ margin: '0 0 0 140px' }}>
             {this.errShow.includes(this.errorStatus) === true &&
-              this.t('wallet:' + this.errorStatus)}
+              this.t(this.errorStatus)}
           </p>
           <Button
             disabled={this.errorStatus !== ''}
             onClick={this.walletPassphraseChange}
           >
-            {this.t('wallet:passphraseChange')}
+            {this.t('passphraseChange')}
           </Button>
         </div>
       </div>

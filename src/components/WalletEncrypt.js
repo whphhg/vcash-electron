@@ -8,24 +8,22 @@ import Button from 'antd/lib/button'
 import Input from 'antd/lib/input'
 import notification from 'antd/lib/notification'
 
-@translate(['wallet'], { wait: true })
-@inject('rpcNext', 'walletNext')
+@translate(['wallet'])
+@inject('rpc', 'wallet')
 @observer
 class WalletEncrypt extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
-    this.rpc = props.rpcNext
-    this.wallet = props.walletNext
-
-    /** Extend the component with observable properties. */
-    extendObservable(this, { passphrase: '', repeat: '' })
-
-    /** Bind the async function. */
+    this.rpc = props.rpc
+    this.wallet = props.wallet
     this.encryptWallet = this.encryptWallet.bind(this)
 
     /** Errors that will be shown to the user. */
     this.errShow = ['passphrasesNotMatching']
+
+    /** Extend the component with observable properties. */
+    extendObservable(this, { passphrase: '', repeat: '' })
   }
 
   /**
@@ -44,15 +42,13 @@ class WalletEncrypt extends React.Component {
   }
 
   /**
-   * Set value(s) of observable properties.
-   * @function setValues
-   * @param {object} values - Key value combinations.
+   * Set observable properties.
+   * @function setProps
+   * @param {object} props - Key value combinations.
    */
   @action
-  setValues = values => {
-    Object.keys(values).forEach(key => {
-      this[key] = values[key]
-    })
+  setProps = props => {
+    Object.keys(props).forEach(key => (this[key] = props[key]))
   }
 
   /**
@@ -63,16 +59,13 @@ class WalletEncrypt extends React.Component {
     const res = await this.rpc.encryptWallet(this.passphrase)
 
     if ('result' in res === true) {
-      /** Update wallet's lock status. */
       this.wallet.updateLockStatus()
-
-      /** Clear entered passphrases. */
-      this.setValues({ passphrase: '', repeat: '' })
+      this.setProps({ passphrase: '', repeat: '' })
 
       /** Display a non-expiring restart notification. */
       notification.success({
-        message: this.t('wallet:encrypted'),
-        description: this.t('wallet:encryptedLong'),
+        message: this.t('encrypted'),
+        description: this.t('encryptedDesc'),
         duration: 0
       })
     }
@@ -85,36 +78,38 @@ class WalletEncrypt extends React.Component {
       <div>
         <div className="flex">
           <i className="material-icons md-16">vpn_key</i>
-          <p>{this.t('wallet:encryptLong')}</p>
+          <p>{this.t('encryptDesc')}</p>
         </div>
-        <div className="flex-sb" style={{ margin: '10px 0 0 0' }}>
-          <p style={{ width: '120px' }}>{this.t('wallet:passphrase')}</p>
+        <div className="flex-sb" style={{ margin: '15px 0 5px 0' }}>
+          <p style={{ width: '140px' }}>{this.t('passphrase')}</p>
           <Input
-            onChange={e => this.setValues({ passphrase: e.target.value })}
-            placeholder={this.t('wallet:passphraseLong')}
+            onChange={e => this.setProps({ passphrase: e.target.value })}
+            placeholder={this.t('passphraseDesc')}
             style={{ flex: 1 }}
+            type="password"
             value={this.passphrase}
           />
         </div>
-        <div className="flex-sb" style={{ margin: '5px 0 0 0' }}>
-          <p style={{ width: '120px' }}>{this.t('wallet:passphraseRepeat')}</p>
+        <div className="flex-sb">
+          <p style={{ width: '140px' }}>{this.t('passphraseRepeat')}</p>
           <Input
-            onChange={e => this.setValues({ repeat: e.target.value })}
-            placeholder={this.t('wallet:passphraseRepeatLong')}
+            onChange={e => this.setProps({ repeat: e.target.value })}
+            placeholder={this.t('passphraseRepeatDesc')}
             style={{ flex: 1 }}
+            type="password"
             value={this.repeat}
           />
         </div>
-        <div className="flex-sb" style={{ margin: '5px 0 0 0' }}>
-          <p className="red" style={{ margin: '0 0 0 120px' }}>
+        <div className="flex-sb" style={{ margin: '10px 0 0 0' }}>
+          <p className="red" style={{ margin: '0 0 0 140px' }}>
             {this.errShow.includes(this.errorStatus) === true &&
-              this.t('wallet:' + this.errorStatus)}
+              this.t(this.errorStatus)}
           </p>
           <Button
             disabled={this.errorStatus !== ''}
             onClick={this.encryptWallet}
           >
-            {this.t('wallet:encrypt')}
+            {this.t('encrypt')}
           </Button>
         </div>
       </div>
