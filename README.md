@@ -28,11 +28,11 @@ install Node.js dependencies using `npm install`.
     npm install
 
 After the dependency installation is completed, transform the source code using
-`npm run babel` or `npm run watch` to keep auto-transforming on any changes to
-the files in the `src/` directory.
+`npm run babel` or `npm run babel-watch` to keep auto-transforming on any
+changes to the files in the `src/` directory.
 
     npm run babel (transform once)
-    npm run watch (auto-transform on changes)
+    npm run babel-watch (auto-transform on changes)
 
 You can now run the GUI using `npm run gui`, or if you want to use development
 tools, using `npm run dev` or `npm run dev-win` on Windows.
@@ -45,7 +45,7 @@ tools, using `npm run dev` or `npm run dev-win` on Windows.
 [Download](https://vcash.info/) the latest daemon for your platform
 to the `build/bin/` directory and rename it to either `vcashd-ia32` or
 `vcashd-x64`, depending on the arch. The `build/bin/` directory gets bundled
-with the GUI when you run any of the `npm run dist-*` scripts, and is checked on
+with the GUI when you run any of the `npm run build-*` scripts, and is checked on
 start-up by
 [daemon.js](https://github.com/openvcash/vcash-electron/blob/master/src/stores/daemon.js)
 which launches the daemon if it matches the correct platform and arch.
@@ -65,17 +65,17 @@ packages and transform the source code to `lib/` directory using `Babel`.
 You can now create and save packages into the `dist/` directory by running the
 scripts (for your platform) from the table below.
 
-Script        | Description
-------------- | ----------------------------------------------------------------
-dist-linux    | Create 64-bit .deb and .zip packages
-dist-macos    | Create a 64-bit .dmg package
-dist-win-nsis | Create a Windows NSIS installer for both architectures
-dist-win-ia32 | Create a 32-bit Windows portable executable
-dist-win-x64  | Create a 64-bit Windows portable executable
+Script         | Description
+-------------- | ----------------------------------------------------------------
+build-linux    | Create 64-bit .deb and .zip packages
+build-macos    | Create a 64-bit .dmg package
+build-win-nsis | Create a Windows NSIS installer for both architectures
+build-win-ia32 | Create a 32-bit Windows portable executable
+build-win-x64  | Create a 64-bit Windows portable executable
 
     npm run <script>
 
-**Note:** `dist-win-nsis` script requires both `vcashd-ia32.exe` and
+**Note:** `build-win-nsis` script requires both `vcashd-ia32.exe` and
 `vcashd-x64.exe` in the `build/bin/` directory.
 
 ## Contributing
