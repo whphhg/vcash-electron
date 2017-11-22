@@ -45,8 +45,8 @@ tools, using `npm run dev` or `npm run dev-win` on Windows.
 [Download](https://vcash.info/) the latest daemon for your platform
 to the `build/bin/` directory and rename it to either `vcashd-ia32` or
 `vcashd-x64`, depending on the arch. The `build/bin/` directory gets bundled
-with the GUI when you run any of the `npm run build-*` scripts, and is checked on
-start-up by
+with the GUI when you run any of the `npm run build-*` scripts, and is
+checked on start-up by
 [daemon.js](https://github.com/openvcash/vcash-electron/blob/master/src/stores/daemon.js)
 which launches the daemon if it matches the correct platform and arch.
 
@@ -66,7 +66,7 @@ You can now create and save packages into the `dist/` directory by running the
 scripts (for your platform) from the table below.
 
 Script         | Description
--------------- | ----------------------------------------------------------------
+-------------- | ---------------------------------------------------------------
 build-linux    | Create 64-bit .deb and .zip packages
 build-macos    | Create a 64-bit .dmg package
 build-win-nsis | Create a Windows NSIS installer for both architectures
