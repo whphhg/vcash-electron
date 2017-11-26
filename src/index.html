@@ -2,6 +2,18 @@
 <html>
   <head>
     <meta charset="UTF-8">
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+        default-src 'none';
+        script-src 'self';
+        connect-src http://127.0.0.1:* https://apiv2.bitcoinaverage.com
+                    https://bittrex.com https://poloniex.com;
+        img-src file://*;
+        font-src https://fonts.gstatic.com https://at.alicdn.com;
+        style-src 'self' https://fonts.googleapis.com;
+      "
+    >
     <title>Vcash Electron GUI</title>
     <link rel="stylesheet" href="../node_modules/antd/dist/antd.min.css">
     <link rel="stylesheet" href="assets/css/default.css">
