@@ -44,6 +44,11 @@ useStrict(true)
 /** Enable MobX logging in development mode. */
 if (process.env.NODE_ENV === 'dev') enableLogging()
 
+/** Override and disable eval, which allows strings to be executed as code. */
+window.eval = global.eval = () => { // eslint-disable-line
+  throw new Error('window.eval() is disabled for security reasons.')
+}
+
 render(
   <Provider connections={connections} gui={gui} rates={rates}>
     <BrowserRouter>
