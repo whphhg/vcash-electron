@@ -3,8 +3,8 @@
 [![Styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![Standard style guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-[Multi-platform and multi-node GUI](https://github.com/openvcash/vcash-electron/releases)
-for [Vcash](https://vcash.info/), a decentralized currency for the internet.
+Multi-platform and multi-node GUI for [Vcash](https://vcash.info/). You can find
+the latest release [here](https://github.com/openvcash/vcash-electron/releases).
 
 ![Screenshots](http://i.imgur.com/i3Dxol0.gif)
 

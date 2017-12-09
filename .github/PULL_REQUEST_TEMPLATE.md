@@ -1,4 +1,4 @@
-**Before submitting a pull request,** please make sure the following is done:
+**Before submitting a pull request**, please make sure the following is done:
 
 1. Make sure you read the [contributing guide](https://github.com/openvcash/vcash-electron/blob/master/.github/CONTRIBUTING.md) before making any changes.
 2. Fork [the repository](https://github.com/openvcash/vcash-electron) and create your branch from `master`, making sure to give your branch a descriptive name.

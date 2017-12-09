@@ -16,6 +16,7 @@ in the local clone of your fork using `npm install`. After the dependency
 installation is completed, start `npm run babel-watch` to auto-transform the
 source code on any changes to the files in the `src/` directory.
 
+    npm install
     npm run babel-watch
 
 You can now run the GUI using `npm run gui`. Depending on the size of your
@@ -26,14 +27,17 @@ changes you might also require development tools which are enabled when using
     npm run dev (Linux and macOS)
     npm run dev-win (Windows)
 
-Then [download](https://vcash.info/wallets.php) and launch the latest daemon,
-or skip this part if you've already got a daemon or GUI bundled with a daemon
-running. This ensures the wallet will keep running while you restart the GUI
-to look at the changes you've made.
+Then [download](https://vcash.info) and launch the latest daemon, or skip this
+part if you've already got a daemon or GUI bundled with a daemon running.
+This ensures the wallet will keep running while you restart the GUI to look at
+the changes you've made.
 
 You're now ready to implement your fix or feature. Make sure that your code
 lints by using `npm run lint` and to format it using `npm run format` before
 creating the pull request.
+
+    npm run lint
+    npm run format
 
 ### Code style
 This repository uses [prettier](https://github.com/prettier/prettier) and
