@@ -2,6 +2,13 @@ import { homedir } from 'os'
 import { join, sep } from 'path'
 
 /**
+ * A coin.
+ * @name coin
+ * @see {@link https://github.com/openvcash/vcash/blob/master/coin/include/coin/constants.hpp#L84|GitHub}
+ */
+export const coin = 1000000
+
+/**
  * Get decimal separator.
  * @function decimalSeparator
  * @return {string} Decimal separator.
@@ -83,7 +90,7 @@ export const humanReadable = (num = 0, dec = true, suffix = 'B', language) => {
  * @see {@link https://remysharp.com/2010/07/21/throttling-function-calls|Blog}
  */
 export const debounce = (callback, delay = 1000) => {
-  var timer = null
+  let timer = null
 
   return () => {
     let context = this
