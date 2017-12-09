@@ -13,6 +13,18 @@ class SetSoundAlerts extends React.Component {
     super(props)
     this.t = props.t
     this.gui = props.gui
+    this.toggleNotification = this.toggleNotification.bind(this)
+  }
+
+  /**
+   * Toggle notification.
+   * @function toggleNotification
+   */
+  toggleNotification(name) {
+    this.gui.setSoundAlert(name)
+
+    /** Play the sound if enabling the notification. */
+    if (this.gui.soundAlerts[name] === true) this.gui.sounds[name].play()
   }
 
   /**
@@ -43,7 +55,7 @@ class SetSoundAlerts extends React.Component {
           <Switch
             checked={this.gui.soundAlerts.incoming === true}
             checkedChildren={this.switchIcon('done')}
-            onChange={() => this.gui.setSoundAlert('incoming')}
+            onChange={() => this.toggleNotification('incoming')}
             size="small"
             unCheckedChildren={this.switchIcon('clear')}
           />
@@ -56,7 +68,7 @@ class SetSoundAlerts extends React.Component {
           <Switch
             checked={this.gui.soundAlerts.spendable === true}
             checkedChildren={this.switchIcon('done')}
-            onChange={() => this.gui.setSoundAlert('spendable')}
+            onChange={() => this.toggleNotification('spendable')}
             size="small"
             unCheckedChildren={this.switchIcon('clear')}
           />

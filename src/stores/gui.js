@@ -1,4 +1,5 @@
 import { action, extendObservable, reaction } from 'mobx'
+import { join } from 'path'
 import { getItem, setItem } from '../utilities/localStorage'
 import { debounce } from '../utilities/common'
 import i18next from '../utilities/i18next'
@@ -7,6 +8,8 @@ import moment from 'moment'
 class GUI {
   /**
    * @prop {array} languages - Available languages.
+   * @prop {string} soundsDir - Directory with notification sounds.
+   * @prop {object} sounds - Loaded notification audio elements.
    * @prop {string} language - Selected language.
    * @prop {string} localCurrency - Selected local currency.
    * @prop {object} soundAlerts - Sound alert settings.
@@ -21,6 +24,13 @@ class GUI {
       { language: 'sl-SI', name: 'Slovenian' },
       { language: 'es-ES', name: 'Spanish' }
     ]
+
+    /** Load notification sounds. */
+    this.soundsDir = join(__dirname, '..', 'assets', 'sounds')
+    this.sounds = {
+      incoming: new Audio(join(this.soundsDir, 'incoming.mp3')),
+      spendable: new Audio(join(this.soundsDir, 'spendable.mp3'))
+    }
 
     /** Extend the store with observable properties. */
     extendObservable(this, {
