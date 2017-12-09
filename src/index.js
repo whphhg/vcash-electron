@@ -47,7 +47,7 @@ if (process.env.NODE_ENV === 'dev') enableLogging()
 /** Override and disable eval, which allows strings to be executed as code. */
 // prettier-ignore
 window.eval = global.eval = () => { // eslint-disable-line
-  throw new Error('window.eval() is disabled for security reasons.')
+  throw new Error('eval() is disabled for security reasons.')
 }
 
 render(

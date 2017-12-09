@@ -9,9 +9,10 @@
         script-src 'self';
         connect-src http://127.0.0.1:* https://apiv2.bitcoinaverage.com
                     https://bittrex.com https://poloniex.com;
-        img-src file://*;
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
         font-src https://fonts.gstatic.com https://at.alicdn.com;
-        style-src 'self' https://fonts.googleapis.com;
+        img-src file://*;
+        media-src 'self';
       "
     >
     <title>Vcash Electron GUI</title>
