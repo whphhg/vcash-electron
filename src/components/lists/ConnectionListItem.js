@@ -4,40 +4,28 @@ import { observer } from 'mobx-react'
 const ConnectionListItem = observer(({ t, connections, index }) => {
   const instance = connections.instances.get(connections.ids[index])
   const { rpc } = instance.status
-
-  /**
-   * Change viewing connection on list item click.
-   * @function onClick
-   */
-  const onClick = () => connections.setViewing(instance.id)
+  const color = rpc === null ? '' : rpc === true ? 'green' : 'red'
 
   return (
     <div
       className={
         'list-item' +
         (index % 2 === 0 ? ' even' : '') +
-        (instance.id === connections.viewingId ? ' selected' : '')
+        (connections.viewingId === instance.id ? ' selected' : '')
       }
-      onClick={onClick}
+      onClick={() => connections.setViewing(instance.id)}
     >
-      <div className="flex-sb" style={{ padding: '5px' }}>
-        <span style={{ fontWeight: '500' }}>
+      <div className="flex-sb">
+        <p style={{ fontWeight: '500' }}>
           {instance.type === 'local' ? '127.0.0.1' : instance.host}:
           {instance.type === 'local' ? instance.localPort : instance.port}
-        </span>
-        <span style={{ fontWeight: '400' }}>
+        </p>
+        <p style={{ fontWeight: '400' }}>
           {instance.type === 'local' ? t('local') : 'SSH'}
-        </span>
+        </p>
       </div>
-      <div className="flex" style={{ padding: '5px' }}>
-        <i
-          className={
-            'material-icons md-16 ' +
-            (rpc === null ? '' : rpc === true ? 'green' : 'red')
-          }
-        >
-          power_settings_new
-        </i>
+      <div className="flex">
+        <i className={'material-icons md-16 ' + color}>power_settings_new</i>
         <p>{rpc === true ? t('connected') : t('disconnected')}</p>
       </div>
     </div>
