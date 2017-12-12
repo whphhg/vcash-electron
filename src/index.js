@@ -1,6 +1,6 @@
 /**
  * Vcash Electron GUI
- * Copyright (C) 2015-2017, whphhg
+ * Copyright (C) 2015-2018, whphhg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +22,13 @@ import { BrowserRouter, Route } from 'react-router-dom'
 import { useStrict } from 'mobx'
 import { enableLogging } from 'mobx-logger'
 import { Provider } from 'mobx-react'
+import { join } from 'path'
 import i18next from './utilities/i18next'
 import './utilities/rightClickMenu'
 
 /** Components */
-import Connections from './components/Connections'
-import MainMenu from './components/MainMenu'
+import Connections from './components/screens/Connections'
+import MainMenu from './components/menus/MainMenu'
 import Root from './components/Root'
 
 /** Store instances */
@@ -54,7 +55,12 @@ render(
   <Provider connections={connections} gui={gui} rates={rates}>
     <BrowserRouter>
       <div id="App">
-        <MainMenu />
+        <div id="MainMenu">
+          <div className="logo">
+            <img src={join(__dirname, 'assets', 'images', 'logoGrey.png')} />
+          </div>
+          <MainMenu />
+        </div>
         <Route exact path="/" component={Connections} />
         <Route path="/:id" component={Root} />
       </div>
