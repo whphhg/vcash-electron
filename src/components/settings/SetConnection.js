@@ -1,6 +1,6 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { observer } from 'mobx-react'
+import { inject, observer } from 'mobx-react'
 import { remote } from 'electron'
 
 /** Ant Design */
@@ -10,15 +10,13 @@ import Popconfirm from 'antd/lib/popconfirm'
 import Switch from 'antd/lib/switch'
 
 @translate(['wallet'])
+@inject('connections')
 @observer
-class ConnectionEdit extends React.Component {
+class SetConnection extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
     this.connections = props.connections
-
-    /** Function: add new connection and scroll to it in the list. */
-    this.add = props.add
   }
 
   /**
@@ -55,7 +53,6 @@ class ConnectionEdit extends React.Component {
 
   render() {
     const { status, startStatus, type } = this.connections.viewing
-
     return (
       <div id="Connection">
         <div id="Header" className="flex">
@@ -194,7 +191,7 @@ class ConnectionEdit extends React.Component {
           </div>
         </div>
         <div className="flex-sb" style={{ overflow: 'hidden' }}>
-          <Button onClick={this.add} size="small">
+          <Button onClick={() => this.connections.add()} size="small">
             <i className="flex-center material-icons md-16">
               add_circle_outline
             </i>
@@ -216,4 +213,4 @@ class ConnectionEdit extends React.Component {
   }
 }
 
-export default ConnectionEdit
+export default SetConnection
