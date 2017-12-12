@@ -14,27 +14,27 @@ import {
 } from 'recharts'
 import moment from 'moment'
 
-/** Required components. */
+/** Components */
 import { CustomTick, CustomTooltip } from './RechartsCustom'
 
-@translate(['wallet'], { wait: true })
-@inject('stats')
+@translate(['wallet'])
+@inject('gui', 'statistics')
 @observer
-class TransactionsStatistics extends React.Component {
+class TransactionStatistics extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
-    this.stats = props.stats
+    this.gui = props.gui
+    this.statistics = props.statistics
   }
 
   render() {
     const beginning = new Date().getTime() - 31 * 24 * 60 * 60 * 1000
-
     return (
       <ResponsiveContainer height={160} width="100%">
         <AreaChart
-          data={this.stats.dailyTotals}
-          margin={{ top: 10, right: 37, bottom: 0, left: 37 }}
+          data={this.statistics.dailyTotals}
+          margin={{ top: 0, right: 20, bottom: 0, left: 20 }}
         >
           <defs>
             <linearGradient id="colorSent" x1="0" y1="0" x2="0" y2="1">
@@ -94,12 +94,21 @@ class TransactionsStatistics extends React.Component {
             type="monotone"
           />
           <CartesianGrid strokeDasharray="3 3" />
-          <Tooltip content={<CustomTooltip amounts />} />
+          <Tooltip
+            content={<CustomTooltip amounts language={this.gui.language} />}
+          />
           <XAxis
             dataKey="date"
             domain={[Math.round(beginning), Math.round(moment().format('x'))]}
             interval={4}
-            tick={<CustomTick textType="date" textX={0} textY={15} />}
+            tick={
+              <CustomTick
+                language={this.gui.language}
+                textType="date"
+                textX={0}
+                textY={15}
+              />
+            }
           />
         </AreaChart>
       </ResponsiveContainer>
@@ -107,4 +116,4 @@ class TransactionsStatistics extends React.Component {
   }
 }
 
-export default TransactionsStatistics
+export default TransactionStatistics

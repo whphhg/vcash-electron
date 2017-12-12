@@ -11,24 +11,25 @@ import {
   YAxis
 } from 'recharts'
 
-/** Required components. */
+/** Components */
 import { CustomTick, CustomTooltip } from './RechartsCustom'
 
-@translate(['wallet'], { wait: true })
-@inject('stats')
+@translate(['wallet'])
+@inject('gui', 'statistics')
 @observer
 class Difficulties extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
-    this.stats = props.stats
+    this.gui = props.gui
+    this.statistics = props.statistics
   }
 
   render() {
     return (
-      <ResponsiveContainer height={215} width="100%">
+      <ResponsiveContainer height={250} width="100%">
         <LineChart
-          data={this.stats.network}
+          data={this.statistics.network}
           margin={{ top: 15, right: 0, bottom: 5, left: 30 }}
           syncId="0"
         >
@@ -47,21 +48,38 @@ class Difficulties extends React.Component {
             type="monotone"
             yAxisId="right"
           />
-          <Tooltip content={<CustomTooltip labelTime />} />
+          <Tooltip
+            content={<CustomTooltip labelTime language={this.gui.language} />}
+          />
           <XAxis
             dataKey="date"
             domain={['dataMin', 'dataMax']}
-            tick={<CustomTick textType="time" textX={0} textY={15} />}
+            tick={
+              <CustomTick
+                language={this.gui.language}
+                textType="time"
+                textX={0}
+                textY={15}
+              />
+            }
           />
           <YAxis
             orientation="left"
-            tick={<CustomTick textType="number" textX={-5} textY={4} />}
+            tick={
+              <CustomTick
+                language={this.gui.language}
+                textType="number"
+                textX={-5}
+                textY={4}
+              />
+            }
             yAxisId="left"
           />
           <YAxis
             orientation="right"
             tick={
               <CustomTick
+                language={this.gui.language}
                 textAnchor="start"
                 textType="number"
                 textX={5}

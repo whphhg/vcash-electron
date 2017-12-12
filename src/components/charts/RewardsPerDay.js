@@ -11,38 +11,49 @@ import {
 } from 'recharts'
 import moment from 'moment'
 
-/** Required components. */
+/** Components */
 import { CustomTick, CustomTooltip } from './RechartsCustom'
 
-@inject('stats')
+@inject('gui', 'statistics')
 @observer
 class RewardsPerDay extends React.Component {
   constructor(props) {
     super(props)
-    this.stats = props.stats
+    this.gui = props.gui
+    this.statistics = props.statistics
   }
 
   render() {
     const beginning = new Date().getTime() - 30 * 24 * 60 * 60 * 1000
-
     return (
-      <ResponsiveContainer height={215} width="100%">
+      <ResponsiveContainer height={250} width="100%">
         <BarChart
-          data={this.stats.rewardsPerDay}
+          data={this.statistics.rewardsPerDay}
           margin={{ top: 15, right: 20, bottom: 5, left: 20 }}
         >
           <Bar dataKey="stakingReward" fill="#FE9950" stackId="a" />
           <Bar dataKey="miningReward" fill="#EC5E44" stackId="a" />
           <Bar dataKey="incentiveReward" fill="#803888" stackId="a" />
           <CartesianGrid strokeDasharray="3 3" />
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip content={<CustomTooltip language={this.gui.language} />} />
           <XAxis
             dataKey="date"
             domain={[Math.round(beginning), Math.round(moment().format('x'))]}
             interval={4}
-            tick={<CustomTick textType="date" textX={0} textY={15} />}
+            tick={
+              <CustomTick
+                language={this.gui.language}
+                textType="date"
+                textX={0}
+                textY={15}
+              />
+            }
           />
-          <YAxis tick={<CustomTick textX={-5} textY={4} />} />
+          <YAxis
+            tick={
+              <CustomTick language={this.gui.language} textX={-5} textY={4} />
+            }
+          />
         </BarChart>
       </ResponsiveContainer>
     )

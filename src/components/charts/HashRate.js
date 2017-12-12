@@ -14,24 +14,25 @@ import {
   stop
 } from 'recharts'
 
-/** Required components. */
+/** Components */
 import { CustomTick, CustomTooltip } from './RechartsCustom'
 
-@translate(['wallet'], { wait: true })
-@inject('stats')
+@translate(['wallet'])
+@inject('gui', 'statistics')
 @observer
 class HashRate extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
-    this.stats = props.stats
+    this.gui = props.gui
+    this.statistics = props.statistics
   }
 
   render() {
     return (
-      <ResponsiveContainer width="100%" height={215}>
+      <ResponsiveContainer height={250} width="100%">
         <AreaChart
-          data={this.stats.network}
+          data={this.statistics.network}
           margin={{ top: 15, right: 60, bottom: 5, left: 30 }}
           syncId="0"
         >
@@ -50,15 +51,33 @@ class HashRate extends React.Component {
             yAxisId="left"
           />
           <CartesianGrid strokeDasharray="3 3" />
-          <Tooltip content={<CustomTooltip labelTime hashRate />} />
+          <Tooltip
+            content={
+              <CustomTooltip hashRate labelTime language={this.gui.language} />
+            }
+          />
           <XAxis
             dataKey="date"
             domain={['dataMin', 'dataMax']}
-            tick={<CustomTick textType="time" textX={0} textY={15} />}
+            tick={
+              <CustomTick
+                language={this.gui.language}
+                textType="time"
+                textX={0}
+                textY={15}
+              />
+            }
           />
           <YAxis
             orientation="left"
-            tick={<CustomTick textType="hashRate" textX={-5} textY={4} />}
+            tick={
+              <CustomTick
+                language={this.gui.language}
+                textType="hashRate"
+                textX={-5}
+                textY={4}
+              />
+            }
             yAxisId="left"
           />
         </AreaChart>
