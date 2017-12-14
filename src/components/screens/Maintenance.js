@@ -4,7 +4,7 @@ import { Route } from 'react-router-dom'
 import { inject, observer } from 'mobx-react'
 
 /** Components */
-import Console from '../Console'
+import Console from '../utilities/Console'
 import Header from '../Header'
 import Footer from '../Footer'
 import MaintenanceMenu from '../menus/MaintenanceMenu'

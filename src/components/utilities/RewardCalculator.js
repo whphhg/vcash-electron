@@ -2,20 +2,20 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, extendObservable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { calculateIncentive, calculatePoW } from '../utilities/blockRewards'
+import { calculateIncentive, calculatePoW } from '../../utilities/blockRewards'
 
 /** Ant Design */
 import Input from 'antd/lib/input'
 
-@translate(['wallet'], { wait: true })
-@inject('gui', 'walletNext')
+@translate(['wallet'])
+@inject('gui', 'wallet')
 @observer
 class RewardCalculator extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
     this.gui = props.gui
-    this.wallet = props.walletNext
+    this.wallet = props.wallet
 
     /** Extend the component with observable properties. */
     extendObservable(this, { enteredBlock: '' })
@@ -89,21 +89,21 @@ class RewardCalculator extends React.Component {
     return (
       <div className="flex">
         <div style={{ margin: '0 36px 0 0' }}>
-          <div className="flex" style={{ margin: '0 0 5px 0' }}>
+          <div className="flex" style={{ margin: '0 0 10px 0' }}>
             <i className="material-icons md-16">extension</i>
-            <p>{this.t('wallet:block')}</p>
+            <p>{this.t('block')}</p>
           </div>
           <div className="flex">
-            <i className="material-icons md-16">stars</i>
-            <p>{this.t('wallet:powReward')}</p>
+            <i className="material-icons md-16">star</i>
+            <p>{this.t('powReward')}</p>
           </div>
           <div className="flex">
             <i className="material-icons md-16">developer_board</i>
-            <p>{this.t('wallet:miningReward')}</p>
+            <p>{this.t('miningReward')}</p>
           </div>
           <div className="flex">
             <i className="material-icons md-16">event_seat</i>
-            <p>{this.t('wallet:incentiveReward')}</p>
+            <p>{this.t('incentiveReward')}</p>
           </div>
         </div>
         <div style={{ margin: '0 0 2px 0' }}>
@@ -111,7 +111,7 @@ class RewardCalculator extends React.Component {
             onChange={e => this.setBlock(e.target.value)}
             placeholder={this.block}
             size="small"
-            style={{ margin: '0 0 5px 0', width: '60px' }}
+            style={{ margin: '0 0 10px 0', width: '60px' }}
             value={this.enteredBlock}
           />
           <p>
