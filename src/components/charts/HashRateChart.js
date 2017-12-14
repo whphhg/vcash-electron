@@ -2,22 +2,25 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import {
+  AreaChart,
+  Area,
   CartesianGrid,
-  LineChart,
-  Line,
   ResponsiveContainer,
   Tooltip,
   XAxis,
-  YAxis
+  YAxis,
+  defs,
+  linearGradient,
+  stop
 } from 'recharts'
 
 /** Components */
-import { CustomTick, CustomTooltip } from './RechartsCustom'
+import { CustomTick, CustomTooltip } from './CustomRecharts'
 
 @translate(['wallet'])
 @inject('gui', 'statistics')
 @observer
-class Difficulties extends React.Component {
+class HashRateChart extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
@@ -28,28 +31,30 @@ class Difficulties extends React.Component {
   render() {
     return (
       <ResponsiveContainer height={250} width="100%">
-        <LineChart
+        <AreaChart
           data={this.statistics.network}
-          margin={{ top: 15, right: 0, bottom: 5, left: 30 }}
+          margin={{ top: 15, right: 60, bottom: 5, left: 30 }}
           syncId="0"
         >
-          <CartesianGrid strokeDasharray="3 3" />
-          <Line
-            dataKey="powDifficulty"
-            dot={false}
-            stroke="#EC5E44"
+          <defs>
+            <linearGradient id="colorPoW" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="35%" stopColor="#b60127" stopOpacity={0.9} />
+              <stop offset="100%" stopColor="#b60127" stopOpacity={0.3} />
+            </linearGradient>
+          </defs>
+          <Area
+            dataKey="hashRate"
+            fill="url(#colorPoW)"
+            fillOpacity={1}
+            stroke="#b60127"
             type="monotone"
             yAxisId="left"
           />
-          <Line
-            dataKey="posDifficulty"
-            dot={false}
-            stroke="#FE9950"
-            type="monotone"
-            yAxisId="right"
-          />
+          <CartesianGrid strokeDasharray="3 3" />
           <Tooltip
-            content={<CustomTooltip labelTime language={this.gui.language} />}
+            content={
+              <CustomTooltip hashRate labelTime language={this.gui.language} />
+            }
           />
           <XAxis
             dataKey="date"
@@ -68,30 +73,17 @@ class Difficulties extends React.Component {
             tick={
               <CustomTick
                 language={this.gui.language}
-                textType="number"
+                textType="hashRate"
                 textX={-5}
                 textY={4}
               />
             }
             yAxisId="left"
           />
-          <YAxis
-            orientation="right"
-            tick={
-              <CustomTick
-                language={this.gui.language}
-                textAnchor="start"
-                textType="number"
-                textX={5}
-                textY={4}
-              />
-            }
-            yAxisId="right"
-          />
-        </LineChart>
+        </AreaChart>
       </ResponsiveContainer>
     )
   }
 }
 
-export default Difficulties
+export default HashRateChart

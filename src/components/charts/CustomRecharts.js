@@ -7,7 +7,7 @@ import moment from 'moment'
  * Custom axis tick.
  * @function CustomTick
  */
-const CustomTick = props => {
+export const CustomTick = props => {
   let value = ''
 
   switch (props.textType) {
@@ -55,7 +55,7 @@ const CustomTick = props => {
  * Custom tooltip.
  * @function CustomTooltip
  */
-const CustomTooltip = props => {
+export const CustomTooltip = props => {
   if (props.active === false) return null
 
   switch (props.tooltipType) {
@@ -118,5 +118,3 @@ const CustomTooltip = props => {
       )
   }
 }
-
-export { CustomTick, CustomTooltip }

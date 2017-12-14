@@ -12,11 +12,11 @@ import {
 import moment from 'moment'
 
 /** Components */
-import { CustomTick, CustomTooltip } from './RechartsCustom'
+import { CustomTick, CustomTooltip } from './CustomRecharts'
 
 @inject('gui', 'statistics')
 @observer
-class RewardsPerDay extends React.Component {
+class DailyRewardChart extends React.Component {
   constructor(props) {
     super(props)
     this.gui = props.gui
@@ -28,7 +28,7 @@ class RewardsPerDay extends React.Component {
     return (
       <ResponsiveContainer height={250} width="100%">
         <BarChart
-          data={this.statistics.rewardsPerDay}
+          data={this.statistics.dailyRewards}
           margin={{ top: 15, right: 20, bottom: 5, left: 20 }}
         >
           <Bar dataKey="stakingReward" fill="#FE9950" stackId="a" />
@@ -60,4 +60,4 @@ class RewardsPerDay extends React.Component {
   }
 }
 
-export default RewardsPerDay
+export default DailyRewardChart

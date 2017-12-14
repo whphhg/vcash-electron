@@ -13,12 +13,12 @@ import {
 import moment from 'moment'
 
 /** Components */
-import { CustomTick, CustomTooltip } from './RechartsCustom'
+import { CustomTick, CustomTooltip } from './CustomRecharts'
 
 @translate(['wallet'])
 @inject('gui', 'statistics')
 @observer
-class RewardSpread extends React.Component {
+class RewardSpreadChart extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
@@ -117,4 +117,4 @@ class RewardSpread extends React.Component {
   }
 }
 
-export default RewardSpread
+export default RewardSpreadChart

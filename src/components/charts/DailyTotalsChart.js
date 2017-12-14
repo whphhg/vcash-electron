@@ -15,12 +15,12 @@ import {
 import moment from 'moment'
 
 /** Components */
-import { CustomTick, CustomTooltip } from './RechartsCustom'
+import { CustomTick, CustomTooltip } from './CustomRecharts'
 
 @translate(['wallet'])
 @inject('gui', 'statistics')
 @observer
-class TransactionStatistics extends React.Component {
+class DailyTotalsChart extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
@@ -116,4 +116,4 @@ class TransactionStatistics extends React.Component {
   }
 }
 
-export default TransactionStatistics
+export default DailyTotalsChart
