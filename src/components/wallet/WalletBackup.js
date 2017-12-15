@@ -4,7 +4,7 @@ import { action, computed, extendObservable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { remote } from 'electron'
 import { join, sep } from 'path'
-import { dataPath } from '../utilities/common'
+import { dataPath } from '../../utilities/common'
 
 /** Ant Design */
 import Button from 'antd/lib/button'

@@ -92,7 +92,7 @@ class PrivateKeyDump extends React.Component {
         <div className="flex-sb" style={{ margin: '15px 0 5px 0' }}>
           <p style={{ width: '140px' }}>{this.t('address')}</p>
           <AutoComplete
-            dataSource={this.wallet.addressList}
+            dataSource={this.wallet.addrKeys}
             filterOption
             getPopupContainer={triggerNode => triggerNode.parentNode}
             onChange={address => this.setProps({ address })}

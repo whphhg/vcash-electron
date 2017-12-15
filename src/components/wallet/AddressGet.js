@@ -9,15 +9,19 @@ import Button from 'antd/lib/button'
 import Input from 'antd/lib/input'
 import Popover from 'antd/lib/popover'
 
-@translate(['wallet'], { wait: true })
-@inject('rpcNext', 'walletNext')
+@translate(['wallet'])
+@inject('rpc', 'wallet')
 @observer
 class AddressGet extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
-    this.rpc = props.rpcNext
-    this.wallet = props.walletNext
+    this.rpc = props.rpc
+    this.wallet = props.wallet
+    this.getNewAddress = this.getNewAddress.bind(this)
+
+    /** Errors that will be shown to the user. */
+    this.errShow = ['accChars', 'keypoolRanOut']
 
     /** Extend the component with observable properties. */
     extendObservable(this, {
@@ -27,20 +31,15 @@ class AddressGet extends React.Component {
       popoverVisible: false
     })
 
-    /** Bind the async function. */
-    this.getNewAddress = this.getNewAddress.bind(this)
-
-    /** Errors that will be shown to the user. */
-    this.errShow = ['accChars', 'keypoolRanOut']
-
     /** Clear new address when the popover gets hidden. */
     reaction(
       () => this.popoverVisible,
       popoverVisible => {
         if (popoverVisible === false) {
-          if (this.address !== '') this.setValues({ address: '' })
+          if (this.address !== '') this.setProps({ address: '' })
         }
-      }
+      },
+      { name: 'AddressGet: popover hidden, clearing new address.' }
     )
   }
 
@@ -58,19 +57,17 @@ class AddressGet extends React.Component {
   }
 
   /**
-   * Set value(s) of observable properties.
-   * @function setValues
-   * @param {object} values - Key value combinations.
+   * Set observable properties.
+   * @function setProps
+   * @param {object} props - Key value combinations.
    */
   @action
-  setValues = values => {
-    Object.keys(values).forEach(key => {
-      this[key] = values[key]
-    })
+  setProps = props => {
+    Object.keys(props).forEach(key => (this[key] = props[key]))
   }
 
   /**
-   * Toggle popover's visibility.
+   * Toggle popover visibility.
    * @function togglePopover
    */
   @action
@@ -86,17 +83,14 @@ class AddressGet extends React.Component {
     const res = await this.rpc.getNewAddress(this.account)
 
     if ('result' in res === true) {
-      /** Set new receiving address. */
-      this.setValues({ address: res.result })
-
-      /** Update account's address list. */
+      this.setProps({ address: res.result })
       this.wallet.updateAddresses([this.account])
     }
 
     if ('error' in res === true) {
       switch (res.error.code) {
         case -12:
-          return this.setValues({ rpcError: 'keypoolRanOut' })
+          return this.setProps({ rpcError: 'keypoolRanOut' })
       }
     }
   }
@@ -110,8 +104,8 @@ class AddressGet extends React.Component {
               dataSource={this.wallet.accountNames}
               filterOption
               getPopupContainer={triggerNode => triggerNode.parentNode}
-              onChange={account => this.setValues({ account })}
-              placeholder={this.t('wallet:accName')}
+              onChange={account => this.setProps({ account })}
+              placeholder={this.t('accName')}
               style={{ width: '100%' }}
               value={this.account}
             />
@@ -126,20 +120,20 @@ class AddressGet extends React.Component {
             <div className="flex-sb" style={{ margin: '5px 0 0 0' }}>
               <p className="red">
                 {this.errShow.includes(this.errorStatus) === true &&
-                  this.t('wallet:' + this.errorStatus)}
+                  this.t(this.errorStatus)}
               </p>
               <Button
                 disabled={this.errorStatus !== ''}
                 onClick={this.getNewAddress}
               >
-                {this.t('wallet:addrGet')}
+                {this.t('addrGet')}
               </Button>
             </div>
           </div>
         }
         onVisibleChange={this.togglePopover}
-        placement="bottomLeft"
-        title={this.t('wallet:addrGetDesc')}
+        placement="topLeft"
+        title={this.t('addrGetDesc')}
         trigger="click"
         visible={this.popoverVisible}
       >

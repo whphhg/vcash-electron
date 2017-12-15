@@ -1,7 +1,7 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { dataPath } from '../utilities/common'
+import { dataPath } from '../../utilities/common'
 
 /** Ant Design */
 import Button from 'antd/lib/button'

@@ -9,15 +9,20 @@ import Button from 'antd/lib/button'
 import Input from 'antd/lib/input'
 import Popover from 'antd/lib/popover'
 
-@translate(['wallet'], { wait: true })
-@inject('rpcNext', 'walletNext')
+@translate(['wallet'])
+@inject('rpc', 'wallet')
 @observer
 class Message extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
-    this.rpc = props.rpcNext
-    this.wallet = props.walletNext
+    this.rpc = props.rpc
+    this.wallet = props.wallet
+    this.signMessage = this.signMessage.bind(this)
+    this.verifyMessage = this.verifyMessage.bind(this)
+
+    /** Errors that will be shown to the user. */
+    this.errShow = ['addrChars', 'addrInvalid', 'addrUnknown', 'sigChars']
 
     /** Extend the component with observable properties. */
     extendObservable(this, {
@@ -29,21 +34,15 @@ class Message extends React.Component {
       popoverVisible: false
     })
 
-    /** Bind the async functions. */
-    this.signMessage = this.signMessage.bind(this)
-    this.verifyMessage = this.verifyMessage.bind(this)
-
-    /** Errors that will be shown to the user. */
-    this.errShow = ['addrChars', 'addrInvalid', 'addrUnknown', 'sigChars']
-
     /** Clear prev. RPC error and verification on address or message update. */
     reaction(
       () => [this.address, this.message],
       ([address, message]) => {
         if (this.rpcError !== '' || this.verified !== null) {
-          this.setValues({ rpcError: '', verified: null })
+          this.setProps({ rpcError: '', verified: null })
         }
-      }
+      },
+      { name: 'Message: inputs changed, clearing RPC error and verification.' }
     )
 
     /** Clear verification on signature update. */
@@ -51,9 +50,10 @@ class Message extends React.Component {
       () => this.signature,
       signature => {
         if (this.verified !== null && signature.setBy === 'user') {
-          this.setValues({ verified: null })
+          this.setProps({ verified: null })
         }
-      }
+      },
+      { name: 'Message: signature changed, clearing verification.' }
     )
   }
 
@@ -77,19 +77,17 @@ class Message extends React.Component {
   }
 
   /**
-   * Set value(s) of observable properties.
-   * @function setValues
-   * @param {object} values - Key value combinations.
+   * Set observable properties.
+   * @function setProps
+   * @param {object} props - Key value combinations.
    */
   @action
-  setValues = values => {
-    Object.keys(values).forEach(key => {
-      this[key] = values[key]
-    })
+  setProps = props => {
+    Object.keys(props).forEach(key => (this[key] = props[key]))
   }
 
   /**
-   * Toggle popover's visibility.
+   * Toggle popover visibility.
    * @function togglePopover
    */
   @action
@@ -98,15 +96,14 @@ class Message extends React.Component {
   }
 
   /**
-   * Sign the message using the address's private key.
+   * Sign the message using the address private key.
    * @function signMessage
    */
   async signMessage() {
     const res = await this.rpc.signMessage(this.address, this.message)
 
     if ('result' in res === true) {
-      /** Set signature and verification status. */
-      this.setValues({
+      this.setProps({
         signature: { value: res.result, setBy: 'rpc' },
         verified: true
       })
@@ -115,15 +112,15 @@ class Message extends React.Component {
     if ('error' in res === true) {
       switch (res.error.code) {
         case -3:
-          return this.setValues({ rpcError: 'addrUnknown' })
+          return this.setProps({ rpcError: 'addrUnknown' })
         case -5:
-          return this.setValues({ rpcError: 'addrInvalid' })
+          return this.setProps({ rpcError: 'addrInvalid' })
       }
     }
   }
 
   /**
-   * Verify the message was signed by the address's private key.
+   * Verify the message was signed by the address private key.
    * @function verifyMessage
    */
   async verifyMessage() {
@@ -134,14 +131,13 @@ class Message extends React.Component {
     )
 
     if ('result' in res === true) {
-      /** Set verification status. */
-      this.setValues({ verified: res.result })
+      this.setProps({ verified: res.result })
     }
 
     if ('error' in res === true) {
       switch (res.error.code) {
         case -5:
-          return this.setValues({ rpcError: 'addrInvalid' })
+          return this.setProps({ rpcError: 'addrInvalid' })
       }
     }
   }
@@ -152,41 +148,39 @@ class Message extends React.Component {
         content={
           <div style={{ width: '400px' }}>
             <AutoComplete
-              dataSource={this.wallet.addressList}
+              dataSource={this.wallet.addrKeys}
               filterOption
               getPopupContainer={triggerNode => triggerNode.parentNode}
-              onChange={address => this.setValues({ address })}
-              placeholder={this.t('wallet:address')}
-              style={{ width: '100%' }}
+              onChange={address => this.setProps({ address })}
+              placeholder={this.t('address')}
+              style={{ width: '100%', margin: '0 0 5px 0' }}
               value={this.address}
             />
             <Input.TextArea
-              autosize={{ minRows: 3 }}
               name="message"
-              onChange={e => this.setValues({ message: e.target.value })}
-              placeholder={this.t('wallet:msg')}
-              style={{ margin: '5px 0 0 0' }}
+              onChange={e => this.setProps({ message: e.target.value })}
+              placeholder={this.t('msg')}
               value={this.message}
             />
             <Input.TextArea
-              autosize={{ minRows: 2, maxRows: 2 }}
               className={
                 this.verified === null
                   ? ''
                   : this.verified === true ? 'green' : 'red'
               }
               onChange={e =>
-                this.setValues({
+                this.setProps({
                   signature: { value: e.target.value, setBy: 'user' }
-                })}
-              placeholder={this.t('wallet:msgSignature')}
+                })
+              }
+              placeholder={this.t('msgSignature')}
               style={{ margin: '5px 0 5px 0' }}
               value={this.signature.value}
             />
             <div className="flex-sb" style={{ margin: '5px 0 0 0' }}>
               <p className="red">
                 {this.errShow.includes(this.errorStatus) === true &&
-                  this.t('wallet:' + this.errorStatus)}
+                  this.t(this.errorStatus)}
               </p>
               {this.signature.value === '' && (
                 <Button
@@ -195,7 +189,7 @@ class Message extends React.Component {
                   }
                   onClick={this.signMessage}
                 >
-                  {this.t('wallet:msgSign')}
+                  {this.t('msgSign')}
                 </Button>
               )}
               {this.signature.value !== '' && (
@@ -203,15 +197,15 @@ class Message extends React.Component {
                   disabled={this.errorStatus !== ''}
                   onClick={this.verifyMessage}
                 >
-                  {this.t('wallet:msgVerify')}
+                  {this.t('msgVerify')}
                 </Button>
               )}
             </div>
           </div>
         }
         onVisibleChange={this.togglePopover}
-        placement="bottomLeft"
-        title={this.t('wallet:msgDesc')}
+        placement="topLeft"
+        title={this.t('msgDesc')}
         trigger="click"
         visible={this.popoverVisible}
       >

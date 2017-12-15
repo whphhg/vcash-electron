@@ -82,6 +82,7 @@ class PrivateKeyImport extends React.Component {
 
     if ('result' in res === true) {
       this.wallet.updateAddresses()
+      this.wallet.updateWallet(true)
       message.success(this.t('pkImported'))
     }
 
