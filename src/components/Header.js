@@ -1,14 +1,13 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { withRouter } from 'react-router-dom'
 import { inject, observer } from 'mobx-react'
 
 /** Ant Design */
 import Popover from 'antd/lib/popover'
 
 /** Components */
-import WalletLock from './WalletLock'
-import WalletUnlock from './WalletUnlock'
+import WalletLock from './wallet/WalletLock'
+import WalletUnlock from './wallet/WalletUnlock'
 
 @translate(['wallet'])
 @inject('connections', 'gui', 'rates', 'wallet')
@@ -25,7 +24,6 @@ class Header extends React.Component {
 
   render() {
     const { average, local } = this.rates
-
     return (
       <div className="flex-sb" id="Header">
         <div className="flex">
@@ -75,7 +73,6 @@ class Header extends React.Component {
                       </p>
                     </div>
                   )}
-
                   {this.wallet.info.stake > 0 && (
                     <div className="flex-sb">
                       <p>{this.t('staking')}</p>
@@ -89,7 +86,6 @@ class Header extends React.Component {
                       </p>
                     </div>
                   )}
-
                   {this.wallet.info.newmint > 0 && (
                     <div className="flex-sb">
                       <p>{this.t('immature')}</p>
@@ -122,7 +118,6 @@ class Header extends React.Component {
               </div>
             </Popover>
           )}
-
           {this.wallet.isEncrypted === true && (
             <div>
               <WalletLock />
@@ -135,4 +130,4 @@ class Header extends React.Component {
   }
 }
 
-export default withRouter(Header)
+export default Header
