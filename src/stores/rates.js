@@ -1,10 +1,15 @@
 import { action, computed, extendObservable } from 'mobx'
 import { getItem, setItem } from '../utilities/localStorage'
 
-/** Required store instances. */
+/** Store instance */
 import gui from './gui'
 
 class Rates {
+  /**
+   * @prop {object} bitcoinAverage - Bitcoin average price index.
+   * @prop {object} bittrex - Bittrex XVC ticker.
+   * @prop {object} poloniex - Poloniex XVC ticker.
+   */
   constructor() {
     extendObservable(this, {
       bitcoinAverage: getItem('bitcoinAverage') || { rates: {}, updated: 0 },
@@ -52,7 +57,7 @@ class Rates {
    */
   @computed
   get local() {
-    if (this.bitcoinAverage.rates.hasOwnProperty(gui.localCurrency) === true) {
+    if (gui.localCurrency in this.bitcoinAverage.rates === true) {
       return this.bitcoinAverage.rates[gui.localCurrency]
     }
 
@@ -98,7 +103,7 @@ class Rates {
   @action
   setBittrex(ticker) {
     /** Set only if ticker is an object and result exists. */
-    if (ticker === Object(ticker) && ticker.hasOwnProperty('result') === true) {
+    if (ticker === Object(ticker) && 'result' in ticker === true) {
       this.bittrex = { ...ticker.result[0], updated: new Date() }
     }
   }
@@ -111,10 +116,7 @@ class Rates {
   @action
   setPoloniex(ticker) {
     /** Set only if ticker is an object and BTC_XVC pair exists. */
-    if (
-      ticker === Object(ticker) &&
-      ticker.hasOwnProperty('BTC_XVC') === true
-    ) {
+    if (ticker === Object(ticker) && 'BTC_XVC' in ticker === true) {
       this.poloniex = { ...ticker['BTC_XVC'], updated: new Date() }
     }
   }
@@ -183,9 +185,6 @@ class Rates {
 /** Initialize a new globally used store. */
 const rates = new Rates()
 
-/**
- * Export initialized store as default export,
- * and store class as named export.
- */
+/** Export initialized store as default export & store class as named export. */
 export default rates
 export { Rates }
