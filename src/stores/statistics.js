@@ -1,51 +1,92 @@
-import { action, computed, extendObservable, reaction } from 'mobx'
+import { action, computed, extendObservable, reaction, runInAction } from 'mobx'
 import { coin } from '../utilities/common'
 
 class Statistics {
   /**
    * @param {object} rpc - Connection instance RPC store.
    * @param {object} wallet - Connection instance Wallet store.
-   * @prop {number|null} updateTimeout - setNetworkByMinute timeout id.
-   * @prop {array} networkByMinute - Hash rate and difficulty in 1min interval.
+   * @prop {object} timeouts - Update loops timeouts.
+   * @prop {array} networkRates - Hash rate and difficulties in 1 min interval.
+   * @prop {array} recentBlocks - Short descriptions of recent blocks.
    */
   constructor(rpc, wallet) {
     this.rpc = rpc
     this.wallet = wallet
-    this.updateTimeout = null
+    this.timeouts = { networkRates: null, recentBlocks: null }
 
     /** Extend the store with observable properties. */
-    extendObservable(this, { networkByMinute: [] })
+    extendObservable(this, { networkRates: [], recentBlocks: [] })
 
     /** Start update loop or cleanup after RPC connectivity change. */
     reaction(
       () => this.rpc.ready,
       ready => {
         if (ready === true) {
-          this.updateTimeout = setTimeout(
-            () => this.setNetworkByMinute(),
+          this.timeouts.networkRates = setTimeout(
+            () => this.setNetworkRates(),
             3 * 1000
           )
         }
 
         if (ready === false) {
-          /** Clear auto-update timeout when RPC becomes unreachable. */
-          clearTimeout(this.updateTimeout)
+          /** Clear auto-update timeouts when RPC becomes unreachable. */
+          clearTimeout(this.timeouts.networkRates)
+          clearTimeout(this.timeouts.recentBlocks)
         }
       },
       { name: 'Statistics: RPC ready changed, adjusting update loops.' }
     )
+
+    /** Update recent block list on every block change. */
+    reaction(
+      () => this.wallet.info.blocks,
+      block => this.updateRecentBlocks(),
+      { name: 'Statistics: new block found, updating recent block list.' }
+    )
   }
 
   /**
-   * Get saved network statistics since GUI launch.
-   * @function network
-   * @return {array} Network statistics by minute.
+   * Get network rewards grouped by day for the last 31 days.
+   * @function dailyRewards
+   * @return {array} Network rewards.
    */
   @computed
-  get network() {
-    return this.networkByMinute.length > 1
-      ? [...this.networkByMinute]
-      : [...this.networkByMinute, ...this.networkByMinute]
+  get dailyRewards() {
+    /** Threshold for including transactions (today - 31 days). */
+    const threshold = new Date().getTime() - 31 * 24 * 60 * 60 * 1000
+
+    /** Populate the map with the last 31 dates. */
+    let rewards = new Map()
+
+    for (let i = 1; i <= 31; i++) {
+      const timestamp = threshold + i * 24 * 60 * 60 * 1000
+      const date = new Date(timestamp).toJSON().split('T')[0]
+
+      rewards.set(date, {
+        date: timestamp,
+        stakingReward: 0,
+        miningReward: 0,
+        incentiveReward: 0
+      })
+    }
+
+    /** Add to reward count if the transaction is in the last 31 days window. */
+    for (let txid of this.wallet.generated) {
+      const tx = this.wallet.tx.get(txid)
+
+      /** Break the loop once we're below the threshold. */
+      if (tx.time < threshold) break
+
+      /** Increase reward count. */
+      const date = new Date(tx.time).toJSON().split('T')[0]
+
+      if (rewards.has(date) === true) {
+        let total = rewards.get(date)
+        total[tx.category] += 1
+      }
+    }
+
+    return [...rewards.values()]
   }
 
   /**
@@ -97,47 +138,15 @@ class Statistics {
   }
 
   /**
-   * Get network rewards grouped per day for the last 31 days.
-   * @function rewardsPerDay
-   * @return {array} Network rewards.
+   * Get saved network statistics.
+   * @function network
+   * @return {array} Network statistics by minute.
    */
   @computed
-  get rewardsPerDay() {
-    /** Threshold for including transactions (today - 31 days). */
-    const threshold = new Date().getTime() - 31 * 24 * 60 * 60 * 1000
-
-    /** Populate the map with the last 31 dates. */
-    let rewards = new Map()
-
-    for (let i = 1; i <= 31; i++) {
-      const timestamp = threshold + i * 24 * 60 * 60 * 1000
-      const date = new Date(timestamp).toJSON().split('T')[0]
-
-      rewards.set(date, {
-        date: timestamp,
-        stakingReward: 0,
-        miningReward: 0,
-        incentiveReward: 0
-      })
-    }
-
-    /** Add to reward count if the transaction is in the last 31 days window. */
-    for (let txid of this.wallet.generated) {
-      const tx = this.wallet.tx.get(txid)
-
-      /** Break the loop once we're below the threshold. */
-      if (tx.time < threshold) break
-
-      /** Increase reward count. */
-      const date = new Date(tx.time).toJSON().split('T')[0]
-
-      if (rewards.has(date) === true) {
-        let total = rewards.get(date)
-        total[tx.category] += 1
-      }
-    }
-
-    return [...rewards.values()]
+  get network() {
+    return this.networkRates.length > 1
+      ? [...this.networkRates]
+      : [...this.networkRates, ...this.networkRates]
   }
 
   /**
@@ -185,24 +194,72 @@ class Statistics {
 
   /**
    * Save current network hash rate, PoW and PoS difficulties.
-   * @function setNetworkByMinute
+   * @function setNetworkRates
    */
   @action
-  setNetworkByMinute() {
-    this.networkByMinute.push({
+  setNetworkRates() {
+    this.networkRates.push({
       date: new Date().getTime(),
+      hashRate: this.wallet.info.networkhashps,
       posDifficulty: this.wallet.info['proof-of-stake'],
-      powDifficulty: this.wallet.info['proof-of-work'],
-      hashRate: this.wallet.info.networkhashps
+      powDifficulty: this.wallet.info['proof-of-work']
     })
 
     /** Start a new timeout while RPC is ready. */
     if (this.rpc.ready === true) {
-      this.updateTimeout = setTimeout(
-        () => this.setNetworkByMinute(),
+      this.timeouts.networkRates = setTimeout(
+        () => this.setNetworkRates(),
         60 * 1000
       )
     }
+  }
+
+  /**
+   * Add latest block(s) to the recent blocks list.
+   * @function updateRecentBlocks
+   */
+  @action
+  async updateRecentBlocks() {
+    const blocks = this.recentBlocks.length === 0 ? this.wallet.info.blocks : -1
+    const startFrom = blocks === -1 ? this.recentBlocks[0].height + 1 : blocks
+
+    /** Add new blocks since last update. */
+    let lookupHashes = []
+
+    for (let i = startFrom; i <= this.wallet.info.blocks; i++) {
+      lookupHashes.push({ method: 'getblockhash', params: [i] })
+    }
+
+    /** Get block hashes. */
+    const resHashes = await this.rpc.batch(lookupHashes)
+    if ('res' in resHashes === false) return
+
+    /** Get blocks. */
+    const lookupBlocks = resHashes.res.reduce((lookupBlocks, hash) => {
+      if ('result' in hash === true) {
+        lookupBlocks.push({ method: 'getblock', params: [hash.result] })
+      }
+
+      return lookupBlocks
+    }, [])
+
+    const resBlocks = await this.rpc.batch(lookupBlocks)
+    if ('res' in resBlocks === false) return
+
+    /** Update recent blocks. */
+    runInAction(() => {
+      for (let block of resBlocks.res) {
+        if ('result' in block === true) {
+          this.recentBlocks.unshift({
+            height: block.result.height,
+            size: block.result.size,
+            time: block.result.time * 1000,
+            txCount: block.result.tx.length,
+            type: block.result.flags === 'proof-of-work' ? 'PoW' : 'PoS'
+          })
+        }
+      }
+    })
   }
 }
 
