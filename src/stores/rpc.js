@@ -87,10 +87,10 @@ class RPC {
       if (res.length === 1 && single === true) return res[0]
       return { res, req }
     } catch (error) {
-      console.error('rpc.batch:', error.message)
+      console.error('rpc.batch:', error.message, req)
 
       /** Reject invalid responses without altering the RPC status. */
-      if (error.message.indexOf('Unexpected token') !== -1) return {}
+      if (error.message.indexOf('Unexpected') !== -1) return {}
 
       /** Toggle connection RPC status if not false. */
       if (this.connection.status.rpc !== false || this.testTimeout === null) {
