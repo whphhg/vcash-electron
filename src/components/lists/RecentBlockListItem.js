@@ -14,7 +14,9 @@ const RecentBlockListItem = observer(props => {
         <p style={{ minWidth: '80px' }}>
           {humanReadable(block.size, true, 'B', props.gui.language)}
         </p>
-        <p style={{ minWidth: '80px' }}>{block.txCount}</p>
+        <p style={{ minWidth: '80px' }}>
+          {new Intl.NumberFormat(props.gui.language).format(block.txCount)}
+        </p>
       </div>
     </div>
   )

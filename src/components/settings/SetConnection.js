@@ -55,7 +55,7 @@ class SetConnection extends React.Component {
     const { status, startStatus, type } = this.connections.viewing
     return (
       <div id="Connection">
-        <div id="Header" className="flex">
+        <div className="flex" id="Header">
           <p style={{ fontWeight: 500 }}>{this.t('connManager')}</p>
         </div>
         <div className="flex-sb" style={{ alignItems: 'flex-start' }}>
