@@ -7,7 +7,10 @@ import message from 'antd/lib/message'
 import notification from 'antd/lib/notification'
 
 /** Components */
-import Maintenance from './Maintenance'
+import Maintenance from './screens/Maintenance'
+import Network from './screens/Network'
+import Send from './screens/Send'
+import Transactions from './screens/Transactions'
 
 /** Set notification and message top margin. */
 notification.config({ top: 35 })
@@ -25,6 +28,9 @@ class Root extends React.Component {
     return (
       <Provider {...this.connections.viewing.stores}>
         <div>
+          <Route path="/:id/transactions" component={Transactions} />
+          <Route path="/:id/send" component={Send} />
+          <Route path="/:id/network" component={Network} />
           <Route path="/:id/maintenance" component={Maintenance} />
         </div>
       </Provider>
