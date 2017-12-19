@@ -20,7 +20,7 @@ class WalletEncrypt extends React.Component {
     this.encryptWallet = this.encryptWallet.bind(this)
 
     /** Errors that will be shown to the user. */
-    this.errShow = ['passphrasesNotMatching']
+    this.errShow = ['ppNotMatching']
 
     /** Extend the component with observable properties. */
     extendObservable(this, { passphrase: '', repeat: '' })
@@ -37,7 +37,7 @@ class WalletEncrypt extends React.Component {
 
     if (len.pass < 1 || len.repeat < 1) return 'emptyFields'
     if (len.pass !== len.repeat) return 'differentLengths'
-    if (this.passphrase !== this.repeat) return 'passphrasesNotMatching'
+    if (this.passphrase !== this.repeat) return 'ppNotMatching'
     return ''
   }
 
@@ -81,20 +81,20 @@ class WalletEncrypt extends React.Component {
           <p>{this.t('encryptDesc')}</p>
         </div>
         <div className="flex-sb" style={{ margin: '15px 0 5px 0' }}>
-          <p style={{ width: '140px' }}>{this.t('passphrase')}</p>
+          <p style={{ width: '140px' }}>{this.t('pp')}</p>
           <Input
             onChange={e => this.setProps({ passphrase: e.target.value })}
-            placeholder={this.t('passphraseDesc')}
+            placeholder={this.t('ppDesc')}
             style={{ flex: 1 }}
             type="password"
             value={this.passphrase}
           />
         </div>
         <div className="flex-sb">
-          <p style={{ width: '140px' }}>{this.t('passphraseRepeat')}</p>
+          <p style={{ width: '140px' }}>{this.t('ppRepeat')}</p>
           <Input
             onChange={e => this.setProps({ repeat: e.target.value })}
-            placeholder={this.t('passphraseRepeatDesc')}
+            placeholder={this.t('ppRepeatDesc')}
             style={{ flex: 1 }}
             type="password"
             value={this.repeat}

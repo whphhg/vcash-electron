@@ -20,11 +20,7 @@ class WalletPassphraseChange extends React.Component {
     this.walletPassphraseChange = this.walletPassphraseChange.bind(this)
 
     /** Errors that will be shown to the user. */
-    this.errShow = [
-      'passphraseIncorrect',
-      'passphrasesEqual',
-      'passphrasesNotMatching'
-    ]
+    this.errShow = ['ppIncorrect', 'ppEqual', 'ppNotMatching']
 
     /** Extend the component with observable properties. */
     extendObservable(this, { current: '', next: '', repeat: '', rpcError: '' })
@@ -53,9 +49,9 @@ class WalletPassphraseChange extends React.Component {
     }
 
     if (len.old < 1 || len.next < 1 || len.repeat < 1) return 'emptyFields'
-    if (this.next === this.current) return 'passphrasesEqual'
+    if (this.next === this.current) return 'ppEqual'
     if (len.next !== len.repeat) return 'differentLengths'
-    if (this.next !== this.repeat) return 'passphrasesNotMatching'
+    if (this.next !== this.repeat) return 'ppNotMatching'
     if (this.rpcError !== '') return this.rpcError
     return ''
   }
@@ -80,13 +76,13 @@ class WalletPassphraseChange extends React.Component {
     if ('result' in res) {
       this.wallet.updateLockStatus()
       this.setProps({ current: '', next: '', repeat: '' })
-      message.success(this.t('passphraseChanged'))
+      message.success(this.t('ppChanged'))
     }
 
     if ('error' in res) {
       switch (res.error.code) {
         case -14:
-          return this.setProps({ rpcError: 'passphraseIncorrect' })
+          return this.setProps({ rpcError: 'ppIncorrect' })
       }
     }
   }
@@ -98,33 +94,33 @@ class WalletPassphraseChange extends React.Component {
       <div>
         <div className="flex">
           <i className="material-icons md-16">vpn_key</i>
-          <p>{this.t('passphraseChangeDesc')}</p>
+          <p>{this.t('ppChangeDesc')}</p>
         </div>
         <div className="flex-sb" style={{ margin: '15px 0 5px 0' }}>
-          <p style={{ width: '140px' }}>{this.t('passphrase')}</p>
+          <p style={{ width: '140px' }}>{this.t('pp')}</p>
           <Input
             onChange={e => this.setProps({ current: e.target.value })}
-            placeholder={this.t('passphraseDesc')}
+            placeholder={this.t('ppDesc')}
             style={{ flex: 1 }}
             type="password"
             value={this.current}
           />
         </div>
         <div className="flex-sb">
-          <p style={{ width: '140px' }}>{this.t('passphraseNew')}</p>
+          <p style={{ width: '140px' }}>{this.t('ppNew')}</p>
           <Input
             onChange={e => this.setProps({ next: e.target.value })}
-            placeholder={this.t('passphraseNewDesc')}
+            placeholder={this.t('ppNewDesc')}
             style={{ flex: 1 }}
             type="password"
             value={this.next}
           />
         </div>
         <div className="flex-sb" style={{ margin: '5px 0 10px 0' }}>
-          <p style={{ width: '140px' }}>{this.t('passphraseRepeat')}</p>
+          <p style={{ width: '140px' }}>{this.t('ppRepeat')}</p>
           <Input
             onChange={e => this.setProps({ repeat: e.target.value })}
-            placeholder={this.t('passphraseRepeatDesc')}
+            placeholder={this.t('ppRepeatDesc')}
             style={{ flex: 1 }}
             type="password"
             value={this.repeat}
@@ -139,7 +135,7 @@ class WalletPassphraseChange extends React.Component {
             disabled={this.errorStatus !== ''}
             onClick={this.walletPassphraseChange}
           >
-            {this.t('passphraseChange')}
+            {this.t('ppChange')}
           </Button>
         </div>
       </div>

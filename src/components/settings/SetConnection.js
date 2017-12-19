@@ -121,7 +121,7 @@ class SetConnection extends React.Component {
                   <p>{this.t('port')}</p>
                   <p>{this.t('rpcRemote')}</p>
                   <p>{this.t('user')}</p>
-                  <p>{this.t('passphrase')}</p>
+                  <p>{this.t('pp')}</p>
                   <p>{this.t('keyFile')}</p>
                 </div>
                 <div className="flex inputs" style={{ flex: 1 }}>
@@ -164,7 +164,7 @@ class SetConnection extends React.Component {
                     disabled={status.active === true || type !== 'ssh'}
                     name="passphrase"
                     onChange={this.setProp}
-                    placeholder={this.t('passphrase')}
+                    placeholder={this.t('pp')}
                     size="small"
                     style={{ margin: '0 0 5px 0' }}
                     type="password"

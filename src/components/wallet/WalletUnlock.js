@@ -22,7 +22,7 @@ class WalletUnlock extends React.Component {
     this.walletPassphrase = this.walletPassphrase.bind(this)
 
     /** Errors that will be shown to the user. */
-    this.errShow = ['passphraseIncorrect']
+    this.errShow = ['ppIncorrect']
 
     /** Extend the component with observable properties. */
     extendObservable(this, {
@@ -99,7 +99,7 @@ class WalletUnlock extends React.Component {
     if ('error' in res === true) {
       switch (res.error.code) {
         case -14:
-          return this.setProps({ rpcError: 'passphraseIncorrect' })
+          return this.setProps({ rpcError: 'ppIncorrect' })
       }
     }
   }
@@ -118,7 +118,7 @@ class WalletUnlock extends React.Component {
           <Input
             onChange={e => this.setProps({ passphrase: e.target.value })}
             onPressEnter={this.walletPassphrase}
-            placeholder={this.t('passphraseDesc')}
+            placeholder={this.t('ppDesc')}
             style={{ width: '100%', margin: '0 0 5px 0' }}
             type="password"
             value={this.passphrase}

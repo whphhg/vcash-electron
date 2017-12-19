@@ -18,7 +18,7 @@ class NetworkInfo extends React.Component {
     return (
       <div className="flex" id="NetworkInfo">
         <div style={{ margin: '0 50px 0 0' }}>
-          <div className="network-info">
+          <div className="items">
             <div className="flex">
               <i className="material-icons md-16">hearing</i>
               <p>{this.t('listeningOn')}</p>
@@ -32,7 +32,7 @@ class NetworkInfo extends React.Component {
               <p>{this.t('testnet')}</p>
             </div>
           </div>
-          <div className="network-info">
+          <div className="items">
             <div className="flex">
               <i className="material-icons md-16">account_balance</i>
               <p>{this.t('moneySupply')}</p>
@@ -46,7 +46,7 @@ class NetworkInfo extends React.Component {
               <p>{this.t('relayFee')}</p>
             </div>
           </div>
-          <div className="network-info">
+          <div className="items">
             <div className="flex">
               <i className="material-icons md-16">grid_on</i>
               <p>{this.t('currentBlockSize')}</p>
@@ -60,7 +60,7 @@ class NetworkInfo extends React.Component {
               <p>{this.t('pooledTxs')}</p>
             </div>
           </div>
-          <div className="network-info">
+          <div className="items">
             <div className="flex">
               <i className="material-icons md-16">network_check</i>
               <p>{this.t('hashRate')}</p>
@@ -76,7 +76,7 @@ class NetworkInfo extends React.Component {
           </div>
         </div>
         <div>
-          <div className="network-info">
+          <div className="items">
             <p>
               {this.wallet.info.ip}:{this.wallet.info.port}
             </p>
@@ -85,7 +85,7 @@ class NetworkInfo extends React.Component {
             </p>
             <p>{this.t(this.wallet.info.testnet === true ? 'yes' : 'no')}</p>
           </div>
-          <div className="network-info">
+          <div className="items">
             <p>
               {new Intl.NumberFormat(this.gui.language, {
                 maximumFractionDigits: 0
@@ -95,7 +95,7 @@ class NetworkInfo extends React.Component {
             <p>{this.wallet.info.paytxfee} XVC / kB</p>
             <p>{this.wallet.info.relayfee} XVC / kB</p>
           </div>
-          <div className="network-info">
+          <div className="items">
             <p>
               {humanReadable(
                 this.wallet.info.currentblocksize,
@@ -107,7 +107,7 @@ class NetworkInfo extends React.Component {
             <p>{this.wallet.info.currentblocktx}</p>
             <p>{this.wallet.info.pooledtx}</p>
           </div>
-          <div className="network-info">
+          <div className="items">
             <p>
               {humanReadable(
                 this.wallet.info.networkhashps,
