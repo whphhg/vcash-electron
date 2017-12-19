@@ -8,14 +8,13 @@ import Popover from 'antd/lib/popover'
 import Switch from 'antd/lib/switch'
 
 @translate(['wallet'])
-@inject('search', 'wallet')
+@inject('search')
 @observer
 class TransactionFilter extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
     this.search = props.search
-    this.wallet = props.wallet
   }
 
   /**
