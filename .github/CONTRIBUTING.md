@@ -19,16 +19,16 @@ source code on any changes to the files in the `src/` directory.
     npm install
     npm run babel-watch
 
-You can now run the GUI using `npm run gui`. Depending on the size of your
+You can now run the GUI using `npm start`. Depending on the size of your
 changes you might also require development tools which are enabled when using
 `npm run dev` or `npm run dev-win` on Windows.
 
-    npm run gui
+    npm start
     npm run dev (Linux and macOS)
     npm run dev-win (Windows)
 
 Then [download](https://vcash.info) and launch the latest daemon, or skip this
-part if you've already got a daemon or GUI bundled with a daemon running.
+step if you've already got a daemon or GUI bundled with a daemon running.
 This ensures the wallet will keep running while you restart the GUI to look at
 the changes you've made.
 
@@ -54,7 +54,7 @@ and the second part by using the `ISO 3166 Alpha-2 code`
 Delimit the two parts with a dash `-`.
 
 The final step is to open `src/stores/gui.js` and add your translation to the
-[languages](https://github.com/openvcash/vcash-electron/blob/master/src/stores/gui.js#L26-L33)
+[languages](https://github.com/openvcash/vcash-electron/blob/master/src/stores/gui.js#L20-L25)
 array. Please add it in alphabetical order (by name) and use 6 spaces to indent
 the line.
 

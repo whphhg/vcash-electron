@@ -18,9 +18,8 @@ the latest release [here](https://github.com/openvcash/vcash-electron/releases).
 
 ## Install from source
 Make sure you have installed `git` and the latest version of
-[Node.js](https://nodejs.org/en/download/current/), then clone this repository
-using `git clone`, move to the cloned directory using `cd vcash-electron/` and
-install Node.js dependencies using `npm install`.
+[Node.js](https://nodejs.org/en/download/current/), then clone this repository,
+move to the cloned directory and install Node.js dependencies.
 
     git clone https://github.com/openvcash/vcash-electron.git
     cd vcash-electron/
@@ -31,28 +30,27 @@ After the dependency installation is completed, transform the source code using
 changes to the files in the `src/` directory.
 
     npm run babel (transform once)
-    npm run babel-watch (auto-transform on changes)
+    npm run babel-watch (auto-transform on changes to `src/`)
 
-You can now run the GUI using `npm run gui`, or if you want to use development
+You can now run the GUI using `npm start`, or if you want to use development
 tools, using `npm run dev` or `npm run dev-win` on Windows.
 
-    npm run gui
+    npm start
     npm run dev (Linux and macOS)
     npm run dev-win (Windows)
 
 ## Build and package for Linux, macOS and Windows
 [Download](https://vcash.info/) the latest daemon for your platform
-to the `build/bin/` directory and rename it to either `vcashd-ia32` or
-`vcashd-x64`, depending on the arch. The `build/bin/` directory gets bundled
-with the GUI when you run any of the `npm run build-*` scripts, and is
-checked on start-up by
+to the `build/bin/` directory and rename it to `vcashd-ia32` or `vcashd-x64`,
+depending on the arch. The `build/bin/` directory gets bundled with the GUI
+when you run any of the `npm run build-*` scripts and is checked on startup by
 [daemon.js](https://github.com/openvcash/vcash-electron/blob/master/src/stores/daemon.js)
 which launches the daemon if it matches the correct platform and arch.
 
 Packages are created according to the
 [.buildrc](https://github.com/openvcash/vcash-electron/blob/master/.buildrc)
-config and `scripts` options in
-[package.json](https://github.com/openvcash/vcash-electron/blob/master/package.json#L18-L23),
+config and highlighted `scripts` options in
+[package.json](https://github.com/openvcash/vcash-electron/blob/master/package.json#L13-L17),
 about which you can read more
 [here](https://www.electron.build/configuration/configuration).
 
