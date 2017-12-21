@@ -115,7 +115,7 @@ class PrivateKeyImport extends React.Component {
         <div className="flex-sb">
           <p style={{ width: '140px' }}>{this.t('acc')}</p>
           <AutoComplete
-            dataSource={this.wallet.accountNames}
+            dataSource={this.wallet.accNames}
             filterOption
             getPopupContainer={triggerNode => triggerNode.parentNode}
             onChange={account => this.setProps({ account })}

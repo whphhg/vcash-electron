@@ -101,7 +101,7 @@ class AddressGet extends React.Component {
         content={
           <div style={{ width: '400px' }}>
             <AutoComplete
-              dataSource={this.wallet.accountNames}
+              dataSource={this.wallet.accNames}
               filterOption
               getPopupContainer={triggerNode => triggerNode.parentNode}
               onChange={account => this.setProps({ account })}

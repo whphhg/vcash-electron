@@ -115,7 +115,7 @@ class ChainBlender extends React.Component {
         }
       >
         <Button disabled={this.wallet.isLocked === true} size="small">
-          <i className="material-icons md-16">shuffle</i>
+          <i className="flex-center material-icons md-16">shuffle</i>
         </Button>
       </Popover>
     )

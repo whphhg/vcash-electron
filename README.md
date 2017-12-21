@@ -25,12 +25,12 @@ move to the cloned directory and install Node.js dependencies.
     cd vcash-electron/
     npm install
 
-After the dependency installation is completed, transform the source code using
+After the installation is completed, transform the source code using
 `npm run babel` or `npm run babel-watch` to keep auto-transforming on any
 changes to the files in the `src/` directory.
 
     npm run babel (transform once)
-    npm run babel-watch (auto-transform on changes to `src/`)
+    npm run babel-watch (auto-transform on changes to src/)
 
 You can now run the GUI using `npm start`, or if you want to use development
 tools, using `npm run dev` or `npm run dev-win` on Windows.

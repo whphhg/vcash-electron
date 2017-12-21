@@ -74,7 +74,7 @@ class AddressFilter extends React.Component {
         }
       >
         <Button size="small">
-          <i className="material-icons md-16">filter_list</i>
+          <i className="flex-center material-icons md-16">filter_list</i>
         </Button>
       </Popover>
     )
