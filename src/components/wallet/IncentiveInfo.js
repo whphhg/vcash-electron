@@ -21,7 +21,7 @@ class IncentiveInfo extends React.Component {
     const { walletaddress } = info
 
     return (
-      <div>
+      <div style={{ lineHeight: '20px' }}>
         <Tooltip placement="bottom" title={this.t('addrDefault')}>
           <i className="flex-center material-icons md-16">account_circle</i>
         </Tooltip>
@@ -31,46 +31,41 @@ class IncentiveInfo extends React.Component {
           </p>
         </div>
         <hr />
-        <div className="flex-sb" style={{ padding: '0px 10px 5px 10px' }}>
-          <div className="flex">
-            <i className="material-icons md-16">gavel</i>
-            <p>{this.t('voteCandidate')}</p>
-          </div>
-          <p
-            className={info.votecandidate === true ? 'green' : 'red'}
-            style={{ fontWeight: 500 }}
-          >
-            {this.t(info.votecandidate === true ? 'yes' : 'no')}
-          </p>
-        </div>
-        <div className="flex-sb" style={{ padding: '0 10px 5px 10px' }}>
-          <div className="flex">
-            <i className="material-icons md-16">event_seat</i>
-            <p>{this.t('collateralizedNodes')}</p>
-          </div>
-          <p style={{ fontWeight: '500' }}>
-            {info.collateralized} / {info.endpoints.length}
-          </p>
-        </div>
         <div className="flex-sb" style={{ padding: '0 10px 10px 10px' }}>
-          <div className="flex">
-            <i className="material-icons md-16">redeem</i>
-            <p style={{ margin: '0 10px 0 5px' }}>
-              {this.t('collateralBalance')}
+          <div>
+            <div className="flex">
+              <i className="material-icons md-16">gavel</i>
+              <p>{this.t('voteCandidate')}</p>
+            </div>
+            <div className="flex">
+              <i className="material-icons md-16">event_seat</i>
+              <p>{this.t('collateralizedNodes')}</p>
+            </div>
+            <div className="flex">
+              <i className="material-icons md-16">redeem</i>
+              <p>{this.t('collateralBalance')}</p>
+            </div>
+          </div>
+          <div style={{ fontWeight: 500, textAlign: 'right' }}>
+            <p className={info.votecandidate === true ? 'green' : 'red'}>
+              {this.t(info.votecandidate === true ? 'yes' : 'no')}
+            </p>
+            <p>
+              {info.collateralized} / {info.endpoints.length}
+            </p>
+            <p>
+              <span className={info.votecandidate === true ? 'green' : 'red'}>
+                {new Intl.NumberFormat(this.gui.language, {
+                  maximumFractionDigits: 6
+                }).format(info.collateralbalance)}
+              </span>{' '}
+              /{' '}
+              {new Intl.NumberFormat(this.gui.language).format(
+                info.collateralrequired
+              )}{' '}
+              XVC
             </p>
           </div>
-          <p style={{ fontWeight: 500 }}>
-            <span className={info.votecandidate === true ? 'green' : 'red'}>
-              {new Intl.NumberFormat(this.gui.language, {
-                maximumFractionDigits: 6
-              }).format(info.collateralbalance)}
-            </span>{' '}
-            /{' '}
-            {new Intl.NumberFormat(this.gui.language).format(
-              info.collateralrequired
-            )}{' '}
-            XVC
-          </p>
         </div>
       </div>
     )

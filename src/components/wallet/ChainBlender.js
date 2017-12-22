@@ -68,12 +68,12 @@ class ChainBlender extends React.Component {
         }
         content={
           <div className="flex-sb" style={{ width: '250px' }}>
-            <div>
-              <div className="flex" style={{ padding: '0 0 2px 0' }}>
+            <div style={{ lineHeight: '18px' }}>
+              <div className="flex">
                 <i className="material-icons md-16">account_balance_wallet</i>
                 <p>{this.t('balanceOnChain')}</p>
               </div>
-              <div className="flex" style={{ padding: '0 0 2px 0' }}>
+              <div className="flex">
                 <i className="material-icons md-16">shuffle</i>
                 <p>
                   {this.t('blended')} (
@@ -88,15 +88,15 @@ class ChainBlender extends React.Component {
                 <p>{this.t('denominated')}</p>
               </div>
             </div>
-            <div style={{ fontWeight: 500 }}>
-              <p style={{ padding: '0 0 2px 0' }}>
+            <div style={{ fontWeight: 500, lineHeight: '18px' }}>
+              <p>
                 {new Intl.NumberFormat(this.gui.language, {
                   maximumFractionDigits: 6,
                   minimumFractionDigits: 6
                 }).format(this.wallet.info.balanceOnChain)}{' '}
                 XVC
               </p>
-              <p style={{ padding: '0 0 2px 0' }}>
+              <p>
                 {new Intl.NumberFormat(this.gui.language, {
                   maximumFractionDigits: 6,
                   minimumFractionDigits: 6
