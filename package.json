@@ -1,7 +1,7 @@
 {
   "name": "vcash-electron",
   "productName": "Vcash Electron GUI",
-  "version": "0.33.35",
+  "version": "0.33.36",
   "description": "Multi-platform and multi-node GUI for Vcash.",
   "author": "whphhg <whphhg@protonmail.ch>",
   "license": "GPL-3.0",
@@ -58,7 +58,7 @@
     "babel-preset-react": "6.24.1",
     "babel-preset-stage-0": "6.24.1",
     "electron": "1.7.10",
-    "electron-builder": "19.49.0",
+    "electron-builder": "19.49.2",
     "eslint": "4.13.1",
     "eslint-config-standard": "10.2.1",
     "eslint-config-standard-jsx": "4.0.2",
