@@ -5,8 +5,8 @@ import React from 'react'
  * @function Placeholder
  * @prop {object} t - i18next intance.
  * @prop {string} icon - Material icon name.
- * @prop {object} style - Custom component style.
  * @prop {string} string - i18next namespace string.
+ * @prop {object} style - Custom component style.
  * @prop {object} wallet - Connection instance Wallet store.
  */
 export const Placeholder = props => {
