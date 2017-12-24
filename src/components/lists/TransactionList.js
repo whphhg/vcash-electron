@@ -3,8 +3,9 @@ import List from 'react-list'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 
-/** Component */
+/** Components */
 import TransactionListItem from './TransactionListItem'
+import { Placeholder } from '../utilities/Common'
 
 @translate(['wallet'])
 @inject('gui', 'rates', 'search', 'wallet')
@@ -35,6 +36,13 @@ class TransactionList extends React.Component {
               wallet={this.wallet}
             />
           )}
+        />
+        <Placeholder
+          t={this.t}
+          icon="face"
+          string="welcomeNew"
+          style={{ minHeight: '100%' }}
+          wallet={this.wallet}
         />
       </div>
     )
