@@ -5,6 +5,9 @@ import { inject, observer } from 'mobx-react'
 /** Ant Design */
 import Switch from 'antd/lib/switch'
 
+/** Component */
+import { SwitchIcon } from '../utilities/Common'
+
 @translate(['wallet'])
 @inject('gui')
 @observer
@@ -27,19 +30,6 @@ class SetSoundAlerts extends React.Component {
     if (this.gui.soundAlerts[name] === true) this.gui.sounds[name].play()
   }
 
-  /**
-   * Switch icon.
-   * @function switchIcon
-   * @param {string} name - Material icon name.
-   */
-  switchIcon(name) {
-    return (
-      <div style={{ margin: '-2px 0 0 0' }}>
-        <i className="material-icons md-16">{name}</i>
-      </div>
-    )
-  }
-
   render() {
     return (
       <div>
@@ -54,10 +44,10 @@ class SetSoundAlerts extends React.Component {
           </div>
           <Switch
             checked={this.gui.soundAlerts.incoming === true}
-            checkedChildren={this.switchIcon('done')}
+            checkedChildren={<SwitchIcon icon="done" />}
             onChange={() => this.toggleNotification('incoming')}
             size="small"
-            unCheckedChildren={this.switchIcon('clear')}
+            unCheckedChildren={<SwitchIcon icon="clear" />}
           />
         </div>
         <div className="flex-sb">
@@ -67,10 +57,10 @@ class SetSoundAlerts extends React.Component {
           </div>
           <Switch
             checked={this.gui.soundAlerts.spendable === true}
-            checkedChildren={this.switchIcon('done')}
+            checkedChildren={<SwitchIcon icon="done" />}
             onChange={() => this.toggleNotification('spendable')}
             size="small"
-            unCheckedChildren={this.switchIcon('clear')}
+            unCheckedChildren={<SwitchIcon icon="clear" />}
           />
         </div>
       </div>

@@ -9,6 +9,9 @@ import Input from 'antd/lib/input'
 import Popconfirm from 'antd/lib/popconfirm'
 import Switch from 'antd/lib/switch'
 
+/** Component */
+import { SwitchIcon } from '../utilities/Common'
+
 @translate(['wallet'])
 @inject('connections')
 @observer
@@ -98,19 +101,11 @@ class SetConnection extends React.Component {
             <div className="flex" style={{ margin: '0 0 15px 0' }}>
               <Switch
                 checked={type === 'ssh'}
-                checkedChildren={
-                  <div style={{ margin: '-2px 0 0 0' }}>
-                    <i className="material-icons md-16">done</i>
-                  </div>
-                }
+                checkedChildren={<SwitchIcon icon="done" />}
                 disabled={status.active === true}
                 onChange={this.toggleType}
                 size="small"
-                unCheckedChildren={
-                  <div style={{ margin: '-2px 0 0 0' }}>
-                    <i className="material-icons md-16">clear</i>
-                  </div>
-                }
+                unCheckedChildren={<SwitchIcon icon="clear" />}
               />
               <p style={{ margin: '0 0 0 10px' }}>{this.t('sshTunnel')}</p>
             </div>

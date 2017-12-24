@@ -22,3 +22,14 @@ export const Placeholder = props => {
     </div>
   )
 }
+
+/**
+ * Switch icon.
+ * @function SwitchIcon
+ * @prop {string} icon - Material icon name.
+ */
+export const SwitchIcon = props => (
+  <div style={{ margin: '-2px 0 0 0' }}>
+    <i className="material-icons md-16">{props.icon}</i>
+  </div>
+)

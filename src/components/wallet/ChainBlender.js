@@ -8,6 +8,9 @@ import message from 'antd/lib/message'
 import Popover from 'antd/lib/popover'
 import Switch from 'antd/lib/switch'
 
+/** Component */
+import { SwitchIcon } from '../utilities/Common'
+
 @translate(['wallet'])
 @inject('gui', 'rpc', 'wallet')
 @observer
@@ -50,19 +53,11 @@ class ChainBlender extends React.Component {
             <p>{this.t('toggleChainBlender')}</p>
             <Switch
               checked={this.wallet.isBlending === true}
-              checkedChildren={
-                <div style={{ margin: '-2px 0 0 0' }}>
-                  <i className="material-icons md-16">done</i>
-                </div>
-              }
+              checkedChildren={<SwitchIcon icon="done" />}
               disabled={this.wallet.isLocked === true}
               onChange={this.toggle}
               size="small"
-              unCheckedChildren={
-                <div style={{ margin: '-2px 0 0 0' }}>
-                  <i className="material-icons md-16">clear</i>
-                </div>
-              }
+              unCheckedChildren={<SwitchIcon icon="clear" />}
             />
           </div>
         }
