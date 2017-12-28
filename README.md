@@ -33,7 +33,7 @@ changes to the files in the `src/` directory.
     npm run babel-watch (auto-transform on changes to src/)
 
 You can now run the GUI using `npm start`, or if you want to use development
-tools, using `npm run dev` or `npm run dev-win` on Windows.
+tools, using `npm run dev` or using `npm run dev-win` on Windows.
 
     npm start
     npm run dev (Linux and macOS)
