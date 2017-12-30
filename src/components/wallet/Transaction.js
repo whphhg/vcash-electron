@@ -5,7 +5,7 @@ import { inject, observer } from 'mobx-react'
 import moment from 'moment'
 
 /** Components */
-import IoList from '../lists/IoList'
+import TransactionIoList from '../lists/TransactionIoList'
 import { Placeholder } from '../utilities/Common'
 
 @translate(['wallet'])
@@ -29,7 +29,7 @@ class Transaction extends React.Component {
    */
   @computed
   get io() {
-    if (this.wallet.tx.has(this.wallet.viewing.tx) === false) return null
+    if (this.wallet.tx.has(this.wallet.viewing.tx) === false) return []
     const tx = this.wallet.tx.get(this.wallet.viewing.tx)
 
     /** Prepare inputs and remove coinbase (PoW) if present. */
@@ -70,6 +70,9 @@ class Transaction extends React.Component {
   }
 
   render() {
+    /** Do not render if the transaction does not exist. */
+    if (this.wallet.tx.has(this.wallet.viewing.tx) === false) return null
+
     /** Render a placeholder if this is a wallet without transactions (new). */
     if (this.wallet.txKeys.length === 0) {
       return (
@@ -202,33 +205,25 @@ class Transaction extends React.Component {
                 )}
                 <p className={tx.color}>{tx.confirmations}</p>
               </div>
-              <div id="TransactionDescription" style={{ flex: 1 }}>
-                <div>
-                  {'to' in tx === true && (
-                    <div className="flex">
-                      <i className="material-icons md-16">perm_identity</i>
-                      <p>{this.t('recipient')}</p>
-                    </div>
-                  )}
-                </div>
-                <div>
-                  {'to' in tx === true && (
-                    <p style={{ fontWeight: '500' }}>{tx.to}</p>
-                  )}
-                </div>
-                <div>
-                  {'comment' in tx === true && (
-                    <div className="flex">
-                      <i className="material-icons md-16">create</i>
-                      <p>{this.t('comment')}</p>
-                    </div>
-                  )}
-                </div>
-                <div>
-                  {'comment' in tx === true && (
-                    <p style={{ textAlign: 'justify' }}>{tx.comment}</p>
-                  )}
-                </div>
+              <div className="labelsContent" style={{ flex: 1 }}>
+                {'to' in tx === true && (
+                  <div className="flex">
+                    <i className="material-icons md-16">perm_identity</i>
+                    <p>{this.t('recipient')}</p>
+                  </div>
+                )}
+                {'to' in tx === true && (
+                  <p style={{ fontWeight: '500' }}>{tx.to}</p>
+                )}
+                {'comment' in tx === true && (
+                  <div className="flex">
+                    <i className="material-icons md-16">create</i>
+                    <p>{this.t('comment')}</p>
+                  </div>
+                )}
+                {'comment' in tx === true && (
+                  <p style={{ textAlign: 'justify' }}>{tx.comment}</p>
+                )}
               </div>
             </div>
           </div>
@@ -238,7 +233,7 @@ class Transaction extends React.Component {
           style={{ alignItems: 'flex-start', margin: '30px 0 0 0' }}
         >
           <div style={{ flex: 1 }}>
-            <IoList io={this.io.vin} type="vin" />
+            <TransactionIoList io={this.io.vin} type="vin" />
           </div>
           <div style={{ margin: 'auto 10px auto 10px' }}>
             <div style={{ margin: '29px 0 0 0' }}>
@@ -246,7 +241,7 @@ class Transaction extends React.Component {
             </div>
           </div>
           <div style={{ flex: 1 }}>
-            <IoList io={this.io.vout} type="vout" />
+            <TransactionIoList io={this.io.vout} type="vout" />
           </div>
         </div>
       </div>

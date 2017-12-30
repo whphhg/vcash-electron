@@ -4,12 +4,12 @@ import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 
 /** Component */
-import IoListItem from './IoListItem'
+import TransactionIoListItem from './TransactionIoListItem'
 
 @translate(['wallet'])
 @inject('gui', 'wallet')
 @observer
-class IoList extends React.Component {
+class TransactionIoList extends React.Component {
   constructor(props) {
     super(props)
     this.t = props.t
@@ -40,7 +40,12 @@ class IoList extends React.Component {
           <List
             length={this.io.length}
             itemRenderer={(index, key) => (
-              <IoListItem index={index} key={key} gui={this.gui} io={this.io} />
+              <TransactionIoListItem
+                index={index}
+                key={key}
+                gui={this.gui}
+                io={this.io}
+              />
             )}
           />
           {this.type === 'vin' &&
@@ -57,4 +62,4 @@ class IoList extends React.Component {
   }
 }
 
-export default IoList
+export default TransactionIoList
