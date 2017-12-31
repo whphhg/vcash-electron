@@ -60,7 +60,7 @@ class Statistics {
 
     for (let i = 1; i <= 31; i++) {
       const timestamp = threshold + i * 24 * 60 * 60 * 1000
-      const date = new Date(timestamp).toJSON().split('T')[0]
+      const date = new Date(timestamp).toLocaleString().split(',')[0]
 
       rewards.set(date, {
         date: timestamp,
@@ -78,7 +78,7 @@ class Statistics {
       if (tx.time < threshold) break
 
       /** Increase reward count. */
-      const date = new Date(tx.time).toJSON().split('T')[0]
+      const date = new Date(tx.time).toLocaleString().split(',')[0]
 
       if (rewards.has(date) === true) {
         let total = rewards.get(date)
@@ -104,7 +104,7 @@ class Statistics {
 
     for (let i = 1; i <= 31; i++) {
       const timestamp = threshold + i * 24 * 60 * 60 * 1000
-      const date = new Date(timestamp).toJSON().split('T')[0]
+      const date = new Date(timestamp).toLocaleString().split(',')[0]
 
       totals.set(date, {
         date: timestamp,
@@ -124,7 +124,7 @@ class Statistics {
       if (tx.time < threshold) break
 
       /** Add the transaction amount. */
-      const date = new Date(tx.time).toJSON().split('T')[0]
+      const date = new Date(tx.time).toLocaleString().split(',')[0]
 
       if (totals.has(date) === true) {
         let total = totals.get(date)
