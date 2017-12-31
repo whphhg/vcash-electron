@@ -205,7 +205,7 @@ class Transaction extends React.Component {
                 )}
                 <p className={tx.color}>{tx.confirmations}</p>
               </div>
-              <div className="labelsContent" style={{ flex: 1 }}>
+              <div className="grid-lc" style={{ flex: 1 }}>
                 {'to' in tx === true && (
                   <div className="flex">
                     <i className="material-icons md-16">perm_identity</i>
