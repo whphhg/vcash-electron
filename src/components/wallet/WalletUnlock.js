@@ -32,7 +32,7 @@ class WalletUnlock extends React.Component {
     })
 
     /** Clear previous RPC error on passphrase change. */
-    reaction(
+    this.ppReaction = reaction(
       () => this.passphrase,
       passphrase => {
         if (this.rpcError !== '') this.setProps({ rpcError: '' })
@@ -41,7 +41,7 @@ class WalletUnlock extends React.Component {
     )
 
     /** Clear passphrase when the modal gets hidden. */
-    reaction(
+    this.modalReaction = reaction(
       () => this.modalVisible,
       modalVisible => {
         if (modalVisible === false) {
@@ -50,6 +50,12 @@ class WalletUnlock extends React.Component {
       },
       { name: 'WalletUnlock: modal toggled, clearing previous passphrase.' }
     )
+  }
+
+  /** Dispose of reactions on component unmount. */
+  componentWillUnmount() {
+    this.ppReaction()
+    this.modalReaction()
   }
 
   /**

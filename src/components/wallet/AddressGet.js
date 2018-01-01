@@ -32,7 +32,7 @@ class AddressGet extends React.Component {
     })
 
     /** Clear new address when the popover gets hidden. */
-    reaction(
+    this.popoverReaction = reaction(
       () => this.popoverVisible,
       popoverVisible => {
         if (popoverVisible === false) {
@@ -41,6 +41,11 @@ class AddressGet extends React.Component {
       },
       { name: 'AddressGet: popover hidden, clearing new address.' }
     )
+  }
+
+  /** Dispose of reaction on component unmount. */
+  componentWillUnmount() {
+    this.popoverReaction()
   }
 
   /**

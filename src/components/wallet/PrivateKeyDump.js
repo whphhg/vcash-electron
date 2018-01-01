@@ -26,7 +26,7 @@ class PrivateKeyDump extends React.Component {
     extendObservable(this, { address: '', privateKey: '', rpcError: '' })
 
     /** Clear private key and previous RPC error when the address is updated. */
-    reaction(
+    this.addrReaction = reaction(
       () => this.address,
       address => {
         if (this.privateKey !== '' || this.rpcError !== '') {
@@ -35,6 +35,11 @@ class PrivateKeyDump extends React.Component {
       },
       { name: 'PrivateKeyDump: address changed, clearing key and RPC error.' }
     )
+  }
+
+  /** Dispose of reaction on component unmount. */
+  componentWillUnmount() {
+    this.addrReaction()
   }
 
   /**

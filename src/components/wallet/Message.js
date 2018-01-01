@@ -35,7 +35,7 @@ class Message extends React.Component {
     })
 
     /** Clear prev. RPC error and verification on address or message update. */
-    reaction(
+    this.addrMsgReaction = reaction(
       () => [this.address, this.message],
       ([address, message]) => {
         if (this.rpcError !== '' || this.verified !== null) {
@@ -46,7 +46,7 @@ class Message extends React.Component {
     )
 
     /** Clear verification on signature update. */
-    reaction(
+    this.signatureReaction = reaction(
       () => this.signature,
       signature => {
         if (this.verified !== null && signature.setBy === 'user') {
@@ -55,6 +55,12 @@ class Message extends React.Component {
       },
       { name: 'Message: signature changed, clearing verification.' }
     )
+  }
+
+  /** Dispose of reactions on component unmount. */
+  componentWillUnmount() {
+    this.addrMsgReaction()
+    this.signatureReaction()
   }
 
   /**

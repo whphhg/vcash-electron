@@ -26,13 +26,18 @@ class WalletPassphraseChange extends React.Component {
     extendObservable(this, { current: '', next: '', repeat: '', rpcError: '' })
 
     /** Clear previous RPC error on current passphrase change. */
-    reaction(
+    this.ppReaction = reaction(
       () => this.current,
       current => {
         if (this.rpcError !== false) this.setProps({ rpcError: '' })
       },
       { name: 'WalletPassChange: pass changed, clearing previous RPC error.' }
     )
+  }
+
+  /** Dispose of reaction on component unmount. */
+  componentWillUnmount() {
+    this.ppReaction()
   }
 
   /**

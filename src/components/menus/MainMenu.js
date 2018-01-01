@@ -23,7 +23,7 @@ class MainMenu extends React.Component {
      * Redirect to the viewing connection when RPC becomes active, or to the
      * connections screen if the viewing connection becomes unreachable.
      */
-    reaction(
+    this.viewingReaction = reaction(
       () => [this.connections.viewingId, this.connections.viewing.status.rpc],
       ([id, rpc]) => {
         this.setSelected({
@@ -35,6 +35,11 @@ class MainMenu extends React.Component {
         name: 'MainMenu: viewing connection status changed, adjusting screen.'
       }
     )
+  }
+
+  /** Dispose of reaction on component unmount. */
+  componentWillUnmount() {
+    this.viewingReaction()
   }
 
   /**

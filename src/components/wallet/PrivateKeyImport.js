@@ -32,13 +32,18 @@ class PrivateKeyImport extends React.Component {
     })
 
     /** Clear previous RPC error when the private key is updated. */
-    reaction(
+    this.pkReaction = reaction(
       () => this.privateKey,
       privateKey => {
         if (this.rpcError !== '') this.setProps({ rpcError: '' })
       },
       { name: 'PrivateKeyImport: private key changed, clearing RPC error.' }
     )
+  }
+
+  /** Dispose of reaction on component unmount. */
+  componentWillUnmount() {
+    this.pkReaction()
   }
 
   /**
