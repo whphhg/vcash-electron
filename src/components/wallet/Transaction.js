@@ -1,6 +1,6 @@
 import React from 'react'
 import { translate } from 'react-i18next'
-import { computed } from 'mobx'
+import { computed, reaction } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import moment from 'moment'
 
@@ -20,6 +20,26 @@ class Transaction extends React.Component {
     this.rpc = props.rpc
     this.wallet = props.wallet
     this.ztLock = this.ztLock.bind(this)
+
+    /** Update wallet (confirmations update) on block change. */
+    this.blockReaction = reaction(
+      () => this.wallet.info.blocks,
+      blocks => this.wallet.updateWallet(),
+      { delay: 4 * 1000, name: 'Transaction: refreshing confirmation count.' }
+    )
+
+    /** Update wallet on viewing transaction change. */
+    this.txReaction = reaction(
+      () => this.wallet.viewing.tx,
+      tx => this.wallet.updateWallet(),
+      { name: 'Transaction: viewing transaction changed, updating wallet.' }
+    )
+  }
+
+  /** Dispose of reactions on component unmount. */
+  componentWillUnmount() {
+    this.blockReaction()
+    this.txReaction()
   }
 
   /**
