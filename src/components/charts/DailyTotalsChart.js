@@ -15,7 +15,7 @@ import {
 import moment from 'moment'
 
 /** Components */
-import { CustomTick, CustomTooltip } from './CustomRecharts'
+import { CustomTick, CustomTooltip } from './CustomRecharts.js'
 
 @translate(['wallet'])
 @inject('gui', 'statistics')

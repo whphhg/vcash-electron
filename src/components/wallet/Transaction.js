@@ -5,8 +5,8 @@ import { inject, observer } from 'mobx-react'
 import moment from 'moment'
 
 /** Components */
-import TransactionIoList from '../lists/TransactionIoList'
-import { Placeholder } from '../utilities/Common'
+import TransactionIoList from '../lists/TransactionIoList.js'
+import { Placeholder } from '../utilities/Common.js'
 
 @translate(['wallet'])
 @inject('gui', 'rates', 'rpc', 'wallet')

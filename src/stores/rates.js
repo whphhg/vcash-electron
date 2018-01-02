@@ -1,8 +1,8 @@
 import { action, computed, extendObservable } from 'mobx'
-import { getItem, setItem } from '../utilities/localStorage'
+import { getItem, setItem } from '../utilities/localStorage.js'
 
 /** Store instance */
-import gui from './gui'
+import gui from './gui.js'
 
 class Rates {
   /**

@@ -4,8 +4,8 @@ import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 
 /** Components */
-import TransactionListItem from './TransactionListItem'
-import { Placeholder } from '../utilities/Common'
+import TransactionListItem from './TransactionListItem.js'
+import { Placeholder } from '../utilities/Common.js'
 
 @translate(['wallet'])
 @inject('gui', 'rates', 'search', 'wallet')

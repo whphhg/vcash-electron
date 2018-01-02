@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, extendObservable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { calculateIncentive, calculatePoW } from '../../utilities/blockRewards'
+import { incentivePercent, powReward } from '../../utilities/blockRewards.js'
 
 /** Ant Design */
 import Input from 'antd/lib/input'
@@ -40,7 +40,7 @@ class RewardCalculator extends React.Component {
    */
   @computed
   get powReward() {
-    return calculatePoW(this.block)
+    return powReward(this.block)
   }
 
   /**
@@ -50,7 +50,7 @@ class RewardCalculator extends React.Component {
    */
   @computed
   get incentivePercent() {
-    return calculateIncentive(this.block)
+    return incentivePercent(this.block)
   }
 
   /**

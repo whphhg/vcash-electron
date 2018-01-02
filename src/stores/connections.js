@@ -1,8 +1,8 @@
 import { action, computed, extendObservable, reaction } from 'mobx'
-import { getItem, setItem } from '../utilities/localStorage'
+import { getItem, setItem } from '../utilities/localStorage.js'
 
 /** Store classes */
-import Connection from './connection'
+import Connection from './connection.js'
 
 class Connections {
   /**

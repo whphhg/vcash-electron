@@ -1,9 +1,9 @@
 import React from 'react'
 
 /** Components */
-import ConnectionList from '../lists/ConnectionList'
-import SetConnection from '../settings/SetConnection'
-import SetLocaleSettings from '../settings/SetLocaleSettings'
+import ConnectionList from '../lists/ConnectionList.js'
+import SetConnection from '../settings/SetConnection.js'
+import SetLocaleSettings from '../settings/SetLocaleSettings.js'
 
 const Connections = props => (
   <div id="AppListContent">

@@ -2,8 +2,8 @@ import React from 'react'
 import { translate } from 'react-i18next'
 
 /** Components */
-import SetCurrency from './SetCurrency'
-import SetLanguage from './SetLanguage'
+import SetCurrency from './SetCurrency.js'
+import SetLanguage from './SetLanguage.js'
 
 @translate(['wallet'])
 class SetLocaleSettings extends React.Component {

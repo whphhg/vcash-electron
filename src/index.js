@@ -23,18 +23,18 @@ import { useStrict } from 'mobx'
 import { enableLogging } from 'mobx-logger'
 import { Provider } from 'mobx-react'
 import { join } from 'path'
-import i18next from './utilities/i18next'
-import './utilities/rightClickMenu'
+import i18next from './utilities/i18next.js'
+import './utilities/rightClickMenu.js'
 
 /** Components */
-import Connections from './components/screens/Connections'
-import MainMenu from './components/menus/MainMenu'
-import Root from './components/Root'
+import Connections from './components/screens/Connections.js'
+import MainMenu from './components/menus/MainMenu.js'
+import Root from './components/Root.js'
 
 /** Store instances */
-import connections from './stores/connections'
-import gui from './stores/gui'
-import rates from './stores/rates'
+import connections from './stores/connections.js'
+import gui from './stores/gui.js'
+import rates from './stores/rates.js'
 
 /** Set the i18next instance. */
 translate.setI18n(i18next)

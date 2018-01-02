@@ -1,14 +1,14 @@
 import React from 'react'
 
 /** Components */
-import ChainBlender from '../wallet/ChainBlender'
-import DailyTotalsChart from '../charts/DailyTotalsChart'
-import Footer from '../Footer'
-import Header from '../Header'
-import Transaction from '../wallet/Transaction'
-import TransactionFilter from '../search/TransactionFilter'
-import TransactionFind from '../search/TransactionFind'
-import TransactionList from '../lists/TransactionList'
+import ChainBlender from '../wallet/ChainBlender.js'
+import DailyTotalsChart from '../charts/DailyTotalsChart.js'
+import Footer from '../Footer.js'
+import Header from '../Header.js'
+import Transaction from '../wallet/Transaction.js'
+import TransactionFilter from '../search/TransactionFilter.js'
+import TransactionFind from '../search/TransactionFind.js'
+import TransactionList from '../lists/TransactionList.js'
 
 const Transactions = props => (
   <div id="AppListContent">

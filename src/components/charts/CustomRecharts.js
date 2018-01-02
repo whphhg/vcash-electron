@@ -1,6 +1,6 @@
 import React from 'react'
-import { humanReadable } from '../../utilities/common'
-import i18next from '../../utilities/i18next'
+import { humanReadable } from '../../utilities/common.js'
+import i18next from '../../utilities/i18next.js'
 import moment from 'moment'
 
 /**

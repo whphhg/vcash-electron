@@ -2,7 +2,7 @@ import i18next from 'i18next'
 import backend from 'i18next-node-fs-backend'
 import { readdirSync } from 'fs'
 import { join } from 'path'
-import { getItem } from '../utilities/localStorage'
+import { getItem } from '../utilities/localStorage.js'
 
 /**
  * Initialize a new globally used i18next instance.

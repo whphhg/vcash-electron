@@ -6,8 +6,8 @@ import { inject, observer } from 'mobx-react'
 import Popover from 'antd/lib/popover'
 
 /** Components */
-import WalletLock from './wallet/WalletLock'
-import WalletUnlock from './wallet/WalletUnlock'
+import WalletLock from './wallet/WalletLock.js'
+import WalletUnlock from './wallet/WalletUnlock.js'
 
 @translate(['wallet'])
 @inject('connections', 'gui', 'rates', 'wallet')

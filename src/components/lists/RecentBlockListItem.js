@@ -1,6 +1,6 @@
 import React from 'react'
 import { observer } from 'mobx-react'
-import { humanReadable } from '../../utilities/common'
+import { humanReadable } from '../../utilities/common.js'
 import moment from 'moment'
 
 const RecentBlockListItem = observer(props => {

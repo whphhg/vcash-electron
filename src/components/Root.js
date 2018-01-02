@@ -7,10 +7,10 @@ import message from 'antd/lib/message'
 import notification from 'antd/lib/notification'
 
 /** Components */
-import Maintenance from './screens/Maintenance'
-import Network from './screens/Network'
-import Send from './screens/Send'
-import Transactions from './screens/Transactions'
+import Maintenance from './screens/Maintenance.js'
+import Network from './screens/Network.js'
+import Send from './screens/Send.js'
+import Transactions from './screens/Transactions.js'
 
 /** Set notification and message top margin. */
 notification.config({ top: 35 })

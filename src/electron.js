@@ -3,7 +3,7 @@ import { join } from 'path'
 import { format } from 'url'
 
 /** Store instance */
-import daemon from './stores/daemon'
+import daemon from './stores/daemon.js'
 
 /** Global reference of the window object. */
 let mainWindow = null

@@ -1,10 +1,10 @@
 /**
  * Get incentive percent of PoW reward for provided block.
- * @function calculateIncentive
+ * @function incentivePercent
  * @param {number} block - Block to retrieve the reward percent of.
  * @return {number} Incentive percent of PoW reward.
  */
-export const calculateIncentive = block => {
+export const incentivePercent = block => {
   const percents = incentivePercents()
   const percentsLen = percents.length - 1
 
@@ -17,11 +17,11 @@ export const calculateIncentive = block => {
 
 /**
  * Get PoW reward for provided block.
- * @function calculatePoW
+ * @function powReward
  * @param {number} block - Block to calculate the PoW reward of.
  * @return {number} PoW reward.
  */
-export const calculatePoW = block => {
+export const powReward = block => {
   let subsidy = 0
 
   if (block >= 136400 && block <= 136400 + 1000) {

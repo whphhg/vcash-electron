@@ -1,5 +1,5 @@
 import { computed, reaction } from 'mobx'
-import rpcs from '../utilities/rpcs'
+import rpcs from '../utilities/rpcs.js'
 
 class RPC {
   /**

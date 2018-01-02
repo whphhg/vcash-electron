@@ -15,7 +15,7 @@ import {
 } from 'recharts'
 
 /** Components */
-import { CustomTick, CustomTooltip } from './CustomRecharts'
+import { CustomTick, CustomTooltip } from './CustomRecharts.js'
 
 @translate(['wallet'])
 @inject('gui', 'statistics')

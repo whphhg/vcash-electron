@@ -1,8 +1,8 @@
 import { action, extendObservable, reaction } from 'mobx'
 import { join } from 'path'
-import { getItem, setItem } from '../utilities/localStorage'
-import { debounce } from '../utilities/common'
-import i18next from '../utilities/i18next'
+import { getItem, setItem } from '../utilities/localStorage.js'
+import { debounce } from '../utilities/common.js'
+import i18next from '../utilities/i18next.js'
 import moment from 'moment'
 
 class GUI {

@@ -3,7 +3,7 @@ import { translate } from 'react-i18next'
 import { action, computed, extendObservable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { join } from 'path'
-import { decimalSeparator } from '../../utilities/common'
+import { decimalSeparator } from '../../utilities/common.js'
 import moment from 'moment'
 
 /** Ant Design */

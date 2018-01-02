@@ -4,7 +4,7 @@ import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 
 /** Component */
-import TransactionIoListItem from './TransactionIoListItem'
+import TransactionIoListItem from './TransactionIoListItem.js'
 
 @translate(['wallet'])
 @inject('gui', 'wallet')

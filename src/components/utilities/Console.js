@@ -1,7 +1,7 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { shortUid } from '../../utilities/common'
+import { shortUid } from '../../utilities/common.js'
 
 /** Ant Design */
 import AutoComplete from 'antd/lib/auto-complete'

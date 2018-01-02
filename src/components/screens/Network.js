@@ -4,17 +4,17 @@ import { Route } from 'react-router-dom'
 import { inject, observer } from 'mobx-react'
 
 /** Components */
-import DailyRewardChart from '../charts/DailyRewardChart'
-import DifficultyChart from '../charts/DifficultyChart'
-import Footer from '../Footer'
-import HashRateChart from '../charts/HashRateChart'
-import Header from '../Header'
-import IncentiveInfo from '../wallet/IncentiveInfo'
-import NetworkInfo from '../wallet/NetworkInfo'
-import NetworkMenu from '../menus/NetworkMenu'
-import Peers from '../wallet/Peers'
-import RecentBlockList from '../lists/RecentBlockList'
-import RewardSpreadChart from '../charts/RewardSpreadChart'
+import DailyRewardChart from '../charts/DailyRewardChart.js'
+import DifficultyChart from '../charts/DifficultyChart.js'
+import Footer from '../Footer.js'
+import HashRateChart from '../charts/HashRateChart.js'
+import Header from '../Header.js'
+import IncentiveInfo from '../wallet/IncentiveInfo.js'
+import NetworkInfo from '../wallet/NetworkInfo.js'
+import NetworkMenu from '../menus/NetworkMenu.js'
+import Peers from '../wallet/Peers.js'
+import RecentBlockList from '../lists/RecentBlockList.js'
+import RewardSpreadChart from '../charts/RewardSpreadChart.js'
 
 @translate(['wallet'])
 @inject('connections')

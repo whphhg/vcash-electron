@@ -8,7 +8,7 @@ import Popover from 'antd/lib/popover'
 import Switch from 'antd/lib/switch'
 
 /** Component */
-import { SwitchIcon } from '../utilities/Common'
+import { SwitchIcon } from '../utilities/Common.js'
 
 @translate(['wallet'])
 @inject('search')

@@ -3,7 +3,7 @@ import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 
 /** Component */
-import AddressOutputList from '../lists/AddressOutputList'
+import AddressOutputList from '../lists/AddressOutputList.js'
 
 @translate(['wallet'])
 @inject('wallet')

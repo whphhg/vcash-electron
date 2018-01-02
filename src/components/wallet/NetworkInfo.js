@@ -1,7 +1,7 @@
 import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
-import { humanReadable } from '../../utilities/common'
+import { humanReadable } from '../../utilities/common.js'
 
 @translate(['wallet'])
 @inject('gui', 'wallet')

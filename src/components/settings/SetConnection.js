@@ -10,7 +10,7 @@ import Popconfirm from 'antd/lib/popconfirm'
 import Switch from 'antd/lib/switch'
 
 /** Component */
-import { SwitchIcon } from '../utilities/Common'
+import { SwitchIcon } from '../utilities/Common.js'
 
 @translate(['wallet'])
 @inject('connections')
