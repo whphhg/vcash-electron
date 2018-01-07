@@ -1,85 +1,120 @@
-import { action, autorunAsync, computed, observable, reaction } from 'mobx'
+import { action, computed, extendObservable, reaction, runInAction } from 'mobx'
 import { notification } from 'antd'
-import { join } from 'path'
-import { shortUid } from '../utilities/common'
-import i18next from '../utilities/i18next'
-import moment from 'moment'
+import { coin, shortUid } from '../utilities/common.js'
+import i18next from '../utilities/i18next.js'
 
-export default class Wallet {
+class Wallet {
   /**
-   * Observable properties.
-   * @property {map} addresses - Wallet label and change addresses.
-   * @property {boolean} isBlending - Blending status.
-   * @property {boolean} isEncrypted - Encrypted status.
-   * @property {boolean} isLocked - Locked status.
-   * @property {map} responses - Saved RPC info responses.
-   * @property {object} search - Addresses and txs search keywords.
-   * @property {string} spendFrom - Spend funds from this account.
-   * @property {map} txs - Wallet txs.
-   * @property {string|null} viewing - Tx being viewed.
-   * @property {string|null} viewingQueue - Just sent tx waiting to be viewed.
-   */
-  @observable addresses = observable.map({})
-  @observable isBlending = false
-  @observable isEncrypted = false
-  @observable isLocked = false
-  @observable responses = observable.map({})
-  @observable
-  search = {
-    addresses: { value: '', keywords: [], timeoutId: null },
-    txs: { value: '', keywords: [], timeoutId: null }
-  }
-  @observable spendFrom = '#'
-  @observable txs = observable.map({})
-  @observable viewing = null
-  @observable viewingQueue = null
-
-  /**
-   * @constructor
-   * @param {object} gui - GUI store.
-   * @param {object} rates - Rates store.
-   * @param {object} rpc - RPC store.
-   * @property {string} lastBlock - Last looked up block.
-   * @property {object} timeouts - Timeout ids.
+   * @param {object} gui - Global GUI store.
+   * @param {object} rates - Global Rates store.
+   * @param {object} rpc - Connection instance RPC store.
+   * @prop {string} lastBlock - Last block looked up for new transactions.
+   * @prop {number} lastUpdate - Time (in ms) of last wallet update.
+   * @prop {object} timeouts - Update loops timeouts.
+   * @prop {map} acc - Accounts assigned to addresses.
+   * @prop {map} addr - Label and change addresses.
+   * @prop {object} info - Info presets responses.
+   * @prop {boolean} isBlending - Blending status.
+   * @prop {boolean} isEncrypted - Wallet.dat encryption status.
+   * @prop {boolean} isLocked - Lock status.
+   * @prop {map} tx - Transactions since genesis block.
+   * @prop {array} utxo - Unspent transaction outputs.
+   * @prop {object} viewing - Address and transaction being viewed.
    */
   constructor(gui, rates, rpc) {
     this.gui = gui
     this.rates = rates
     this.rpc = rpc
     this.lastBlock = ''
-    this.timeouts = {
-      network: null,
-      wallet: null,
+    this.lastUpdate = 0
+    this.timeouts = { network: null, transactions: null, wallet: null }
 
-      getWallet: null
-    }
+    /** Extend the store with observable properties. */
+    extendObservable(this, {
+      acc: new Map(),
+      addr: new Map(),
+      info: {
+        /** ChainBlender */
+        blendstate: 'none',
+        balanceOnChain: 0,
+        denominatedbalance: 0,
+        nondenominatedbalance: 0,
+        blendedbalance: 0,
+        blendedpercentage: 0,
+        /** GetDifficulty */
+        'proof-of-work': 0,
+        'proof-of-stake': 0,
+        'search-interval': 0,
+        /** GetMiningInfo */
+        blocks: 0,
+        currentblocksize: 0,
+        currentblocktx: 0,
+        difficulty: 0,
+        errors: '',
+        generate: null,
+        genproclimit: 0,
+        hashespersec: 0,
+        networkhashps: 0,
+        pooledtx: 0,
+        testnet: null,
+        /** GetIncentiveInfo */
+        walletaddress: '',
+        collateralrequired: 0,
+        collateralbalance: 0,
+        networkstatus: '',
+        votecandidate: false,
+        votescore: 0,
+        /** GetInfo */
+        version: ':',
+        protocolversion: 0,
+        walletversion: 0,
+        balance: 0,
+        newmint: 0,
+        stake: 0,
+        moneysupply: 0,
+        connections: 0,
+        ip: '',
+        port: 0,
+        keypoolsize: 0,
+        paytxfee: 0,
+        relayfee: 0,
+        /** GetNetworkInfo */
+        udp: { connections: 0, ip: '', port: 0 },
+        endpoints: [],
+        tcp: { connections: 0, ip: '', port: 0 },
+        collateralized: 0,
+        /** GetPeerInfo */
+        peers: [],
+        /** GetUnconfirmedBalance */
+        unconfirmed: 0
+      },
+      isBlending: false,
+      isEncrypted: false,
+      isLocked: false,
+      tx: new Map(),
+      utxo: [],
+      viewing: { addr: '', tx: '' }
+    })
 
-    /** Refresh network info every 3s until there are at least 3 peers. */
-    autorunAsync(() => {
-      if (this.peers.length < 3 || this.info.endpoints.length === 0) {
-        this.getInfo('network')
-      }
-    }, 3 * 1000)
-
-    /** Begin updating when RPC becomes active. */
+    /** Start update loops or cleanup after RPC connectivity change. */
     reaction(
       () => this.rpc.ready,
       ready => {
-        /** Start update loops & update lock status. */
         if (ready === true) {
-          this.getInfo('network')
-          this.getInfo('wallet')
-          this.getWallet(true, true)
-          this.getLockStatus()
+          this.updateInfo('network')
+          this.updateInfo('wallet')
+          this.updateAddresses()
+          this.updateLockStatus()
         }
 
-        /** Clear timeouts when RPC becomes inactive. */
         if (ready === false) {
+          /** Clear auto-update timeouts when RPC becomes unreachable. */
           Object.keys(this.timeouts).forEach(id =>
             clearTimeout(this.timeouts[id])
           )
         }
-      }
+      },
+      { name: 'Wallet: RPC ready changed, adjusting update loops.' }
     )
 
     /** Restart wallet info update loop when the wallet gets unlocked. */
@@ -87,79 +122,63 @@ export default class Wallet {
       () => this.isLocked,
       isLocked => {
         if (isLocked === false) {
-          this.getInfo('wallet')
+          this.updateInfo('wallet')
 
-          /**
-           * Restart network info update loop 5s after unlocking if
-           * the default wallet address is not yet set.
-           */
-          if (this.responses.has('getincentiveinfo') === true) {
-            const info = this.responses.get('getincentiveinfo')
-
-            if (info.walletaddress === '') {
-              setTimeout(() => this.getInfo('network'), 5 * 1000)
-            }
+          /** Update default wallet address 5s after unlocking if not set. */
+          if (this.info.walletaddress === '') {
+            setTimeout(() => this.updateInfo('network'), 5 * 1000)
           }
         }
-      }
+      },
+      { name: 'Wallet: lock status changed, checking if default address set.' }
     )
 
-    /** Check if there's a sent transaction waiting to be viewed. */
+    /** Refresh network info every 3s until there are at least 3 peers. */
     reaction(
-      () => this.txs.size,
-      size => {
-        if (this.viewingQueue !== null) {
-          this.setViewing(this.viewingQueue)
+      () => [this.info.peers, this.info.endpoints],
+      ([peers, endpoints]) => {
+        if (peers.length < 3 || endpoints.length === 0) {
+          this.updateInfo('network')
         }
-      }
+      },
+      { delay: 3 * 1000, name: 'Wallet: checking if connected to >= 3 peers.' }
+    )
+
+    /** Update wallet on balance or unconfirmed balance change. */
+    reaction(
+      () => [this.info.balance, this.info.unconfirmed],
+      ([balance, unconfirmed]) => this.updateWallet(false, true),
+      { name: 'Wallet: balance changed. Updating transactions and addressses.' }
+    )
+
+    /** Update wallet on block change if there are pending generated tx. */
+    reaction(
+      () => this.info.blocks,
+      blocks => {
+        if (this.generatedPending.length > 0) this.updateWallet()
+      },
+      { name: 'Wallet: block changed, updating if pending generated tx > 0.' }
     )
   }
 
   /**
-   * Get a list of account balances.
-   * @function accountBalances
-   * @return {object} Account balances.
-   */
-  @computed
-  get accountBalances() {
-    return this.addresses.values().reduce((balances, address) => {
-      /** Skip change addresses. */
-      if (address.account !== null) {
-        const account = address.account === '' ? '*' : address.account
-
-        if (balances.hasOwnProperty(account) === false) {
-          balances[account] = parseFloat(address.balance)
-        } else {
-          balances[account] += parseFloat(address.balance)
-        }
-      }
-
-      return balances
-    },
-    { '#': this.info.balance })
-  }
-
-  /**
-   * Get a list of accounts in alphabetical order.
-   * @function accounts
+   * Get a list of accounts.
+   * @function accKeys
    * @return {array} Account list.
    */
   @computed
-  get accounts() {
-    let accounts = new Set()
+  get accKeys() {
+    return [...this.acc.keys()]
+  }
 
-    /** Add accounts to the set. */
-    this.addresses.forEach(address => {
-      if (address.account !== '' && address.account !== null) {
-        accounts.add(address.account)
-      }
-    })
-
-    /** Convert Set to Array. */
-    accounts = [...accounts]
-
-    /** Return accounts in ASC order. */
-    return accounts.sort((a, b) => {
+  /**
+   * Get account names (excluding default "") in alphabetical order.
+   * @function accNames
+   * @return {array} Sorted account names.
+   */
+  @computed
+  get accNames() {
+    return this.accKeys.filter(key => key !== '').sort((a, b) => {
       if (a.toLowerCase() < b.toLowerCase()) return -1
       if (a.toLowerCase() > b.toLowerCase()) return 1
       return 0
@@ -167,232 +186,100 @@ export default class Wallet {
   }
 
   /**
-   * Get a list of addresses.
-   * @function addressList
+   * Get a list of label and change addresses.
+   * @function addrKeys
    * @return {array} Address list.
    */
   @computed
-  get addressList() {
-    return [...this.addresses.keys()]
+  get addrKeys() {
+    return [...this.addr.keys()]
   }
 
   /**
-   * Get addresses data.
-   * @function addressesData
-   * @return {array} Addresses data.
-   */
-  @computed
-  get addressesData() {
-    let addresses = []
-
-    this.addresses.forEach(address => {
-      let keywordMatches = 0
-
-      if (
-        this.spendFrom === '#' ||
-        this.spendFrom === address.account ||
-        (this.spendFrom === '*' && address.account === '')
-      ) {
-        const balance = new Intl.NumberFormat(this.gui.language, {
-          minimumFractionDigits: 6,
-          maximumFractionDigits: 6
-        }).format(address.balance)
-
-        /** Increment keywordMatches by 1 each time a keyword matches. */
-        this.search.addresses.keywords.forEach(keyword => {
-          if (
-            balance.indexOf(keyword) > -1 ||
-            address.address.indexOf(keyword) > -1
-          ) {
-            keywordMatches += 1
-          }
-        })
-
-        /** Push addresses with match count equal to the number of keywords. */
-        if (keywordMatches === this.search.addresses.keywords.length) {
-          let outputs = []
-          let spent = 0
-
-          if (address.outputs.length > 0) {
-            address.outputs.forEach(output => {
-              if (output.spentTxid !== '') spent += 1
-
-              outputs.push({
-                ...output,
-                key: shortUid(),
-                color: output.spentTxid === '' ? 'green' : 'red'
-              })
-            })
-          }
-
-          addresses.push({
-            ...address,
-            outputs,
-            received: outputs.length,
-            spent
-          })
-        }
-      }
-    })
-
-    return addresses
-  }
-
-  /**
-   * Get generated txs.
+   * Get generated transactions since genesis block.
    * @function generated
-   * @return {array} Generated txs.
+   * @return {array} Generated transaction IDs.
    */
   @computed
   get generated() {
     let generated = []
 
-    this.txs.forEach((data, txid) => {
-      if (data.hasOwnProperty('generated') === true) {
-        generated.push(data)
-      }
+    this.tx.forEach((tx, txid) => {
+      if ('generated' in tx === true) generated.push(txid)
     })
 
-    /** Return generated txs in ASC order. */
+    /** Return generated transactions in DESC order. */
     return generated.reverse()
   }
 
   /**
-   * Get pending generated txs.
+   * Get pending generated transactions.
    * @function generatedPending
-   * @return {map} Generated pending txs.
+   * @return {array} Pending generated transaction IDs.
    */
   @computed
   get generatedPending() {
-    return this.generated.reduce((pending, tx) => {
-      if (tx.confirmations > 0 && tx.confirmations <= 220) {
-        pending.set(tx.txid, tx)
-      }
+    let pending = []
 
-      return pending
-    }, new Map())
-  }
+    /** Return empty array if there are no generated transactions. */
+    if (this.generated.length === 0) return pending
 
-  /**
-   * Get RPC info responses results.
-   * @function info
-   * @return {object} Results.
-   */
-  @computed
-  get info() {
-    return this.responses.entries().reduce((results, [key, values]) => {
-      if (key === 'getpeerinfo') return { ...results, peers: values }
-      return { ...results, ...values }
-    },
-    {
-      blendstate: 'none',
-      balance: 0,
-      denominatedbalance: 0,
-      nondenominatedbalance: 0,
-      blendedbalance: 0,
-      blendedpercentage: 0,
-      'proof-of-work': 0,
-      'proof-of-stake': 0,
-      'search-interval': 0,
-      blocks: 0,
-      currentblocksize: 0,
-      currentblocktx: 0,
-      difficulty: 0,
-      errors: '',
-      generate: null,
-      genproclimit: 0,
-      hashespersec: 0,
-      networkhashps: 0,
-      pooledtx: 0,
-      testnet: null,
-      walletaddress: '',
-      collateralrequired: 0,
-      collateralbalance: 0,
-      networkstatus: '',
-      votecandidate: false,
-      votescore: 0,
-      version: ':',
-      protocolversion: 0,
-      walletversion: 0,
-      newmint: 0,
-      stake: 0,
-      moneysupply: 0,
-      connections: 0,
-      ip: '',
-      port: 0,
-      keypoolsize: 0,
-      paytxfee: 0,
-      relayfee: 0,
-      collateralized: 0,
-      endpoints: [],
-      tcp: { connections: 0, ip: '', port: 0 },
-      udp: { connections: 0, ip: '', port: 0 },
-      peers: []
-    })
-  }
+    for (let i = 0; i < this.generated.length; i++) {
+      const tx = this.tx.get(this.generated[i])
 
-  /**
-   * Get connected peers.
-   * @function peers
-   * @return {array} Saved RPC response.
-   */
-  @computed
-  get peers() {
-    if (this.responses.has('getpeerinfo') === true) {
-      const peerInfo = this.responses.get('getpeerinfo')
+      /** Break loop after transactions reach confirmation threshold of 220. */
+      if (tx.confirmations > 220) break
 
-      if (peerInfo !== null) {
-        return peerInfo.reduce((peers, peer) => {
-          if (peer.lastsend !== 0 && peer.startingheight !== -1) {
-            peers.push({
-              ...peer,
-              key: shortUid(),
-              version: peer.subver
-                .match(/\/(.*)\(/)
-                .pop()
-                .split(':')[1],
-              os: peer.subver.split(' ')[1].replace(')/', ''),
-              ip: peer.addr.split(':')[0],
-              port: peer.addr.split(':')[1]
-            })
-          }
-
-          return peers
-        }, [])
-      }
+      /** Add pending generated transaction ID. */
+      pending.push(tx.txid)
     }
-
-    return []
-  }
-
-  /**
-   * Get pending amount.
-   * @function pendingAmount
-   * @return {number} Amount pending.
-   */
-  @computed
-  get pendingAmount() {
-    let pending = 0
-
-    this.txs.forEach((tx, txid) => {
-      if (
-        tx.confirmations === 0 &&
-        (tx.category === 'receiving' ||
-          tx.category === 'sending' ||
-          tx.category === 'sendingToSelf' ||
-          tx.category === 'blending')
-      ) {
-        pending = pending + Math.abs(tx.amount)
-      }
-    })
 
     return pending
   }
 
   /**
-   * Get blockchain sync percentage.
+   * Get connected peers info.
+   * @function peers
+   * @return {array} Connected peers.
+   */
+  @computed
+  get peers() {
+    return this.info.peers.reduce((peers, peer) => {
+      if (peer.lastsend !== 0 && peer.startingheight !== -1) {
+        peers.push({
+          ...peer,
+          key: shortUid(),
+          conntime: peer.conntime * 1000,
+          ip: peer.addr.split(':')[0],
+          lastrecv: peer.lastrecv * 1000,
+          port: peer.addr.split(':')[1],
+          os: peer.subver.split(' ')[1].replace(')/', ''),
+          version: peer.subver
+            .match(/\/(.*)\(/)
+            .pop()
+            .split(':')[1]
+        })
+      }
+
+      return peers
+    }, [])
+  }
+
+  /**
+   * Get total pending balance.
+   * @function pending
+   * @return {number} Total pending balance.
+   */
+  @computed
+  get pending() {
+    const { newmint, stake, unconfirmed } = this.info
+    return (newmint * coin + stake * coin + unconfirmed * coin) / coin
+  }
+
+  /**
+   * Get the locally best block chain sync percentage related to peers height.
    * @function syncPercent
-   * @return {number} Blockchain sync percentage.
+   * @return {number} Sync percentage.
    */
   @computed
   get syncPercent() {
@@ -405,796 +292,683 @@ export default class Wallet {
   }
 
   /**
-   * Get txs data.
-   * @function txsData
-   * @return {array} Txs data.
+   * Transaction IDs since genesis block.
+   * @function txKeys
+   * @return {array} Transaction IDs.
    */
   @computed
-  get txsData() {
-    let txs = []
-
-    this.txs.forEach((tx, txid) => {
-      let keywordMatches = 0
-
-      const amount = new Intl.NumberFormat(this.gui.language, {
-        minimumFractionDigits: 6,
-        maximumFractionDigits: 6
-      }).format(tx.amount)
-
-      const amountLocal = new Intl.NumberFormat(this.gui.language, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }).format(tx.amount * this.rates.average * this.rates.local)
-
-      /** Increment keywordMatches by 1 each time a keyword matches. */
-      this.search.txs.keywords.forEach(keyword => {
-        if (
-          amount.indexOf(keyword) > -1 ||
-          amountLocal.indexOf(keyword) > -1 ||
-          i18next.t('wallet:' + tx.category).indexOf(keyword) > -1 ||
-          (tx.blockhash && tx.blockhash.indexOf(keyword) > -1) ||
-          (tx.comment && tx.comment.indexOf(keyword) > -1) ||
-          tx.txid.indexOf(keyword) > -1 ||
-          moment(tx.time)
-            .format('L - LTS')
-            .indexOf(keyword) > -1
-        ) {
-          keywordMatches += 1
-        }
-      })
-
-      /** Push txs with match count equal to the number of keywords. */
-      if (keywordMatches === this.search.txs.keywords.length) {
-        txs.push({
-          key: tx.txid,
-          amount,
-          amountLocal,
-          category: tx.category,
-          color: tx.color,
-          comment: tx.comment || '',
-          time: tx.time,
-          txid: tx.txid
-        })
-      }
-    })
-
-    /** Return txs in ASC order. */
-    return txs.reverse()
+  get txKeys() {
+    return [...this.tx.keys()].reverse()
   }
 
   /**
-   * Get data of the transaction being viewed.
-   * @function viewingTx
-   * @return {object|null} Transaction data or null.
+   * Unspent transaction outputs in txid:n format.
+   * @function utxoKeys
+   * @return {array} Unspent transaction outputs.
    */
   @computed
-  get viewingTx() {
-    if (this.txs.has(this.viewing) === true) {
-      const saved = this.txs.get(this.viewing)
+  get utxoKeys() {
+    return this.utxo.reduce((utxo, output) => {
+      utxo.push(output.txid + ':' + output.vout)
+      return utxo
+    }, [])
+  }
 
-      /** Assign a unique key to each input. */
-      const inputs = saved.vin.reduce((inputs, input) => {
-        if (input.hasOwnProperty('coinbase') === false) {
-          inputs.push({
-            key: shortUid(),
-            address: input.address,
-            amount: input.value
-          })
+  /**
+   * Set viewing transaction or address.
+   * @function setViewing
+   * @param {string} key - Type of value (addr / tx).
+   * @param {string} value - Transaction ID or address.
+   */
+  @action
+  setViewing(key, value) {
+    this.viewing[key] = value
+  }
+
+  /**
+   * Set transactions and change addresses.
+   * @function setWallet
+   * @param {object} tx - Transactions to parse and update.
+   * @param {object} mem - Current mempool.
+   * @param {object} io - Input transactions and output addresses lookups.
+   */
+  @action
+  setWallet(tx, mem, io = null) {
+    const isMemPoolEmpty = Array.isArray(mem.result) === true
+
+    /** Map of input transactions lookup results. */
+    let inputTx = new Map()
+
+    /** Grouped notifications for incoming and spendable transactions. */
+    let notifications = { incoming: new Map(), spendable: new Map() }
+
+    /** Update notification amounts. */
+    const updateNotifications = (type, category, amount) => {
+      const totalExists = notifications[type].has(category) === true
+      const total = totalExists === true ? notifications[type].get(category) : 0
+
+      notifications[type].set(category, (total * coin + amount * coin) / coin)
+    }
+
+    /** Show notifications and play the sounds. */
+    const showNotifications = type => {
+      const msg = type === 'incoming' ? 'toBeConfirmed' : 'hasBeenConfirmed'
+      const icon = type === 'incoming' ? 'info' : 'success'
+
+      notifications[type].forEach((total, category) => {
+        /** Convert the total amount to local notation. */
+        total = new Intl.NumberFormat(this.gui.language, {
+          minimumFractionDigits: 6,
+          maximumFractionDigits: 6
+        }).format(total)
+
+        /** Open the notification. */
+        notification[icon]({
+          message: i18next.t(category),
+          description: total + ' XVC ' + i18next.t(msg)
+        })
+      })
+
+      /** Play a notification sound if enabled. */
+      if (notifications[type].size > 0 && this.gui.soundAlerts[type] === true) {
+        this.gui.sounds[type].play()
+      }
+    }
+
+    if (io !== null) {
+      io.res.forEach((res, index) => {
+        if ('result' in res === false) return
+
+        /** Populate the map of input transactions lookup results. */
+        if (io.req[index].method === 'gettransaction') {
+          inputTx.set(res.result.txid, res.result)
         }
 
-        return inputs
-      }, [])
+        /** Add change addresses. */
+        if (
+          io.req[index].method === 'validateaddress' &&
+          res.result.ismine === true &&
+          this.addr.has(res.result.address) === false
+        ) {
+          this.addr.set(res.result.address, {
+            account: null,
+            address: res.result.address,
+            balance: 0,
+            outputs: [],
+            received: 0,
+            spent: 0
+          })
+        }
+      })
+    }
 
-      /** Assign a unique key to each output. */
-      const outputs = saved.vout.reduce((outputs, output) => {
-        if (output.scriptPubKey.type !== 'nonstandard') {
-          let color = ''
+    /** Set or update transactions. */
+    tx.res.forEach(tx => {
+      tx = tx.result
 
-          /** Set color depending on output being spent. */
-          if (output.hasOwnProperty('spentTxid') === true) {
-            if (output.spentTxid === '') {
-              color = 'green'
-            } else {
-              color = 'red'
+      /** Get transaction saved status. */
+      const isSaved = this.tx.has(tx.txid)
+
+      /** Determine which transaction to alter (saved or result). */
+      let save = isSaved === false ? tx : this.tx.get(tx.txid)
+
+      /** Update ztlock status if transaction is in mempool. */
+      if (isMemPoolEmpty === false && tx.txid in mem.result === true) {
+        save.ztlock = mem.result[tx.txid].ztlock
+      }
+
+      /** Skip updating if confirmations haven't changed. */
+      if (isSaved === true && save.confirmations === tx.confirmations) return
+
+      /** Set inputs and outputs of new and orphaned transactions. */
+      if (isSaved === false || tx.confirmations === -1) {
+        /** Set inputs. */
+        save.vin.forEach(vin => {
+          if ('coinbase' in vin === true) return
+          if (inputTx.has(vin.txid) === false) return
+
+          /** Get the input transaction. */
+          const input = inputTx.get(vin.txid)
+
+          /** Set the value and address of input transaction output. */
+          vin.value = input.vout[vin.vout].value
+          vin.address = input.vout[vin.vout].scriptPubKey.addresses[0]
+
+          /** Mark the output spent below. */
+          if (this.tx.has(vin.txid) === false) return
+          if (this.addr.has(vin.address) === false) return
+
+          const savedTx = this.tx.get(vin.txid)
+          const addr = this.addr.get(vin.address)
+
+          /** Mark the output spent / spendable in address outputs. */
+          addr.outputs.forEach(output => {
+            if (output.txid === vin.txid && output.vout === vin.vout) {
+              output.spentTxid = tx.confirmations === -1 ? '' : save.txid
+            }
+          })
+
+          /** Revert changes if transaction becomes orphaned. */
+          if (tx.confirmations === -1) {
+            /** Add the output amount to address balance. */
+            addr.balance = (addr.balance * coin + vin.value * coin) / coin
+
+            /** Decrease the spent count. */
+            addr.spent -= 1
+
+            /** Mark the output spendable in transaction. */
+            savedTx.vout[vin.vout].spentTxid = ''
+          } else {
+            /** Deduct the output amount from address balance. */
+            addr.balance = (addr.balance * coin - vin.value * coin) / coin
+
+            /** Increase the spent count. */
+            addr.spent += 1
+
+            /** Mark the output spent in transaction. */
+            savedTx.vout[vin.vout].spentTxid = save.txid
+          }
+        })
+
+        /** Set outputs. */
+        save.vout.forEach(vout => {
+          if (vout.scriptPubKey.type === 'nonstandard') return
+          if (this.addr.has(vout.scriptPubKey.addresses[0]) === false) return
+
+          const addr = this.addr.get(vout.scriptPubKey.addresses[0])
+
+          /** Revert changes if transaction becomes orphaned. */
+          if (tx.confirmations === -1) {
+            /** Deduct the output amount from address balance. */
+            addr.balance = (addr.balance * coin - vout.value * coin) / coin
+
+            /** Remove the output from address outputs. */
+            addr.outputs.forEach((output, index) => {
+              if (output.txid === save.txid && output.vout === vout.n) {
+                addr.outputs.splice(index, 1)
+              }
+            })
+
+            /** Decrease the received count. */
+            addr.received -= 1
+          } else {
+            /** Add the output amount to address balance. */
+            addr.balance = (addr.balance * coin + vout.value * coin) / coin
+
+            /** Add the output to address outputs. */
+            addr.outputs.push({
+              txid: save.txid,
+              vout: vout.n,
+              scriptPubKey: vout.scriptPubKey.hex,
+              amount: vout.value,
+              spentTxid: ''
+            })
+
+            /** Increase the received count. */
+            addr.received += 1
+          }
+
+          /** Mark this output belonging to the wallet. */
+          vout.spentTxid = ''
+        })
+      }
+
+      /** Remove orphaned tx after vin and vout have been reset above. */
+      if (tx.confirmations === -1) this.tx.delete(tx.txid)
+
+      /** Set amount color. */
+      save.color =
+        'generated' in tx === true
+          ? tx.confirmations < 220 ? 'orange' : 'green'
+          : tx.confirmations === 0 ? 'orange' : tx.amount > 0 ? 'green' : 'red'
+
+      /** Convert time to miliseconds. */
+      if ('time' in tx === true) {
+        save.time = tx.time * 1000
+      }
+
+      /** Convert blocktime to miliseconds. */
+      if ('blocktime' in tx === true) {
+        save.blocktime = tx.blocktime * 1000
+      }
+
+      /** Convert timereceived to miliseconds. */
+      if ('timereceived' in tx === true) {
+        save.timereceived = tx.timereceived * 1000
+      }
+
+      /** Set blockhash if found in block. */
+      if ('blockhash' in tx === true) {
+        save.blockhash = tx.blockhash
+      }
+
+      /** Process transactions with details property. */
+      if ('details' in tx === true) {
+        /** Process generated transactions. */
+        if ('generated' in tx === true) {
+          /** Proof-of-Stake reward. */
+          if (tx.vout[0].scriptPubKey.type === 'nonstandard') {
+            save.category = 'stakingReward'
+          }
+
+          if ('coinbase' in tx.vin[0] === true) {
+            /** Proof-of-Work reward. */
+            if (
+              tx.details[0].address === tx.vout[0].scriptPubKey.addresses[0]
+            ) {
+              save.category = 'miningReward'
+            }
+
+            /** Incentive reward. */
+            if (
+              tx.details[0].address === tx.vout[1].scriptPubKey.addresses[0]
+            ) {
+              save.category = 'incentiveReward'
             }
           }
 
-          outputs.push({
-            key: shortUid(),
-            address: output.scriptPubKey.addresses[0],
-            amount: output.value,
-            color
-          })
+          /**
+           * While < 220 confirmations:
+           *  - PoW: tx.amount is zero.
+           *  - PoS: tx.amount is negative, sum of vout amounts - stake reward.
+           *  - Incentive: tx.amount is zero.
+           *
+           * During this time use the correct amount from tx.details.
+           */
+          if (isSaved === false && tx.confirmations < 220) {
+            save.amount = tx.details[0].amount
+          }
         }
 
-        return outputs
-      }, [])
+        /** Process Received and Sent to self transactions. */
+        if ('generated' in tx === false) {
+          /** Received. */
+          if (tx.amount !== 0) {
+            save.category = tx.confirmations > 0 ? 'received' : 'receiving'
+          }
 
-      /** Return saved transaction data with added inputs and outputs. */
-      return { ...saved, inputs, outputs }
-    }
+          /** Sent to self. */
+          if (tx.amount === 0) {
+            save.category = tx.confirmations > 0 ? 'sentSelf' : 'sendingSelf'
 
-    return null
+            /** Calculate the sum of amounts in details. */
+            if (isSaved === false) {
+              tx.details.forEach(entry => {
+                save.amount = (save.amount * coin + entry.amount * coin) / coin
+              })
+            }
+          }
+        }
+      }
+
+      /** Sent. */
+      if ('fee' in tx === true) {
+        if (tx.amount < 0) {
+          save.category = tx.confirmations > 0 ? 'sent' : 'sending'
+        }
+      }
+
+      /** Blended. */
+      if ('blended' in tx === true) {
+        save.category = tx.confirmations > 0 ? 'blended' : 'blending'
+
+        /** Count the sum of outputs belonging to this wallet. */
+        if (isSaved === false) {
+          save.amount = save.vout.reduce((amount, vout) => {
+            if ('spentTxid' in vout === false) return amount
+            return (amount * coin + vout.value * coin) / coin
+          }, 0)
+        }
+      }
+
+      /** Add incoming amounts to notifications. */
+      if (tx.confirmations === 0 && tx.category !== 'sending') {
+        updateNotifications('incoming', save.category, save.amount)
+      }
+
+      /** Add spendable amounts to notifications. */
+      if (
+        (isSaved === true || tx.blockhash === '0'.repeat(64)) &&
+        (tx.confirmations === 1 ||
+          (tx.confirmations === 220 && 'generated' in tx === true))
+      ) {
+        updateNotifications('spendable', save.category, save.amount)
+      }
+
+      /** Update confirmations. */
+      save.confirmations = tx.confirmations
+
+      /** Set new transaction. */
+      if (isSaved === false) this.tx.set(save.txid, save)
+    })
+
+    /** Show notifications if there are incoming or spendable transactions. */
+    showNotifications('incoming')
+    showNotifications('spendable')
+
+    /** Set the address and transaction being viewed on startup. */
+    if (this.viewing.addr === '') this.setViewing('addr', this.addrKeys[0])
+    if (this.viewing.tx === '') this.setViewing('tx', this.txKeys[0])
   }
 
   /**
-   * Set blending status.
-   * @function setBlendingStatus
+   * Toggle blending status.
+   * @function toggleBlendingStatus
    */
   @action
-  setBlendingStatus() {
+  toggleBlendingStatus() {
     this.isBlending = !this.isBlending
   }
 
   /**
-   * Set RPC info responses.
-   * @function setInfo
-   * @param {array} responses - RPC responses.
-   * @param {array} options - RPC options.
+   * Update label addresses and account balances.
+   * @function updateAddresses
+   * @param {array} accounts - Accounts to update the addresses of.
    */
   @action
-  setInfo(responses, options) {
-    const overwrite = ['getnetworkinfo', 'getpeerinfo']
+  async updateAddresses(accounts = null) {
+    const resAcc = await this.rpc.listAccounts()
+    if ('result' in resAcc === false) return
 
-    responses.forEach((response, index) => {
-      if (response.hasOwnProperty('result') === true) {
-        /** Update previous response or set a new one. */
-        if (
-          this.responses.has(options[index].method) === true &&
-          overwrite.includes(options[index].method) === false
-        ) {
-          let saved = this.responses.get(options[index].method)
+    /** Update addresses and balances of every account by default. */
+    if (accounts === null) {
+      accounts = Object.keys(resAcc.result)
+    }
 
-          for (let i in response.result) {
-            saved[i] = response.result[i]
-          }
+    /** Get addresses of each account. */
+    const resAddr = await this.rpc.batch(
+      accounts.reduce((req, acc) => {
+        req.push({ method: 'getaddressesbyaccount', params: [acc] })
+        return req
+      }, [])
+    )
+
+    /** Exit if there are no results in response. */
+    if ('res' in resAddr === false) return
+
+    runInAction(() => {
+      /** Add new account or update existing. */
+      accounts.forEach((acc, index) => {
+        if (this.acc.has(acc) === false) {
+          this.acc.set(acc, {
+            balance: resAcc.result[acc],
+            addresses: resAddr.res[index].result
+          })
         } else {
-          this.responses.set(options[index].method, response.result)
+          const saved = this.acc.get(acc)
+          saved.balance = resAcc.result[acc]
+          saved.addresses = resAddr.res[index].result
         }
-      }
+      })
+
+      /** Add new label address or update existing. */
+      resAddr.res.forEach((addresses, index) => {
+        addresses.result.forEach(address => {
+          if (this.addr.has(address) === false) {
+            this.addr.set(address, {
+              account: resAddr.req[index].params[0],
+              address,
+              balance: 0,
+              outputs: [],
+              received: 0,
+              spent: 0
+            })
+          } else {
+            /** Update account name in case it's different due to re-import. */
+            const saved = this.addr.get(address)
+            saved.account = resAddr.req[index].params[0]
+          }
+        })
+      })
     })
   }
 
   /**
-   * Set wallet lock status.
-   * @function setLockStatus
-   * @param {boolean} isEncrypted - Encryption status.
-   * @param {boolean} isLocked - Lock status.
+   * Update info props present in the specified preset of RPC requests.
+   * @function updateInfo
+   * @param {string} preset - Network or wallet.
    */
   @action
-  setLockStatus(isEncrypted, isLocked) {
-    this.isEncrypted = isEncrypted
-    this.isLocked = isLocked
-  }
-
-  /**
-   * Set searching keywords.
-   * @function setSearch
-   * @param {string} key - Search object key.
-   * @param {string} value - Input element value.
-   */
-  @action
-  setSearch(key, value) {
-    /** Clear previous timeout id. */
-    clearTimeout(this.search[key].timeoutId)
-
-    /** Update search string. */
-    this.search[key].value = value
-
-    /** Update keywords array in 1s, unless canceled before. */
-    this.search[key].timeoutId = setTimeout(
-      action('setSearch', () => {
-        this.search[key].keywords = value.match(/[^ ]+/g) || []
-      }),
-      1 * 1000
-    )
-  }
-
-  /**
-   * Set the account from which the coins will be spent.
-   * @function setSpendFrom
-   * @param {string} account - Account name.
-   */
-  @action
-  setSpendFrom(account = '#') {
-    this.spendFrom = account
-  }
-
-  /**
-   * Set wallet txs and addresses.
-   * @function setWallet
-   * @param {array} txs - Txs lookups.
-   * @param {array} addresses - Addresses lookup.
-   * @param {array} io - Inputs and outputs lookups.
-   * @param {array} options - io RPC request options.
-   */
-  @action
-  setWallet(txs = null, addresses = null, io = null, options = null) {
-    let inputTxs = new Map()
-
-    /** Grouped notifications for pending and spendable txs. */
-    let notifications = { pending: new Map(), spendable: new Map() }
-
-    /** Set wallet label addresses. */
-    if (addresses !== null) {
-      addresses.forEach(address => {
-        if (this.addresses.has(address.address) === false) {
-          this.addresses.set(address.address, {
-            address: address.address,
-            account: address.account,
-            balance: 0,
-            outputs: []
-          })
-        } else {
-          const saved = this.addresses.get(address.address)
-          saved.account = address.account
-        }
-      })
-    }
-
-    /** Create a map of txs inputs and set wallet change addresses. */
-    if (io !== null) {
-      io.forEach((io, index) => {
-        if (io.hasOwnProperty('result') === true) {
-          /** Create a map of txs inputs. */
-          if (options[index].method === 'gettransaction') {
-            inputTxs.set(io.result.txid, io.result)
-          }
-
-          /** Set wallet change addresses. */
-          if (options[index].method === 'validateaddress') {
-            if (io.result.ismine === true) {
-              /** Don't override previously set change address. */
-              if (this.addresses.has(io.result.address) === false) {
-                this.addresses.set(io.result.address, {
-                  address: io.result.address,
-                  account: null,
-                  balance: 0,
-                  outputs: []
-                })
-              }
-            }
-          }
-        }
-      })
-    }
-
-    /** Go through txs and make adjustments. */
-    if (txs !== null) {
-      txs.forEach(tx => {
-        tx = tx.result
-
-        /** Get saved status. */
-        const isSaved = this.txs.has(tx.txid)
-
-        /** Determine which tx to alter. */
-        let save = isSaved === false ? tx : this.txs.get(tx.txid)
-
-        /** Update ztlock status. */
-        if (tx.hasOwnProperty('ztlock') === true) {
-          save.ztlock = tx.ztlock
-        }
-
-        /** Skip updating if confirmations haven't changed. */
-        if (isSaved === true && save.confirmations === tx.confirmations) return
-
-        /** Check inputs and outputs of new txs. */
-        if (isSaved === false) {
-          /** Check inputs. */
-          save.vin.forEach(vin => {
-            /** Skip coinbase inputs. */
-            if (vin.hasOwnProperty('coinbase') === false) {
-              if (inputTxs.has(vin.txid) === true) {
-                const inputTx = inputTxs.get(vin.txid)
-
-                /** Set the value and address of input tx output. */
-                vin.value = inputTx.vout[vin.vout].value
-                vin.address = inputTx.vout[vin.vout].scriptPubKey.addresses[0]
-
-                if (this.txs.has(vin.txid) === true) {
-                  if (this.addresses.has(vin.address) === true) {
-                    const savedTx = this.txs.get(vin.txid)
-                    const address = this.addresses.get(vin.address)
-
-                    /** Deduct the output's amount from address balance. */
-                    address.balance =
-                      (address.balance * 1000000 - vin.value * 1000000) /
-                      1000000
-
-                    /** Mark the output spent in address outputs. */
-                    address.outputs.forEach(output => {
-                      if (
-                        output.txid === vin.txid &&
-                        output.vout === vin.vout
-                      ) {
-                        output.spentTxid = save.txid
-                      }
-                    })
-
-                    /** Mark the output spent in transaction. */
-                    savedTx.vout[vin.vout].spentTxid = save.txid
-                  }
-                }
-              }
-            }
-          })
-
-          /** Check outputs. */
-          save.vout.forEach(vout => {
-            /** Skip nonstandard outputs. */
-            if (vout.scriptPubKey.type !== 'nonstandard') {
-              let address = vout.scriptPubKey.addresses[0]
-
-              if (this.addresses.has(address) === true) {
-                address = this.addresses.get(address)
-
-                /** Add the output's amount to address balance. */
-                address.balance =
-                  (address.balance * 1000000 + vout.value * 1000000) / 1000000
-
-                /** Add the output to address outputs. */
-                address.outputs.push({
-                  txid: save.txid,
-                  vout: vout.n,
-                  amount: vout.value,
-                  spentTxid: ''
-                })
-
-                /** Mark this output belonging to the wallet. */
-                vout.spentTxid = ''
-              }
-            }
-          })
-        }
-
-        /** Determine amount color. */
-        save.color =
-          tx.hasOwnProperty('generated') === true
-            ? tx.confirmations < 220 ? 'orange' : 'green'
-            : tx.confirmations === 0
-              ? 'orange'
-              : tx.amount > 0 ? 'green' : 'red'
-
-        /** Convert time to miliseconds. */
-        if (tx.hasOwnProperty('time') === true) {
-          save.time = tx.time * 1000
-        }
-
-        /** Convert blocktime to miliseconds. */
-        if (tx.hasOwnProperty('blocktime') === true) {
-          save.blocktime = tx.blocktime * 1000
-        }
-
-        /** Convert timereceived to miliseconds. */
-        if (tx.hasOwnProperty('timereceived') === true) {
-          save.timereceived = tx.timereceived * 1000
-        }
-
-        /** Set blockhash if found in block. */
-        if (tx.hasOwnProperty('blockhash') === true) {
-          if (isSaved === false || save.blockhash !== tx.blockhash) {
-            save.blockhash = tx.blockhash
-          }
-        }
-
-        /** Process txs with details property. */
-        if (tx.hasOwnProperty('details') === true) {
-          /** Process PoW, PoS and Incentive reward txs. */
-          if (tx.hasOwnProperty('generated') === true) {
-            /** Proof-of-Stake reward. */
-            if (tx.vout[0].scriptPubKey.type === 'nonstandard') {
-              save.category = 'stakingReward'
-            }
-
-            if (tx.vin[0].hasOwnProperty('coinbase') === true) {
-              /** Proof-of-Work reward. */
-              if (
-                tx.details[0].address === tx.vout[0].scriptPubKey.addresses[0]
-              ) {
-                save.category = 'miningReward'
-              }
-
-              /** Incentive reward. */
-              if (
-                tx.details[0].address === tx.vout[1].scriptPubKey.addresses[0]
-              ) {
-                save.category = 'incentiveReward'
-              }
-            }
-
-            /**
-             * While < 220 confirmations:
-             *  - PoW: tx.amount is zero.
-             *  - PoS: tx.amount is negative to the sum
-             *         of output amounts - stake reward.
-             *  - Incentive: tx.amount is zero.
-             *
-             * During this time use the correct amount from tx.details.
-             */
-            if (tx.confirmations < 220) {
-              if (isSaved === false) {
-                save.amount = tx.details[0].amount
-              }
-            }
-          }
-
-          /** Process Received and Sent to self txs. */
-          if (tx.hasOwnProperty('generated') === false) {
-            /** Received. */
-            if (tx.amount !== 0) {
-              if (tx.confirmations > 0) {
-                save.category = 'received'
-              } else {
-                save.category = 'receiving'
-              }
-            }
-
-            /** Sent to self. */
-            if (tx.amount === 0) {
-              if (tx.confirmations > 0) {
-                save.category = 'sentToSelf'
-              } else {
-                save.category = 'sendingToSelf'
-              }
-
-              /** Calculate the sum of amounts in details. */
-              if (isSaved === false) {
-                tx.details.forEach(entry => {
-                  save.amount += entry.amount
-                })
-              }
-            }
-          }
-        }
-
-        /** Sent. */
-        if (tx.hasOwnProperty('fee') === true) {
-          if (tx.amount < 0) {
-            if (tx.confirmations > 0) {
-              save.category = 'sent'
-            } else {
-              save.category = 'sending'
-            }
-          }
-        }
-
-        /** Blended. */
-        if (tx.hasOwnProperty('blended') === true) {
-          /** Count the sum of outputs belonging to this wallet. */
-          if (isSaved === false) {
-            save.amount = 0
-
-            save.vout.forEach(vout => {
-              if (vout.hasOwnProperty('spentTxid') === true) {
-                save.amount += vout.value
-              }
-            })
-          }
-
-          if (tx.confirmations > 0) {
-            save.category = 'blended'
-          } else {
-            save.category = 'blending'
-          }
-        }
-
-        /** Add pending amounts to notifications. */
-        if (tx.confirmations === 0 && tx.category !== 'sending') {
-          /** Get total amount or return 0. */
-          let total =
-            notifications.pending.has(save.category) === true
-              ? notifications.pending.get(save.category)
-              : 0
-
-          /** Add tx amount to the total. */
-          notifications.pending.set(save.category, total + save.amount)
-        }
-
-        /** Add spendable amounts to notifications. */
-        if (isSaved === true) {
-          if (
-            tx.confirmations === 1 ||
-            (tx.confirmations === 220 &&
-              tx.hasOwnProperty('generated') === true)
-          ) {
-            /** Get total amount or return 0. */
-            let total =
-              notifications.spendable.has(save.category) === true
-                ? notifications.spendable.get(save.category)
-                : 0
-
-            /** Add tx amount to the total. */
-            notifications.spendable.set(save.category, total + save.amount)
-          }
-        }
-
-        /** Update confirmations. */
-        save.confirmations = tx.confirmations
-
-        /**
-         * Add unsaved txs to the map,
-         * saved txs update changed properties only.
-         */
-        if (isSaved === false) {
-          this.txs.set(save.txid, save)
-        }
-      })
-
-      /** Open notifications for pending txs. */
-      notifications.pending.forEach((total, category) => {
-        /** Convert the amount to local notation. */
-        total = new Intl.NumberFormat(this.gui.language, {
-          minimumFractionDigits: 6,
-          maximumFractionDigits: 6
-        }).format(total)
-
-        /** Open the notification. */
-        notification.info({
-          message: i18next.t('wallet:' + category),
-          description: total + ' XVC ' + i18next.t('wallet:toBeConfirmed'),
-          duration: 6
-        })
-      })
-
-      /** Play a incoming notification sound if enabled. */
-      if (
-        notifications.pending.size > 0 &&
-        this.gui.soundAlerts.incoming === true
-      ) {
-        new Audio(
-          join(__dirname, '..', 'assets', 'sounds', 'incoming.mp3')
-        ).play()
-      }
-
-      /**
-       * Open notification on confirmation change,
-       * from 0 -> 1 and 219 -> 220 for generated.
-       */
-      notifications.spendable.forEach((total, category) => {
-        /** Convert the amount to local notation. */
-        total = new Intl.NumberFormat(this.gui.language, {
-          minimumFractionDigits: 6,
-          maximumFractionDigits: 6
-        }).format(total)
-
-        /** Open the notification. */
-        notification.success({
-          message: i18next.t('wallet:' + category),
-          description: total + ' XVC ' + i18next.t('wallet:hasBeenConfirmed'),
-          duration: 6
-        })
-      })
-
-      /** Play a spendable notification sound if enabled. */
-      if (
-        notifications.spendable.size > 0 &&
-        this.gui.soundAlerts.spendable === true
-      ) {
-        new Audio(
-          join(__dirname, '..', 'assets', 'sounds', 'spendable.mp3')
-        ).play()
-      }
-    }
-  }
-
-  /**
-   * Set txid of the transaction being viewed.
-   * @function setViewing
-   * @param {string} txid - Transaction id.
-   */
-  @action
-  setViewing(txid = null) {
-    /** Lookup transaction that was just sent. */
-    if (txid !== null && this.txs.has(txid) === false) {
-      /** Save the txid in viewing queue. */
-      this.viewingQueue = txid
-
-      /** Update from the last known block. */
-      this.getWallet()
-    } else {
-      this.viewing = txid
-
-      /** Clear viewing queue if not null. */
-      if (this.viewingQueue !== null) {
-        this.viewingQueue = null
-      }
-    }
-  }
-
-  /**
-   * Get wallet or network info.
-   * @function getInfo
-   * @param {string} id - Request's id; either network or wallet.
-   */
-  getInfo(id = 'wallet') {
-    /** Clear previous timeout. */
-    clearTimeout(this.timeouts[id])
-
-    /** Grouped RPC info requests and their update intervals. */
-    const requests = {
+  async updateInfo(preset = 'wallet') {
+    const presets = {
       network: {
-        delay: 60 * 1000,
-        options: [
+        requests: [
           { method: 'getnetworkinfo', params: [] },
           { method: 'getpeerinfo', params: [] },
           { method: 'getincentiveinfo', params: [] },
           { method: 'getmininginfo', params: [] },
           { method: 'getdifficulty', params: [] }
-        ]
+        ],
+        update: 60 * 1000
       },
       wallet: {
-        delay: 10 * 1000,
-        options: [
+        requests: [
           { method: 'getinfo', params: [] },
+          { method: 'getunconfirmedbalance', params: [] },
           { method: 'chainblender', params: ['info'] }
-        ]
+        ],
+        update: 10 * 1000
       }
     }
 
-    this.rpc.execute(requests[id].options, (response, options) => {
-      /** Set the RPC response. */
-      this.setInfo(response, options)
+    /** Clear previously set timeout. */
+    clearTimeout(this.timeouts[preset])
 
-      /** Start a new timeout. */
-      this.timeouts[id] = setTimeout(() => this.getInfo(id), requests[id].delay)
-    })
-  }
+    /** Get the RPC responses. */
+    const batch = await this.rpc.batch(presets[preset].requests)
 
-  /**
-   * Get wallet lock status.
-   * @function getLockStatus
-   */
-  getLockStatus() {
-    this.rpc.execute([{ method: 'walletpassphrase', params: [] }], response => {
-      switch (response[0].error.code) {
-        /** error_code_wallet_wrong_enc_state (unencrypted) */
-        case -15:
-          return this.setLockStatus(false, false)
-
-        /** error_code_wallet_already_unlocked (encrypted and unlocked) */
-        case -17:
-          return this.setLockStatus(true, false)
-
-        /** error_code_invalid_params (encrypted and locked) */
-        case -32602:
-          return this.setLockStatus(true, true)
-      }
-    })
-  }
-
-  /**
-   * Get wallet txs and addresses.
-   * @param {boolean} fromGenesis - Get txs from genesis or last block.
-   * @param {boolean} addresses - Get addresses.
-   * @function getWallet
-   */
-  getWallet(fromGenesis = false, addresses = false) {
-    /** Clear previous timeout id. */
-    clearTimeout(this.timeouts.getWallet)
-
-    /** Default RPC request options. */
-    let options = [
-      {
-        method: 'listsinceblock',
-        params: [fromGenesis === true ? '' : this.lastBlock]
-      },
-      { method: 'getrawmempool', params: [true] }
-    ]
-
-    /** Add address update RPC option if true. */
-    if (addresses === true) {
-      options.push({
-        method: 'listreceivedbyaddress',
-        params: [0, true]
-      })
+    /** Start a new timeout for the specified preset while RPC is ready. */
+    if (this.rpc.ready === true) {
+      this.timeouts[preset] = setTimeout(
+        () => this.updateInfo(preset),
+        presets[preset].update
+      )
     }
 
-    this.rpc.execute(options, response => {
-      let lsb = response[0].result
-      let mempool = response[1].result
-      let options = new Map()
-
-      /** Assign addresses if they were looked up. */
-      const addresses = response.length === 3 ? response[2].result : null
-
-      /** Set last looked up block. */
-      this.lastBlock = lsb.lastblock
-
-      /** Set a new timeout for 10 seconds. */
-      this.timeouts.getWallet = setTimeout(() => this.getWallet(), 10 * 1000)
-
-      /** Add currently viewing transaction. */
-      if (this.viewing !== null) {
-        options.set(this.viewing, {
-          method: 'gettransaction',
-          params: [this.viewing]
-        })
+    if ('res' in batch === true) {
+      /** These RPCs return keyless values. Assign them manually below. */
+      const assignTo = {
+        getpeerinfo: 'peers',
+        getunconfirmedbalance: 'unconfirmed'
       }
 
-      /** Add pending generated txs below 220 confirmations. */
-      if (this.generatedPending.size > 0) {
-        this.generatedPending.forEach(tx => {
-          options.set(tx.txid, {
-            method: 'gettransaction',
-            params: [tx.txid]
-          })
-        })
-      }
+      runInAction(() => {
+        batch.res.forEach((res, index) => {
+          if ('result' in res === false) return
 
-      /** Sort txs received from lsb by time ASC. */
-      lsb.transactions.sort((a, b) => {
-        if (a.time < b.time) return -1
-        if (a.time > b.time) return 1
-        return 0
-      })
-
-      /** Add txs received from lsb, excluding orphaned. */
-      lsb.transactions.forEach(tx => {
-        if (tx.confirmations !== -1) {
-          options.set(tx.txid, {
-            method: 'gettransaction',
-            params: [tx.txid]
-          })
-        }
-      })
-
-      /** Return addresses if there are no further lookups. */
-      if (options.size === 0) {
-        if (addresses !== null) {
-          this.setWallet(null, addresses)
-        }
-      } else {
-        this.rpc.execute([...options.values()], txs => {
-          let options = new Map()
-
-          txs.forEach(tx => {
-            tx = tx.result
-
-            /** Update ztlock status of txs in mempool. */
-            if (Array.isArray(mempool) === false) {
-              if (mempool.hasOwnProperty(tx.txid) === true) {
-                tx.ztlock = mempool[tx.txid].ztlock
+          /** Set the results of RPC methods in assignTo to assigned props. */
+          if (batch.req[index].method in assignTo === true) {
+            this.info[assignTo[batch.req[index].method]] = res.result
+          } else {
+            for (let prop in res.result) {
+              /** Update nested objects (e.g. getnetworkinfo tcp and udp). */
+              if (
+                typeof res.result[prop] === 'object' &&
+                Array.isArray(res.result[prop]) === false
+              ) {
+                for (let nested in res.result[prop]) {
+                  this.info[prop][nested] = res.result[prop][nested]
+                }
+              } else {
+                /** ChainBlender info returns balance on chain, re-assign it. */
+                if (
+                  batch.req[index].method === 'chainblender' &&
+                  prop === 'balance'
+                ) {
+                  this.info.balanceOnChain = res.result[prop]
+                } else {
+                  this.info[prop] = res.result[prop]
+                }
               }
             }
-
-            /** Lookup inputs and outputs of unsaved txs. */
-            if (this.txs.has(tx.txid) === false) {
-              /** Lookup inputs, excluding coinbase. */
-              tx.vin.forEach(input => {
-                if (input.hasOwnProperty('coinbase') === false) {
-                  options.set(input.txid, {
-                    method: 'gettransaction',
-                    params: [input.txid]
-                  })
-                }
-              })
-
-              /** Lookup outputs, excluding nonstandard. */
-              tx.vout.forEach(output => {
-                if (output.scriptPubKey.type !== 'nonstandard') {
-                  const address = output.scriptPubKey.addresses[0]
-
-                  if (this.addresses.has(address) === false) {
-                    options.set(address, {
-                      method: 'validateaddress',
-                      params: [address]
-                    })
-                  }
-                }
-              })
-            }
-          })
-
-          /** Return txs and addresses if there are no further lookups. */
-          if (options.size === 0) {
-            this.setWallet(txs, addresses)
-          } else {
-            this.rpc.execute([...options.values()], (io, options) => {
-              this.setWallet(txs, addresses, io, options)
-            })
           }
         })
+      })
+    }
+  }
+
+  /**
+   * Update wallet lock status.
+   * @function updateLockStatus
+   */
+  @action
+  async updateLockStatus() {
+    const res = await this.rpc.walletPassphrase()
+    if ('error' in res === false) return
+
+    const is = (() => {
+      switch (res.error.code) {
+        case -32602:
+          return { encrypted: true, locked: true }
+        case -17:
+          return { encrypted: true, locked: false }
+        case -15:
+          return { encrypted: false, locked: false }
       }
+    })()
+
+    runInAction(() => {
+      this.isEncrypted = is.encrypted
+      this.isLocked = is.locked
     })
   }
+
+  /**
+   * Update unspent transaction outputs.
+   * @function updateUtxo
+   */
+  async updateUtxo() {
+    const res = await this.rpc.listUnspent()
+    if ('result' in res === false) return
+
+    runInAction(() => {
+      this.utxo = res.result
+    })
+  }
+
+  /**
+   * Update transactions and change addresses.
+   * @param {boolean} fromGenesis - Since genesis or last looked up block.
+   * @param {boolean} force - Disregard the 5 second update limit.
+   * @function updateWallet
+   */
+  async updateWallet(fromGenesis = false, force = false) {
+    /** Clear previous update timeout. */
+    clearTimeout(this.timeouts.transactions)
+
+    /** Enforce the 5 second update limit, unless forced to update. */
+    if (this.lastUpdate !== 0 && force === false) {
+      if (Date.now() - this.lastUpdate < 5 * 1000) {
+        /** Set a timeout for the remaining difference. */
+        this.timeouts.transactions = setTimeout(() => {
+          this.updateWallet()
+        }, 5 * 1000 - (Date.now() - this.lastUpdate))
+
+        return
+      }
+    }
+
+    /** Set time in ms when the update ran. */
+    this.lastUpdate = Date.now()
+
+    /** Get transactions info since genesis block or last looked up block. */
+    const sinceBlock = fromGenesis === true ? '' : this.lastBlock
+    const resLsb = await this.rpc.listSinceBlock(sinceBlock)
+    if ('result' in resLsb === false) return
+
+    /** Set the last looked up block. */
+    this.lastBlock = resLsb.result.lastblock
+
+    /** Sort transactions received from lsb by time ASC. */
+    resLsb.result.transactions.sort((a, b) => {
+      if (a.time < b.time) return -1
+      if (a.time > b.time) return 1
+      return 0
+    })
+
+    /** Prepare a map of RPC requests for transactions returned by lsb. */
+    let lookupTx = resLsb.result.transactions.reduce((lookupTx, tx) => {
+      /** Skip all unsaved orphaned transactions. */
+      if (this.tx.has(tx.txid) === false && tx.confirmations === -1) {
+        return lookupTx
+      }
+
+      lookupTx.set(tx.txid, { method: 'gettransaction', params: [tx.txid] })
+      return lookupTx
+    }, new Map())
+
+    /** Add currently viewing transaction. */
+    if (this.viewing.tx !== '') {
+      lookupTx.set(this.viewing.tx, {
+        method: 'gettransaction',
+        params: [this.viewing.tx]
+      })
+    }
+
+    /** Add pending generated transactions with less than 220 confirmations. */
+    this.generatedPending.forEach(tx => {
+      lookupTx.set(tx, { method: 'gettransaction', params: [tx] })
+    })
+
+    /** Exit if there are no transactions to lookup. */
+    if (lookupTx.size === 0) return
+
+    /** Get transactions. */
+    const resTx = await this.rpc.batch([...lookupTx.values()])
+    if ('res' in resTx === false) return
+
+    /** Get mempool. */
+    const resMem = await this.rpc.getRawMemPool(true)
+    if ('result' in resMem === false) return
+
+    /** Update unspent transaction outputs. */
+    this.updateUtxo()
+
+    /** Prepare a map of inputs and outputs to lookup further. */
+    let lookupIo = resTx.res.reduce((lookupIo, tx) => {
+      if ('result' in tx === false) return lookupIo
+
+      /** Lookup unsaved and saved orphaned (after confirm.) transactions. */
+      if (
+        this.tx.has(tx.result.txid) === false ||
+        tx.result.confirmations === -1
+      ) {
+        /** Get input transactions, excluding coinbase. */
+        tx.result.vin.forEach(input => {
+          if ('coinbase' in input === true) return
+
+          lookupIo.set(input.txid, {
+            method: 'gettransaction',
+            params: [input.txid]
+          })
+        })
+
+        /** Validate unknown output addresses, excluding nonstandard. */
+        tx.result.vout.forEach(output => {
+          if (output.scriptPubKey.type === 'nonstandard') return
+          if (this.addr.has(output.scriptPubKey.addresses[0]) === true) return
+
+          lookupIo.set(output.scriptPubKey.addresses[0], {
+            method: 'validateaddress',
+            params: [output.scriptPubKey.addresses[0]]
+          })
+        })
+      }
+
+      return lookupIo
+    }, new Map())
+
+    /** Exit and set transactions if there are no input and output lookups. */
+    if (lookupIo.size === 0) return this.setWallet(resTx, resMem)
+
+    /** Get input transactions and output addresses. */
+    const resIo = await this.rpc.batch([...lookupIo.values()])
+    if ('res' in resIo === false) return
+
+    /** Set transactions (with vin & vout) and change addresses. */
+    this.setWallet(resTx, resMem, resIo)
+  }
 }
+
+/** Export store class as default export. */
+export default Wallet

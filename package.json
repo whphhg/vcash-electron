@@ -1,7 +1,7 @@
 {
   "name": "vcash-electron",
   "productName": "Vcash Electron GUI",
-  "version": "0.33.43",
+  "version": "0.33.45",
   "description": "Multi-platform and multi-node GUI for Vcash.",
   "author": "whphhg <whphhg@protonmail.ch>",
   "license": "GPL-3.0",
