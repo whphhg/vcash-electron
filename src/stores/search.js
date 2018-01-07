@@ -50,6 +50,7 @@ class Search {
    */
   @computed
   get addr() {
+    const fromAccount = this.send.spend.fromAccount
     const keywordCount = this.find.addr.keywords.length
 
     /** Check if any address type is hidden. */
@@ -59,47 +60,58 @@ class Search {
     }, true)
 
     /** Return all addresses by default. */
-    if (showAll === true && keywordCount === 0) {
+    if (showAll === true && keywordCount === 0 && fromAccount === '*ANY*') {
       return this.wallet.addrKeys
     }
 
     /** Return filtered addresses. */
-    return this.wallet.addr.values().reduce((filtered, addr) => {
-      /** Skip addresses of hidden types. */
-      if (this.show.addr.new === false) {
-        if (addr.received === 0) return filtered
-      }
-
-      if (this.show.addr.spendable === false) {
-        if (addr.received !== addr.spent) return filtered
-      }
-
-      if (this.show.addr.spent === false) {
-        if (addr.received === addr.spent && addr.received > 0) return filtered
-      }
-
-      /** Allow searching for balances using the local notation. */
-      const balance = new Intl.NumberFormat(this.gui.language, {
-        minimumFractionDigits: 6,
-        maximumFractionDigits: 6
-      }).format(addr.balance)
-
-      /** Check if all keywords match once. */
-      const matches = this.find.addr.keywords.reduce((matches, keyword) => {
-        if (
-          balance.indexOf(keyword) > -1 ||
-          addr.address.indexOf(keyword) > -1
-        ) {
-          return matches + 1
+    return this.wallet.addr
+      .values()
+      .reduce((filtered, addr) => {
+        /** Skip addresses of hidden types. */
+        if (this.show.addr.new === false) {
+          if (addr.received === 0) return filtered
         }
 
-        return matches
-      }, 0)
+        if (this.show.addr.spendable === false) {
+          if (addr.received !== addr.spent) return filtered
+        }
 
-      /** Add addresses with matches equal to the number of keywords. */
-      if (matches === keywordCount) filtered.push(addr.address)
-      return filtered
-    }, [])
+        if (this.show.addr.spent === false) {
+          if (addr.received === addr.spent && addr.received > 0) return filtered
+        }
+
+        /** Filter addresses by account. */
+        if (
+          fromAccount === '*ANY*' ||
+          fromAccount === addr.account ||
+          (fromAccount === '*DEFAULT*' && addr.account === '')
+        ) {
+          /** Allow searching for balances using the local notation. */
+          const balance = new Intl.NumberFormat(this.gui.language, {
+            minimumFractionDigits: 6,
+            maximumFractionDigits: 6
+          }).format(addr.balance)
+
+          /** Check if all keywords match once. */
+          const matches = this.find.addr.keywords.reduce((matches, keyword) => {
+            if (
+              balance.indexOf(keyword) > -1 ||
+              addr.address.indexOf(keyword) > -1
+            ) {
+              return matches + 1
+            }
+
+            return matches
+          }, 0)
+
+          /** Add addresses with matches equal to the number of keywords. */
+          if (matches === keywordCount) filtered.push(addr.address)
+        }
+
+        return filtered
+      }, [])
+      .reverse()
   }
 
   /**
@@ -126,9 +138,7 @@ class Search {
     )
 
     /** Return all transactions by default. */
-    if (show.all === true && keywordCount === 0) {
-      return this.wallet.txKeys
-    }
+    if (show.all === true && keywordCount === 0) return this.wallet.txKeys
 
     /** Return filtered transactions in original (DESC) order. */
     return this.wallet.tx
