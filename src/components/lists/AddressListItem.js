@@ -13,7 +13,10 @@ const AddressListItem = observer(props => {
       onClick={() => props.wallet.setViewing('addr', addr.address)}
     >
       <div className="mono" style={{ fontWeight: '400', opacity: '0.7' }}>
-        <p style={{ letterSpacing: addr.address.length === 34 ? '0.22px' : 0 }}>
+        <p
+          className="flex-center"
+          style={{ letterSpacing: addr.address.length === 34 ? '0.22px' : 0 }}
+        >
           {addr.address}
         </p>
       </div>
@@ -22,7 +25,7 @@ const AddressListItem = observer(props => {
           {new Intl.NumberFormat(props.gui.language, {
             minimumFractionDigits: 6,
             maximumFractionDigits: 6
-          }).format(addr.balance)}{' '}
+          }).format(Math.abs(addr.balance))}{' '}
           XVC
         </p>
       </div>
