@@ -1,5 +1,5 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto:300,400,500&subset=latin-ext);
-@import url(https://fonts.googleapis.com/css?family=Roboto+Mono:300,400,500&subset=latin-ext);
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,500&subset=latin-ext);
+@import url(https://fonts.googleapis.com/css?family=Roboto+Mono:400,500&subset=latin-ext);
 @import url(https://fonts.googleapis.com/icon?family=Material+Icons);
 
 /******************************* Basic elements *******************************/
@@ -8,11 +8,14 @@
 }
 
 a,
-a:active {
+a:active,
+a.alt:hover {
   color: #b60127;
 }
 
-a:hover {
+a:hover,
+a.alt,
+a.alt:active {
   color: #43464b;
 }
 
@@ -34,6 +37,7 @@ hr {
 }
 
 /************************* Success, warning and error *************************/
+.green > .ant-input-sm, /** Recipient list address coloring */
 .green {
   color: #4fb71c;
 }
@@ -42,6 +46,7 @@ hr {
   color: #ff7200;
 }
 
+.red > .ant-input-sm, /** Recipient list address coloring */
 .red {
   color: #b60127;
 }
@@ -64,6 +69,16 @@ hr {
 }
 
 /******************************** Grid aliases ********************************/
+.grid-lc {
+  display: grid;
+  grid-gap: 5px 50px;
+  grid-template-columns: auto 1fr; /** Labels and content perfectly aligned */
+}
+
+.grid-lc.gap-5-30 {
+  grid-gap: 5px 30px;
+}
+
 .grid-tb {
   display: grid;
   grid-template-rows: 1fr auto; /** Align elements top and bottom */
@@ -71,11 +86,21 @@ hr {
 }
 
 /******* React "infinite" list, limited by browser max scrolling height *******/
+.list,
+.list-plain {
+  overflow: auto;
+  z-index: 10;
+}
+
 .list {
   background: #fafafa;
   box-shadow: 1px 0px 5px 0px #888888;
-  overflow: auto;
-  z-index: 10;
+}
+
+.list-header {
+  border-bottom: 1px solid #d5d5d5;
+  font-weight: 500;
+  padding: 0 5px 3px 5px;
 }
 
 .list-item {
@@ -85,19 +110,31 @@ hr {
   cursor: pointer;
 }
 
-.list-item:hover {
+.list-item > div,
+.list-item-plain > div {
+  padding: 3px 5px;
+}
+
+.list-item.even,
+.list-item-plain.even {
+  background: #ededed;
+}
+
+.list-item:hover,
+.list-item-plain:hover {
   background: #dddddd;
 }
 
-.list-item.even {
-  background: #efefef;
-}
-
-.list-item.selected {
+.list-item.selected,
+.list-item-plain.selected {
   background: #cdcdcd;
 }
 
 /******************************* Material icons *******************************/
+.material-icons.md-40 {
+  font-size: 40px;
+}
+
 .material-icons.md-22 {
   font-size: 22px;
 }
@@ -124,6 +161,20 @@ hr {
 
 .material-icons + p {
   margin: 0 0 0 5px;
+}
+
+/****************************** Recharts tooltip ******************************/
+.chartTooltip {
+  background-color: rgba(255, 255, 255, 0.85);
+  border: 1px solid #f5f5f5;
+  margin: 0;
+  padding: 10px;
+}
+
+.chartTooltip .label {
+  border-bottom: 1px solid #cccccc;
+  font-weight: 500;
+  margin: 0;
 }
 
 /******************************** Application *********************************/
@@ -236,6 +287,12 @@ hr {
   color: #b60127;
 }
 
+#InfoBlocks {
+  display: grid;
+  grid-gap: 90px;
+  grid-template-columns: auto 1fr; /** Network info, recent blocks */
+}
+
 #MainMenu {
   background-color: #b60127;
   box-shadow: 1px 0px 5px 0px #888888;
@@ -288,7 +345,16 @@ hr {
 
 #OutputsRecipients {
   display: grid;
+  grid-gap: 20px;
   grid-template-columns: 250px 1fr; /** UTXO selection, sending recipients */
+}
+
+#OutputsRecipients > div:first-child > div:nth-child(1) {
+  margin: 0 0 40px 0; /** Address outputs bottom margin */
+}
+
+#OutputsRecipients > div:first-child > div:nth-child(2) {
+  margin: 0 0 20px 0; /** Selected outputs bottom margin */
 }
 
 /********************************* Ant Design *********************************/
@@ -314,6 +380,28 @@ hr {
   color: #ffffff;
 }
 
+.ant-btn-primary:active,
+.ant-btn-primary.active {
+  background-color: #b60127;
+  border-color: #b60127;
+}
+
+.ant-checkbox-wrapper:hover .ant-checkbox-inner,
+.ant-checkbox:hover .ant-checkbox-inner,
+.ant-checkbox-input:focus + .ant-checkbox-inner {
+  border-color: #b60127;
+}
+
+.ant-checkbox-checked:after {
+  border: 1px solid #b60127;
+}
+
+.ant-checkbox-checked .ant-checkbox-inner,
+.ant-checkbox-indeterminate .ant-checkbox-inner {
+  background-color: #b60127;
+  border-color: #b60127;
+}
+
 .ant-input:hover:not(.ant-input-disabled),
 .ant-input:focus {
   border-color: #808080;
@@ -331,6 +419,11 @@ hr {
 .ant-menu-inline .ant-menu-item:after,
 .ant-menu-vertical .ant-menu-item:after {
   border-right: none;
+}
+
+.ant-menu-inline .ant-menu-item {
+  line-height: 40px;
+  height: 40px; /** Same as logo on the left with 6px padding on top / bottom */
 }
 
 .ant-menu-item-selected,
