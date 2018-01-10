@@ -1,13 +1,11 @@
 import React from 'react'
+import { observer } from 'mobx-react'
 
 /** Ant Design */
 import Checkbox from 'antd/lib/checkbox'
 
-const SpendOutputListItem = props => {
-  const utxoVout = props.send.spend.utxo[props.index]
-  const utxoIndex = props.wallet.utxoKeys.indexOf(utxoVout)
-  const utxo = props.wallet.utxo[utxoIndex]
-
+const SpendOutputListItem = observer(props => {
+  const utxo = props.send.spendUtxo[props.index]
   return (
     <div className={'list-item-plain' + (props.index % 2 === 0 ? ' even' : '')}>
       <div className="flex-sb">
@@ -15,7 +13,7 @@ const SpendOutputListItem = props => {
           <Checkbox
             checked
             className="mono"
-            id={utxoVout}
+            id={utxo.txid + ':' + utxo.vout}
             onChange={props.setOutput}
           >
             {utxo.txid.slice(0, 11)}:{utxo.vout}
@@ -30,6 +28,6 @@ const SpendOutputListItem = props => {
       </div>
     </div>
   )
-}
+})
 
 export default SpendOutputListItem

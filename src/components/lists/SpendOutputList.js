@@ -7,7 +7,7 @@ import { inject, observer } from 'mobx-react'
 import SpendOutputListItem from './SpendOutputListItem.js'
 
 @translate(['wallet'])
-@inject('gui', 'send', 'wallet')
+@inject('gui', 'send')
 @observer
 class SpendOutputList extends React.Component {
   constructor(props) {
@@ -15,7 +15,6 @@ class SpendOutputList extends React.Component {
     this.t = props.t
     this.gui = props.gui
     this.send = props.send
-    this.wallet = props.wallet
   }
 
   /**
@@ -47,7 +46,6 @@ class SpendOutputList extends React.Component {
                 key={key}
                 gui={this.gui}
                 send={this.send}
-                wallet={this.wallet}
                 setOutput={this.setOutput}
               />
             )}
