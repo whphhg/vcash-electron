@@ -14,7 +14,7 @@ import Message from '../wallet/Message.js'
 import RecipientList from '../lists/RecipientList.js'
 import SendControls from '../send/SendControls.js'
 import SendOptions from '../send/SendOptions.js'
-import SpendInfo from '../send/SpendInfo.js'
+import SpendBalance from '../send/SpendBalance.js'
 import SpendOutputList from '../lists/SpendOutputList.js'
 
 const Send = props => (
@@ -50,7 +50,7 @@ const Send = props => (
         <div>
           <Address />
           <SpendOutputList />
-          <SpendInfo />
+          <SpendBalance />
         </div>
         <div className="grid-tb">
           <div>
