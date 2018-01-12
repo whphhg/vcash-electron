@@ -20,8 +20,12 @@ class SendOptions extends React.Component {
     if (this.send.spend.utxo.length > 0) return null
     return (
       <div>
-        <div className="flex-sb">
-          <div style={{ lineHeight: '22px', margin: '0 36px 0 0' }}>
+        <div className="flex-sb" style={{ lineHeight: '22px' }}>
+          <div style={{ margin: '0 36px 0 0' }}>
+            <div className="flex" style={{ margin: '5px 0 0 0' }}>
+              <i className="material-icons md-16">label</i>
+              <p>{this.t('spendFrom')}</p>
+            </div>
             {this.send.recipients.size === 1 && (
               <div className="flex" style={{ margin: '5px 0 0 0' }}>
                 <i className="material-icons md-16">perm_identity</i>
@@ -40,6 +44,12 @@ class SendOptions extends React.Component {
             )}
           </div>
           <div style={{ flex: 1 }}>
+            <p style={{ margin: '5px 0 0 0' }}>
+              {(this.send.spend.fromAccount === '*ANY*' && this.t('any')) ||
+                (this.send.spend.fromAccount === '*DEFAULT*' &&
+                  this.t('default')) ||
+                this.send.spend.fromAccount}
+            </p>
             {this.send.recipients.size === 1 && (
               <div style={{ flex: 1, margin: '5px 0 0 0' }}>
                 <Input

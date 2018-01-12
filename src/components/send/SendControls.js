@@ -60,7 +60,10 @@ class SendControls extends React.Component {
             </Button>
           </Popconfirm>
           <Button
-            disabled={this.wallet.spendFrom === '*ANY*'}
+            disabled={
+              this.send.spend.fromAccount === '*ANY*' &&
+              this.send.spend.utxo.length === 0
+            }
             onClick={() => this.send.addRecipient()}
             size="small"
             style={{ margin: '0 5px 0 5px' }}
