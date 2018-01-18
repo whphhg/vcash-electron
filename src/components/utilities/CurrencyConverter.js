@@ -3,7 +3,7 @@ import { translate } from 'react-i18next'
 import { action, computed, extendObservable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { join } from 'path'
-import { decimalSeparator } from '../../utilities/common.js'
+import { decimalSep } from '../../utilities/common.js'
 import moment from 'moment'
 
 /** Ant Design */
@@ -68,7 +68,7 @@ class CurrencyConverter extends React.Component {
     const from = e.target.name
 
     /** Allow only amount in 0000000[.,]00000000 format. */
-    switch (decimalSeparator()) {
+    switch (decimalSep()) {
       case '.':
         if (amount.match(/^\d{0,7}(?:\.\d{0,8})?$/) === null) return
         break

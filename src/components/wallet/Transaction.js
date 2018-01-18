@@ -2,6 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { computed, reaction } from 'mobx'
 import { inject, observer } from 'mobx-react'
+import { statusColor } from '../../utilities/common.js'
 import moment from 'moment'
 
 /** Components */
@@ -86,7 +87,7 @@ class Transaction extends React.Component {
    */
   async ztLock() {
     const res = await this.rpc.ztLock(this.wallet.viewing.tx)
-    if ('result' in res === true) this.wallet.updateWallet()
+    if ('result' in res === true) this.wallet.updateWallet(false, true)
   }
 
   render() {
@@ -223,7 +224,9 @@ class Transaction extends React.Component {
                     XVC
                   </p>
                 )}
-                <p className={tx.color}>{tx.confirmations}</p>
+                <p className={statusColor(tx.confirmations, tx.category)}>
+                  {tx.confirmations}
+                </p>
               </div>
               <div className="grid-lc" style={{ flex: 1 }}>
                 {'to' in tx === true && (
