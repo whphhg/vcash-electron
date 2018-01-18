@@ -6,7 +6,7 @@ import Input from 'antd/lib/input'
 import Popconfirm from 'antd/lib/popconfirm'
 
 const RecipientListItem = observer(props => {
-  const rec = props.send.recipients.get(props.send.recipientKeys[props.index])
+  const rec = props.send.recipients.get(props.send.recipientsKeys[props.index])
   return (
     <div className="flex-sb" style={{ margin: '0 0 5px 0' }}>
       <div style={{ flex: 1.4 }}>
@@ -46,7 +46,7 @@ const RecipientListItem = observer(props => {
           placeholder={props.t('amount')}
           size="small"
           suffix="XVC"
-          value={rec.amount}
+          value={rec.amountString}
         />
       </div>
       <div style={{ flex: 0.7 }}>

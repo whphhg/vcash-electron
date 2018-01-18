@@ -34,7 +34,7 @@ class RecipientList extends React.Component {
         style={{ maxHeight: this.gui.window.height - 268 }}
       >
         <List
-          length={this.send.recipientKeys.length}
+          length={this.send.recipientsKeys.length}
           itemRenderer={(index, key) => (
             <RecipientListItem
               index={index}

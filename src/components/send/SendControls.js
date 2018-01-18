@@ -30,7 +30,7 @@ class SendControls extends React.Component {
    */
   @action
   togglePopconfirm = () => {
-    if (this.wallet.isLocked === false && this.send.errorStatus === false) {
+    if (this.wallet.isLocked === false && this.send.errorStatus === '') {
       this.popconfirmVisible = !this.popconfirmVisible
     }
   }
@@ -52,7 +52,7 @@ class SendControls extends React.Component {
               disabled={
                 this.wallet.isLocked === true ||
                 this.wallet.info.balance < this.wallet.info.paytxfee ||
-                this.send.errorStatus !== false
+                this.send.errorStatus !== ''
               }
               size="small"
             >
@@ -75,7 +75,7 @@ class SendControls extends React.Component {
           <Popconfirm
             cancelText={this.t('no')}
             okText={this.t('yes')}
-            onConfirm={() => this.send.clear()}
+            onConfirm={() => this.send.reset()}
             placement="bottom"
             title={this.t('sendReset')}
           >
