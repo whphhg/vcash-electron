@@ -9,15 +9,6 @@ import { join, sep } from 'path'
 export const coin = 1000000
 
 /**
- * Get decimal separator.
- * @function decimalSeparator
- * @return {string} Decimal separator.
- */
-export const decimalSeparator = (n = 1.1) => {
-  return n.toLocaleString().substring(1, 2)
-}
-
-/**
  * Get data folder path.
  * @function dataPath
  * @return {string} Data folder path.
@@ -36,15 +27,35 @@ export const dataPath = () => {
 }
 
 /**
- * Get a 4-character alphanumeric unique sequence.
- * For N unique IDs, out of X possibilities,
- * call at most 1 / (1 − N / X) times on average to ensure uniqueness.
- * @function shortUid
- * @return {string} Unique 4-character uid.
- * @see {@link http://stackoverflow.com/a/6248722|StackOverflow}
+ * Debounce a function for a specified delay.
+ * @function debounce
+ * @param {function} callback - Function to be called upon execution.
+ * @param {number} delay - Delay from last debounce until execution.
+ * @return {function} Debounced function.
+ * @see {@link https://remysharp.com/2010/07/21/throttling-function-calls|Blog}
  */
-export const shortUid = () => {
-  return ('0000' + ((Math.random() * 1679616) | 0).toString(36)).slice(-4)
+export const debounce = (callback, delay = 1000) => {
+  let timer = null
+
+  return () => {
+    let context = this
+    let args = arguments
+
+    /** Clear previous timeout. */
+    clearTimeout(timer)
+
+    /** Set a new timeout and apply context and arguments to the function. */
+    timer = setTimeout(() => callback.apply(context, args), delay)
+  }
+}
+
+/**
+ * Get decimal separator.
+ * @function decimalSep
+ * @return {string} Decimal separator.
+ */
+export const decimalSep = (n = 1.1) => {
+  return n.toLocaleString().substring(1, 2)
 }
 
 /**
@@ -82,24 +93,27 @@ export const humanReadable = (num = 0, dec = true, suffix = 'B', language) => {
 }
 
 /**
- * Debounce a function for a specified delay.
- * @function debounce
- * @param {function} callback - Function to be called upon execution.
- * @param {number} delay - Delay from last debounce until execution.
- * @return {function} Debounced function.
- * @see {@link https://remysharp.com/2010/07/21/throttling-function-calls|Blog}
+ * Get a 4-character alphanumeric unique sequence.
+ * For N unique IDs, out of X possibilities,
+ * call at most 1 / (1 − N / X) times on average to ensure uniqueness.
+ * @function shortUid
+ * @return {string} Unique 4-character uid.
+ * @see {@link http://stackoverflow.com/a/6248722|StackOverflow}
  */
-export const debounce = (callback, delay = 1000) => {
-  let timer = null
+export const shortUid = () => {
+  return ('0000' + ((Math.random() * 1679616) | 0).toString(36)).slice(-4)
+}
 
-  return () => {
-    let context = this
-    let args = arguments
+/**
+ * Get the CSS class of the color representing confirmation status.
+ * @function statusColor
+ * @param {number} conf - Transaction confirmations.
+ * @param {string} cat - Transaction category.
+ * @return {string} CSS classname.
+ */
+export const statusColor = (conf, cat) => {
+  const rewards = ['incentiveReward', 'miningReward', 'stakingReward']
 
-    /** Clear previous timeout. */
-    clearTimeout(timer)
-
-    /** Set a new timeout and apply context and arguments to the function. */
-    timer = setTimeout(() => callback.apply(context, args), delay)
-  }
+  if (rewards.includes(cat) === true) return conf < 220 ? 'orange' : 'green'
+  return conf < 1 ? 'orange' : 'green'
 }
