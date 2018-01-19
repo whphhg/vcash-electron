@@ -5,7 +5,7 @@ import { inject, observer } from 'mobx-react'
 /** Ant Design */
 import Select from 'antd/lib/select'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('gui')
 @observer
 class SetLanguage extends React.Component {

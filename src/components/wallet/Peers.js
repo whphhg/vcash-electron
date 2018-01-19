@@ -6,7 +6,7 @@ import moment from 'moment'
 /** Ant Design */
 import Table from 'antd/lib/table'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('gui', 'wallet')
 @observer
 class Peers extends React.Component {

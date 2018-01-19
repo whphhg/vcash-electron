@@ -7,7 +7,7 @@ import { inject, observer } from 'mobx-react'
 import TransactionListItem from './TransactionListItem.js'
 import { Placeholder } from '../utilities/Common.js'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('gui', 'rates', 'search', 'wallet')
 @observer
 class TransactionList extends React.Component {

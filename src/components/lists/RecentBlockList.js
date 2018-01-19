@@ -6,7 +6,7 @@ import { inject, observer } from 'mobx-react'
 /** Component */
 import RecentBlockListItem from './RecentBlockListItem.js'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('gui', 'statistics')
 @observer
 class RecentBlockList extends React.Component {

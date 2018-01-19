@@ -6,7 +6,7 @@ import { inject, observer } from 'mobx-react'
 /** Component */
 import SpendOutputListItem from './SpendOutputListItem.js'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('gui', 'send')
 @observer
 class SpendOutputList extends React.Component {

@@ -12,7 +12,7 @@ import Switch from 'antd/lib/switch'
 /** Component */
 import { SwitchIcon } from '../utilities/Common.js'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('connections')
 @observer
 class SetConnection extends React.Component {

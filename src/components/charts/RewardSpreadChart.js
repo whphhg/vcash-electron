@@ -15,7 +15,7 @@ import moment from 'moment'
 /** Components */
 import { CustomTick, CustomTooltip } from './CustomRecharts.js'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('gui', 'statistics')
 @observer
 class RewardSpreadChart extends React.Component {

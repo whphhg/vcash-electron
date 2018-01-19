@@ -3,7 +3,7 @@ import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 import { humanReadable } from '../../utilities/common.js'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('gui', 'wallet')
 @observer
 class NetworkInfo extends React.Component {
@@ -17,7 +17,7 @@ class NetworkInfo extends React.Component {
   render() {
     return (
       <div className="flex" style={{ alignSelf: 'flex-start' }}>
-        <div style={{ lineHeight: '20px', margin: '0 50px 0 0' }}>
+        <div style={{ lineHeight: '20px', margin: '0 30px 0 0' }}>
           <div>
             <div className="flex">
               <i className="material-icons md-16">hearing</i>

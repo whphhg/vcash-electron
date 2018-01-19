@@ -6,7 +6,7 @@ import { inject, observer } from 'mobx-react'
 import Button from 'antd/lib/button'
 import Tooltip from 'antd/lib/tooltip'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('rpc', 'wallet')
 @observer
 class WalletLock extends React.Component {

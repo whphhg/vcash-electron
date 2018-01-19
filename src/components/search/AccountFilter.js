@@ -5,7 +5,7 @@ import { inject, observer } from 'mobx-react'
 /** Ant Design */
 import Select from 'antd/lib/select'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('send', 'wallet')
 @observer
 class AccountFilter extends React.Component {

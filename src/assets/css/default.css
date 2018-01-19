@@ -289,7 +289,7 @@ hr {
 
 #InfoBlocks {
   display: grid;
-  grid-gap: 90px;
+  grid-gap: 50px;
   grid-template-columns: auto 1fr; /** Network info, recent blocks */
 }
 

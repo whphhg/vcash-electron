@@ -9,7 +9,7 @@ import Popover from 'antd/lib/popover'
 import WalletLock from './wallet/WalletLock.js'
 import WalletUnlock from './wallet/WalletUnlock.js'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('connections', 'gui', 'rates', 'wallet')
 @observer
 class Header extends React.Component {

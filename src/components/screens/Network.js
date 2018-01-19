@@ -16,7 +16,7 @@ import Peers from '../wallet/Peers.js'
 import RecentBlockList from '../lists/RecentBlockList.js'
 import RewardSpreadChart from '../charts/RewardSpreadChart.js'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('connections')
 @observer
 class Network extends React.Component {

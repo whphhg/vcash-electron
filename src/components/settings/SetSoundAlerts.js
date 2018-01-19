@@ -8,7 +8,7 @@ import Switch from 'antd/lib/switch'
 /** Component */
 import { SwitchIcon } from '../utilities/Common.js'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('gui')
 @observer
 class SetSoundAlerts extends React.Component {

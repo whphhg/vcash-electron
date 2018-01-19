@@ -17,7 +17,7 @@ import moment from 'moment'
 /** Components */
 import { CustomTick, CustomTooltip } from './CustomRecharts.js'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('gui', 'statistics')
 @observer
 class DailyTotalsChart extends React.Component {

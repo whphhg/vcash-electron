@@ -10,7 +10,7 @@ import Switch from 'antd/lib/switch'
 /** Component */
 import { SwitchIcon } from '../utilities/Common.js'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('search')
 @observer
 class AddressFilter extends React.Component {

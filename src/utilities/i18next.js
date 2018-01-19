@@ -27,12 +27,12 @@ const i18n = (() => {
       jsonIndent: 2
     },
     debug: process.env.NODE_ENV === 'dev',
-    defaultNS: 'wallet',
+    defaultNS: 'common',
     fallbackLng,
     interpolation: { escapeValue: false },
     languages,
     load: 'currentOnly',
-    ns: ['wallet'],
+    ns: ['common'],
     react: {
       bindI18n: 'languageChanged',
       bindStore: false,

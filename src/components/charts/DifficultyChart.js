@@ -14,7 +14,7 @@ import {
 /** Components */
 import { CustomTick, CustomTooltip } from './CustomRecharts.js'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('gui', 'statistics')
 @observer
 class DifficultyChart extends React.Component {

@@ -7,7 +7,7 @@ import { shortUid } from '../../utilities/common.js'
 import AutoComplete from 'antd/lib/auto-complete'
 import Button from 'antd/lib/button'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('console', 'gui', 'rpc')
 @observer
 class Console extends React.Component {

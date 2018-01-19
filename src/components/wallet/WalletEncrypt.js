@@ -8,7 +8,7 @@ import Button from 'antd/lib/button'
 import Input from 'antd/lib/input'
 import notification from 'antd/lib/notification'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('rpc', 'wallet')
 @observer
 class WalletEncrypt extends React.Component {

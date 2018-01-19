@@ -9,7 +9,7 @@ import Button from 'antd/lib/button'
 import Input from 'antd/lib/input'
 import Popover from 'antd/lib/popover'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('rpc', 'wallet')
 @observer
 class AddressGet extends React.Component {

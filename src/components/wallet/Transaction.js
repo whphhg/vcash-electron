@@ -9,7 +9,7 @@ import moment from 'moment'
 import TransactionIoList from '../lists/TransactionIoList.js'
 import { Placeholder } from '../utilities/Common.js'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('gui', 'rates', 'rpc', 'wallet')
 @observer
 class Transaction extends React.Component {

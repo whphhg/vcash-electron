@@ -7,7 +7,7 @@ import { inject, observer } from 'mobx-react'
 /** Ant Design */
 import Menu from 'antd/lib/menu'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('connections')
 @observer
 class MainMenu extends React.Component {

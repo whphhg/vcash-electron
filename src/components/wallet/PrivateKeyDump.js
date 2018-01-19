@@ -8,7 +8,7 @@ import AutoComplete from 'antd/lib/auto-complete'
 import Button from 'antd/lib/button'
 import Input from 'antd/lib/input'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('rpc', 'wallet')
 @observer
 class PrivateKeyDump extends React.Component {

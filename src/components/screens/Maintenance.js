@@ -19,7 +19,7 @@ import WalletPassphraseChange from '../wallet/WalletPassphraseChange.js'
 import WalletRepair from '../wallet/WalletRepair.js'
 import WalletSeedDump from '../wallet/WalletSeedDump.js'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('connections')
 @observer
 class Maintenance extends React.Component {

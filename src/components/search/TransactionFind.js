@@ -5,7 +5,7 @@ import { inject, observer } from 'mobx-react'
 /** Ant Design */
 import Input from 'antd/lib/input'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('search')
 @observer
 class TransactionFind extends React.Component {

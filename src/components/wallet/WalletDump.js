@@ -8,7 +8,7 @@ import Button from 'antd/lib/button'
 import Input from 'antd/lib/input'
 import message from 'antd/lib/message'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('rpc', 'wallet')
 @observer
 class WalletDump extends React.Component {

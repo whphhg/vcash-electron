@@ -5,7 +5,7 @@ import { inject, observer } from 'mobx-react'
 /** Component */
 import AddressOutputList from '../lists/AddressOutputList.js'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('wallet')
 @observer
 class Address extends React.Component {

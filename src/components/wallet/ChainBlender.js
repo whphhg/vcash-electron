@@ -11,7 +11,7 @@ import Switch from 'antd/lib/switch'
 /** Component */
 import { SwitchIcon } from '../utilities/Common.js'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('gui', 'rpc', 'wallet')
 @observer
 class ChainBlender extends React.Component {

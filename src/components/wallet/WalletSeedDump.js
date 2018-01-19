@@ -7,7 +7,7 @@ import { inject, observer } from 'mobx-react'
 import Button from 'antd/lib/button'
 import Input from 'antd/lib/input'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('rpc', 'wallet')
 @observer
 class WalletSeedDump extends React.Component {

@@ -6,7 +6,7 @@ import { inject, observer } from 'mobx-react'
 /** Ant Design */
 import Button from 'antd/lib/button'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('gui', 'rpc')
 @observer
 class WalletRepair extends React.Component {

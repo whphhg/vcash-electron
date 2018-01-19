@@ -5,7 +5,7 @@ import { inject, observer } from 'mobx-react'
 /** Ant Design */
 import Tooltip from 'antd/lib/tooltip'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('gui', 'wallet')
 @observer
 class IncentiveInfo extends React.Component {

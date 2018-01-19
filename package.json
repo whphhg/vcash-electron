@@ -1,7 +1,7 @@
 {
   "name": "vcash-electron",
   "productName": "Vcash Electron GUI",
-  "version": "0.33.51",
+  "version": "0.33.52",
   "description": "Multi-platform and multi-node GUI for Vcash.",
   "author": "whphhg <whphhg@protonmail.ch>",
   "license": "GPL-3.0",
@@ -36,7 +36,7 @@
   ],
   "dependencies": {
     "antd": "2.13.11",
-    "i18next": "10.2.2",
+    "i18next": "10.3.0",
     "i18next-node-fs-backend": "1.0.0",
     "mobx": "3.4.1",
     "mobx-logger": "0.6.0",

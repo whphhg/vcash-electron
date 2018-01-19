@@ -6,7 +6,7 @@ import { inject, observer } from 'mobx-react'
 /** Component */
 import TransactionIoListItem from './TransactionIoListItem.js'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('gui', 'wallet')
 @observer
 class TransactionIoList extends React.Component {

@@ -7,7 +7,7 @@ import { version } from '../../package.json'
 /** Ant Design */
 import Progress from 'antd/lib/progress'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('connections', 'gui', 'wallet')
 @observer
 class Footer extends React.Component {

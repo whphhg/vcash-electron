@@ -10,7 +10,7 @@ import Popconfirm from 'antd/lib/popconfirm'
 /** Component */
 import SendTotal from './SendTotal.js'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('send', 'wallet')
 @observer
 class SendControls extends React.Component {

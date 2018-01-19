@@ -6,7 +6,7 @@ import { inject, observer } from 'mobx-react'
 /** Component */
 import AddressListItem from './AddressListItem.js'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('gui', 'search', 'wallet')
 @observer
 class AddressList extends React.Component {

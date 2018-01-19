@@ -7,7 +7,7 @@ import { incentivePercent, powReward } from '../../utilities/blockRewards.js'
 /** Ant Design */
 import Input from 'antd/lib/input'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('gui', 'wallet')
 @observer
 class RewardCalculator extends React.Component {

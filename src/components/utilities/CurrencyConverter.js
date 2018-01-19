@@ -10,7 +10,7 @@ import moment from 'moment'
 import Input from 'antd/lib/input'
 import Tooltip from 'antd/lib/tooltip'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('gui', 'rates')
 @observer
 class CurrencyConverter extends React.Component {

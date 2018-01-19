@@ -10,7 +10,7 @@ import message from 'antd/lib/message'
 import Modal from 'antd/lib/modal'
 import Tooltip from 'antd/lib/tooltip'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('rpc', 'wallet')
 @observer
 class WalletUnlock extends React.Component {

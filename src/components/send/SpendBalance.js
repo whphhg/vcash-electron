@@ -2,7 +2,7 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { inject, observer } from 'mobx-react'
 
-@translate(['wallet'])
+@translate(['common'])
 @inject('gui', 'send')
 @observer
 class SpendBalance extends React.Component {
