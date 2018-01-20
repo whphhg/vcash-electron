@@ -2,20 +2,23 @@ import { action, computed, extendObservable } from 'mobx'
 import { readFileSync } from 'fs'
 import { createServer } from 'net'
 import { Client } from 'ssh2'
-import { shortUid } from '../utilities/common'
-import i18next from '../utilities/i18next'
+import { shortUid } from '../utilities/common.js'
+import i18next from '../utilities/i18next.js'
 
 /** Ant Design */
 import notification from 'antd/lib/notification'
 
 /** Store instances */
-import gui from './gui'
-import rates from './rates'
+import gui from './gui.js'
+import rates from './rates.js'
 
 /** Store classes */
-import Console from './console'
-import RPC from './rpc'
-import Wallet from './wallet'
+import Console from './console.js'
+import RPC from './rpc.js'
+import Search from './search.js'
+import Send from './send.js'
+import Statistics from './statistics.js'
+import Wallet from './wallet.js'
 
 class Connection {
   /**
@@ -130,11 +133,16 @@ class Connection {
     /** Initialize and set new stores. */
     if (Object.keys(this.stores).length === 0) {
       const rpc = new RPC(this)
+      const wallet = new Wallet(gui, rates, rpc)
+      const send = new Send(rpc, wallet)
 
       this.stores = {
-        rpc,
         console: new Console(rpc),
-        wallet: new Wallet(gui, rates, rpc)
+        rpc,
+        search: new Search(gui, rates, send, wallet),
+        send,
+        statistics: new Statistics(rpc, wallet),
+        wallet
       }
     }
 
