@@ -11,6 +11,7 @@ import MaintenanceMenu from '../menus/MaintenanceMenu.js'
 import PrivateKeyDump from '../wallet/PrivateKeyDump.js'
 import PrivateKeyImport from '../wallet/PrivateKeyImport.js'
 import SetLocaleSettings from '../settings/SetLocaleSettings.js'
+import SetRates from '../settings/SetRates.js'
 import SetSoundAlerts from '../settings/SetSoundAlerts.js'
 import WalletBackup from '../wallet/WalletBackup.js'
 import WalletDump from '../wallet/WalletDump.js'
@@ -78,6 +79,14 @@ class Maintenance extends React.Component {
             render={() => (
               <div>
                 <PrivateKeyImport />
+              </div>
+            )}
+          />
+          <Route
+            path={'/' + this.connections.viewingId + '/maintenance/rates'}
+            render={() => (
+              <div>
+                <SetRates />
               </div>
             )}
           />

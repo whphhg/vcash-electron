@@ -26,7 +26,7 @@ class IncentiveInfo extends React.Component {
           <i className="flex-center material-icons md-16">account_circle</i>
         </Tooltip>
         <div style={{ margin: '10px 0 0 0' }}>
-          <p className="flex-center" style={{ fontWeight: 500 }}>
+          <p className="flex-center" style={{ fontWeight: '500' }}>
             {walletaddress === '' ? this.t('unlockReveal') : walletaddress}
           </p>
         </div>
@@ -46,7 +46,7 @@ class IncentiveInfo extends React.Component {
               <p>{this.t('collateralBalance')}</p>
             </div>
           </div>
-          <div style={{ fontWeight: 500, textAlign: 'right' }}>
+          <div style={{ fontWeight: '500', textAlign: 'right' }}>
             <p className={info.votecandidate === true ? 'green' : 'red'}>
               {this.t(info.votecandidate === true ? 'yes' : 'no')}
             </p>

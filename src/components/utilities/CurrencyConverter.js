@@ -2,13 +2,10 @@ import React from 'react'
 import { translate } from 'react-i18next'
 import { action, computed, extendObservable } from 'mobx'
 import { inject, observer } from 'mobx-react'
-import { join } from 'path'
 import { decimalSep } from '../../utilities/common.js'
-import moment from 'moment'
 
 /** Ant Design */
 import Input from 'antd/lib/input'
-import Tooltip from 'antd/lib/tooltip'
 
 @translate(['common'])
 @inject('gui', 'rates')
@@ -83,54 +80,11 @@ class CurrencyConverter extends React.Component {
   }
 
   render() {
-    const imgDir = join(__dirname, '..', '..', 'assets', 'images')
     return (
       <div>
-        <div className="flex-sb" style={{ margin: '0 0 10px 0' }}>
-          <div className="flex">
-            <i className="material-icons md-16">cached</i>
-            <p>{this.t('currencyConverter')}</p>
-          </div>
-          <div className="flex">
-            <img src={join(imgDir, 'exchangeBittrex.png')} />
-            <Tooltip
-              placement="bottom"
-              title={''.concat(
-                this.t('lastUpdated'),
-                ' ',
-                moment(this.rates.bittrex.updated).format('LTS')
-              )}
-            >
-              <p style={{ margin: '1px 10px 0 5px' }}>
-                <span style={{ fontWeight: '500' }}>
-                  {new Intl.NumberFormat(this.gui.language, {
-                    minimumFractionDigits: 8,
-                    maximumFractionDigits: 8
-                  }).format(this.rates.bittrex.Last)}
-                </span>{' '}
-                BTC
-              </p>
-            </Tooltip>
-            <img src={join(imgDir, 'exchangePoloniex.png')} />
-            <Tooltip
-              placement="bottomRight"
-              title={''.concat(
-                this.t('lastUpdated'),
-                ' ',
-                moment(this.rates.poloniex.updated).format('LTS')
-              )}
-            >
-              <p style={{ margin: '1px 0 0 5px' }}>
-                <span style={{ fontWeight: '500' }}>
-                  {new Intl.NumberFormat(this.gui.language, {
-                    minimumFractionDigits: 8,
-                    maximumFractionDigits: 8
-                  }).format(this.rates.poloniex.last)}
-                </span>{' '}
-                BTC
-              </p>
-            </Tooltip>
-          </div>
+        <div className="flex" style={{ margin: '0 0 10px 0' }}>
+          <i className="material-icons md-16">cached</i>
+          <p>{this.t('currencyConverter')}</p>
         </div>
         <div className="flex-sb">
           <div style={{ flex: '1' }}>

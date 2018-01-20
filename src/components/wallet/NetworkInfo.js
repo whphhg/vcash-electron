@@ -75,7 +75,7 @@ class NetworkInfo extends React.Component {
             </div>
           </div>
         </div>
-        <div style={{ fontWeight: 500, lineHeight: '20px' }}>
+        <div style={{ fontWeight: '500', lineHeight: '20px' }}>
           <div>
             <p>
               {this.wallet.info.ip}:{this.wallet.info.port}

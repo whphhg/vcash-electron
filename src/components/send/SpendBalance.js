@@ -19,7 +19,7 @@ class SpendBalance extends React.Component {
     return (
       <div>
         <div className="flex-center" style={{ margin: '0 0 3px 0' }}>
-          <p style={{ fontWeight: 500 }}>{this.t('spendBalance')}</p>
+          <p style={{ fontWeight: '500' }}>{this.t('spendBalance')}</p>
         </div>
         <p className="flex-center green">
           {new Intl.NumberFormat(this.gui.language, {

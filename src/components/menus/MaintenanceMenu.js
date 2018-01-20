@@ -62,6 +62,14 @@ class MaintenanceMenu extends React.Component {
             <p style={{ margin: '0 0 0 10px' }}>{this.t('maintImport')}</p>
           </div>
         </Menu.Item>
+        <Menu.Item key={key + 'rates'}>
+          <div className="flex">
+            <i className="material-icons md-20">cached</i>
+            <p style={{ margin: '0 0 0 10px' }}>
+              {this.t('toggleExchangeRates')}
+            </p>
+          </div>
+        </Menu.Item>
         <Menu.Item key={key + 'console'}>
           <div className="flex">
             <i className="material-icons md-20">remove_from_queue</i>

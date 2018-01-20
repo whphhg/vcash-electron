@@ -1,4 +1,4 @@
-import { action, computed, extendObservable } from 'mobx'
+import { action, computed, extendObservable, reaction } from 'mobx'
 import { getItem, setItem } from '../utilities/localStorage.js'
 
 /** Store instance */
@@ -6,21 +6,45 @@ import gui from './gui.js'
 
 class Rates {
   /**
+   * @prop {object} timeouts - Update loops timeouts.
+   * @prop {object} exchanges - Exchanges used in average rate calculation.
    * @prop {object} bitcoinAverage - Bitcoin average price index.
    * @prop {object} bittrex - Bittrex XVC ticker.
    * @prop {object} poloniex - Poloniex XVC ticker.
    */
   constructor() {
+    this.timeouts = { bittrex: null, poloniex: null }
+
+    /** Extend the store with observable properties. */
     extendObservable(this, {
+      exchanges: getItem('exchanges') || { bittrex: true, poloniex: true },
       bitcoinAverage: getItem('bitcoinAverage') || { rates: {}, updated: 0 },
-      bittrex: { Last: 0 },
-      poloniex: { last: 0 }
+      bittrex: { Last: 0, updated: 0 },
+      poloniex: { last: 0, updated: 0 }
     })
 
-    /** Start the update loops. */
+    /** Begin Bitcoin average update loop. */
     this.fetchBitcoinAverage()
-    this.fetchBittrex()
-    this.fetchPoloniex()
+
+    /** Begin enabled exchanges update loops. */
+    Object.keys(this.exchanges).forEach(exchange => {
+      if (this.exchanges[exchange] === true) this.fetchRate(exchange)
+    })
+
+    /** Auto-save exchanges settings to local storage with 3s delay. */
+    reaction(
+      () => {
+        return Object.keys(this.exchanges).reduce((exchanges, exchange) => {
+          exchanges[exchange] = this.exchanges[exchange]
+          return exchanges
+        }, {})
+      },
+      exchanges => setItem('exchanges', exchanges),
+      {
+        delay: 3 * 1000,
+        name: 'Rates: auto-saving exchanges settings to local storage.'
+      }
+    )
   }
 
   /**
@@ -30,13 +54,15 @@ class Rates {
    */
   @computed
   get average() {
-    const rates = [this.bittrex.Last, this.poloniex.last]
+    const rates = { bittrex: this.bittrex.Last, poloniex: this.poloniex.last }
 
-    const result = rates.reduce(
-      (result, rate) => {
-        rate = parseFloat(rate)
+    /** Get the sum of rates and count of enabled exchanges to divide by. */
+    const result = Object.keys(rates).reduce(
+      (result, exchange) => {
+        const rate = parseFloat(rates[exchange])
 
-        if (rate > 0) {
+        /** Increment total if the exchange is enabled and has updated rate. */
+        if (this.exchanges[exchange] === true && rate > 0) {
           result.divideBy += 1
           result.total += rate
         }
@@ -51,17 +77,27 @@ class Rates {
   }
 
   /**
-   * Get current local bitcoin price.
+   * Get the number of enabled exchanges.
+   * @function exchangesEnabled
+   * @return {number} Enabled exchanges.
+   */
+  @computed
+  get exchangesEnabled() {
+    return Object.keys(this.exchanges).reduce((enabled, exchange) => {
+      if (this.exchanges[exchange] === true) return enabled + 1
+      return enabled
+    }, 0)
+  }
+
+  /**
+   * Get current local Bitcoin price.
    * @function local
-   * @return {number} Local bitcoin price.
+   * @return {number} Local Bitcoin price.
    */
   @computed
   get local() {
-    if (gui.localCurrency in this.bitcoinAverage.rates === true) {
-      return this.bitcoinAverage.rates[gui.localCurrency]
-    }
-
-    return 0
+    if (gui.localCurrency in this.bitcoinAverage.rates === false) return 0
+    return this.bitcoinAverage.rates[gui.localCurrency]
   }
 
   /**
@@ -72,6 +108,24 @@ class Rates {
   @computed
   get localCurrencies() {
     return Object.keys(this.bitcoinAverage.rates)
+  }
+
+  /**
+   * Toggle exchange being used in average rate calculation.
+   * @function setExchange
+   * @param {string} exchange - Exchange name (key).
+   */
+  @action
+  setExchange(exchange) {
+    /** Always have at least one exchange enabled. */
+    if (this.exchangesEnabled === 1 && this.exchanges[exchange] === true) return
+
+    /** Clear previous timeout. */
+    clearTimeout(this.timeouts[exchange])
+
+    /** Toggle the exchange and begin the update loop if it was toggled on. */
+    this.exchanges[exchange] = !this.exchanges[exchange]
+    if (this.exchanges[exchange] === true) this.fetchRate(exchange)
   }
 
   /**
@@ -125,9 +179,13 @@ class Rates {
    * Fetch BitcoinAverage price index every 15 minutes
    * to obey the 100 requests per day limit.
    * @function fetchBitcoinAverage
+   * @param {boolean} force - Force update, regardless of per day limit.
    */
-  async fetchBitcoinAverage() {
-    if (new Date().getTime() - this.bitcoinAverage.updated > 15 * 59 * 1000) {
+  async fetchBitcoinAverage(force = false) {
+    if (
+      force === true ||
+      new Date().getTime() - this.bitcoinAverage.updated > 15 * 59 * 1000
+    ) {
       try {
         let res = await window.fetch(
           'https://apiv2.bitcoinaverage.com/indices/global/ticker/short?crypto=BTC'
@@ -159,7 +217,7 @@ class Rates {
       console.error('Bittrex:', error.message)
     }
 
-    setTimeout(() => this.fetchBittrex(), 60 * 1000)
+    this.timeouts.bittrex = setTimeout(() => this.fetchBittrex(), 60 * 1000)
   }
 
   /**
@@ -178,7 +236,17 @@ class Rates {
       console.error('Poloniex:', error.message)
     }
 
-    setTimeout(() => this.fetchPoloniex(), 60 * 1000)
+    this.timeouts.poloniex = setTimeout(() => this.fetchPoloniex(), 60 * 1000)
+  }
+
+  /**
+   * Fetch exchange rate.
+   * @function fetchRate
+   * @param {string} exchange - Exchange name (key).
+   */
+  fetchRate(exchange) {
+    if (exchange === 'bittrex') return this.fetchBittrex()
+    if (exchange === 'poloniex') return this.fetchPoloniex()
   }
 }
 

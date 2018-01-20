@@ -83,7 +83,7 @@ class ChainBlender extends React.Component {
                 <p>{this.t('denominated')}</p>
               </div>
             </div>
-            <div style={{ fontWeight: 500, lineHeight: '18px' }}>
+            <div style={{ fontWeight: '500', lineHeight: '18px' }}>
               <p>
                 {new Intl.NumberFormat(this.gui.language, {
                   maximumFractionDigits: 6,

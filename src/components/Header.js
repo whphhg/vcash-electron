@@ -64,7 +64,7 @@ class Header extends React.Component {
                     <div className="flex-sb">
                       <p>{this.t('unconfirmed')}</p>
                       <p>
-                        <span style={{ fontWeight: 500 }}>
+                        <span style={{ fontWeight: '500' }}>
                           {new Intl.NumberFormat(this.gui.language, {
                             maximumFractionDigits: 6
                           }).format(this.wallet.info.unconfirmed)}
@@ -77,7 +77,7 @@ class Header extends React.Component {
                     <div className="flex-sb">
                       <p>{this.t('staking')}</p>
                       <p>
-                        <span style={{ fontWeight: 500 }}>
+                        <span style={{ fontWeight: '500' }}>
                           {new Intl.NumberFormat(this.gui.language, {
                             maximumFractionDigits: 6
                           }).format(this.wallet.info.stake)}
@@ -90,7 +90,7 @@ class Header extends React.Component {
                     <div className="flex-sb">
                       <p>{this.t('immature')}</p>
                       <p>
-                        <span style={{ fontWeight: 500 }}>
+                        <span style={{ fontWeight: '500' }}>
                           {new Intl.NumberFormat(this.gui.language, {
                             maximumFractionDigits: 6
                           }).format(this.wallet.info.newmint)}

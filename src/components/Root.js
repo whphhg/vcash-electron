@@ -12,9 +12,9 @@ import Network from './screens/Network.js'
 import Send from './screens/Send.js'
 import Transactions from './screens/Transactions.js'
 
-/** Set notification and message top margin. */
-notification.config({ top: 35 })
+/** Set message and notification top margin. */
 message.config({ top: 35 })
+notification.config({ top: 35 })
 
 @inject('connections')
 @observer
