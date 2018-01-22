@@ -1,7 +1,6 @@
 # Vcash Electron GUI
 
 [![Join the chat at https://gitter.im/openvcash/vcash-electron](https://badges.gitter.im/openvcash/vcash-electron.svg)](https://gitter.im/openvcash/vcash-electron?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 [![TravisCI](https://img.shields.io/travis/openvcash/vcash-electron/master.svg)](https://travis-ci.org/openvcash/vcash-electron)
 [![Release](https://img.shields.io/github/release/openvcash/vcash-electron.svg)](https://github.com/openvcash/vcash-electron/releases)
 [![AUR](https://img.shields.io/aur/version/vcash-electron.svg)](https://aur.archlinux.org/packages/vcash-electron/)
