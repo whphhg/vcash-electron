@@ -11,6 +11,7 @@ cache:
 install:
   - npm install
   - npm prune
+  - npm run babel
 script:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then npm run build-macos; else npm run build-linux; fi
 # - npm test
