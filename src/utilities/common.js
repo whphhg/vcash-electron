@@ -2,13 +2,6 @@ import { homedir } from 'os'
 import { join, sep } from 'path'
 
 /**
- * A coin.
- * @name coin
- * @see {@link https://github.com/openvcash/vcash/blob/master/coin/include/coin/constants.hpp#L84|GitHub}
- */
-export const coin = 1000000
-
-/**
  * Get data folder path.
  * @function dataPath
  * @return {string} Data folder path.

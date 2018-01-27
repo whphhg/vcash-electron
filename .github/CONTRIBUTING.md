@@ -42,7 +42,7 @@ creating the pull request.
 ### Code style
 This repository uses [prettier](https://github.com/prettier/prettier) and
 [standard](https://standardjs.com/) to maintain code style and consistency,
-and to avoid style arguments.
+and to avoid bike-shedding.
 
 ### Add new translation
 Follow and complete the steps above, then create a copy of the `en-US/`
@@ -61,7 +61,7 @@ the line.
     { language: 'languageCode-countryCode', name: 'Language' },
 
 You can now select your translation in the GUI and begin translating the
-strings in `wallet.json`.
+strings in `common.json`.
 
 **Note:** Please use an editor that will open and save files in UTF-8
 (e.g. [Atom](https://atom.io/)).

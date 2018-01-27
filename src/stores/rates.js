@@ -1,5 +1,6 @@
 import { action, computed, extendObservable, reaction } from 'mobx'
 import { getItem, setItem } from '../utilities/localStorage.js'
+import { bitcoinAverage, bittrex, poloniex } from '../utilities/constants.js'
 
 /** Store instance */
 import gui from './gui.js'
@@ -187,10 +188,7 @@ class Rates {
       new Date().getTime() - this.bitcoinAverage.updated > 15 * 59 * 1000
     ) {
       try {
-        let res = await window.fetch(
-          'https://apiv2.bitcoinaverage.com/indices/global/ticker/short?crypto=BTC'
-        )
-
+        let res = await window.fetch(bitcoinAverage)
         res = await res.json()
         this.setBitcoinAverage(res)
       } catch (error) {
@@ -207,10 +205,7 @@ class Rates {
    */
   async fetchBittrex() {
     try {
-      let res = await window.fetch(
-        'https://bittrex.com/api/v1.1/public/getmarketsummary?market=btc-xvc'
-      )
-
+      let res = await window.fetch(bittrex)
       res = await res.json()
       this.setBittrex(res)
     } catch (error) {
@@ -226,10 +221,7 @@ class Rates {
    */
   async fetchPoloniex() {
     try {
-      let res = await window.fetch(
-        'https://poloniex.com/public?command=returnTicker'
-      )
-
+      let res = await window.fetch(poloniex)
       res = await res.json()
       this.setPoloniex(res)
     } catch (error) {

@@ -58,7 +58,7 @@ about which you can read more
 [here](https://www.electron.build/configuration/configuration).
 
 Run the commands below to install npm dependencies, remove extraneous npm
-packages and transform the source code to `lib/` directory using `Babel`.
+packages and transform the source code to `lib/` directory using Babel.
 
     npm install && npm prune && npm run babel
 
