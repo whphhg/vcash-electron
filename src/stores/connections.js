@@ -14,7 +14,16 @@ class Connections {
     this.instances = new Map()
 
     /** Get connection configs saved in local storage. */
-    const saved = getItem('connections')
+    let saved = getItem('connections')
+
+    /** TODO: Remove in a future release. */
+    Object.keys(saved).forEach(id => {
+      if ('uid' in saved[id] === false) return
+
+      /** Replace uid with id, which was used prior to v0.33.17. */
+      saved[id].id = saved[id].uid
+      delete saved[id].uid
+    })
 
     /** Extend the store with observable properties. */
     extendObservable(this, {
