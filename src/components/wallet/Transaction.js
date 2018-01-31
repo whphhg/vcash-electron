@@ -91,9 +91,6 @@ class Transaction extends React.Component {
   }
 
   render() {
-    /** Do not render if the transaction does not exist. */
-    if (this.wallet.tx.has(this.wallet.viewing.tx) === false) return null
-
     /** Render a placeholder if this is a wallet without transactions (new). */
     if (this.wallet.txKeys.length === 0) {
       return (
@@ -106,6 +103,9 @@ class Transaction extends React.Component {
         />
       )
     }
+
+    /** Render a empty div if the transaction does not exist. */
+    if (this.wallet.tx.has(this.wallet.viewing.tx) === false) return <div />
 
     const { average, local } = this.rates
     const tx = this.wallet.tx.get(this.wallet.viewing.tx)
