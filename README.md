@@ -9,7 +9,7 @@
 Multi-platform and multi-node GUI for [Vcash](https://vcash.info/). You can find
 the latest release [here](https://github.com/openvcash/vcash-electron/releases).
 
-![Screenshots](https://i.imgur.com/i3Dxol0.gif)
+![Screenshots](https://i.imgur.com/jZbIspi.gif)
 
 ## Table of Contents
 - [Install from source](#install-from-source)
