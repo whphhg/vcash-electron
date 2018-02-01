@@ -1,6 +1,7 @@
 import { action, computed, extendObservable, reaction, runInAction } from 'mobx'
 import { notification } from 'antd'
-import { coin, shortUid } from '../utilities/common.js'
+import { shortUid } from '../utilities/common.js'
+import { coin } from '../utilities/constants.js'
 import i18next from '../utilities/i18next.js'
 
 class Wallet {
@@ -667,8 +668,13 @@ class Wallet {
    */
   @action
   async updateAddresses(accounts = null) {
-    const resAcc = await this.rpc.listAccounts()
+    let resAcc = await this.rpc.listAccounts()
     if ('result' in resAcc === false) return
+
+    /** TODO: Remove once issue #47 in openvcash/vcash is resolved. */
+    if (Array.isArray(resAcc.result) === true) {
+      resAcc.result = { '': resAcc.result[0] }
+    }
 
     /** Update addresses and balances of every account by default. */
     if (accounts === null) {
