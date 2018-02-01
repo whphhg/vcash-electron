@@ -1,5 +1,5 @@
 import { action, computed, extendObservable, reaction, runInAction } from 'mobx'
-import { coin } from '../utilities/common.js'
+import { coin } from '../utilities/constants.js'
 
 class Statistics {
   /**

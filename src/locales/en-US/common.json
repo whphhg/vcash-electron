@@ -1,5 +1,6 @@
 {
   "acc": "Account",
+  "accChanged": "Changed to the default account",
   "accChars": "You can only enter alphanumerals, dash and space.",
   "accName": "Account name (optional)",
   "address": "Address",

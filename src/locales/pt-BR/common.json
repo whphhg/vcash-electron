@@ -1,5 +1,6 @@
 {
   "acc": "Conta",
+  "accChanged": "Changed to the default account",
   "accChars": "Você só pode inserir alfanuméricos, traço e espaço.",
   "accName": "Nome da conta (opcional)",
   "address": "Endereço",

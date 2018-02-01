@@ -1,5 +1,6 @@
 {
   "acc": "Счёт",
+  "accChanged": "Changed to the default account",
   "accChars": "Вы можете ввести только латинские буквы, цифры, дефис и пробел.",
   "accName": "Название счёта (необязательно)",
   "address": "Адрес",

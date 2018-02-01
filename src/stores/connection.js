@@ -134,7 +134,7 @@ class Connection {
     if (Object.keys(this.stores).length === 0) {
       const rpc = new RPC(this)
       const wallet = new Wallet(gui, rates, rpc)
-      const send = new Send(rpc, wallet)
+      const send = new Send(gui, rpc, wallet)
 
       this.stores = {
         console: new Console(rpc),

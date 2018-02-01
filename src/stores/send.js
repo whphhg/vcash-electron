@@ -1,5 +1,7 @@
 import { action, computed, extendObservable, reaction, runInAction } from 'mobx'
-import { coin, decimalSep, shortUid, statusColor } from '../utilities/common.js'
+import { decimalSep, shortUid, statusColor } from '../utilities/common.js'
+import { coin } from '../utilities/constants.js'
+import message from 'antd/lib/message'
 import notification from 'antd/lib/notification'
 import i18next from '../utilities/i18next.js'
 
@@ -10,6 +12,7 @@ import i18next from '../utilities/i18next.js'
  */
 class Send {
   /**
+   * @param {object} gui - Global GUI store.
    * @param {object} rpc - Connection instance RPC store.
    * @param {object} wallet - Connection instance Wallet store.
    * @prop {string} comment - Comment about transaction.
@@ -18,7 +21,8 @@ class Send {
    * @prop {object} spend - Spend funds from this account or utxo set.
    * @prop {map} recipients - Addresses and amounts to pay.
    */
-  constructor(rpc, wallet) {
+  constructor(gui, rpc, wallet) {
+    this.gui = gui
     this.rpc = rpc
     this.wallet = wallet
 
@@ -41,6 +45,24 @@ class Send {
         fireImmediately: true,
         name: 'Send: checking if at least one recipient is available.'
       }
+    )
+
+    /**
+     * Change to the *DEFAULT* account if spending from *ANY*, with multiple
+     * recipients and removing the last unspent transaction output.
+     */
+    reaction(
+      () => this.spend.utxo.length,
+      selected => {
+        if (selected !== 0) return
+        if (this.spend.fromAccount !== '*ANY*') return
+        if (this.recipients.size === 1) return
+
+        /** Change to the default account and inform the user. */
+        this.setSpendFrom('*DEFAULT*')
+        message.success(i18next.t('accChanged'))
+      },
+      { name: 'Send: checking if the last selected utxo was removed.' }
     )
   }
 
@@ -402,8 +424,21 @@ class Send {
    * @param {string} txid - Sent transaction ID.
    */
   succeeded(txid) {
+    notification.success({
+      message: i18next.t('sent'),
+      description: ''.concat(
+        new Intl.NumberFormat(this.gui.language, {
+          minimumFractionDigits: 6,
+          maximumFractionDigits: 6
+        }).format(this.total),
+        ' XVC'
+      )
+    })
+
     /** Update balance (and unconfirmed) info, triggering wallet update. */
     this.wallet.updateInfo('wallet')
+
+    /** Update viewing transaction and reset the sending form. */
     this.wallet.setViewing('tx', txid)
     this.reset()
   }

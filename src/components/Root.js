@@ -13,8 +13,8 @@ import Send from './screens/Send.js'
 import Transactions from './screens/Transactions.js'
 
 /** Set message and notification top margin. */
-message.config({ top: 35 })
-notification.config({ top: 35 })
+message.config({ top: 40 })
+notification.config({ top: 40 })
 
 @inject('connections')
 @observer

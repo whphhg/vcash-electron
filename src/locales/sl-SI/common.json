@@ -1,5 +1,6 @@
 {
   "acc": "Račun",
+  "accChanged": "Spremenjeno na privzeti račun",
   "accChars": "Vneseš lahko samo črke, števila, pomišljaj, ter presledek.",
   "accName": "Ime računa (neobvezno)",
   "address": "Naslov",
