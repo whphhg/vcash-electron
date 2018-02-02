@@ -27,7 +27,7 @@ class RewardSpreadChart extends React.Component {
   }
 
   render() {
-    const beginning = new Date().getTime() - 30 * 24 * 60 * 60 * 1000
+    const beginning = Date.now() - 30 * 24 * 60 * 60 * 1000
     return (
       <ResponsiveContainer height={250} width="100%">
         <ScatterChart margin={{ top: 15, right: 20, bottom: 5, left: 20 }}>

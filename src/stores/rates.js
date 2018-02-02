@@ -143,7 +143,7 @@ class Rates {
           rates[ticker.substr(3)] = priceIndex[ticker].last
           return rates
         }, {}),
-        updated: new Date().getTime()
+        updated: Date.now()
       }
 
       setItem('bitcoinAverage', this.bitcoinAverage)
@@ -159,7 +159,7 @@ class Rates {
   setBittrex(ticker) {
     /** Set only if ticker is an object and result exists. */
     if (ticker === Object(ticker) && 'result' in ticker === true) {
-      this.bittrex = { ...ticker.result[0], updated: new Date() }
+      this.bittrex = { ...ticker.result[0], updated: Date.now() }
     }
   }
 
@@ -172,7 +172,7 @@ class Rates {
   setPoloniex(ticker) {
     /** Set only if ticker is an object and BTC_XVC pair exists. */
     if (ticker === Object(ticker) && 'BTC_XVC' in ticker === true) {
-      this.poloniex = { ...ticker['BTC_XVC'], updated: new Date() }
+      this.poloniex = { ...ticker['BTC_XVC'], updated: Date.now() }
     }
   }
 
@@ -185,7 +185,7 @@ class Rates {
   async fetchBitcoinAverage(force = false) {
     if (
       force === true ||
-      new Date().getTime() - this.bitcoinAverage.updated > 15 * 59 * 1000
+      Date.now() - this.bitcoinAverage.updated > 15 * 59 * 1000
     ) {
       try {
         let res = await window.fetch(bitcoinAverage)

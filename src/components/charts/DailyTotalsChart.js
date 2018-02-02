@@ -29,7 +29,7 @@ class DailyTotalsChart extends React.Component {
   }
 
   render() {
-    const beginning = new Date().getTime() - 31 * 24 * 60 * 60 * 1000
+    const beginning = Date.now() - 31 * 24 * 60 * 60 * 1000
     return (
       <ResponsiveContainer height={160} width="100%">
         <AreaChart

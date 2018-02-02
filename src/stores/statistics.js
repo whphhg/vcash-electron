@@ -53,7 +53,7 @@ class Statistics {
   @computed
   get dailyRewards() {
     /** Threshold for including transactions (today - 31 days). */
-    const threshold = new Date().getTime() - 31 * 24 * 60 * 60 * 1000
+    const threshold = Date.now() - 31 * 24 * 60 * 60 * 1000
 
     /** Populate the map with the last 31 dates. */
     let rewards = new Map()
@@ -97,7 +97,7 @@ class Statistics {
   @computed
   get dailyTotals() {
     /** Threshold for including transactions (today - 31 days). */
-    const threshold = new Date().getTime() - 31 * 24 * 60 * 60 * 1000
+    const threshold = Date.now() - 31 * 24 * 60 * 60 * 1000
 
     /** Populate the map with the last 31 dates. */
     let totals = new Map()
@@ -157,7 +157,7 @@ class Statistics {
   @computed
   get rewardSpread() {
     /** Threshold for including transactions (today - 31 days). */
-    const threshold = new Date().getTime() - 31 * 24 * 60 * 60 * 1000
+    const threshold = Date.now() - 31 * 24 * 60 * 60 * 1000
 
     /** Populate the spread arrays with rewards. */
     let spread = {
@@ -199,7 +199,7 @@ class Statistics {
   @action
   setNetworkRates() {
     this.networkRates.push({
-      date: new Date().getTime(),
+      date: Date.now(),
       hashRate: this.wallet.info.networkhashps,
       posDifficulty: this.wallet.info['proof-of-stake'],
       powDifficulty: this.wallet.info['proof-of-work']

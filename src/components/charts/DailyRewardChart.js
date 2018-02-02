@@ -24,7 +24,7 @@ class DailyRewardChart extends React.Component {
   }
 
   render() {
-    const beginning = new Date().getTime() - 30 * 24 * 60 * 60 * 1000
+    const beginning = Date.now() - 30 * 24 * 60 * 60 * 1000
     return (
       <ResponsiveContainer height={250} width="100%">
         <BarChart
