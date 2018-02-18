@@ -11,6 +11,25 @@ the latest release [here](https://github.com/openvcash/vcash-electron/releases).
 
 ![Screenshots](https://i.imgur.com/jZbIspi.gif)
 
+**Disclaimer:** I (@whphhg) am the creator of this GUI, but not of Vcash itself.
+I've been learning about Bitcoin for a short period of time when I found this
+coin with a mixed PoW and PoS consensus that had the ability to spend the coins
+a few seconds after receiving them. However, there was no GUI for Linux, so
+I've started to learn about Node.js and created my first GUI using Express.js
+and Socket.io. Since then I've learned about Electron, React, Redux, MobX and
+created this GUI, with the goal of making it as simple, clean and intuitive as
+I could.
+
+During this time the creator of the coin @john-connor left and deleted the
+website, forums and git repository. Shortly after, @xCoreDev decided to keep
+the community together and provided a website snapshot and forum hosting along
+with c++ improvements, and another person handled the BitcoinTalk and Twitter
+account.
+
+I've decided to add this disclaimer because I'm not a c++ programmer and am
+unable to verify how the coin works on my own to give you a definite conclusion,
+even though I've created a RPC based GUI for it.
+
 ## Table of Contents
 - [Install from source](#install-from-source)
 - [Build and package for Linux, macOS and Windows](#build-and-package-for-linux-macos-and-windows)
