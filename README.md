@@ -23,12 +23,18 @@ I could.
 During this time the creator of the coin @john-connor left and deleted the
 website, forums and git repository. Shortly after, @xCoreDev decided to keep
 the community together and provided a website snapshot and forum hosting along
-with c++ improvements, and another person handled the BitcoinTalk and Twitter
+with c++ improvements, and @bettertimes handled the BitcoinTalk and Twitter
 account.
 
-I've decided to add this disclaimer because I'm not a c++ programmer and am
-unable to verify how the coin works on my own to give you a definite conclusion,
-even though I've created a RPC based GUI for it.
+I couldn't have predicted that it would get abandoned, which is why I haven't
+tweeted or otherwise talked about the GUI. I can live with it never seeing the
+light of day, even if it is one of my biggest accomplishments so far. However,
+I would never forgive myself if anyone else bought coins based on the GUI alone
+and got burned in the end because of the coin and it's history.
+
+I'm not saying that the coin doesn't work, but I've decided to add this
+disclaimer because I'm not a c++ programmer and am unable to verify how it works
+on my own to give you a definite conclusion. Please do your due diligence.
 
 ## Table of Contents
 - [Install from source](#install-from-source)
